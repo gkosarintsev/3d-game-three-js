@@ -70,11 +70,11 @@ function findEntity(ref) {
   return map?.get(ref.id) || null;
 }
 
-function selectEntity(ref) {
+function selectEntity(ref, point = null) {
   if (!ref) { state.selectedId = null; state.selectedKind = null; }
   else { state.selectedId = ref.id; state.selectedKind = ref.kind; }
   const ent = ref ? findEntity(ref) : null;
-  ui.setInspector(ent, model?.diagnostics, model);
+  ui.setInspector(ent, model?.diagnostics, model, point);
   renderer?.highlight(state.selectedId, null);
   markDirty();
 }
@@ -302,7 +302,16 @@ function bindEvents() {
     if (!renderer || !viewManager) return;
     if (viewManager.consumeDragFlag && viewManager.consumeDragFlag()) return;
     const ref = renderer.pick(e.clientX, e.clientY, viewManager);
-    selectEntity(ref);
+    const point = state.view === 'top' ? viewManager.screenToWorld(e.clientX, e.clientY) : null;
+    if (!ref && point) {
+      state.selectedId = null;
+      state.selectedKind = null;
+      renderer.highlight(null, null);
+      ui.setInspectorPoint(point);
+      markDirty();
+      return;
+    }
+    selectEntity(ref, point);
   });
   window.addEventListener('keydown', (e) => {
     if (e.target && (e.target.tagName === 'INPUT' || e.target.tagName === 'SELECT' || e.target.tagName === 'TEXTAREA')) return;

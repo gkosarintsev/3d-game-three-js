@@ -182,7 +182,7 @@ export class UI {
     if (diag.list.length > list.length) this.diagBody.append(el('div', 'viz-muted', `… ещё ${diag.list.length - list.length}`));
   }
 
-  setInspector(entity, diagnostics, model) {
+  setInspector(entity, diagnostics, model, point = null) {
     this.selected = entity;
     this.inspectorBody.innerHTML = '';
     if (!entity) {
@@ -223,6 +223,10 @@ export class UI {
     if (entity.kind === 'prop') { add('model', a.model); add('source', a.source); }
     if (entity.kind === 'district') { add('district type', a.type); add('parcels', a.parcels); add('cells', a.cells); add('geometry', entity.geometry?.type); }
 
+    if (point) {
+      add('клик x, z', `${fmt(point.x)},${fmt(point.z)}`);
+    }
+
     const actions = el('div', 'viz-actions');
     const focusBtn = el('button', 'viz-btn', 'Focus');
     focusBtn.addEventListener('click', () => this.onAction({ type: 'focus', id: entity.id }));
@@ -230,7 +234,16 @@ export class UI {
     facadeBtn.addEventListener('click', () => this.onAction({ type: 'facade', id: entity.id }));
     const copyBtn = el('button', 'viz-btn', 'Copy id');
     copyBtn.addEventListener('click', () => this.onAction({ type: 'copyId', id: entity.id }));
-    actions.append(focusBtn, facadeBtn, copyBtn);
+    if (point) {
+      const copyPt = el('button', 'viz-btn', 'Copy click');
+      copyPt.addEventListener('click', () => {
+        const txt = `${fmt(point.x)},${fmt(point.z)}`;
+        navigator.clipboard?.writeText(txt).catch(() => {});
+      });
+      actions.append(focusBtn, facadeBtn, copyBtn, copyPt);
+    } else {
+      actions.append(focusBtn, facadeBtn, copyBtn);
+    }
     this.inspectorBody.append(actions);
 
     const refs = diagnostics?.byEntity?.get(entity.id) || [];
@@ -241,6 +254,30 @@ export class UI {
         this.inspectorBody.append(row);
       }
     }
+  }
+
+  setInspectorPoint(point) {
+    this.selected = null;
+    this.inspectorBody.innerHTML = '';
+    if (!point) {
+      this.inspectorBody.textContent = 'Выберите объект на плане.';
+      return;
+    }
+    const add = (k, v) => {
+      if (v == null || v === '') return;
+      const row = el('div', 'viz-kv');
+      row.append(el('span', 'viz-k', k), el('span', 'viz-v', String(v)));
+      this.inspectorBody.append(row);
+    };
+    add('клик x, z', `${fmt(point.x)},${fmt(point.z)}`);
+    const actions = el('div', 'viz-actions');
+    const copyBtn = el('button', 'viz-btn', 'Copy coords');
+    copyBtn.addEventListener('click', () => {
+      const txt = `${fmt(point.x)},${fmt(point.z)}`;
+      navigator.clipboard?.writeText(txt).catch(() => {});
+    });
+    actions.append(copyBtn);
+    this.inspectorBody.append(actions);
   }
 
   setStatus(text) { this.status.textContent = text; }
