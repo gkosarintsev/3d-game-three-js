@@ -246,7 +246,7 @@ async function testKindSelectsImplementation() {
     for (const m of OPTIONAL) {
       const present = typeof map[m] === 'function';
       if (kind === 'stream' && m === 'updateStreaming' && !present) bad.push(`${LEVEL_NUMBERS[i]}: стримящая карта без updateStreaming`);
-      if (['json', 'json2'].includes(kind) && m === 'debugIds' && !present) bad.push(`${LEVEL_NUMBERS[i]}: карта из брифа без debugIds`);
+      if (kind === 'open' && m === 'debugIds' && !present) bad.push(`${LEVEL_NUMBERS[i]}: карта из брифа без debugIds`);
       if (kind === 'open' && ['streamStep', 'isBuiltAt', 'debugIds'].includes(m) && !present) {
         bad.push(`${LEVEL_NUMBERS[i]}: открытый мир без ${m}`);
       }

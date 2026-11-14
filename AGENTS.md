@@ -8,7 +8,7 @@
 («почему») вынесены в `docs/` и **действуют так же обязательно**:
 - контракт карты и стриминг/открытый мир — [docs/architecture-map-contract.md](docs/architecture-map-contract.md), план — [docs/open-world-plan.md](docs/open-world-plan.md);
 - внешние ассеты (GLB), колонки, стрим окна, ночной свет — [docs/architecture-glb.md](docs/architecture-glb.md);
-- уровни из брифа (json/json2): геометрия, навигация, рельеф, кровли, вода, косые районы, трасса и замеры — [docs/architecture-json-levels.md](docs/architecture-json-levels.md), планы — [docs/level12-relief-plan.md](docs/level12-relief-plan.md), [docs/level13-track-plan.md](docs/level13-track-plan.md), дефекты — [docs/defects-v2-plan.md](docs/defects-v2-plan.md);
+- уровни из брифа (open/CityForge): геометрия, навигация, рельеф, кровли, вода, косые районы, трасса и замеры — [docs/architecture-json-levels.md](docs/architecture-json-levels.md), планы — [docs/level12-relief-plan.md](docs/level12-relief-plan.md), [docs/level13-track-plan.md](docs/level13-track-plan.md), дефекты — [docs/defects-v2-plan.md](docs/defects-v2-plan.md);
 - пайплайн брифа, схема DSL, процедурные ряды, генератор — [docs/architecture-level-pipeline.md](docs/architecture-level-pipeline.md);
 - v3 CityForge (чанки/каталог) и движковая арифметика поверхностей (`SurfaceField`, `src/surfaces.js`) — [docs/open-world-plan.md](docs/open-world-plan.md), контекст в [docs/architecture-json-levels.md](docs/architecture-json-levels.md);
 - рельеф TerrainMap — [docs/architecture-terrain.md](docs/architecture-terrain.md);
@@ -68,7 +68,7 @@ You operate in this repository as an autonomous engineer. Maintain project conte
 - Декор (`src/decor.js`, выводимые квады, кузова машин) — чистая визуализация: без `solids`/`blockers`/влияния на навигацию и проходовость.
 - Сущности открытого мира (только при `streamStep`): враги/маяк/кузова вне застроенных клеток скрываются или не используются; снятие врага — **молча** (без смерти/звука/зачёта), возрождение и посадка — по застроенной опоре/узлу; план миникарты берёт всю плиту. Подробности — [docs/architecture-map-contract.md](docs/architecture-map-contract.md).
 
-Реализации (7 классов, 8 ключей: `json`/`json2` → `JsonMap`, `cityforge` компилируется в `open`): `TownMap`, `TerrainMap`, `CityMap`, `ModelMap`, `StreamedModelMap`, `JsonMap` (v1/v2), `WorldMap` (подкласс `JsonMap`, `open`). Все строятся на общих механизмах без копий: `SolidField` (src/solids.js) → `SurfaceField` (src/surfaces.js) → `JsonMap` → `WorldMap`; граф/поиск — `NavGraph` (src/nav-graph.js); дом — `src/building.js`. Новый тип — класс с контрактом, выбор по `map.kind` в `Game.createMap()`.
+Реализации: `TownMap`, `TerrainMap`, `CityMap`, `ModelMap`, `StreamedModelMap`, `JsonMap`, `WorldMap` (подкласс `JsonMap`, `open`; `cityforge` компилируется в `open`). Все строятся на общих механизмах без копий: `SolidField` (src/solids.js) → `SurfaceField` (src/surfaces.js) → `JsonMap` → `WorldMap`; граф/поиск — `NavGraph` (src/nav-graph.js); дом — `src/building.js`. Новый тип — класс с контрактом, выбор по `map.kind` в `Game.createMap()`.
 
 ## Внешние ассеты уровня (GLB)
 
@@ -85,14 +85,14 @@ You operate in this repository as an autonomous engineer. Maintain project conte
 - Каждая глава — файл-определение: `name`, `map` (kind и содержимое), `decor`, `sky`, `gameplay` (цель/монеты/выход/враги/авто). Регистрация — `src/levels/index.js` по порядку прохождения.
 - Содержимое уровня и декор детерминированы (ГПСЧ с сидом из определения; разброс монет может использовать `Math.random`). Запрещено хардкодить содержимое конкретной главы в `game.js`, `map.js`, `terrain-map.js`, `enemies.js`, `decor.js`. `config.js` — только значения по умолчанию.
 - Цель из `gameplay.goal`: `exit` (дойти до точки B) или `coins`; следующая глава загружается без перезагрузки, смерть перезапускает текущую.
-- Типы/главы (по данным): `terrain` (перевал/рельеф, `TerrainMap`), `stream` (GLB-окно по макету), город/улица (`TownMap`/`CityMap`), `json`/`json2` (бриф → `JsonMap`), `open` (WorldMap, в т.ч. v3 CityForge). Район GLB — `asset/window/cell/scale/spawn`; рельеф TerrainMap — `hills/mountains/caves/chasm/ramps/bridge/flats/spawn`; город — `grid/block/street/curb/sidewalk/house/seed/spawn`.
+- Типы/главы (по данным): `terrain` (перевал/рельеф, `TerrainMap`), `stream` (GLB-окно по макету), город/улица (`TownMap`/`CityMap`), `open` (WorldMap, в т.ч. CityForge v3/v4). Район GLB — `asset/window/cell/scale/spawn`; рельеф TerrainMap — `hills/mountains/caves/chasm/ramps/bridge/flats/spawn`; город — `grid/block/street/curb/sidewalk/house/seed/spawn`.
 
-### Брифы и пайплайн (json/json2/open/v3)
+### Брифы и пайплайн (open/CityForge)
 
-- Пайплайн: `src/levels/level-NN.json` → `node tools/build-level.mjs` (валидация, нормализация, запись `level-NN.js`). Оба файла в репозитории; модуль — производное, обязан сходиться **побайтово** и **без предупреждений парсера**. `JsonMap` ест нормализованные данные и не знает номеров глав/схем.
-- Схема — один DSL (`tools/level-schema.mjs`) → экспорт JSON Schema (`tools/export-schema.mjs --check`); бриф с `$schema` своей версии. `default` берётся из применяющего объекта; числа, равные default, в бриф не пишут (кроме наличия секции-переключателя). Rationale — `metadata.notes`. Детали — [docs/architecture-level-pipeline.md](docs/architecture-level-pipeline.md).
+- Пайплайн: `src/levels/level-NN.json` → `node tools/build-level.mjs` (валидация, нормализация/компиляция, запись каталога или модуля). Результат — производное, обязан сходиться **побайтово** и **без предупреждений парсера** (где применимо). Поддерживаемые форматы исходников: `cityforge` v3/v4 и `kind: 'open'` (каталог/стриминг). Устаревшие форматы брифов/схем `json`/`json2` (v1/v2) удалены и не поддерживаются.
+- Схема — один DSL (`tools/level-schema.mjs`) → экспорт JSON Schema (`tools/export-schema.mjs --check`): `level-v3.schema.json`, `level-common.schema.json`, `level-v4.schema.json`. Бриф с `$schema` своей версии; v4 дополнительно `schemaVersion: 4`. `default` берётся из применяющего объекта; числа, равные default, в бриф не пишут (кроме наличия секции-переключателя). Rationale — `metadata.notes`. Детали — [docs/architecture-level-pipeline.md](docs/architecture-level-pipeline.md).
 - Процедурные ряды (окна/мусор/вывески), генератор кварталов/трасс — вывод из данных/ГПСЧ, без роста модуля; детерминизм и порядок вызовов значимы. Счётчики отказов, а не молчание.
-- Ключевые геометрические/навигационные инварианты (v2/рельеф): поворотные дома в своих осях (OBB/SAT, допуск обратного хода 1e-9 м), аналитические призмы/дуги/рельеф кормят ногу, пулю, сферу, картинку и навигацию **одним полем**; наклонные пролёты — не в `solids`, а в аналитике; рёбра графа держат габарит и опору под шагом; проходовость русла/кровель/маршей/настилов — свойство данных и общих механизмов. Полные правила и замеры — [docs/architecture-json-levels.md](docs/architecture-json-levels.md).
+- Ключевые геометрические/навигационные инварианты (open/рельеф): поворотные дома в своих осях (OBB/SAT), аналитические призмы/дуги/рельеф кормят ногу, пулю, сферу, картинку и навигацию **одним полем**; наклонные пролёты — не в `solids`, а в аналитике; рёбра графа держат габарит и опору под шагом. Полные правила и замеры — [docs/architecture-json-levels.md](docs/architecture-json-levels.md).
 - Автомобили (`gameplay.cars`) — данные брифа, декор без коллизий, неуязвимость/поведение — в [docs/architecture-vehicles.md](docs/architecture-vehicles.md).
 
 ## Сущности и жизненный цикл

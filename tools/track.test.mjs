@@ -13,7 +13,7 @@ import { makeRng } from '../src/rng.js';
 import { arcDelta, r3 } from '../src/geo2d.js';
 import { CONFIG } from '../src/config.js';
 import { reliefOf } from '../src/relief.js';
-import { validateLevel, LEVEL_SPEC_V2 } from './level-schema.mjs';
+import { validateLevel, LEVEL_SPEC_OPEN } from './level-schema.mjs';
 import { normalizeLevel } from './normalize-level.mjs';
 import {
   TRACK_DEFAULTS, TRACK_ARC_MIN, TRACK_ARC_SLIVER, TRACK_PIECE_MIN, trackSpec, trackCenterline, trackAxisAt, expandCity,
@@ -293,7 +293,7 @@ t('съезды: сторона и направление из сида, ось 
 
 // --------------------------------------------------------------- гейты секции
 
-const LEVEL = (city, kind = 'json2') => ({
+const LEVEL = (city, kind = 'open') => ({
   kind,
   ground: { y: 0, size: 600 },
   city: { seed: 20261105, districts: [{ id: 'd0', block: { minX: -290, maxX: -200, minZ: 200, maxZ: 290 } }], ...city },
@@ -320,12 +320,9 @@ t('гейты: невозможная конфигурация называет�
     ['петля вне земли', { radius: 290 }, /не влезает в землю/],
     ['кольцо из двух вершин', { turns: 2 }, /turns/],
     ['несчитанный ключ', { spline: 'catmull' }, /ключ 'spline'/],
-    ['v1 не принимает трассу', null, /поле v2/],
   ];
   for (const [name, over, re] of cases) {
-    const msg = over === null
-      ? (() => { try { expandCity(LEVEL({ track: { ...TRACK_DEFAULTS } }, 'json')); return null; } catch (e) { return String(e.message); } })()
-      : gate({}, over);
+    const msg = gate({}, over);
     assert(msg !== null, `${name}: конфигурация прошла молча`);
     assert(re.test(msg), `${name}: ошибка '${msg.split('\n')[0]}' не называет причину (искали ${re})`);
   }
@@ -514,7 +511,7 @@ t('съезд, не дотянувшийся до грунта за край п�
 
 t('носы съездов попадают в ctx.noses до цикла районов, и сетка улицы подаётся под них', () => {
   const level = {
-    kind: 'json2',
+    kind: 'open',
     ground: { y: 0, size: 600 },
     city: {
       seed: 20261105,
@@ -554,7 +551,7 @@ t('коридор съезда отбраковывает лот под подъ
   assert(best.far < safe,
     `блок подъезда дотянул до полосы петли: дальний угол ${best.far.toFixed(1)} м при ${safe} м — проба не изолирована`);
   const level = (entries) => ({
-    kind: 'json2', ground: { y: 0, size: 600 },
+    kind: 'open', ground: { y: 0, size: 600 },
     city: {
       seed,
       districts: [{
@@ -659,7 +656,7 @@ function cityLevel(block, over = {}, seed = 20261105) {
     id: 'd0', street: { pitch: 44, width: 14, grade: 0.06 }, block,
   };
   return {
-    kind: 'json2',
+    kind: 'open',
     metadata: { levelName: 'проба', name: 'проба', hint: ' ', units: 'meters' },
     ground: { y: 0, size: 600 },
     ...(over.relief ? { relief: over.relief } : {}),
@@ -675,11 +672,13 @@ function cityLevel(block, over = {}, seed = 20261105) {
 /** Разворот, точка B на пластине кольца и оба прохода проверки данных. */
 function buildDeck(block, over = {}, seed = 20261105) {
   const stats = {};
-  const built = expandCity(cityLevel(block, over, seed), stats);
+  const input = cityLevel(block, over, seed);
+  const built = expandCity(input, stats);
+  built.stream = built.stream ?? input.stream ?? { chunk: 200, keep: 1, aheadMin: 0, aheadMax: 0, budgetMs: 8 };
   const ring = built.roads.find(r => r.trackRole === 'ring');
   const p = ring.elements.find(el => el.plate).plate;
   built.gameplay.exit = { x: p.x, z: p.z };
-  const { errors, warnings } = validateLevel(built, LEVEL_SPEC_V2);
+  const { errors, warnings } = validateLevel(built, LEVEL_SPEC_OPEN);
   const norm = normalizeLevel(structuredClone(built));
   return {
     built, stats, ring, errors, norm,

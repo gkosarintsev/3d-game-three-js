@@ -32,7 +32,7 @@ const ROTATIONS = [0, 90, 180, 270];
  * прямоугольником ровно так же, как это бракует схема v1.
  */
 export function isV2Kind(kind) {
-  return kind === 'json2' || kind === 'open';
+  return kind === 'open';
 }
 
 /**
@@ -56,7 +56,7 @@ export function normalizeLevel(raw) {
   if (relief) addDistrictPads(relief, raw.buildings ?? [], raw.roads ?? []);
   // Отметка местности в точке — единственная запись о «полу главы»: рельеф там,
   // где секция задана, и прежняя плоскость `ground.y` там, где её нет. Главы 9–11
-  // получают ту же константу, поэтому их модули обязаны остаться байт-в-байт.
+  // получают ту же константу.
   ground.land = relief ? ((x, z) => relief.fieldAt(x, z)) : (() => ground.y);
 
   const channels = (raw.waterways ?? []).map(w => normalizeWaterway(w, ground));
@@ -92,8 +92,7 @@ export function normalizeLevel(raw) {
     ]),
   ];
   const water = waterwayFoot(channels);
-  // голову фонаря на проезжую часть поворачивает только v2: у v1 (главы 9–10)
-  // `rotationY` обязан остаться прежним, иначе их модули разойдутся с парсером
+  // голову фонаря поворачивают на проезжую часть.
   const lampsFaceRoad = isV2Kind(raw.kind);
   for (const road of roads) {
     // перехода не держат колонны: их держат здания, а опора с земли до настила
@@ -154,7 +153,7 @@ export function normalizeLevel(raw) {
       ...(gp.cars ? { cars: authoredCars(gp.cars, support) } : {}),
     },
     map: {
-      kind: raw.kind ?? 'json',
+      kind: raw.kind ?? 'open',
       units: 'meters',
       ground,
       // рельеф едет в модуль как данные поля (холмы и площадки), а не как растер
@@ -1832,7 +1831,7 @@ function bridgePillars(road, ground, obstacles, warnings, water) {
  * Фонари вдоль настила: шаг J.lampSpacing, по обе стороны на J.lampOffset за
  * краем.
  *
- * `face` — поворачивать голову на проезжую часть (только `json2`). Голова
+ * `face` — поворачивать голову на проезжую часть. Голова
  * `lamp_post` вынесена по локальной +Z ([src/props.js:59]), а `rotationY` — угол
  * `Object3D.rotation.y`, мировой вектор головы при этом `(sin θ, cos θ)`, поэтому
  * θ = atan2(hx, hz) для направления `h` от столба к ОСЕВОЙ полотна. Прежний

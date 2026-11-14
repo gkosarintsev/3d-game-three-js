@@ -436,7 +436,6 @@ export function compileCityforge(raw) {
   };
 
   const engine = {
-    $schema: './level-v2.schema.json',
     kind: 'open',
     // v3: окна фасадов включены по умолчанию (программная текстура/ритм из движка).
     // Явное null/false в источнике отключает окна (perf-тюнинг); отсутствие поля = defaults.

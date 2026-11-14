@@ -29,8 +29,6 @@ const MAP_KINDS = {
   model: createModelMap,
   stream: createStreamedMap,
   town: createTownMap,
-  json: createJsonMap,
-  json2: createJsonMap,
   // открытый мир: та же арифметика `JsonMap`, но собранная по загруженным
   // клеткам (`src/world-map.js`); файлы клеток читает сама карта по `catalog`
   // из данных главы — его печатает парсер вместе с `cells[].file`, движок путь

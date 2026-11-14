@@ -21,7 +21,7 @@ import { resolve } from 'node:path';
 import { CONFIG } from '../src/config.js';
 import { circleHitsRect } from '../src/solids.js';
 import { SurfaceField } from '../src/surfaces.js';
-import { validateLevel, LEVEL_SPEC_V2 } from './level-schema.mjs';
+import { validateLevel, LEVEL_SPEC_OPEN } from './level-schema.mjs';
 import { generateCatalog, generateModule } from './build-level.mjs';
 import { SKELETON_STEP, GROUND_FIT, axisLength, skeletonOf } from './skeleton.mjs';
 import { schemaText, schemaTextFor, SCHEMA_FILES } from './export-schema.mjs';
@@ -565,7 +565,7 @@ t('скелет: цена ∝ протяжённость осей, а не пл�
  */
 function syntheticMap() {
   return {
-    kind: 'json2',
+    kind: 'open',
     ground: { size: 400, y: 0, color: 0x111111 },
     spawn: { x: 0, z: 0 },
     buildings: [{
@@ -636,7 +636,7 @@ t('index.js держит мировые секции ровно один раз,
     + ` секции вывода ${outBytes} Б (18 + 73 + 53 Б на фикстуре этапа 1 их теряла)`);
 });
 
-// § 7.1 п. 6 (scope v3/v4): legacy json2 single-module chapters removed; v3 open chapters
+// § 7.1 п. 6: legacy single-module json/json2 briefs removed; open/cityforge chapters
 // are produced by the chunking pipeline and verified by check-levels/build --check.
 t('модули глав из брифа побайтово прежние, и разрезка к ним не прикоснулась', () => {
   const single = readdirSync(resolve(ROOT, 'src/levels'))
@@ -646,36 +646,27 @@ t('модули глав из брифа побайтово прежние, и �
       const raw = JSON.parse(readFileSync(resolve(ROOT, 'src/levels', f), 'utf8'));
       return raw.kind === 'json' || raw.kind === 'json2';
     });
-  // No legacy single-module json/json2 briefs remain in v3/v4 scope.
   eq(single.length, 0, `ожидались только cityforge/open-источники, найдены: ${single.join(', ')}`);
 });
 
-// § 7.1 п. 7 — схема.
-t('схема: stream берёт только open; open без него и json2 с ним отвергаются', () => {
-  const ok = validateLevel(structuredClone(brief), LEVEL_SPEC_V2);
+// § 7.1 п. 7 — схема open.
+t('схема: open требует stream и валидирует параметры разрезки', () => {
+  const ok = validateLevel(structuredClone(brief), LEVEL_SPEC_OPEN);
   assert(ok.errors.length === 0, `законный open-бриф отвергнут: ${ok.errors.slice(0, 3).join(' | ')}`);
 
-  // `json2` без `stream` — законен: главы 11–13 живут именно так
-  const plain = validateLevel(openBrief(CHUNK, r => { delete r.stream; r.kind = 'json2'; }), LEVEL_SPEC_V2);
-  assert(plain.errors.length === 0, `v2 без stream отвергнут: ${plain.errors.slice(0, 2).join(' | ')}`);
-  hasError(validateLevel(openBrief(CHUNK, r => { r.kind = 'json2'; }), LEVEL_SPEC_V2).errors,
-    'stream', 'v2 со stream принят');
-  hasError(validateLevel(openBrief(CHUNK, r => { delete r.stream; }), LEVEL_SPEC_V2).errors,
+  hasError(validateLevel(openBrief(CHUNK, r => { delete r.stream; }), LEVEL_SPEC_OPEN).errors,
     'stream', 'open без stream принят');
-  hasError(validateLevel(openBrief(CHUNK, r => { r.stream.aheadMax = 100; }), LEVEL_SPEC_V2).errors,
+  hasError(validateLevel(openBrief(CHUNK, r => { r.stream.aheadMax = 100; }), LEVEL_SPEC_OPEN).errors,
     'ahead', 'aheadMax меньше aheadMin принят');
-  hasError(validateLevel(openBrief(45), LEVEL_SPEC_V2).errors,
+  hasError(validateLevel(openBrief(45), LEVEL_SPEC_OPEN).errors,
     'chunk', 'клетка 45 м, не делящая плиту, принята');
-  hasError(validateLevel(openBrief(CHUNK, r => { r.stream.extra = 1; }), LEVEL_SPEC_V2).errors,
+  hasError(validateLevel(openBrief(CHUNK, r => { r.stream.extra = 1; }), LEVEL_SPEC_OPEN).errors,
     'extra', 'неописанное поле stream принято');
 
-  // Гейт клетки теперь один — деление плиты нацело (для малых плит снята и
-  // кратность meshCell, глава 2). Клетка, не делящая плиту, — ошибка, и она
-  // обязана называть подходящие стороны
-  const e1 = validateLevel(openBrief(240), LEVEL_SPEC_V2).errors.join(' | ');
+  const e1 = validateLevel(openBrief(240), LEVEL_SPEC_OPEN).errors.join(' | ');
   assert(/не делит плиту/.test(e1) && /200/.test(e1),
     `клетка 240 на плите 1400 не названа ошибкой со списком подходящих сторон: ${e1.slice(0, 240)}`);
-  const ok350 = validateLevel(openBrief(350), LEVEL_SPEC_V2);
+  const ok350 = validateLevel(openBrief(350), LEVEL_SPEC_OPEN);
   eq(ok350.errors.length, 0, `клетка 350 на плите 1400 теперь должна быть принята: ${ok350.errors.slice(0, 3).join(' | ')}`);
   eq(cellChoices(worldMap.ground.size).join(', '), '40, 56, 200, 280',
     'стороны клетки, которые принимает эта плита (деление нацело; кратность meshCell для малых плит снята)');
@@ -733,7 +724,7 @@ t('чанк — законные данные карты: мировая пли�
   let worstChunkReach = 0;
   for (const c of full.chunks) {
     const m = c.map;
-    if (m.kind !== 'json2') errors.push(`${c.id}: kind чанка ${m.kind}, а JsonMap принимает v2 под именем json2`);
+    if (m.kind !== 'open') errors.push(`${c.id}: kind чанка ${m.kind}, ожидался open`);
     // мировое в чанк не едет: плита, рельеф, спавн и габарит лежат в index.js
     // один раз (§ 4.1), иначе у движка стало бы две правды о кадре мира
     for (const key of ['city', 'stream', 'metadata', 'ground', 'relief', 'spawn', 'bounds', 'windows', 'clutter', 'signage']) {

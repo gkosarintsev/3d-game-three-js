@@ -335,7 +335,7 @@ export function splitLevel(map, stream, opts = {}) {
  */
 function buildChunk(map, cell, bucket) {
   const chunkMap = {
-    kind: map.kind === 'open' ? 'json2' : (map.kind ?? 'json'),
+    kind: 'open',
     units: map.units ?? 'meters',
   };
   const counts = {};

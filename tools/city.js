@@ -352,7 +352,7 @@ function districtSpec(d) {
 /**
  * Кадр района: поворот вокруг центра его блока. `yaw` 0 или нет — кадра нет
  * (`frameAt` отдаёт null), и весь район идёт прежним осевым путём без единой
- * лишней операции: v1-брифы это обязаны касаться побайтово.
+ * лишней операции.
  */
 const districtFrame = d => frameAt(
   r3((d.block.minX + d.block.maxX) / 2), r3((d.block.minZ + d.block.maxZ) / 2), d.yaw ?? 0,
@@ -376,18 +376,9 @@ export const DISTRICT_SECTION_KEYS = {
   tower: ['chance', 'floors', 'floorHeight'],
   roofs: ['walkable', 'access', 'parapet'],
 };
-/** Поля секций района, живущие только в v2 (см. `V2_DISTRICT_KEYS`). */
-export const V2_DISTRICT_SECTION_KEYS = { street: ['grade'] };
 
 const unknownIn = (obj, allowed) => Object.keys(obj ?? {}).filter(k => !allowed.includes(k));
 
-/**
- * Поля v2 в секции `city`. Глава 10 (`kind: 'json'`) их принять не обязана:
- * заморозка v1 держится не только схемой уровней, но и здесь, потому что `city`
- * разворачивается **до** валидатора — схема просто не увидела бы район, которого
- * больше нет. Молчание генератора опаснее ошибки: косой район собрался бы осевым.
- */
-export const V2_DISTRICT_KEYS = ['yaw', 'polygon'];
 
 /**
  * Что запрещено ещё до первого вызова ГПСЧ. Ошибки копятся списком: правка
@@ -410,20 +401,9 @@ function cityConfigErrors(city, ground, districts, v2) {
     for (const k of unknownIn(d, DISTRICT_KEYS)) {
       errors.push(`city.districts (${d.id}): ключ '${k}' генератор не читает — район собрался бы без него`);
     }
-    for (const k of V2_DISTRICT_KEYS) {
-      if (!v2 && d[k] !== undefined) {
-        errors.push(`city.districts (${d.id}): '${k}' — поле v2, а глава 'json': район с ним собрался бы осевым. kind 'json2'`);
-      }
-    }
     for (const [section, allowed] of Object.entries(DISTRICT_SECTION_KEYS)) {
       for (const k of unknownIn(d[section], allowed)) {
         errors.push(`city.districts (${d.id}).${section}: ключ '${k}' генератор не читает — ${section} собрался бы без него`);
-      }
-      for (const k of V2_DISTRICT_SECTION_KEYS[section] ?? []) {
-        if (!v2 && d[section]?.[k] !== undefined) {
-          errors.push(`city.districts (${d.id}).${section}: '${k}' — поле v2, а глава 'json': улица района `
-            + 'собиралась бы плоской и на одной отметке. kind \'json2\'');
-        }
       }
     }
     const spec = districtSpec(d);
@@ -628,10 +608,6 @@ export const trackSpec = t => {
 function trackConfigErrors(track, ground, v2) {
   const errors = [];
   const t = trackSpec(track);
-  if (!v2) {
-    errors.push('city.track: трасса — поле v2, а глава `kind: \'json\'`: кольцо из дуг и повёрнутых '
-      + 'пластин схема v1 не примет. kind \'json2\'');
-  }
   for (const k of unknownIn(track, TRACK_KEYS)) {
     errors.push(`city.track: ключ '${k}' генератор не читает — кольцо собралось бы без него`);
   }
@@ -1581,11 +1557,9 @@ export function expandCity(raw, stats) {
   if (!city) return raw;
   const ground = { y: r3(raw.ground?.y ?? 0), size: r3(raw.ground?.size ?? 176) };
   const districts = city.districts ?? [];
-  // `open` — те же данные v2, только разрезанные (этап 1 плана открытого мира):
-  // генератор обязан разворачивать косые районы, рельеф и трассу ровно так же,
-  // иначе мир `kind: 'open'` собрался бы осевым — то, что схема v1 бракует по
-  // той же причине
-  const v2 = isV2Kind(raw.kind);
+  // `open` — поддерживаемый формат: генератор обязан разворачивать косые районы,
+  // рельеф и трассу полноценно
+  const v2 = true; // v1/v2 schema split removed; open/advanced geometry is the only supported mode
   const errors = cityConfigErrors(city, ground, districts, v2);
   if (errors.length) throw new Error(errors.join('\n'));
   if (!districts.length) throw new Error('city.districts пуст: генератор не дал бы ни улицы, ни дома');
@@ -1605,16 +1579,13 @@ export function expandCity(raw, stats) {
     // секция `relief` как есть: по ней трасса пересобирает поле С террасами
     // районов (`terracedField`) — той же функцией, что и нормализатор
     reliefSpec: raw.relief ? { ...raw.relief, baseY: raw.relief.baseY ?? ground.y } : null,
-    // улицы v2 — пластины с перекрёстками и профилем по рельефу; v1
-    // остаётся полосой `points` на одной отметке, поэтому ей нужен явный флаг
+    // улицы — пластины с перекрёстками и профилем по рельефу
     v2,
     rng: makeRng(city.seed ?? 0),
     obstacles: obstacleRects(raw, ground),
-    // свободные носы авторских подъёмов: сетка улиц v2 обязана дать им асфальт
-    // под срезом (правило валидатора «нос кончается на улице» мерит ровно этот
-    // же список — `bridgeNoses`). Во v1 пуст: такой бриф со своими
-    // недотянутыми носами собирается побайтово
-    noses: v2 ? bridgeNoses(raw.roads ?? [], ground.y, reliefField) : [],
+    // свободные носы авторских подъёмов: сетка улиц обязана дать им асфальт
+    // под срезом (правило валидатора «нос кончается на улице» мерит этот список)
+    noses: bridgeNoses(raw.roads ?? [], ground.y, reliefField),
     state: { lots: 0 },
     bump: key => { if (stats) stats[key] = (stats[key] ?? 0) + 1; },
   };

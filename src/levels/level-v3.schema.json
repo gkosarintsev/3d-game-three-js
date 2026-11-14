@@ -36,11 +36,11 @@
         "properties": {
           "id": {
             "type": "string",
-            "description": "уникальный id дома; лоты генератора имеют форму `<id района>_<номер>`"
+            "description": "уникальный id дома"
           },
           "name": {
             "type": "string",
-            "description": "название для метки debugIds; по умолчанию — id"
+            "description": "название для метки debugIds"
           },
           "archetype": {
             "type": "string",
@@ -56,36 +56,36 @@
               "stepped3",
               "podium_tower"
             ],
-            "description": "форма корпуса у генератора; в брифе — только подпись происхождения, в модуль не доезжает"
+            "description": "форма корпуса (служебное, генератор)"
           },
           "buildingType": {
             "type": "string",
-            "description": "тип дома (жилой, офис, торговый, башня и т.п.); сохраняется в модуле и используется движком для параметров фасада/окон"
+            "description": "тип дома"
           },
           "district": {
             "type": "string",
-            "description": "id района, чью террасу и кадр получает лот; в модуль не доезжает"
+            "description": "id района (служебное, генератор)"
           },
           "isEnterable": {
             "type": "boolean",
-            "description": "false — корпус только декор фасада: этажи считаются ритмом, плит и маршей нет (потолок этажей тогда J.shellFloorsMax)",
+            "description": "false — только фасадный декор",
             "default": true
           },
           "floorsCount": {
             "type": "number",
             "minimum": 1,
             "maximum": 60,
-            "description": "эт: число этажей; вводимый дом ограничен J.enterableFloors (проверяется геометрией, а не этим максимумом)"
+            "description": "эт: число этажей"
           },
           "floorHeight": {
             "type": "number",
             "minimum": 2.4,
             "maximum": 8,
-            "description": "м: высота этажа; все отметки перекрытий и маршей считаются от baseY + floorsCount · floorHeight"
+            "description": "м: высота этажа"
           },
           "baseY": {
             "type": "number",
-            "description": "м: пол первого этажа; по умолчанию — опора грунта под центром дома"
+            "description": "м: пол первого этажа"
           },
           "foundation": {
             "type": "string",
@@ -93,31 +93,83 @@
               "podium",
               "terrain"
             ],
-            "description": "вариант фундамента на неровной поверхности: podium — прямоугольный блок до нижней точки земли (уходит в склон); terrain — низ следует форме ландшафта. baseY в обоих случаях поднимается до наивысшей точки контакта (дом не зарывается)"
+            "description": "вариант фундамента"
           },
           "facadeMaterial": {
             "type": "string",
-            "description": "имя материала фасада; по нему ряды окон и вывесок берут надстройку из byMaterial",
+            "description": "материал фасада",
             "default": "concrete"
+          },
+          "wallColor": {
+            "type": "string",
+            "description": "hex-цвет фасада"
+          },
+          "houseKind": {
+            "type": "string",
+            "description": "вид/архетип дома"
+          },
+          "houseStyleId": {
+            "type": "string",
+            "description": "стиль дома"
+          },
+          "entrances": {
+            "type": "number",
+            "minimum": 1,
+            "maximum": 8,
+            "description": "число подъездов/секций"
+          },
+          "detailedVisual": {
+            "type": "string",
+            "description": "детальная визуальная модель"
+          },
+          "windowDensity": {
+            "type": "number",
+            "minimum": 1,
+            "maximum": 3,
+            "description": "плотность окон"
+          },
+          "windowScale": {
+            "type": "number",
+            "minimum": 0.5,
+            "maximum": 2,
+            "description": "масштаб окон"
+          },
+          "roofMaterial": {
+            "type": "string",
+            "description": "материал кровли"
+          },
+          "roofColor": {
+            "type": "string",
+            "description": "цвет кровли"
+          },
+          "trimFinish": {
+            "type": "string",
+            "description": "отделка"
+          },
+          "houseFeatures": {
+            "type": "object",
+            "properties": {},
+            "additionalProperties": false,
+            "description": "фичи дома"
           },
           "roof": {
             "type": "object",
             "properties": {
               "walkable": {
                 "type": "boolean",
-                "description": "true — кровля становится опорой (парапет J.parapetHeight по краю, маяк точки B может встать на неё); false — плита только картинка",
+                "description": "ходовая ли кровля",
                 "default": false
               },
               "parapet": {
                 "type": "number",
                 "minimum": 0,
                 "maximum": 1.5,
-                "description": "м: высота парапета ходовой кровли; 0 у non-walkable",
+                "description": "м: парапет",
                 "default": 0.9
               }
             },
             "additionalProperties": false,
-            "description": "кровля: плита на союзе footprint минус шахты маршей"
+            "description": "кровля"
           },
           "footprint": {
             "type": "array",
@@ -141,7 +193,7 @@
               "additionalProperties": false,
               "description": "точка в плане (метры)"
             },
-            "description": "м: замкнутый полигон плана дома (ГПСЧ-сетка комнат вписывается в него)"
+            "description": "м: полигон плана дома"
           },
           "rooms": {
             "type": "array",
@@ -150,12 +202,12 @@
               "properties": {
                 "id": {
                   "type": "string",
-                  "description": "уникальный id комнаты"
+                  "description": "id комнаты"
                 },
                 "floor": {
                   "type": "number",
                   "minimum": 0,
-                  "description": "эт: этаж комнаты (0 — пол на baseY)"
+                  "description": "этаж"
                 },
                 "type": {
                   "type": "string",
@@ -170,7 +222,7 @@
                     "market",
                     "warehouse"
                   ],
-                  "description": "назначение: выводимый ряд витрин неона опирается на торговые типы"
+                  "description": "назначение"
                 },
                 "polygon": {
                   "type": "array",
@@ -194,7 +246,7 @@
                     "additionalProperties": false,
                     "description": "точка в плане (метры)"
                   },
-                  "description": "м: план комнаты; обязан лежать внутри footprint и не пересекать другие комнаты"
+                  "description": "м: план комнаты"
                 },
                 "connections": {
                   "type": "array",
@@ -203,7 +255,7 @@
                     "properties": {
                       "target": {
                         "type": "string",
-                        "description": "id комнаты или улицы/настила по ту сторону проёма"
+                        "description": "id цели за проёмом"
                       },
                       "portalPosition": {
                         "type": "object",
@@ -236,16 +288,16 @@
                           "door",
                           "back_entrance"
                         ],
-                        "description": "main_entrance / door / back_entrance: по нему нормализатор ставит проём и связывает внешний узел с решёткой дома"
+                        "description": "тип связки"
                       }
                     },
                     "required": [
                       "target"
                     ],
                     "additionalProperties": false,
-                    "description": "одна дверь: id цели за проёмом, точка портала и тип связки"
+                    "description": "дверь/проём"
                   },
-                  "description": "двери комнаты; проём (rect), а не точка портала, решает связность"
+                  "description": "двери комнаты"
                 }
               },
               "required": [
@@ -255,9 +307,9 @@
                 "polygon"
               ],
               "additionalProperties": false,
-              "description": "одна комната: этаж, назначение, план и двери"
+              "description": "комната"
             },
-            "description": "комнаты дома: решётка пола и граф навигации строятся по ним"
+            "description": "комнаты дома"
           },
           "stairs": {
             "type": "array",
@@ -266,7 +318,7 @@
               "properties": {
                 "id": {
                   "type": "string",
-                  "description": "уникальный id марша"
+                  "description": "id марша"
                 },
                 "connectsFloors": {
                   "type": "array",
@@ -276,7 +328,7 @@
                     "type": "number",
                     "minimum": 0
                   },
-                  "description": "эт: [с, по] — концы марша; цепочка обязана быть непрерывной от пола до кровли, иначе _pruneToSpawn отсечёт решётку"
+                  "description": "[с, по]"
                 },
                 "type": {
                   "type": "string",
@@ -286,7 +338,7 @@
                     "spiral",
                     "ladder"
                   ],
-                  "description": "straight / l_shape / spiral / ladder; беговая длина ограничена stairRun (J.maxStairSlope), у ladder — J.maxRise на проступь"
+                  "description": "тип марша"
                 },
                 "position": {
                   "type": "object",
@@ -309,7 +361,7 @@
                 },
                 "rotation": {
                   "type": "number",
-                  "description": "град: поворот марша в собственных осях дома",
+                  "description": "град",
                   "default": 0
                 },
                 "dimensions": {
@@ -318,16 +370,16 @@
                     "width": {
                       "type": "number",
                       "minimum": 1,
-                      "description": "м: ширина марша (для лестницы) или сторона шахты"
+                      "description": "м"
                     },
                     "length": {
                       "type": "number",
                       "minimum": 1,
-                      "description": "м: беговая длина марша"
+                      "description": "м"
                     },
                     "height": {
                       "type": "number",
-                      "description": "м: высота подъёма; по умолчанию шаг этажа"
+                      "description": "м"
                     }
                   },
                   "required": [
@@ -335,7 +387,7 @@
                     "length"
                   ],
                   "additionalProperties": false,
-                  "description": "габарит шахты марша; для ladder по умолчанию J.ladderShaft × J.ladderShaft"
+                  "description": "габарит марша"
                 }
               },
               "required": [
@@ -344,7 +396,7 @@
                 "type"
               ],
               "additionalProperties": false,
-              "description": "один марш: какие этажи связывает, какой формы и где стоит его шахта"
+              "description": "марш"
             },
             "description": "марши дома"
           },
@@ -352,7 +404,7 @@
             "type": "number",
             "minimum": -360,
             "maximum": 360,
-            "description": "град: поворот дома вокруг центра габарита footprint; весь внутренний расчёт идёт в своих осях, в мире корпус держит OBB (габарит в коллизиях запретил бы невидимые стены по пустым углам)",
+            "description": "град: поворот дома вокруг центра габарита footprint",
             "default": 0
           },
           "districtFrame": {
@@ -360,17 +412,17 @@
             "properties": {
               "cx": {
                 "type": "number",
-                "description": "м: центр поворота района"
+                "description": "м"
               },
               "cz": {
                 "type": "number",
-                "description": "м: центр поворота района"
+                "description": "м"
               },
               "yaw": {
                 "type": "number",
                 "minimum": -180,
                 "maximum": 180,
-                "description": "град: yaw района; терраса квартала собирается в осях района, а не мира"
+                "description": "град"
               }
             },
             "required": [
@@ -379,7 +431,7 @@
               "yaw"
             ],
             "additionalProperties": false,
-            "description": "кадр косого района (служебное поле генератора): в модуль не доезжает"
+            "description": "кадр косого района (служебное, генератор)"
           }
         },
         "required": [
@@ -390,9 +442,9 @@
           "rooms"
         ],
         "additionalProperties": false,
-        "description": "один дом: план footprint, этажность, комнаты с дверями и марши; отметки считаются от baseY"
+        "description": "дом"
       },
-      "description": "авторские дома; кварталы генератора добавляются через `city`"
+      "description": "дома"
     }
   },
   "required": [

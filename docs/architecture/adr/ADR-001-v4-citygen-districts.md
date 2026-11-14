@@ -6,7 +6,7 @@
 
 ## Контекст
 
-Нужен многослойный процедурный генератор города с явными районами, валидацией/repair и детерминизмом, без внедрения новых примитивов движка в MVP. Актуальная база — v3/CityForge (`kind: "cityforge"`, open-каталог). В репозитории остаются legacy-форматы/главы (terrain/stream/town, json/json2, open-legacy), обратная совместимость с ними не требуется.
+Нужен многослойный процедурный генератор города с явными районами, валидацией/repair и детерминизмом, без внедрения новых примитивов движка в MVP. Актуальная база — v3/CityForge (`kind: "cityforge"`, open-каталог). В репозитории остаются legacy-форматы/главы (terrain/stream/town, open/CityForge, open-legacy), обратная совместимость с ними не требуется.
 
 ## Решения
 
@@ -27,7 +27,7 @@
 
 6. **Scope и чистка legacy (атомарно в TASK-001).**
    - Удалить уровни §1.1: `level-01.js`, `level-02.json`+`level-02/`, `level-04.js`, `level-06.js`, `level-11.json`+`.js`, `level-12.json`+`.js`, `level-13.json`+`.js`, `level-14.json`+`level-14/`; убрать из `src/levels/index.js` и из `check-levels`/browser/CI/фильтров.
-   - Удалить `src/levels/level.schema.json`, `src/levels/level-v2.schema.json` и убрать v1/v2 из `tools/level-schema.mjs`, `tools/export-schema.mjs`, валидаторов/веток `build-level`, если v3/v4-scope от них не зависит (иначе — пометить неиспользуемыми).
+   - Удалить `src/levels/level.schema.json`, `src/levels/level-v3.schema.json / level-v4.schema.json` и убрать v1/v2 из `tools/level-schema.mjs`, `tools/export-schema.mjs`, валидаторов/веток `build-level`, если v3/v4-scope от них не зависит (иначе — пометить неиспользуемыми).
    - Scope после чистки: v3 — 03,05,07,08,09,10,15; пилот — 16 (v4).
 
 ## Последствия

@@ -535,7 +535,7 @@ rotated-road 12/12, rotated-house 12/12, rotated-solid 10/10, сюита v1-бр
 
 ## 5. Косой вводимый дом в данных (глава 11)
 
-**Замер.** Схема и `JsonMap` это умеют сегодня: `rotation` — в `LEVEL_SPEC_V2`
+**Замер.** Схема и `JsonMap` это умеют сегодня: `rotation` — в `LEVEL_SPEC_OPEN`
 (`level-schema.mjs:267-273`), `isEnterable` — `:86`, координаты footprint,
 комнат, марша и портала остаются **в локальных осях** дома, кадр поворота
 восстанавливает `JsonMap` (`src/json-map.js:163-233`), дверь поворачивает

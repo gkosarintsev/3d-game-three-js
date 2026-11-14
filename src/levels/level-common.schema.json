@@ -1049,11 +1049,11 @@
                 "properties": {
                   "x": {
                     "type": "number",
-                    "description": "м: мировой центр пластины"
+                    "description": "м: мировой центр осевой линии пластины"
                   },
                   "z": {
                     "type": "number",
-                    "description": "м: мировой центр пластины"
+                    "description": "м: мировой центр осевой линии пластины"
                   },
                   "yaw": {
                     "type": "number",
@@ -1071,11 +1071,30 @@
                     "type": "number",
                     "minimum": 2,
                     "maximum": 30,
-                    "description": "м: ширина полотна поперёк оси"
+                    "description": "м: ширина полотна поперёк оси (на начале u = −L/2; или постоянная)"
+                  },
+                  "widthEnd": {
+                    "type": "number",
+                    "minimum": 2,
+                    "maximum": 30,
+                    "description": "м: ширина полотна на конце (u = +L/2); при отличии от width пластина становится трапециевидной (плавный переход)"
+                  },
+                  "crossStart": {
+                    "type": "number",
+                    "minimum": -30,
+                    "maximum": 30,
+                    "description": "м: поперечный сдвиг центра полотна на начале (u = −L/2) в локальной оси поперёк",
+                    "default": 0
+                  },
+                  "crossEnd": {
+                    "type": "number",
+                    "minimum": -30,
+                    "maximum": 30,
+                    "description": "м: поперечный сдвиг центра полотна на конце (u = +L/2); по умолчанию равен crossStart"
                   },
                   "y": {
                     "type": "number",
-                    "description": "м: верх наса **на локальном начале** (u = −length/2), не в мировом minX; при yaw = −180 начало смотрит на восток"
+                    "description": "м: верх нa **локальном начале** (u = −length/2), не в мировом minX; при yaw = −180 начало смотрит на восток"
                   },
                   "rise": {
                     "type": "number",
@@ -1084,7 +1103,7 @@
                   },
                   "rails": {
                     "type": "boolean",
-                    "description": "перила по обеим кромкам; `railSide` в v2 сознательно не вводится (закрытый вопрос § 10.7 плана главы 13)",
+                    "description": "перила по обеим кромкам; `railSide` сознательно не вводится",
                     "default": false
                   }
                 },
@@ -1096,7 +1115,7 @@
                   "y"
                 ],
                 "additionalProperties": false,
-                "description": "прямая пластина настила v2"
+                "description": "прямая (или трапециевидная) пластина настила v2"
               },
               "arc": {
                 "type": "object",
@@ -1164,7 +1183,7 @@
                   "y"
                 ],
                 "additionalProperties": false,
-                "description": "дуга-настил v2: точная поверхность по углу, радиусу и крену"
+                "description": "дуга-настил: точная поверхность по углу, радиусу и крену"
               },
               "connect": {
                 "type": "string",

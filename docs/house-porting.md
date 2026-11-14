@@ -1,7 +1,7 @@
 # Перенос домов из `docs/houses` в игру
 
 Инструкция по переносу визуальных моделей домов из прототипа/конфигуратора
-`docs/houses` в игровой движок (уровни `json`/`json2`/`open`, `JsonMap`/`WorldMap`,
+`docs/houses` в игровой движок (уровни `open`/`open`/`open`, `JsonMap`/`WorldMap`,
 пайплайн `tools/build-level.mjs`). На примере панельки (`soviet-panel`, уровень 17).
 
 Связанные документы: [AGENTS.md](../AGENTS.md) (контракт карты, сущности/декор,

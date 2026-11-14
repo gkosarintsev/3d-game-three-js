@@ -159,7 +159,7 @@ function placeOn(body, p) {
  */
 function plainSpec() {
   return {
-    kind: 'json2', units: 'meters',
+    kind: 'open', units: 'meters',
     ground: { size: 40, y: 0 },
     bounds: { minX: -20, maxX: 20, minZ: -20, maxZ: 20 },
     spawn: { x: 0, z: 0 }, buildings: [], roads: [], channels: [],
@@ -245,7 +245,7 @@ function routeOf(map, fromKey, toKey) {
 /** Эталон: тот же город, собранный одним `JsonMap` из владеющих копий чанков. */
 async function makeWholeWorld(scene) {
   const spec = {
-    kind: 'json2', units: 'meters', ground: OPEN_600.map.ground, bounds: OPEN_600.map.bounds,
+    kind: 'open', units: 'meters', ground: OPEN_600.map.ground, bounds: OPEN_600.map.bounds,
     spawn: OPEN_600.map.spawn, windows: OPEN_600.map.windows, clutter: OPEN_600.map.clutter,
     signage: OPEN_600.map.signage,
   };

@@ -7,7 +7,7 @@
  */
 import { existsSync, readFileSync, readdirSync } from 'node:fs';
 import { resolve } from 'node:path';
-import { validateLevel, LEVEL_SPEC_V2, LEVEL_SPEC_V3, LEVEL_SPEC_V4, LEVEL_COMMON_V3 } from './level-schema.mjs';
+import { validateLevel, LEVEL_SPEC_OPEN, LEVEL_SPEC_V3, LEVEL_SPEC_V4, LEVEL_COMMON_V3 } from './level-schema.mjs';
 import { generateOutput, ValidationError } from './build-level.mjs';
 import { schemaTextFor, SCHEMA_FILES } from './export-schema.mjs';
 

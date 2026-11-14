@@ -23,7 +23,7 @@
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { basename, dirname, extname, join, relative, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { validateLevel, LEVEL_SPEC_V2, LEVEL_SPEC_V3, LEVEL_SPEC_V4 } from './level-schema.mjs';
+import { validateLevel, LEVEL_SPEC_OPEN, LEVEL_SPEC_V3, LEVEL_SPEC_V4 } from './level-schema.mjs';
 import { normalizeLevel } from './normalize-level.mjs';
 import { expandCity } from './city.js';
 import { splitLevel, stringifyStable } from './chunk-level.mjs';
@@ -57,17 +57,17 @@ function prepare(raw, sourceName) {
   } catch (e) {
     throw new ValidationError([String(e?.message ?? e)], []);
   }
-  const kind = expanded.kind ?? 'json';
+  const kind = expanded.kind;
   if (kind === 'json' || kind === 'json2') {
     throw new ValidationError([
-      `kind '${kind}' (v1/v2 модуль) не поддерживается: используйте cityforge v3/v4 или kind 'open' (каталог).`,
+      `kind '${kind}' не поддерживается: используйте cityforge v3/v4 или kind 'open' (каталог).`,
     ], []);
   }
   // v4 — CityForge с манифестом генератора (`schemaVersion: 4`), валидируется
-  // отдельной схемой; скомпилированный/исходный открытый мир — схемой v2/open.
+  // отдельной схемой; v3 — схемой v3; исходный открытый мир — схемой open.
   const spec = expanded.kind === 'cityforge' && expanded.schemaVersion === 4 ? LEVEL_SPEC_V4
     : expanded.kind === 'cityforge' ? LEVEL_SPEC_V3
-    : LEVEL_SPEC_V2;
+    : LEVEL_SPEC_OPEN;
   const { errors, warnings: geoWarnings } = validateLevel(expanded, spec);
   if (errors.length) throw new ValidationError(errors, geoWarnings);
   let level;
@@ -82,13 +82,13 @@ function prepare(raw, sourceName) {
 }
 
 /**
- * Устаревший модуль главы (`json`/`json2`) не поддерживается: v3/v4 используют
- * CityForge → каталог. Оставлено как явная ошибка вместо тихой генерации.
+ * Устаревшие модульные форматы (`json`/`json2`) не поддерживаются: уровни
+ * собираются как cityforge v3/v4 или kind 'open' (каталог).
  */
 export function generateModule(raw, sourceName) {
-  const kind = raw?.kind ?? 'json';
+  const kind = raw?.kind;
   throw new ValidationError([
-    `generateModule: kind '${kind}' не поддерживается. Поддерживаются cityforge v3/v4 и kind 'open' (каталог).`,
+    `generateModule: kind '${kind ?? 'unknown'}' не поддерживается. Поддерживаются cityforge v3/v4 и kind 'open' (каталог).`,
   ], []);
 }
 
@@ -464,9 +464,9 @@ function generateCityforge(raw, sourceName, opts = {}) {
 export function generateOutput(raw, sourceName, opts = {}) {
   if (raw?.kind === 'cityforge') return generateCityforge(raw, sourceName, opts);
   if (raw?.kind === 'open') return generateCatalog(raw, sourceName, opts);
-  const kind = raw?.kind ?? 'json';
+  const kind = raw?.kind;
   throw new ValidationError([
-    `kind '${kind}' не поддерживается: поддерживаются только cityforge v3/v4 и kind 'open' (каталог).`,
+    `kind '${kind ?? 'unknown'}' не поддерживается: поддерживаются только cityforge v3/v4 и kind 'open' (каталог).`,
   ], []);
 }
 

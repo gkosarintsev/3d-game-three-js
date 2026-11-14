@@ -88,10 +88,9 @@ export class JsonMap extends SurfaceField {
     // грунт, рельеф, дома, дороги и русла с их твёрдостью — в `SurfaceField`;
     // здесь остаются только те поля, которые нужны картинке и навигации
     super(spec);
-    // `json2` — карта с поворотными домами (v2): тот же класс, тот же контракт,
-    // только у зданий появляется угол. При `kind: 'json'` угол absent и каждый
-    // путь ниже идёт прежней арифметикой — v1-брифы собираются побитово.
-    this.kind = spec.kind ?? 'json';
+    // Карта из данных (open/компилированный формат): поворотные дома, пластины/дуги,
+    // рельеф и разрезка поддерживаются данными; геометрия идёт общей арифметикой.
+    this.kind = spec.kind ?? 'open';
     this.spec = spec;
     this.groundColor = spec.ground.color ?? J.asphalt;
     this.bounds = spec.bounds;
@@ -3054,7 +3053,7 @@ export class JsonMap extends SurfaceField {
 
 /**
  * Создаёт карту уровня из JSON по map-секции определения главы.
- * @param {object} spec {kind:'json', ground, bounds, spawn, buildings, roads, props, lights}
+ * @param {object} spec {kind, ground, bounds, spawn, buildings, roads, props, lights}
  */
 export function createJsonMap(spec) {
   return new JsonMap(spec);
