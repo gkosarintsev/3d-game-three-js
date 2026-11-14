@@ -324,10 +324,11 @@ export class ViewManager {
 
   screenToWorld(clientX, clientY) {
     const rect = this.canvas.getBoundingClientRect();
+    if (!rect.width || !rect.height) return null;
     const x = ((clientX - rect.left) / rect.width) * 2 - 1;
     const y = -((clientY - rect.top) / rect.height) * 2 + 1;
+    const ray = new THREE.Raycaster();
     if (this.view === 'free') {
-      const ray = new THREE.Raycaster();
       ray.setFromCamera({ x, y }, this.persp);
       const gy = this.model?.meta?.plate?.groundY || 0;
       const plane = new THREE.Plane(new THREE.Vector3(0, 1, 0), -gy);
@@ -335,6 +336,25 @@ export class ViewManager {
       return ray.ray.intersectPlane(plane, out) ? out : null;
     }
     const cam = this.ortho[this.view];
+    ray.setFromCamera({ x, y }, cam);
+    const out = new THREE.Vector3();
+    // Пересечение с плоскостью, соответствующей виду, чтобы координаты клика
+    // были в той же паре осей, что и на экране (top: XZ, front: XY, side: ZY).
+    if (this.view === 'top') {
+      const py = this.target?.y ?? (this.model?.meta?.plate?.groundY || 0);
+      const plane = new THREE.Plane(new THREE.Vector3(0, 1, 0), -py);
+      return ray.ray.intersectPlane(plane, out) ? out : null;
+    }
+    if (this.view === 'front') {
+      const pz = this.target?.z ?? 0;
+      const plane = new THREE.Plane(new THREE.Vector3(0, 0, 1), -pz);
+      return ray.ray.intersectPlane(plane, out) ? out : null;
+    }
+    if (this.view === 'side') {
+      const px = this.target?.x ?? 0;
+      const plane = new THREE.Plane(new THREE.Vector3(1, 0, 0), -px);
+      return ray.ray.intersectPlane(plane, out) ? out : null;
+    }
     const v = new THREE.Vector3(x, y, 0).unproject(cam);
     return v;
   }

@@ -74,7 +74,7 @@ function selectEntity(ref, point = null) {
   if (!ref) { state.selectedId = null; state.selectedKind = null; }
   else { state.selectedId = ref.id; state.selectedKind = ref.kind; }
   const ent = ref ? findEntity(ref) : null;
-  ui.setInspector(ent, model?.diagnostics, model, point);
+  ui.setInspector(ent, model?.diagnostics, model, point, state.view);
   renderer?.highlight(state.selectedId, null);
   markDirty();
 }
@@ -302,12 +302,12 @@ function bindEvents() {
     if (!renderer || !viewManager) return;
     if (viewManager.consumeDragFlag && viewManager.consumeDragFlag()) return;
     const ref = renderer.pick(e.clientX, e.clientY, viewManager);
-    const point = state.view === 'top' ? viewManager.screenToWorld(e.clientX, e.clientY) : null;
+    const point = viewManager.screenToWorld(e.clientX, e.clientY);
     if (!ref && point) {
       state.selectedId = null;
       state.selectedKind = null;
       renderer.highlight(null, null);
-      ui.setInspectorPoint(point);
+      ui.setInspectorPoint(point, state.view);
       markDirty();
       return;
     }

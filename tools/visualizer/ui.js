@@ -182,7 +182,14 @@ export class UI {
     if (diag.list.length > list.length) this.diagBody.append(el('div', 'viz-muted', `… ещё ${diag.list.length - list.length}`));
   }
 
-  setInspector(entity, diagnostics, model, point = null) {
+  _clickCoord(point, view = 'top') {
+    if (!point) return null;
+    if (view === 'front') return { label: 'клик x, y', value: `${fmt(point.x)},${fmt(point.y)}` };
+    if (view === 'side') return { label: 'клик z, y', value: `${fmt(point.z)},${fmt(point.y)}` };
+    return { label: 'клик x, z', value: `${fmt(point.x)},${fmt(point.z)}` };
+  }
+
+  setInspector(entity, diagnostics, model, point = null, view = 'top') {
     this.selected = entity;
     this.inspectorBody.innerHTML = '';
     if (!entity) {
@@ -223,9 +230,8 @@ export class UI {
     if (entity.kind === 'prop') { add('model', a.model); add('source', a.source); }
     if (entity.kind === 'district') { add('district type', a.type); add('parcels', a.parcels); add('cells', a.cells); add('geometry', entity.geometry?.type); }
 
-    if (point) {
-      add('клик x, z', `${fmt(point.x)},${fmt(point.z)}`);
-    }
+    const click = this._clickCoord(point, view);
+    if (click) add(click.label, click.value);
 
     const actions = el('div', 'viz-actions');
     const focusBtn = el('button', 'viz-btn', 'Focus');
@@ -234,11 +240,10 @@ export class UI {
     facadeBtn.addEventListener('click', () => this.onAction({ type: 'facade', id: entity.id }));
     const copyBtn = el('button', 'viz-btn', 'Copy id');
     copyBtn.addEventListener('click', () => this.onAction({ type: 'copyId', id: entity.id }));
-    if (point) {
+    if (click) {
       const copyPt = el('button', 'viz-btn', 'Copy click');
       copyPt.addEventListener('click', () => {
-        const txt = `${fmt(point.x)},${fmt(point.z)}`;
-        navigator.clipboard?.writeText(txt).catch(() => {});
+        navigator.clipboard?.writeText(click.value).catch(() => {});
       });
       actions.append(focusBtn, facadeBtn, copyBtn, copyPt);
     } else {
@@ -256,25 +261,23 @@ export class UI {
     }
   }
 
-  setInspectorPoint(point) {
+  setInspectorPoint(point, view = 'top') {
     this.selected = null;
     this.inspectorBody.innerHTML = '';
     if (!point) {
       this.inspectorBody.textContent = 'Выберите объект на плане.';
       return;
     }
-    const add = (k, v) => {
-      if (v == null || v === '') return;
+    const click = this._clickCoord(point, view);
+    if (click) {
       const row = el('div', 'viz-kv');
-      row.append(el('span', 'viz-k', k), el('span', 'viz-v', String(v)));
+      row.append(el('span', 'viz-k', click.label), el('span', 'viz-v', click.value));
       this.inspectorBody.append(row);
-    };
-    add('клик x, z', `${fmt(point.x)},${fmt(point.z)}`);
+    }
     const actions = el('div', 'viz-actions');
     const copyBtn = el('button', 'viz-btn', 'Copy coords');
     copyBtn.addEventListener('click', () => {
-      const txt = `${fmt(point.x)},${fmt(point.z)}`;
-      navigator.clipboard?.writeText(txt).catch(() => {});
+      if (click) navigator.clipboard?.writeText(click.value).catch(() => {});
     });
     actions.append(copyBtn);
     this.inspectorBody.append(actions);
