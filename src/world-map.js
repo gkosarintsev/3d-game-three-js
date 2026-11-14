@@ -9,6 +9,7 @@ import { buildProps } from './props.js';
 import { HouseTextureLibrary, makeFacadeMaterial } from './house-materials.js';
 import { buildPanelkaDecor } from './panelka-decor.js';
 import { buildDetailedSovietPanel, makeSovietPanelMaterials } from './soviet-panel-detail.js';
+import { applyGrass } from './grass-material.js';
 
 const J = CONFIG.jsonMap;
 
@@ -562,9 +563,13 @@ export class WorldMap extends JsonMap {
     } });
     slices.push({ label: 'picture-ground-mesh', run: () => {
       this._drawOwnersOnly(() => {
+        const groundMat = new THREE.MeshStandardMaterial({ color: this.groundColor, roughness: 1, metalness: 0 });
+        // Травяной шейдер на рельефных главах (как в JsonMap._buildPicture): без этого
+        // в потоковой сборке open/json-главы поле остаётся плоско-зелёным.
+        if (this.relief) applyGrass(groundMat, { scale: 0.38, strength: 0.22, dark: 0.18, slopeFade: false });
         const ground = new THREE.Mesh(
           pic._groundGeo || new THREE.PlaneGeometry(this.width, this.depth),
-          new THREE.MeshStandardMaterial({ color: this.groundColor, roughness: 1, metalness: 0 }),
+          groundMat,
         );
         ground.rotation.x = -Math.PI / 2;
         ground.position.y = this.groundY;
@@ -578,12 +583,15 @@ export class WorldMap extends JsonMap {
       this._drawOwnersOnly(() => {
         const objs = pic.objs;
         const groups = entry.groups;
+        const earthMat = new THREE.MeshStandardMaterial({ color: J.earth, roughness: 1, metalness: 0 });
+        // Откосы/насыпь на рельефных главах — травянистый оттенок на склонах (паритет с JsonMap).
+        if (this.relief) applyGrass(earthMat, { scale: 0.4, strength: 0.18, dark: 0.15, slopeFade: true });
         const mats = {
           walls: new THREE.MeshStandardMaterial({ color: J.walls, roughness: 0.85, metalness: 0.05 }),
           slabs: new THREE.MeshStandardMaterial({ color: J.slabs, roughness: 0.9, metalness: 0.05 }),
           stairs: new THREE.MeshStandardMaterial({ color: J.stairs, roughness: 0.9, metalness: 0.05 }),
           decks: new THREE.MeshStandardMaterial({ color: J.asphalt, roughness: 0.95, metalness: 0 }),
-          earth: new THREE.MeshStandardMaterial({ color: J.earth, roughness: 1, metalness: 0 }),
+          earth: earthMat,
           rails: new THREE.MeshStandardMaterial({ color: J.railColor, roughness: 0.55, metalness: 0.5 }),
           ceilings: new THREE.MeshStandardMaterial({ color: J.slabs, roughness: 0.95, metalness: 0.05 }),
         };
@@ -628,7 +636,11 @@ export class WorldMap extends JsonMap {
         }
       }, entry.owned);
     } });
-    const ownedBuildingsAll = (entry.data?.buildings ?? []).filter(b => entry.owned.has(b));
+    // Владельцы клетки известны по флагу `owner` записей чанка (entry.owned
+    // наполняется срезом `data` при выполнении, поэтому здесь — не Set, а флаг:
+    // иначе фильтр в момент построения срезов видел бы пустой owned и детальные
+    // модели/декор не попали бы в сцену).
+    const ownedBuildingsAll = (entry.data?.buildings ?? []).filter(b => b.owner === true);
     const detailed = ownedBuildingsAll.filter(b => b.detailedVisual);
     for (const b of detailed) {
       slices.push({ label: 'picture-details-detailed', run: () => {

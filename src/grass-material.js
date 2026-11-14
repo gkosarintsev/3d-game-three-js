@@ -68,19 +68,35 @@ float grassNoise(vec2 p) {
         '#include <color_fragment>',
         `#include <color_fragment>
 {
+  // Те же 3 выборки шума, что и раньше: цена по ALU/текстурам не растёт (текстур нет).
+  // Вместо одного множителя яркости — цветовые пятна (свежая/густая/подсохшая трава)
+  // и тонкая высокочастотная неровность, чтобы дерн читался правдоподобнее.
   vec2 gp = vGrassWorldPos.xz * uGrassScale;
-  float n1 = grassNoise(gp);
-  float n2 = grassNoise(gp * 2.7 + 19.3);
-  float blades = smoothstep(0.45, 0.85, n2) * 0.5 + n1 * 0.5;
-  float grassPatch = grassNoise(gp * 0.18 + 7.1);
-  float grassK = mix(1.0 - uGrassDark, 1.0 + uGrassStrength, blades);
-  grassK *= mix(0.92, 1.08, grassPatch);
+  float n1 = grassNoise(gp);                 // мелкая неровность
+  float n2 = grassNoise(gp * 2.7 + 19.3);    // «травинки»/зерно
+  float clump = grassNoise(gp * 0.18 + 7.1); // крупные пятна (лужайка неоднородна)
+  float blades = smoothstep(0.42, 0.9, n2) * 0.55 + n1 * 0.45;
+
+  float lightK = mix(1.0 - uGrassDark, 1.0 + uGrassStrength, blades);
+  lightK *= mix(0.93, 1.07, clump);
+  float mask = 1.0;
   if (uGrassSlope > 0.5) {
     float up = clamp(vGrassWorldNormal.y, 0.0, 1.0);
-    float slopeFlat = smoothstep(0.25, 0.85, up);
-    grassK = mix(1.0, grassK, slopeFlat);
+    mask = smoothstep(0.25, 0.85, up); // на крутых откосах — меньше травяного рисунка
+    lightK = mix(1.0, lightK, mask);
   }
-  diffuseColor.rgb *= grassK;
+
+  // Три оттенка в пределах «зелёного», без смены базового цвета материала.
+  vec3 lush  = vec3(0.90, 1.06, 0.88); // гуще/свежее
+  vec3 dry   = vec3(1.05, 1.02, 0.82); // чуть подсохшее
+  vec3 deep  = vec3(0.92, 0.98, 0.90); // тень/влага
+  vec3 tint = mix(deep, lush, smoothstep(0.25, 0.75, blades));
+  tint = mix(tint, dry, smoothstep(0.58, 0.92, clump) * 0.35);
+  // Лёгкий цветовой микроконтраст (дёшево, переиспользует те же шумы).
+  tint *= mix(0.985, 1.015, n1);
+  tint = mix(vec3(1.0), tint, mask);
+
+  diffuseColor.rgb *= tint * lightK;
 }`
       );
   };
