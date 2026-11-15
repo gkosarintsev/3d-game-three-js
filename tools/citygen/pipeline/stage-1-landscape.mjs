@@ -272,36 +272,124 @@ function generateLandscape(ctx) {
     const width = clamp(Number.isFinite(riverCfg.width) ? riverCfg.width : 24, 4, 120);
     const depth = clamp(Number.isFinite(riverCfg.depth) ? riverCfg.depth : 4, 0.5, 30);
     const margin = half * 0.9;
-    // Simple deterministic meandering river roughly across the map (west->east or north->south)
     const axis = riverCfg.axis === 'x' ? 'x' : 'z';
     const points = [];
-    const steps = clamp(Number.isInteger(riverCfg.points) ? riverCfg.points : 6, 2, 12);
-    // R1.4: optional meander/widthProfile params (backward-compatible defaults keep prior shape family)
-    const meander = riverCfg.meander === true;
-    const baseAmp = Math.min(half * 0.35, Number.isFinite(riverCfg.amplitude) ? riverCfg.amplitude : half * 0.2);
-    const amp = meander ? clamp(baseAmp, width * 3, width * 6) : baseAmp;
-    const base = lerp(-amp, amp, rng());
-    const widthProfile = [];
-    for (let i = 0; i < steps; i++) {
-      const t = steps === 1 ? 0.5 : i / (steps - 1);
-      const along = lerp(-margin, margin, t);
-      const phase = t * Math.PI * (meander ? 2.5 : 2) + rng() * 0.5;
-      const wiggle = base + Math.sin(phase) * amp * 0.5 + (meander ? Math.sin(phase * 0.5) * amp * 0.15 : 0);
-      const x = axis === 'z' ? wiggle : along;
-      const z = axis === 'z' ? along : wiggle;
-      // sample terrain height for a more grounded path when modifiers exist
-      const y = Math.round(terrainHeightAt(x, z, ctx.input?.ground?.y ?? 0, ctx.terrain.modifiers) * 1000) / 1000;
-      points.push([Math.round(x * 10) / 10, y, Math.round(z * 10) / 10]);
-      if (meander) {
-        const w = Math.round(width * lerp(0.6, 1.4, t) * 1000) / 1000;
+    const steps = clamp(Number.isInteger(riverCfg.points) ? riverCfg.points : 6, 2, 24);
+    const baseY0 = ctx.input?.ground?.y ?? 0;
+
+    if (riverCfg.downslope === true) {
+      // R1.4 (opt-in): trace a downslope-biased path across the plate (deterministic greedy walk).
+      const crossStep = (margin * 2) / (steps - 1);
+      const lateralStep = Math.max(8, Math.min(32, crossStep));
+      const startAlong = -margin;
+      // choose start lateral offset with lowest terrain at source edge among sampled candidates
+      let bestLat = 0, bestH = Infinity;
+      for (let k = -4; k <= 4; k++) {
+        const lat = clamp((k / 4) * margin * 0.6, -margin * 0.7, margin * 0.7);
+        const sx = axis === 'z' ? lat : startAlong;
+        const sz = axis === 'z' ? startAlong : lat;
+        const h = terrainHeightAt(sx, sz, baseY0, ctx.terrain.modifiers);
+        if (h < bestH - 1e-9 || (Math.abs(h - bestH) <= 1e-9 && Math.abs(lat) < Math.abs(bestLat))) { bestH = h; bestLat = lat; }
+      }
+      let lat = bestLat;
+      const widthProfile = [];
+      for (let i = 0; i < steps; i++) {
+        const t = steps === 1 ? 0.5 : i / (steps - 1);
+        const along = lerp(-margin, margin, t);
+        let best = null;
+        // evaluate a few lateral moves biased to descent
+        for (let d = -2; d <= 2; d++) {
+          const nlat = clamp(lat + d * lateralStep, -margin * 0.75, margin * 0.75);
+          const x = axis === 'z' ? nlat : along;
+          const z = axis === 'z' ? along : nlat;
+          const y = terrainHeightAt(x, z, baseY0, ctx.terrain.modifiers);
+          const turn = Math.abs(nlat - lat);
+          const cost = y + turn * 0.05; // prefer lower terrain, penalize sharp lateral turns
+          if (!best || cost < best.cost - 1e-9 || (Math.abs(cost - best.cost) <= 1e-9 && d === 0)) {
+            best = { x, z, y, nlat, cost };
+          }
+        }
+        lat = best.nlat;
+        points.push([Math.round(best.x * 10) / 10, Math.round(best.y * 1000) / 1000, Math.round(best.z * 10) / 10]);
+        const w = Math.round(width * lerp(0.7, 1.3, t) * 1000) / 1000;
         widthProfile.push([+t.toFixed(4), w]);
       }
+      const river = { id: 'river_1', path: points, width, depth, carveTerrain: riverCfg.carveTerrain !== false };
+      if (widthProfile.length >= 2) river.widthProfile = widthProfile;
+      rivers.push(river);
+    } else {
+      // Simple deterministic meandering river roughly across the map (west->east or north->south)
+      // R1.4: optional meander/widthProfile params (backward-compatible defaults keep prior shape family)
+      const meander = riverCfg.meander === true;
+      const baseAmp = Math.min(half * 0.35, Number.isFinite(riverCfg.amplitude) ? riverCfg.amplitude : half * 0.2);
+      const amp = meander ? clamp(baseAmp, width * 3, width * 6) : baseAmp;
+      const base = lerp(-amp, amp, rng());
+      const widthProfile = [];
+      for (let i = 0; i < steps; i++) {
+        const t = steps === 1 ? 0.5 : i / (steps - 1);
+        const along = lerp(-margin, margin, t);
+        const phase = t * Math.PI * (meander ? 2.5 : 2) + rng() * 0.5;
+        const wiggle = base + Math.sin(phase) * amp * 0.5 + (meander ? Math.sin(phase * 0.5) * amp * 0.15 : 0);
+        const x = axis === 'z' ? wiggle : along;
+        const z = axis === 'z' ? along : wiggle;
+        // sample terrain height for a more grounded path when modifiers exist
+        const y = Math.round(terrainHeightAt(x, z, baseY0, ctx.terrain.modifiers) * 1000) / 1000;
+        points.push([Math.round(x * 10) / 10, y, Math.round(z * 10) / 10]);
+        if (meander) {
+          const w = Math.round(width * lerp(0.6, 1.4, t) * 1000) / 1000;
+          widthProfile.push([+t.toFixed(4), w]);
+        }
+      }
+      const river = { id: 'river_1', path: points, width, depth, carveTerrain: riverCfg.carveTerrain !== false };
+      if (widthProfile.length >= 2) river.widthProfile = widthProfile;
+      rivers.push(river);
     }
-    const river = { id: 'river_1', path: points, width, depth, carveTerrain: riverCfg.carveTerrain !== false };
-    if (widthProfile.length >= 2) river.widthProfile = widthProfile;
-    rivers.push(river);
   }
   if (riverCfg.enabled === true) ctx.hydrology.rivers = rivers;
+
+  // R1.4 (opt-in): simple procedural lake in a local low/flat basin when requested.
+  const lakeCfg = ls.lake || {};
+  if (lakeCfg.enabled === true) {
+    const lakes = Array.isArray(ctx.hydrology.lakes) ? [...ctx.hydrology.lakes] : [];
+    const probeStep = Math.max(32, Math.min(128, size / 10));
+    let best = null;
+    for (let z = -half * 0.7; z <= half * 0.7 + EPS; z += probeStep) {
+      for (let x = -half * 0.7; x <= half * 0.7 + EPS; x += probeStep) {
+        if (!farFromAnchors(x, z, anchors, 60)) continue;
+        const y = terrainHeightAt(x, z, ctx.input?.ground?.y ?? 0, ctx.terrain.modifiers);
+        const d = Math.min(24, probeStep / 2);
+        const flat = Math.max(
+          Math.abs(terrainHeightAt(x + d, z, ctx.input?.ground?.y ?? 0, ctx.terrain.modifiers) - y),
+          Math.abs(terrainHeightAt(x - d, z, ctx.input?.ground?.y ?? 0, ctx.terrain.modifiers) - y),
+          Math.abs(terrainHeightAt(x, z + d, ctx.input?.ground?.y ?? 0, ctx.terrain.modifiers) - y),
+          Math.abs(terrainHeightAt(x, z - d, ctx.input?.ground?.y ?? 0, ctx.terrain.modifiers) - y),
+        ) / Math.max(d, EPS);
+        // avoid placing inside river corridor
+        let nearRiver = false;
+        for (const rv of rivers) if (riverMinDistToPoint(rv, x, z) < ((rv.width || 0) * 0.5 + 20)) { nearRiver = true; break; }
+        if (nearRiver) continue;
+        const score = y + flat * 5;
+        if (!best || score < best.score - 1e-9 || (Math.abs(score - best.score) <= 1e-9 && Math.hypot(x, z) < Math.hypot(best.x, best.z))) {
+          best = { x, z, y, score };
+        }
+      }
+    }
+    if (best) {
+      const r = clamp(Number.isFinite(lakeCfg.radius) ? lakeCfg.radius : Math.max(30, size * 0.06), 15, Math.max(20, half * 0.4));
+      const sides = 12;
+      const ring = [];
+      for (let i = 0; i < sides; i++) {
+        const a = (i / sides) * Math.PI * 2;
+        ring.push([
+          Math.round((best.x + Math.cos(a) * r) * 1000) / 1000,
+          Math.round(best.y * 1000) / 1000,
+          Math.round((best.z + Math.sin(a) * r) * 1000) / 1000,
+        ]);
+      }
+      lakes.push({ id: 'lake_1', area: { type: 'polygon', points: ring }, waterLevel: Math.round(best.y * 1000) / 1000 });
+      ctx.hydrology.lakes = lakes;
+    }
+  }
 
   ctx.report.diagnostics.push(info('landscape_generated', stageId, 'stage 1 generated terrain/hydrology from generator.landscape', {
     modifiers: ctx.terrain.modifiers.length,
