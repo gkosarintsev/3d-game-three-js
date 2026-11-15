@@ -9,7 +9,7 @@
   - [x] R0.1 Матрица соответствия §3–13 ↔ модули (зафиксирована ниже, 2026-11-15)
   - [~] R0.2 Валидатор инвариантов §12.1 (read-only) + baseline на 16–19 — `tools/citygen/rules.mjs`: подмножество инвариантов/проверок + проверки уклонов дорог (абсолютный предел/политика классов `slopeLimitPct`), удалённость spawn/exit от сети, контроль целей enterable-share (info), снимок baseline 16–19
   - [~] R0.3 Каркас метрик §12.2 в report — `report.metrics`/`report.rules` (детерминированно, partial): дороги/уклоны/политики, gameplay/stream, terrain analysis (slope/share/crossings/reservations), parcels/reserved share, counts rivers/lakes; отчёты пилотов 16–19 пересобраны
-  - [~] R0.4 Эталоны (3 seed × профили), процедура bump `generatorVersion` — `tools/citygen-baseline.mjs` поддерживает `--out <dir>`; добавлен `tools/citygen-etalon.mjs` (синтетические прогоны profile×seed, hash/metrics/summary) и `tools/citygen-etalon-check.mjs` (регрессионная проверка синтетических эталонов + pilot baseline snapshots, `--update` для контролируемого обновления снимков/summary, `--generatorVersion` для bump synthetic etalons); сохранены/обновлены снимки пилотов (`.ai/state/citygen-baselines/`) и синтетические эталоны 3×3 для `river_trade`/`hill_town`/`railway_industrial`, seeds 101/202/303, `generatorVersion=0.1.0` (`.ai/state/citygen-etalons/`), `node tools/citygen-etalon-check.mjs` зелёный; шаг регрессии эталонов добавлен в CI (`.github/workflows/ci.yml`); формальная политика bump/versioning и автоматизация полного цикла (derived+reports+snapshots) при намеренных изменениях не завершены
+  - [~] R0.4 Эталоны (3 seed × профили), процедура bump `generatorVersion` — `tools/citygen-baseline.mjs` поддерживает `--out <dir>`; добавлен `tools/citygen-etalon.mjs` (синтетические прогоны profile×seed, hash/metrics/summary) и `tools/citygen-etalon-check.mjs` (регрессионная проверка синтетических эталонов + pilot baseline snapshots, `--update` для контролируемого обновления снимков/summary, `--generatorVersion` для bump synthetic etalons); сохранены/обновлены снимки пилотов (`.ai/state/citygen-baselines/`) и синтетические эталоны 3×3 для `river_trade`/`hill_town`/`railway_industrial`, seeds 101/202/303, `generatorVersion=0.1.0` (`.ai/state/citygen-etalons/`), `node tools/citygen-etalon-check.mjs` зелёный; шаг регрессии эталонов добавлен в CI (`.github/workflows/ci.yml`); процедура bump/regression задокументирована в state; формальная политика bump в исходниках/пилотах и автоматизация полного цикла не завершены
   - [~] R0.5 Структура `generator.profiles`/`generator.policies` + чтение/fallback — `tools/citygen/config.mjs`, нормализация в `ctx.meta.{policies,cityProfiles,activeCityProfile*}` (дефолты §13.2)
 - [ ] **R1** Рельеф и вода (§4, §5)
   - [~] R1.1 Профили рельефа и порядок модификаторов — в `stage-1-landscape` добавлена opt-in упорядоченная генерация форм (`ordered/profileDriven`: крупные формы, средние холмы, террасы `replace/step`, платформы `replace/smooth`) с детерминированным порядком §4.2; при наличии `activeCityProfile`/`profileDriven` подставляются профильные дефолты рельефа/воды (если не заданы явно); полный цикл профилей рельефа и влияние всех параметров ещё не завершены
@@ -97,6 +97,29 @@
 - 2026-11-15, R2.5 (инкремент, partial): `stage-2-transport` выводит базовые road junctions + `connections` (lane-level, движения по геометрии подходов) при пустом наборе junctions; IR/engine содержат junctions, пересобраны derived-артефакты пилотов, `build-level --check`/`check-levels`/`node --test`/`citygen-etalon-check` зелёные.
 - 2026-11-15, R1.3/R1.5 (инкремент): `stage-1-landscape` формирует детерминированные landmarks/orientation points (viewpoints/переправы/бассейн) в `terrain.analysis/masks.landmarks` и включает их в reservation-ограничения; stage 3 учитывает их при резервировании парселей (влияние на генерацию). Пересобраны derived каталоги/отчёты L16–L19 и обновлены baseline/etalon snapshots, scoped-гейты зелёные.
 - 2026-11-15, R1.1/R1.4 (инкремент): усилена profile-driven дифференциация гидрологии в stage 1 (river_trade: процедурный meander/widthProfile по умолчанию при генерации; профильные параметры рек), синтетические эталоны `river_trade` отличаются от `railway_industrial` на тех же seed; обновлены etalon snapshots, пилоты 16–19 без регрессии, scoped-гейты зелёные.
+
+## Процедура bump/versioning и регрессии (R0.4, формализовано частично)
+
+### Когда повышать `generatorVersion`
+- **Повышать** при намеренном изменении раскладки/IR/отчёта, влияющем на воспроизводимый результат (геометрия, распределения, ID/порядок, диагностики/метрики, влияющие на report hash, и т.п.) для уровней с фиксированным seed+version.
+- **Не повышать** для чисто нефункциональных правок, не меняющих детерминированный вывод/derived-артефакты.
+- При bump: обновить `generator.generatorVersion` в затронутых исходниках/эталонных сценариях и зафиксировать причину в `.ai/state`/коммите.
+
+### Регрессионный gate (текущее состояние)
+- Синтетические эталоны 3×3: `.ai/state/citygen-etalons/` (`river_trade`,`hill_town`,`railway_industrial` × seeds `101,202,303`, gv `0.1.0`).
+- Pilot baselines: `.ai/state/citygen-baselines/` для `src/levels/level-{16,17,18,19}.json`.
+- Проверка: `node tools/citygen-etalon-check.mjs` (в CI: node job). Сравнивает report hash + summary/rules (и metrics для synthetic etalons).
+
+### Контролируемое обновление при намеренном изменении поведения
+1. Внести изменение генератора/правил.
+2. Пересобрать затронутые derived-артефакты пилотов/уровней: `node tools/build-level.mjs src/levels/level-XX.json ...` (и `--check` для паритета).
+3. Обновить pilot baselines: `node tools/citygen-baseline.mjs --out .ai/state/citygen-baselines src/levels/level-16.json src/levels/level-17.json src/levels/level-18.json src/levels/level-19.json` (или нужный scope).
+4. Обновить synthetic etalons: `node tools/citygen-etalon-check.mjs --update` (обновляет несовпавшие etalon/*.json и `summary.json`). Для смены версии synthetic-сценариев: `node tools/citygen-etalon-check.mjs --update --generatorVersion <v>`.
+5. Прогнать scoped-гейты: `node tools/build-level.mjs --check ...`, `node tools/check-levels.mjs ...`, `node --test tools/citygen.test.mjs`, `node tools/citygen-etalon-check.mjs`, релевантные browser/perf-гейты по scope.
+6. Зафиксировать изменения derived/снапшотов/версий и причину в `.ai/state` и коммите.
+
+### Осталось для полного закрытия R0.4
+- Формальная политика bump в исходных level-брифах/профильных пилотах (не только synthetic), автоматизация полного цикла при изменении `generatorVersion`, расширение набора эталонов до целевого DoD (3 seed × профиль для воспроизводимых профильных пилотов R6).
 
 ## Открытые вопросы / риски
 - GAP-01/06/07/08/11 из `docs/level_generation_rules_claude.md` §14 (см. план, раздел 2).
