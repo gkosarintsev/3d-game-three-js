@@ -228,7 +228,7 @@ function farFromAnchors(x, z, anchors, minD) {
 
 function generateLandscape(ctx) {
   const stageId = '1_landscape_hydrology';
-  const ls = ctx.input.generator.landscape || {};
+  const ls = { ...(ctx.input.generator.landscape || {}) };
   const size = ctx.meta.worldBounds?.size ?? ctx.input?.ground?.size ?? 256;
   const half = size / 2;
   const seed = mix(ctx.meta.seed ?? 0, stageId, ls.seedOffset ?? 0);
@@ -238,6 +238,30 @@ function generateLandscape(ctx) {
     { x: gp.spawn?.x ?? 0, z: gp.spawn?.z ?? 0 },
     { x: gp.exit?.x ?? 0, z: gp.exit?.z ?? 0 },
   ];
+
+  // R1.1: profile-aware defaults (opt-in via active city profile or profileDriven); explicit values win.
+  const profile = ctx.meta?.activeCityProfile && typeof ctx.meta.activeCityProfile === 'object' ? ctx.meta.activeCityProfile : null;
+  const reliefType = String(profile?.terrain?.relief || ls.relief || 'plain');
+  const profileRivers = Number.isFinite(Number(profile?.terrain?.rivers)) ? Number(profile.terrain.rivers) : null;
+  const profileLakes = Number.isFinite(Number(profile?.terrain?.lakes)) ? Number(profile.terrain.lakes) : null;
+  if (ls.profileDriven === true || (profile && ls.generate === true && ls.hills == null && ls.ordered == null)) {
+    // apply gentle defaults only when not explicitly specified
+    if (ls.ordered == null && reliefType !== 'plain') ls.ordered = true;
+    if (ls.largeForms == null && reliefType === 'hills') ls.largeForms = { count: 2, minHeight: 18, maxHeight: 50 };
+    if (ls.terraces == null && reliefType === 'hills') ls.terraces = { count: 3 };
+    if (ls.platforms == null) ls.platforms = { count: Math.max(1, Math.min(4, Math.round(size / 400))) };
+    if (ls.hills == null) {
+      if (reliefType === 'plain') ls.hills = { count: 4, minHeight: 6, maxHeight: 20, minRadius: 120, maxRadius: 320 };
+      else if (reliefType === 'hills') ls.hills = { count: 8, minHeight: 10, maxHeight: 35, minRadius: 100, maxRadius: 260 };
+      else ls.hills = { count: 6, minHeight: 8, maxHeight: 30, minRadius: 100, maxRadius: 280 };
+    }
+    if (ls.river == null && profileRivers != null) {
+      ls.river = { enabled: profileRivers > 0, axis: 'z', points: 7, width: 22, depth: 4 };
+    }
+    if (ls.lake == null && profileLakes != null) {
+      ls.lake = { enabled: profileLakes > 0 };
+    }
+  }
 
   // R1.1 (§4.2): build modifiers in ordered layers when requested; default behavior preserved.
   const ordered = ls.ordered === true || ls.profileDriven === true;
