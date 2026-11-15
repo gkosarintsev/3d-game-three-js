@@ -51,8 +51,8 @@
     {
       "id": "6_finalize_emit",
       "status": "ok",
-      "diagnostics": 5,
-      "repairs": 0,
+      "diagnostics": 7,
+      "repairs": 1,
       "drops": 0
     }
   ],
@@ -95,7 +95,7 @@
       "profileId": "suburb",
       "cells": 1,
       "parcels": 121,
-      "reservedParcels": 10
+      "reservedParcels": 21
     },
     {
       "id": "district_1_1",
@@ -191,8 +191,8 @@
       "severity": "warn",
       "code": "road_graph_disconnected",
       "stage": "2_transport",
-      "message": "road graph has 7 connected components",
-      "components": 7
+      "message": "road graph has 10 connected components",
+      "components": 10
     },
     {
       "severity": "warn",
@@ -247,8 +247,15 @@
       "severity": "warn",
       "code": "road_graph_disconnected_final",
       "stage": "6_finalize_emit",
-      "message": "road graph has 7 connected components at finalize",
-      "components": 7
+      "message": "road graph has 10 connected components at finalize",
+      "components": 10
+    },
+    {
+      "severity": "warn",
+      "code": "road_same_level_conflict",
+      "stage": "6_finalize_emit",
+      "message": "detected 1 same-layer road crossing conflict(s) without shared junction",
+      "count": 1
     },
     {
       "severity": "info",
@@ -276,9 +283,9 @@
       "code": "road_graph",
       "stage": "2_transport",
       "message": "road graph summary",
-      "nodes": 154,
-      "segments": 178,
-      "components": 7
+      "nodes": 160,
+      "segments": 181,
+      "components": 10
     },
     {
       "severity": "info",
@@ -291,8 +298,8 @@
       "code": "transport_passthrough",
       "stage": "2_transport",
       "message": "stage 2 using provided road network (procedural generation pending)",
-      "nodes": 154,
-      "segments": 178
+      "nodes": 160,
+      "segments": 181
     },
     {
       "severity": "info",
@@ -391,22 +398,22 @@
       "message": "generated district props",
       "count": 360,
       "budget": 360,
-      "attempts": 1073,
+      "attempts": 860,
       "byDistrictType": {
-        "old_town": 38,
-        "market": 35,
-        "residential": 64,
-        "luxury": 42,
-        "industrial": 9,
-        "office": 20,
-        "commercial": 18,
-        "slums": 52,
-        "suburb": 20,
-        "campus": 8,
-        "park": 21,
-        "sports": 4,
-        "parking": 9,
-        "forest": 13
+        "office": 18,
+        "luxury": 40,
+        "residential": 56,
+        "commercial": 15,
+        "suburb": 23,
+        "parking": 8,
+        "slums": 57,
+        "market": 33,
+        "old_town": 46,
+        "forest": 13,
+        "sports": 8,
+        "park": 20,
+        "industrial": 4,
+        "campus": 10
       }
     },
     {
@@ -432,10 +439,10 @@
         "grid": 5,
         "total": 25
       },
-      "roadNodes": 154,
-      "roadSegments": 178,
-      "roadComponents": 7,
-      "roadGraphNodes": 154,
+      "roadNodes": 161,
+      "roadSegments": 183,
+      "roadComponents": 9,
+      "roadGraphNodes": 161,
       "districts": 16,
       "districtTypes": [
         "campus",
@@ -454,11 +461,11 @@
         "suburb"
       ],
       "parcels": 2274,
-      "reservedParcels": 309,
+      "reservedParcels": 320,
       "parcelAccess": {
-        "near": 1125,
-        "mid": 1036,
-        "far": 113
+        "near": 1163,
+        "mid": 1012,
+        "far": 99
       },
       "roadAccessByType": {
         "industrial": {
@@ -552,25 +559,25 @@
       "lights": 8,
       "props": 360,
       "propsByDistrictType": {
-        "old_town": 38,
-        "market": 35,
-        "residential": 64,
-        "luxury": 42,
-        "industrial": 9,
-        "office": 20,
-        "commercial": 18,
-        "slums": 52,
-        "suburb": 20,
-        "campus": 8,
-        "park": 21,
-        "sports": 4,
-        "parking": 9,
-        "forest": 13
+        "office": 18,
+        "luxury": 40,
+        "residential": 56,
+        "commercial": 15,
+        "suburb": 23,
+        "parking": 8,
+        "slums": 57,
+        "market": 33,
+        "old_town": 46,
+        "forest": 13,
+        "sports": 8,
+        "park": 20,
+        "industrial": 4,
+        "campus": 10
       },
       "chunkLoad": {
         "nonEmptyChunks": 25,
         "maxBuildings": 30,
-        "maxProps": 32,
+        "maxProps": 34,
         "maxLights": 1,
         "avgBuildings": 16.08,
         "avgProps": 14.4
@@ -585,9 +592,21 @@
     },
     {
       "severity": "info",
-      "code": "road_conflicts_none",
+      "code": "road_conflicts_resolved",
       "stage": "6_finalize_emit",
-      "message": "no same-layer road crossing conflicts detected"
+      "message": "resolved detected same-layer road crossing conflicts",
+      "repairs": 1
+    },
+    {
+      "severity": "info",
+      "code": "road_crossing_repaired",
+      "stage": "6_finalize_emit",
+      "message": "repaired same-layer crossing by inserting junction 'tr_x'",
+      "node": "tr_x",
+      "segments": [
+        "road_179",
+        "road_181"
+      ]
     },
     {
       "severity": "info",
@@ -596,12 +615,22 @@
       "message": "stage 6_finalize_emit completed"
     }
   ],
-  "repairs": [],
+  "repairs": [
+    {
+      "stage": "6_finalize_emit",
+      "code": "resolve_road_crossing",
+      "node": "tr_x",
+      "segments": [
+        "road_179",
+        "road_181"
+      ]
+    }
+  ],
   "drops": [],
   "summary": {
     "errors": 0,
-    "warnings": 9,
-    "repairs": 0,
+    "warnings": 10,
+    "repairs": 1,
     "drops": 0
   }
 }

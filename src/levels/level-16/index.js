@@ -74,7 +74,7 @@ export const LEVEL_16 = {
         "objects": {
           "buildings": 28,
           "lights": 1,
-          "props": 17,
+          "props": 16,
           "roads": 13
         },
         "rect": {
@@ -89,7 +89,7 @@ export const LEVEL_16 = {
         "id": "0_1",
         "objects": {
           "buildings": 16,
-          "props": 8,
+          "props": 6,
           "roads": 4
         },
         "rect": {
@@ -120,7 +120,7 @@ export const LEVEL_16 = {
         "objects": {
           "buildings": 7,
           "lights": 1,
-          "props": 94,
+          "props": 96,
           "roads": 2
         },
         "rect": {
@@ -150,8 +150,8 @@ export const LEVEL_16 = {
         "id": "1_0",
         "objects": {
           "buildings": 6,
-          "props": 14,
-          "roads": 3
+          "props": 22,
+          "roads": 8
         },
         "rect": {
           "maxX": -128,
@@ -165,7 +165,7 @@ export const LEVEL_16 = {
         "id": "1_1",
         "objects": {
           "buildings": 1,
-          "props": 11,
+          "props": 9,
           "roads": 11
         },
         "rect": {
@@ -195,7 +195,7 @@ export const LEVEL_16 = {
         "id": "1_3",
         "objects": {
           "buildings": 1,
-          "props": 30,
+          "props": 24,
           "roads": 8
         },
         "rect": {
@@ -210,7 +210,7 @@ export const LEVEL_16 = {
         "id": "1_4",
         "objects": {
           "buildings": 24,
-          "props": 19,
+          "props": 22,
           "roads": 5
         },
         "rect": {
@@ -226,8 +226,8 @@ export const LEVEL_16 = {
         "objects": {
           "buildings": 3,
           "channels": 1,
-          "props": 17,
-          "roads": 4
+          "props": 6,
+          "roads": 7
         },
         "rect": {
           "maxX": 128,
@@ -242,7 +242,7 @@ export const LEVEL_16 = {
         "objects": {
           "buildings": 9,
           "channels": 1,
-          "props": 10,
+          "props": 15,
           "roads": 4
         },
         "rect": {
@@ -258,7 +258,7 @@ export const LEVEL_16 = {
         "objects": {
           "buildings": 19,
           "channels": 1,
-          "props": 20
+          "props": 18
         },
         "rect": {
           "maxX": 128,
@@ -273,7 +273,7 @@ export const LEVEL_16 = {
         "objects": {
           "buildings": 14,
           "channels": 1,
-          "props": 9,
+          "props": 10,
           "roads": 2
         },
         "rect": {
@@ -290,7 +290,7 @@ export const LEVEL_16 = {
           "buildings": 17,
           "channels": 1,
           "lights": 1,
-          "props": 26,
+          "props": 15,
           "roads": 4
         },
         "rect": {
@@ -305,7 +305,7 @@ export const LEVEL_16 = {
         "id": "3_0",
         "objects": {
           "buildings": 17,
-          "props": 18,
+          "props": 22,
           "roads": 13
         },
         "rect": {
@@ -321,7 +321,7 @@ export const LEVEL_16 = {
         "objects": {
           "buildings": 32,
           "lights": 1,
-          "props": 15,
+          "props": 21,
           "roads": 12
         },
         "rect": {
@@ -336,7 +336,7 @@ export const LEVEL_16 = {
         "id": "3_2",
         "objects": {
           "buildings": 33,
-          "props": 27,
+          "props": 18,
           "roads": 10
         },
         "rect": {
@@ -351,7 +351,7 @@ export const LEVEL_16 = {
         "id": "3_3",
         "objects": {
           "buildings": 23,
-          "props": 13,
+          "props": 15,
           "roads": 15
         },
         "rect": {
@@ -366,7 +366,7 @@ export const LEVEL_16 = {
         "id": "3_4",
         "objects": {
           "buildings": 28,
-          "props": 10,
+          "props": 19,
           "roads": 3
         },
         "rect": {
@@ -382,7 +382,7 @@ export const LEVEL_16 = {
         "objects": {
           "buildings": 30,
           "lights": 1,
-          "props": 27,
+          "props": 32,
           "roads": 3
         },
         "rect": {
@@ -397,7 +397,7 @@ export const LEVEL_16 = {
         "id": "4_1",
         "objects": {
           "buildings": 33,
-          "props": 26,
+          "props": 35,
           "roads": 1
         },
         "rect": {
@@ -413,7 +413,7 @@ export const LEVEL_16 = {
         "objects": {
           "buildings": 30,
           "lights": 1,
-          "props": 33,
+          "props": 32,
           "roads": 11
         },
         "rect": {
@@ -428,7 +428,7 @@ export const LEVEL_16 = {
         "id": "4_3",
         "objects": {
           "buildings": 30,
-          "props": 20,
+          "props": 21,
           "roads": 16
         },
         "rect": {
@@ -444,7 +444,7 @@ export const LEVEL_16 = {
         "objects": {
           "buildings": 19,
           "lights": 1,
-          "props": 26,
+          "props": 21,
           "roads": 72
         },
         "rect": {
@@ -8823,6 +8823,101 @@ export const LEVEL_16 = {
               "x": -100,
               "y": 0,
               "z": -300
+            }
+          ],
+          "shoulder": 1,
+          "width": 8
+        },
+        {
+          "blend": 5,
+          "crossLevel": true,
+          "id": "road_179_a",
+          "points": [
+            {
+              "x": -100,
+              "y": 0,
+              "z": -500
+            },
+            {
+              "x": -146.067,
+              "y": 0,
+              "z": -546.067
+            }
+          ],
+          "shoulder": 1,
+          "width": 8
+        },
+        {
+          "blend": 5,
+          "crossLevel": true,
+          "id": "road_179_b",
+          "points": [
+            {
+              "x": -146.067,
+              "y": 0,
+              "z": -546.067
+            },
+            {
+              "x": -200,
+              "y": 0,
+              "z": -600
+            }
+          ],
+          "shoulder": 1,
+          "width": 8
+        },
+        {
+          "blend": 5,
+          "crossLevel": true,
+          "id": "road_180",
+          "points": [
+            {
+              "x": -100,
+              "y": 0,
+              "z": -600
+            },
+            {
+              "x": -200,
+              "y": 0,
+              "z": -600
+            }
+          ],
+          "shoulder": 1,
+          "width": 8
+        },
+        {
+          "blend": 5,
+          "crossLevel": true,
+          "id": "road_181_a",
+          "points": [
+            {
+              "x": -100,
+              "y": 0,
+              "z": -600
+            },
+            {
+              "x": -146.067,
+              "y": 0,
+              "z": -546.067
+            }
+          ],
+          "shoulder": 1,
+          "width": 8
+        },
+        {
+          "blend": 5,
+          "crossLevel": true,
+          "id": "road_181_b",
+          "points": [
+            {
+              "x": -146.067,
+              "y": 0,
+              "z": -546.067
+            },
+            {
+              "x": -264,
+              "y": 0,
+              "z": -408
             }
           ],
           "shoulder": 1,

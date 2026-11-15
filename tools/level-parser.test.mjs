@@ -8,8 +8,9 @@
 import { existsSync, readFileSync, readdirSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { validateLevel, LEVEL_SPEC_OPEN, LEVEL_SPEC_V3, LEVEL_SPEC_V4, LEVEL_COMMON_V3 } from './level-schema.mjs';
-import { generateOutput, ValidationError } from './build-level.mjs';
+import { generateOutput, expandCityforgeSource, ValidationError } from './build-level.mjs';
 import { schemaTextFor, SCHEMA_FILES } from './export-schema.mjs';
+import { normalizeLevel } from './normalize-level.mjs';
 
 const ROOT = resolve(import.meta.dirname, '..');
 
@@ -227,6 +228,94 @@ t('validateLevel принимает минимальные v3/v4 по DSL и б�
   v4.generator = { generatorVersion: '0.1', seed: 1, districts: [] };
   const ok4 = validateLevel(v4, LEVEL_SPEC_V4);
   eq(ok4.errors.length, 0, `v4 DSL errors: ${ok4.errors.join(' | ')}`);
+});
+
+t('косой path-отрезок: схема принимает, нормализатор даёт повёрнутую пластину, а не осевой габарит', () => {
+  // 1. Схема: path-дорога под 45° больше не бракуется «настил обязан идти по оси X/Z».
+  const source = {
+    kind: 'cityforge', schemaVersion: 4,
+    metadata: { levelName: 'diag', name: 'diag', hint: 'diag', units: 'meters' },
+    ground: { y: 0, size: 400 },
+    gameplay: { goal: 'exit', spawn: { x: -100, z: -100 }, exit: { x: 100, z: 100 } },
+    cityforge: {
+      format: 'cityforge', version: '0.1',
+      world: {
+        units: 'meters',
+        coordinateSystem: { type: 'local', handedness: 'right', up: 'Z' },
+        origin: [0, 0, 0],
+        bounds: { min: [-200, -200, -80], max: [200, 200, 160] },
+      },
+      networks: {
+        roads: {
+          nodes: [
+            { id: 'a', position: [-50, 0, -50], layer: 'ground' },
+            { id: 'b', position: [50, 0, 50], layer: 'ground' },
+          ],
+          segments: [{
+            id: 'diag', from: 'a', to: 'b', type: 'local', layer: 'ground',
+            path: [[-50, 0, -50], [50, 0, 50]],
+            lanes: [{ id: 'l1', direction: 'forward', width: 8, type: 'vehicle' }],
+          }],
+          junctions: [],
+        },
+      },
+    },
+  };
+  const { errors } = validateLevel(source, LEVEL_SPEC_V4);
+  eq(errors.length, 0, `схема v4 отвергла косой path: ${errors.join(' | ')}`);
+
+  // 2. Нормализатор: косой отрезок — повёрнутая пластина с кадром/obb, иначе
+  // осевой габарит крошил бы дорогу в ступенчатую ленту.
+  const engine = {
+    kind: 'open', metadata: { name: 'diag' }, ground: { y: 0, size: 400 },
+    roads: [{
+      id: 'diag', type: 'ground', width: 8,
+      points: [{ x: -50, y: 0, z: -50 }, { x: 0, y: 0, z: 0 }, { x: 50, y: 0, z: 50 }],
+    }],
+    gameplay: { goal: 'exit', spawn: { x: -100, z: -100 }, exit: { x: 100, z: 100 } },
+  };
+  const level = normalizeLevel(engine);
+  const road = level.map.roads.find(r => r.id === 'diag');
+  assert(road, 'нормализатор потерял косую path-дорогу');
+  eq(road.type, 'ground', 'тип косой дороги перестал быть ground');
+  eq(road.decks.length, 2, 'ожидались две пластины на два косых отрезка');
+  const len = Math.hypot(100, 100) / 2;
+  for (const d of road.decks) {
+    eq(d.axis, 'x', 'у повёрнутой пластины кадр обязан быть по локальной X');
+    assert(d.obb, 'у косой пластины нет obb — твёрдость считалась бы по осевому габариту');
+    assert(Math.abs(d.yaw) > 1 && Math.abs(d.yaw) < 89, `ожидался косой yaw, получено ${d.yaw}`);
+    eq(d.width, 8, 'ширина пластины не совпала с полотном');
+    assert(Math.abs(d.length - len) < 0.01, `длина пластины ${d.length}, ожидалась ${len}`);
+    // габарит повёрнутой пластины 70,7×8 при 45° — это ~78,7×78,7, а не полоса 8 м
+    assert(d.maxX - d.minX > 8.5 && d.maxZ - d.minZ > 8.5, 'габарит остался осевой полосой');
+  }
+  const [d1, d2] = road.decks;
+  assert(Math.abs(d1.topAtMax - d2.topAtMin) < 1e-9, 'отметки на стыке пластин не совпали');
+  assert(Math.abs((d2.cx - d1.cx) - 50) < 0.01 && Math.abs((d2.cz - d1.cz) - 50) < 0.01,
+    'вторая пластина не продолжает диагональ от стыка');
+});
+
+t('expand детерминирован, идемпотентен и не мутирует исходный бриф', () => {
+  // Стадии citygen пишут в ctx.input, поэтому expand обязан работать по копии:
+  // иначе второй разворот того же объекта (редактор зовёт Expand на уже
+  // развёрнутом черновике) получал бы мутированный вход и другой источник.
+  const file = resolve(ROOT, 'src', 'levels', 'level-17.json');
+  const raw = JSON.parse(readFileSync(file, 'utf8'));
+  const snapshot = JSON.stringify(raw);
+  const a = expandCityforgeSource(raw, 'level-17.json');
+  const b = expandCityforgeSource(raw, 'level-17.json');
+  eq(JSON.stringify(raw), snapshot, 'expand изменил входной бриф');
+  eq(JSON.stringify(a.source), JSON.stringify(b.source), 'два expand одного объекта дали разные источники');
+  const val = validateLevel(a.source, LEVEL_SPEC_V4);
+  eq(val.errors.length, 0, `развёрнутый источник не проходит схему v4: ${val.errors.join(' | ')}`);
+  const re = expandCityforgeSource(JSON.parse(JSON.stringify(a.source)), 'level-17.json').source;
+  const counts = (s) => [
+    (s.cityforge?.networks?.roads?.segments ?? []).length,
+    (s.buildings ?? []).length,
+    (s.landscapeObjects ?? []).length,
+    (s.lights ?? []).length,
+  ].join('/');
+  eq(counts(re), counts(a.source), 'повторный expand развёрнутого источника добавил объекты');
 });
 
 t('build-level отвергает устаревшие json/json2 источники', () => {

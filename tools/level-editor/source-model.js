@@ -211,8 +211,7 @@ export function deleteSelected(draft, sel) {
     seg.elements = seg.elements || [];
     if (sel.elementIndex < 0 || sel.elementIndex >= seg.elements.length) return false;
     seg.elements.splice(sel.elementIndex, 1);
-    // Если элементов не осталось, дорога не может собраться: path без elements
-    // обязан быть осевым, а диагональный двухкликовый сегмент таким не является.
+    // Если элементов не осталось, дорога может не собраться (вырожденный path без geometry).
     // Удаляем пустую дорогу целиком вместе с осиротевшими узлами.
     if (seg.elements.length === 0) {
       roads.segments.splice(i, 1);
@@ -579,10 +578,10 @@ export function validateDraft(draft) {
     if (elements.length === 0) {
       const p = s.path || [];
       const a = p[0], b = p[p.length - 1];
-      const axisOk = p.length >= 2 && p.every((pt, i, arr) => { if (!i) return true; const prev = arr[i - 1]; return Math.abs(pt[0] - prev[0]) <= AXIS_EPS_V || Math.abs(pt[2] - prev[2]) <= AXIS_EPS_V; });
+      const axisOk = p.length >= 2 && p.every((pt, i, arr) => { if (!i) return true; const a = arr[i - 1]; return Math.hypot(pt[0] - a[0], pt[2] - a[2]) > AXIS_EPS_V; });
       if (!axisOk) {
         const skew = p.length >= 2 && a && b && Math.abs(a[0] - b[0]) > AXIS_EPS_V && Math.abs(a[2] - b[2]) > AXIS_EPS_V;
-        issues.push({ severity: 'error', code: skew ? 'segment.skew-empty' : 'segment.empty', message: `${id}: после удаления элементов дорога осталась без geometry/elements${skew ? ' и её path косой (нужны elements или осевой path)' : ''}`, ref: `segment:${id}` });
+        issues.push({ severity: 'error', code: 'segment.empty', message: `${id}: после удаления элементов дорога осталась без geometry/elements${p.length >= 2 ? ' и её path нулевой/вырожденной' : ''}`, ref: `segment:${id}` });
       }
     }
     (s.elements || []).forEach((el, i) => {

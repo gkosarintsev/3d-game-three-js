@@ -484,6 +484,15 @@ function densifyAxisPolyline(points, maxSlope) {
   return dedup;
 }
 
+function isAnyDirectionPath(pts) {
+  if (!Array.isArray(pts) || pts.length < 2) return false;
+  for (let i = 0; i + 1 < pts.length; i++) {
+    const a = pts[i], b = pts[i + 1];
+    if (Math.hypot(b[0] - a[0], b[2] - a[2]) <= 0.01) return false;
+  }
+  return true;
+}
+
 function isAxisAlignedPath(pts) {
   if (!Array.isArray(pts) || pts.length < 2) return false;
   for (let i = 0; i + 1 < pts.length; i++) {
@@ -976,7 +985,10 @@ function generateTransport(ctx) {
   };
   const isTerrainPathValid = (path) => {
     if (!Array.isArray(path) || path.length < 2) return false;
-    if (!isAxisAlignedPath(path)) return false;
+    // По умолчанию диагональные обычные ветки разрешены; `diagonal: false` оставляет прежний осевой режим.
+    const diagonal = tc.diagonal !== false && tc.diagonal !== 0 && tc.diagonal !== 'false';
+    const shapeOk = isAxisAlignedPath(path) || (diagonal && isAnyDirectionPath(path));
+    if (!shapeOk) return false;
     if (pathMaxSlope(path) > 0.3005) return false;
     for (let i = 0; i + 1 < path.length; i++) {
       const a = path[i], b = path[i + 1];
@@ -2642,7 +2654,7 @@ export function makeStage2() {
       const stageId = '2_transport';
       // Authored road networks (transport.generate === false) may be intentionally
       // grade-separated/disconnected; auto-connectors would inject arbitrary segments.
-      if (!shouldGenerateTransport(ctx)) return;
+      if (ctx.input?.generator?.transport?.generate === false) return;
       const gp = ctx.input?.gameplay ?? {};
       const spawnPos = { x: gp.spawn?.x ?? 0, z: gp.spawn?.z ?? 0 };
       const exitPos = { x: gp.exit?.x ?? 0, z: gp.exit?.z ?? 0 };

@@ -529,7 +529,7 @@ test('citygen stage 2: clamps road path points outside world bounds (warn + repa
 });
 
 test('pilot level-16 v4: generateOutput deterministic (report and catalog contents)', () => {
-  const raw = JSON.parse(readFileSync(resolve(import.meta.dirname, '../src/levels/level-16.json'), 'utf8'));
+  const raw = JSON.parse(readFileSync(resolve(import.meta.dirname, 'fixtures/level-16-pilot.json'), 'utf8'));
   const a = generateOutput(structuredClone(raw), 'src/levels/level-16.json');
   const b = generateOutput(structuredClone(raw), 'src/levels/level-16.json');
   assert.equal(a.kind, 'catalog');
@@ -553,7 +553,7 @@ test('pilot level-16 v4: generateOutput deterministic (report and catalog conten
   assert.equal(fin?.roadComponents, 1, 'pilot road graph should be connected');
   assert.equal(fin?.roadSegments, 171);
   assert.equal(fin?.roadNodes, 141);
-  assert.equal(fin?.buildings, 401);
+  assert.equal(fin?.buildings, 402);
   assert.equal(fin?.props, 360);
   assert.equal(fin?.lights, 8);
   assert.equal(fin?.turnarounds, 1, 'pilot should include configured turnaround');
@@ -944,7 +944,7 @@ test('citygen stage 6: warns when junction ramp does not connect ground and elev
 });
 
 test('citygen M3 B4: multi-level interchange compiles with correct road types and roadCorridors semantics (pilot level-16)', () => {
-  const raw = JSON.parse(readFileSync(resolve('src/levels/level-16.json'), 'utf8'));
+  const raw = JSON.parse(readFileSync(resolve(import.meta.dirname, 'fixtures/level-16-pilot.json'), 'utf8'));
   const out = runCitygen(structuredClone(raw));
   const source = out.ctx?.engine ?? out.ctx?.input ?? out.input ?? raw;
   const compiled = compileCityforge(source);
@@ -975,7 +975,7 @@ test('citygen M3 B4: multi-level interchange compiles with correct road types an
 });
 
 test('citygen M3 B2: optional dead-end turnarounds are deterministic and valid (level-16)', () => {
-  const raw = JSON.parse(readFileSync(resolve('src/levels/level-16.json'), 'utf8'));
+  const raw = JSON.parse(readFileSync(resolve(import.meta.dirname, 'fixtures/level-16-pilot.json'), 'utf8'));
   raw.generator = raw.generator || {};
   raw.generator.transport = raw.generator.transport || {};
   raw.generator.transport.turnarounds = { count: 3 };
@@ -1010,7 +1010,7 @@ test('citygen M3 B2: optional dead-end turnarounds are deterministic and valid (
 });
 
 test('citygen M3 B2: level-16 roundabout (v4 json) is deterministic, curved arc elements and connected', () => {
-  const raw = JSON.parse(readFileSync(resolve('src/levels/level-16.json'), 'utf8'));
+  const raw = JSON.parse(readFileSync(resolve(import.meta.dirname, 'fixtures/level-16-pilot.json'), 'utf8'));
   const a = runCitygen(structuredClone(raw));
   const b = runCitygen(structuredClone(raw));
   assert.equal(a.reportJson, b.reportJson, 'roundabout generation should be deterministic');

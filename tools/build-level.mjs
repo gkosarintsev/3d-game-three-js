@@ -245,7 +245,11 @@ export function expandCityforgeSource(raw, sourceName) {
   let report = null;
   if (isV4) {
     try {
-      const cg = runCitygen(raw);
+      // Городогенератор пишет в `ctx.input` (движковый источник — это и есть
+      // трансформированный вход), поэтому гоняем его по копии: повторный
+      // `expand` того же объекта (редактор зовёт Expand на уже развёрнутом
+      // черновике) иначе видел бы мутированный вход и давал другой результат.
+      const cg = runCitygen(structuredClone(raw));
       source = cg.engine ?? raw;
       report = cg.reportJson ?? null;
       if ((cg.report?.summary?.errors ?? 0) > 0) {

@@ -1254,7 +1254,7 @@ export function validateLevel(raw, spec = LEVEL_SPEC_OPEN) {
     }
   }
 
-  // --- дороги: осевые последовательные точки и разумные уклоны ---
+  // --- дороги: последовательность точек и разумные уклоны (любое прямое направление) ---
   const roadRects = [];
   for (const [n, road] of (raw.roads ?? []).entries()) {
     const label = `roads[${n}] (${road.id})`;
@@ -1270,11 +1270,7 @@ export function validateLevel(raw, spec = LEVEL_SPEC_OPEN) {
     for (let i = 0; i + 1 < road.points.length; i++) {
       const a = road.points[i], b = road.points[i + 1];
       const dx = Math.abs(a.x - b.x), dz = Math.abs(a.z - b.z);
-      if (dx > AXIS_EPS && dz > AXIS_EPS) {
-        errors.push(`${label}: отрезок ${i}→${i + 1} косой — настил дороги обязан идти по оси X или Z`);
-        continue;
-      }
-      const run = Math.max(dx, dz);
+      const run = Math.hypot(dx, dz);
       const rise = Math.abs(b.y - a.y);
       if (run < 0.01) errors.push(`${label}: отрезок ${i}→${i + 1} нулевой длины`);
       // настил с подъёмом — одна наклонная пластина (не лестница коробок), и её

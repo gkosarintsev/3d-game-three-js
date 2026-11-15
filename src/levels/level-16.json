@@ -1647,6 +1647,60 @@
               -300
             ],
             "layer": "ground"
+          },
+          {
+            "id": "n_m100_m500_4",
+            "position": [
+              -100,
+              0,
+              -500
+            ],
+            "layer": "ground"
+          },
+          {
+            "id": "n_m200_m600",
+            "position": [
+              -200,
+              0,
+              -600
+            ],
+            "layer": "ground"
+          },
+          {
+            "id": "n_m100_m600",
+            "position": [
+              -100,
+              0,
+              -600
+            ],
+            "layer": "ground"
+          },
+          {
+            "id": "n_m200_m600_2",
+            "position": [
+              -200,
+              0,
+              -600
+            ],
+            "layer": "ground"
+          },
+          {
+            "id": "n_m100_m600_2",
+            "position": [
+              -100,
+              0,
+              -600
+            ],
+            "layer": "ground"
+          },
+          {
+            "id": "n_m264_m408",
+            "position": [
+              -264,
+              0,
+              -408
+            ],
+            "layer": "ground"
           }
         ],
         "segments": [
@@ -12443,6 +12497,90 @@
             "lanes": [
               {
                 "id": "road_178_lane_1",
+                "direction": "forward",
+                "width": 8,
+                "type": "vehicle"
+              }
+            ]
+          },
+          {
+            "id": "road_179",
+            "from": "n_m100_m500_4",
+            "to": "n_m200_m600",
+            "type": "local",
+            "layer": "ground",
+            "path": [
+              [
+                -100,
+                0,
+                -500
+              ],
+              [
+                -200,
+                0,
+                -600
+              ]
+            ],
+            "elements": [],
+            "lanes": [
+              {
+                "id": "road_179_lane_1",
+                "direction": "forward",
+                "width": 8,
+                "type": "vehicle"
+              }
+            ]
+          },
+          {
+            "id": "road_180",
+            "from": "n_m100_m600",
+            "to": "n_m200_m600_2",
+            "type": "local",
+            "layer": "ground",
+            "path": [
+              [
+                -100,
+                0,
+                -600
+              ],
+              [
+                -200,
+                0,
+                -600
+              ]
+            ],
+            "elements": [],
+            "lanes": [
+              {
+                "id": "road_180_lane_1",
+                "direction": "forward",
+                "width": 8,
+                "type": "vehicle"
+              }
+            ]
+          },
+          {
+            "id": "road_181",
+            "from": "n_m100_m600_2",
+            "to": "n_m264_m408",
+            "type": "local",
+            "layer": "ground",
+            "path": [
+              [
+                -100,
+                0,
+                -600
+              ],
+              [
+                -264,
+                0,
+                -408
+              ]
+            ],
+            "elements": [],
+            "lanes": [
+              {
+                "id": "road_181_lane_1",
                 "direction": "forward",
                 "width": 8,
                 "type": "vehicle"

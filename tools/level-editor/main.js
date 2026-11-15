@@ -333,12 +333,6 @@ function handleCanvasPointerDown(e) {
       return;
     }
     if (state.preset === 'ordinary') {
-      const dx = Math.abs(b.x - a.x), dz = Math.abs(b.z - a.z);
-      if (dx > 1e-9 && dz > 1e-9) {
-        state.pendingPoint = null;
-        ui.addBanner('Обычная дорога без ограждения допустима только по осям X/Z (как path-дорога генератора). Диагональ — через plate/arc или двумя перпендикулярными обычными дорогами.', 'warn');
-        return;
-      }
       pushHistory();
       const seg = makeGroundPathSegment(draft, a.x, 0, a.z, b.x, 0, b.z, { width: 8, type: 'local', layer: 'ground' });
       state.pendingPoint = null;

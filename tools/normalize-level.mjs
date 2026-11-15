@@ -974,6 +974,42 @@ function normalizeRoad(road, ground, tunnels) {
   const decks = [];
   for (let i = 0; i + 1 < pts.length; i++) {
     const a = pts[i], b = pts[i + 1];
+    const adx = Math.abs(b.x - a.x), adz = Math.abs(b.z - a.z);
+    const runXZ = Math.hypot(b.x - a.x, b.z - a.z);
+    if (runXZ < 1e-6) continue;
+    // Косой отрезок пути: ось полотна не совпадает с мировой осью, и осевой
+    // прямоугольник (minX..maxX × minZ..maxZ) раздул бы дорогу в ступенчатую
+    // ленту — каждый шаг драпировки сдвигал бы поперечную полосу на dz.
+    // Поэтому такой отрезок становится повёрнутой пластиной (кадр + obb), как
+    // авторские plate-элементы: картинка, опора, луч и навигация берут один кадр.
+    if (adx > 1e-6 && adz > 1e-6) {
+      const yaw = Math.atan2(b.z - a.z, b.x - a.x) * 180 / Math.PI;
+      const cx = r3((a.x + b.x) / 2), cz = r3((a.z + b.z) / 2);
+      const frame = frameAt(cx, cz, yaw);
+      const halfL = runXZ / 2;
+      const local = { minX: cx - halfL, maxX: cx + halfL, minZ: cz - halfW, maxZ: cz + halfW };
+      const world = obbOf(local, frame);
+      const topLo = r3(a.y), topHi = r3(b.y);
+      const top = r3(Math.min(topLo, topHi));
+      decks.push({
+        ...rectOut(world),
+        ...(world.obb ? {
+          obb: {
+            cx: r3(world.obb.cx), cz: r3(world.obb.cz),
+            hx: r3(world.obb.hx), hz: r3(world.obb.hz), c: world.obb.c, s: world.obb.s,
+          },
+        } : {}),
+        cx, cz, yaw: r3(yaw),
+        length: r3(runXZ), width: r3(road.width),
+        axis: 'x',
+        topY: top,
+        bottomY: r3(top - J.deckThickness),
+        topAtMin: topLo,
+        topAtMax: topHi,
+        ramp: Math.abs(topHi - topLo) > J.rampEps,
+      });
+      continue;
+    }
     const axis = Math.abs(a.x - b.x) >= Math.abs(a.z - b.z) ? 'x' : 'z';
     const aAlong = axis === 'x' ? a.x : a.z;
     const bAlong = axis === 'x' ? b.x : b.z;
