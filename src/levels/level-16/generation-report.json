@@ -37,9 +37,9 @@
     {
       "id": "4_buildings_structures",
       "status": "ok",
-      "diagnostics": 2,
+      "diagnostics": 4,
       "repairs": 0,
-      "drops": 0
+      "drops": 41
     },
     {
       "id": "5_infrastructure_props",
@@ -259,10 +259,26 @@
     },
     {
       "severity": "warn",
-      "code": "finalize_building_in_floodplain",
+      "code": "buildings_dropped_steep_slope",
+      "stage": "4_buildings_structures",
+      "message": "dropped 16 building(s) on steep slopes (>25%)",
+      "count": 16
+    },
+    {
+      "severity": "warn",
+      "code": "buildings_dropped_water_constraint",
+      "stage": "4_buildings_structures",
+      "message": "dropped 25 building(s) violating water buffer/floodplain constraints",
+      "count": 25
+    },
+    {
+      "severity": "warn",
+      "code": "district_without_buildings",
       "stage": "6_finalize_emit",
-      "message": "22 building(s) inside floodplain zone",
-      "count": 22
+      "message": "district 'district_1_2' (sports) has parcels but no buildings",
+      "districtId": "district_1_2",
+      "type": "sports",
+      "parcels": 49
     },
     {
       "severity": "warn",
@@ -463,21 +479,21 @@
       "message": "generated district props",
       "count": 360,
       "budget": 360,
-      "attempts": 1175,
+      "attempts": 1149,
       "byDistrictType": {
-        "luxury": 36,
-        "commercial": 14,
-        "slums": 59,
-        "market": 35,
-        "residential": 67,
-        "old_town": 45,
-        "suburb": 23,
+        "luxury": 38,
+        "commercial": 19,
+        "slums": 51,
+        "market": 32,
+        "residential": 69,
+        "old_town": 50,
+        "suburb": 21,
         "forest": 7,
-        "park": 16,
-        "industrial": 8,
-        "parking": 11,
-        "office": 19,
-        "campus": 8,
+        "park": 15,
+        "industrial": 9,
+        "parking": 8,
+        "office": 20,
+        "campus": 9,
         "sports": 4
       }
     },
@@ -604,47 +620,46 @@
           "accessibleRatio": 0.909
         }
       },
-      "buildings": 402,
+      "buildings": 361,
       "buildingsByDistrictType": {
         "old_town": 52,
         "office": 37,
-        "luxury": 64,
-        "commercial": 35,
+        "luxury": 54,
+        "commercial": 23,
         "slums": 53,
-        "market": 43,
-        "residential": 70,
-        "park": 6,
+        "market": 33,
+        "residential": 65,
         "industrial": 17,
         "parking": 10,
+        "park": 5,
         "campus": 8,
-        "suburb": 5,
-        "forest": 1,
-        "sports": 1
+        "suburb": 3,
+        "forest": 1
       },
       "lights": 8,
       "props": 360,
       "propsByDistrictType": {
-        "luxury": 36,
-        "commercial": 14,
-        "slums": 59,
-        "market": 35,
-        "residential": 67,
-        "old_town": 45,
-        "suburb": 23,
+        "luxury": 38,
+        "commercial": 19,
+        "slums": 51,
+        "market": 32,
+        "residential": 69,
+        "old_town": 50,
+        "suburb": 21,
         "forest": 7,
-        "park": 16,
-        "industrial": 8,
-        "parking": 11,
-        "office": 19,
-        "campus": 8,
+        "park": 15,
+        "industrial": 9,
+        "parking": 8,
+        "office": 20,
+        "campus": 9,
         "sports": 4
       },
       "chunkLoad": {
         "nonEmptyChunks": 25,
         "maxBuildings": 30,
-        "maxProps": 40,
+        "maxProps": 41,
         "maxLights": 1,
-        "avgBuildings": 16.08,
+        "avgBuildings": 14.44,
         "avgProps": 14.4
       }
     },
@@ -666,7 +681,7 @@
       },
       "violations": {
         "buildingsInWaterBuffer": 0,
-        "buildingsInFloodplain": 22,
+        "buildingsInFloodplain": 0,
         "propsInWaterBuffer": 0,
         "propsInFloodplain": 0
       }
@@ -714,12 +729,218 @@
       ]
     }
   ],
-  "drops": [],
+  "drops": [
+    {
+      "stage": "4_buildings_structures",
+      "id": "b_district_1_0_395",
+      "reason": "building_in_water_constraint"
+    },
+    {
+      "stage": "4_buildings_structures",
+      "id": "b_district_1_0_400",
+      "reason": "building_in_water_constraint"
+    },
+    {
+      "stage": "4_buildings_structures",
+      "id": "b_district_1_2_402",
+      "reason": "building_on_steep_slope"
+    },
+    {
+      "stage": "4_buildings_structures",
+      "id": "b_district_1_3_170",
+      "reason": "building_in_water_constraint"
+    },
+    {
+      "stage": "4_buildings_structures",
+      "id": "b_district_1_3_171",
+      "reason": "building_in_water_constraint"
+    },
+    {
+      "stage": "4_buildings_structures",
+      "id": "b_district_1_3_274",
+      "reason": "building_in_water_constraint"
+    },
+    {
+      "stage": "4_buildings_structures",
+      "id": "b_district_2_0_95",
+      "reason": "building_in_water_constraint"
+    },
+    {
+      "stage": "4_buildings_structures",
+      "id": "b_district_2_1_201",
+      "reason": "building_in_water_constraint"
+    },
+    {
+      "stage": "4_buildings_structures",
+      "id": "b_district_2_1_251",
+      "reason": "building_in_water_constraint"
+    },
+    {
+      "stage": "4_buildings_structures",
+      "id": "b_district_2_1_276",
+      "reason": "building_in_water_constraint"
+    },
+    {
+      "stage": "4_buildings_structures",
+      "id": "b_district_2_1_290",
+      "reason": "building_in_water_constraint"
+    },
+    {
+      "stage": "4_buildings_structures",
+      "id": "b_district_2_1_311",
+      "reason": "building_in_water_constraint"
+    },
+    {
+      "stage": "4_buildings_structures",
+      "id": "b_district_2_1_356",
+      "reason": "building_in_water_constraint"
+    },
+    {
+      "stage": "4_buildings_structures",
+      "id": "b_district_2_1_385",
+      "reason": "building_in_water_constraint"
+    },
+    {
+      "stage": "4_buildings_structures",
+      "id": "b_district_2_1_387",
+      "reason": "building_in_water_constraint"
+    },
+    {
+      "stage": "4_buildings_structures",
+      "id": "b_district_2_1_392",
+      "reason": "building_in_water_constraint"
+    },
+    {
+      "stage": "4_buildings_structures",
+      "id": "b_district_2_1_69",
+      "reason": "building_in_water_constraint"
+    },
+    {
+      "stage": "4_buildings_structures",
+      "id": "b_district_2_2_206",
+      "reason": "building_on_steep_slope"
+    },
+    {
+      "stage": "4_buildings_structures",
+      "id": "b_district_2_2_341",
+      "reason": "building_in_water_constraint"
+    },
+    {
+      "stage": "4_buildings_structures",
+      "id": "b_district_2_2_353",
+      "reason": "building_in_water_constraint"
+    },
+    {
+      "stage": "4_buildings_structures",
+      "id": "b_district_2_2_374",
+      "reason": "building_in_water_constraint"
+    },
+    {
+      "stage": "4_buildings_structures",
+      "id": "b_district_2_2_380",
+      "reason": "building_in_water_constraint"
+    },
+    {
+      "stage": "4_buildings_structures",
+      "id": "b_district_2_3_246",
+      "reason": "building_in_water_constraint"
+    },
+    {
+      "stage": "4_buildings_structures",
+      "id": "b_district_2_3_363",
+      "reason": "building_in_water_constraint"
+    },
+    {
+      "stage": "4_buildings_structures",
+      "id": "b_district_2_3_378",
+      "reason": "building_in_water_constraint"
+    },
+    {
+      "stage": "4_buildings_structures",
+      "id": "b_district_2_3_399",
+      "reason": "building_in_water_constraint"
+    },
+    {
+      "stage": "4_buildings_structures",
+      "id": "b_district_2_3_7",
+      "reason": "building_in_water_constraint"
+    },
+    {
+      "stage": "4_buildings_structures",
+      "id": "b_district_3_2_202",
+      "reason": "building_on_steep_slope"
+    },
+    {
+      "stage": "4_buildings_structures",
+      "id": "b_district_3_2_256",
+      "reason": "building_on_steep_slope"
+    },
+    {
+      "stage": "4_buildings_structures",
+      "id": "b_district_3_3_114",
+      "reason": "building_on_steep_slope"
+    },
+    {
+      "stage": "4_buildings_structures",
+      "id": "b_district_3_3_179",
+      "reason": "building_on_steep_slope"
+    },
+    {
+      "stage": "4_buildings_structures",
+      "id": "b_district_3_3_180",
+      "reason": "building_on_steep_slope"
+    },
+    {
+      "stage": "4_buildings_structures",
+      "id": "b_district_3_3_182",
+      "reason": "building_on_steep_slope"
+    },
+    {
+      "stage": "4_buildings_structures",
+      "id": "b_district_3_3_183",
+      "reason": "building_on_steep_slope"
+    },
+    {
+      "stage": "4_buildings_structures",
+      "id": "b_district_3_3_184",
+      "reason": "building_on_steep_slope"
+    },
+    {
+      "stage": "4_buildings_structures",
+      "id": "b_district_3_3_186",
+      "reason": "building_on_steep_slope"
+    },
+    {
+      "stage": "4_buildings_structures",
+      "id": "b_district_3_3_187",
+      "reason": "building_on_steep_slope"
+    },
+    {
+      "stage": "4_buildings_structures",
+      "id": "b_district_3_3_188",
+      "reason": "building_on_steep_slope"
+    },
+    {
+      "stage": "4_buildings_structures",
+      "id": "b_district_3_3_192",
+      "reason": "building_on_steep_slope"
+    },
+    {
+      "stage": "4_buildings_structures",
+      "id": "b_district_3_3_233",
+      "reason": "building_on_steep_slope"
+    },
+    {
+      "stage": "4_buildings_structures",
+      "id": "b_district_3_3_93",
+      "reason": "building_on_steep_slope"
+    }
+  ],
   "summary": {
     "errors": 0,
-    "warnings": 12,
+    "warnings": 14,
     "repairs": 1,
-    "drops": 0
+    "drops": 41
   },
   "metrics": {
     "version": 1,
@@ -730,7 +951,7 @@
       "districts": 16,
       "parcels": 2274,
       "reservedParcels": 393,
-      "buildings": 402,
+      "buildings": 361,
       "enterableBuildings": 0,
       "props": 360,
       "lights": 8,
@@ -871,9 +1092,9 @@
     },
     "report": {
       "diagnosticsErrors": 0,
-      "diagnosticsWarnings": 12,
+      "diagnosticsWarnings": 14,
       "repairs": 1,
-      "drops": 0
+      "drops": 41
     }
   },
   "rules": {

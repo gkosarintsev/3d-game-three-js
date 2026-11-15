@@ -967,12 +967,17 @@ export function makeStage1() {
         }
       }
       // Spatial index for river segments (TASK-002), conservative clearance for downstream checks.
+      // Index bbox must cover water buffer/floodplain so spatial queries don't miss downstream constraints.
       ctx.spatial = ctx.spatial || {};
       const rIdx = createSpatialIndex(ctx.meta.worldBounds ?? { size: ctx.input?.ground?.size ?? 256 });
+      const wbById = new Map((ctx.masks?.terrain?.waterBuffers ?? []).filter(w => w?.id).map(w => [w.id, w]));
       for (const rv of ctx.hydrology.rivers) {
         const path = Array.isArray(rv.path) ? rv.path : [];
         const w = Number(rv.width) || 10;
-        const pad = w * 0.5 + 20.0;
+        const meta = wbById.get(rv.id ?? null) || null;
+        const buffer = Number.isFinite(Number(meta?.buffer)) ? Number(meta.buffer) : (w * 0.5 + 12);
+        const floodplain = Number.isFinite(Number(meta?.floodplain)) ? Number(meta.floodplain) : Math.max(buffer, w * 3);
+        const pad = Math.max(w * 0.5 + 20.0, buffer, floodplain);
         for (let i = 0; i + 1 < path.length; i++) {
           const a = path[i], b = path[i + 1];
           if (!a || !b) continue;
@@ -981,6 +986,8 @@ export function makeStage1() {
             riverId: rv.id ?? null,
             ax: a[0], az: a[2], bx: b[0], bz: b[2],
             width: w,
+            buffer,
+            floodplain,
             minX: Math.min(a[0], b[0]) - pad, maxX: Math.max(a[0], b[0]) + pad,
             minZ: Math.min(a[2], b[2]) - pad, maxZ: Math.max(a[2], b[2]) + pad,
           });

@@ -506,7 +506,7 @@ export function makeStage6() {
               if (d <= hard) return { id: w.id ?? null, type: 'lake', zone: 'buffer' };
               continue;
             }
-            const rv = w._river;
+            const rv = w._river || (w.id ? riverById.get(w.id) : null);
             const path = Array.isArray(rv?.path) ? rv.path : [];
             if (path.length < 2) continue;
             let best = Infinity;

@@ -176,8 +176,11 @@ function generateProps(ctx, stageId, cfg) {
     return m;
   })();
   const riverClearance = (rvOrSeg) => {
-    const id = rvOrSeg?.id ?? rvOrSeg?.riverId ?? null;
-    const meta = (id && waterBufferById.size) ? waterBufferById.get(id) : null;
+    const id = rvOrSeg?.id ?? null;
+    const riverId = rvOrSeg?.riverId ?? null;
+    const meta = (waterBufferById.size && (id || riverId))
+      ? (waterBufferById.get(id) || waterBufferById.get(riverId) || null)
+      : null;
     const width = Number(rvOrSeg?.width) || 10;
     const buffer = Number.isFinite(Number(rvOrSeg?.buffer)) ? Number(rvOrSeg.buffer)
       : (Number.isFinite(Number(meta?.buffer)) ? Number(meta.buffer) : NaN);
@@ -225,7 +228,14 @@ function generateProps(ctx, stageId, cfg) {
 
   const tooCloseToRiver = (x, z) => {
     if (riverIndex) {
-      const pad = 40;
+      // Query pad must cover max buffer/floodplain clearance (not a fixed underestimate).
+      let pad = 80;
+      if (waterBufferById && waterBufferById.size) {
+        for (const w of waterBufferById.values()) {
+          const c = Math.max(Number(w?.buffer) || 0, Number(w?.floodplain) || 0, 6);
+          if (c + 2 > pad) pad = c + 2;
+        }
+      }
       const candidates = riverIndex.query({ minX: x - pad, maxX: x + pad, minZ: z - pad, maxZ: z + pad });
       for (const seg of candidates) {
         const w = riverClearance(seg);

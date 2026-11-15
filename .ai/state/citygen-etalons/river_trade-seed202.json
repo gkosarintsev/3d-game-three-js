@@ -2,10 +2,10 @@
   "profile": "river_trade",
   "seed": 202,
   "generatorVersion": "0.1.0",
-  "reportHash": "98014d0a113de3b26a1658261d69f5170d6437355a34d6e675575715fbe6ed85",
+  "reportHash": "ccc2cfe0ccf7380b521a020bfddbfd243c0b31acc8dd83d1b7086c8bf8ddf0dd",
   "summary": {
     "errors": 0,
-    "warnings": 9,
+    "warnings": 8,
     "repairs": 0,
     "drops": 0
   },

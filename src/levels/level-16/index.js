@@ -74,7 +74,7 @@ export const LEVEL_16 = {
         "objects": {
           "buildings": 28,
           "lights": 1,
-          "props": 11,
+          "props": 13,
           "roads": 13
         },
         "rect": {
@@ -89,7 +89,7 @@ export const LEVEL_16 = {
         "id": "0_1",
         "objects": {
           "buildings": 16,
-          "props": 15,
+          "props": 16,
           "roads": 4
         },
         "rect": {
@@ -120,7 +120,7 @@ export const LEVEL_16 = {
         "objects": {
           "buildings": 7,
           "lights": 1,
-          "props": 94,
+          "props": 91,
           "roads": 2
         },
         "rect": {
@@ -135,7 +135,7 @@ export const LEVEL_16 = {
         "id": "0_4",
         "objects": {
           "buildings": 5,
-          "props": 70,
+          "props": 71,
           "roads": 2
         },
         "rect": {
@@ -150,7 +150,7 @@ export const LEVEL_16 = {
         "id": "1_0",
         "objects": {
           "buildings": 6,
-          "props": 18,
+          "props": 16,
           "roads": 10
         },
         "rect": {
@@ -165,7 +165,7 @@ export const LEVEL_16 = {
         "id": "1_1",
         "objects": {
           "buildings": 1,
-          "props": 4,
+          "props": 3,
           "roads": 11
         },
         "rect": {
@@ -194,8 +194,7 @@ export const LEVEL_16 = {
         "file": "chunk-1-3.l14b",
         "id": "1_3",
         "objects": {
-          "buildings": 1,
-          "props": 29,
+          "props": 28,
           "roads": 8
         },
         "rect": {
@@ -210,7 +209,7 @@ export const LEVEL_16 = {
         "id": "1_4",
         "objects": {
           "buildings": 24,
-          "props": 23,
+          "props": 29,
           "roads": 5
         },
         "rect": {
@@ -224,9 +223,9 @@ export const LEVEL_16 = {
         "file": "chunk-2-0.l14b",
         "id": "2_0",
         "objects": {
-          "buildings": 3,
+          "buildings": 1,
           "channels": 1,
-          "props": 13,
+          "props": 15,
           "roads": 8
         },
         "rect": {
@@ -240,9 +239,9 @@ export const LEVEL_16 = {
         "file": "chunk-2-1.l14b",
         "id": "2_1",
         "objects": {
-          "buildings": 9,
+          "buildings": 1,
           "channels": 1,
-          "props": 16,
+          "props": 17,
           "roads": 4
         },
         "rect": {
@@ -256,9 +255,9 @@ export const LEVEL_16 = {
         "file": "chunk-2-2.l14b",
         "id": "2_2",
         "objects": {
-          "buildings": 19,
+          "buildings": 12,
           "channels": 1,
-          "props": 6
+          "props": 7
         },
         "rect": {
           "maxX": 128,
@@ -271,9 +270,9 @@ export const LEVEL_16 = {
         "file": "chunk-2-3.l14b",
         "id": "2_3",
         "objects": {
-          "buildings": 14,
+          "buildings": 11,
           "channels": 1,
-          "props": 9,
+          "props": 10,
           "roads": 2
         },
         "rect": {
@@ -287,10 +286,10 @@ export const LEVEL_16 = {
         "file": "chunk-2-4.l14b",
         "id": "2_4",
         "objects": {
-          "buildings": 17,
+          "buildings": 14,
           "channels": 1,
           "lights": 1,
-          "props": 13,
+          "props": 9,
           "roads": 4
         },
         "rect": {
@@ -305,7 +304,7 @@ export const LEVEL_16 = {
         "id": "3_0",
         "objects": {
           "buildings": 17,
-          "props": 13,
+          "props": 10,
           "roads": 13
         },
         "rect": {
@@ -336,7 +335,7 @@ export const LEVEL_16 = {
         "id": "3_2",
         "objects": {
           "buildings": 33,
-          "props": 20,
+          "props": 15,
           "roads": 10
         },
         "rect": {
@@ -350,7 +349,7 @@ export const LEVEL_16 = {
         "file": "chunk-3-3.l14b",
         "id": "3_3",
         "objects": {
-          "buildings": 23,
+          "buildings": 21,
           "props": 13,
           "roads": 15
         },
@@ -365,8 +364,8 @@ export const LEVEL_16 = {
         "file": "chunk-3-4.l14b",
         "id": "3_4",
         "objects": {
-          "buildings": 28,
-          "props": 12,
+          "buildings": 24,
+          "props": 19,
           "roads": 3
         },
         "rect": {
@@ -382,7 +381,7 @@ export const LEVEL_16 = {
         "objects": {
           "buildings": 30,
           "lights": 1,
-          "props": 32,
+          "props": 33,
           "roads": 3
         },
         "rect": {
@@ -397,7 +396,7 @@ export const LEVEL_16 = {
         "id": "4_1",
         "objects": {
           "buildings": 33,
-          "props": 41,
+          "props": 42,
           "roads": 1
         },
         "rect": {
@@ -413,7 +412,7 @@ export const LEVEL_16 = {
         "objects": {
           "buildings": 30,
           "lights": 1,
-          "props": 31,
+          "props": 22,
           "roads": 11
         },
         "rect": {
@@ -427,8 +426,8 @@ export const LEVEL_16 = {
         "file": "chunk-4-3.l14b",
         "id": "4_3",
         "objects": {
-          "buildings": 30,
-          "props": 26,
+          "buildings": 27,
+          "props": 29,
           "roads": 16
         },
         "rect": {
@@ -442,7 +441,7 @@ export const LEVEL_16 = {
         "file": "chunk-4-4.l14b",
         "id": "4_4",
         "objects": {
-          "buildings": 19,
+          "buildings": 12,
           "lights": 1,
           "props": 20,
           "roads": 72

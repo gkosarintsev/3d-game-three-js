@@ -54,9 +54,9 @@
     "railway_industrial": {
       "runs": 3,
       "hashes": [
-        "24e5ef30c3ac246e981c4e73d1f4c2813e4b5a570fde0b3a80fb7885cc52796f",
-        "e24be3d89381d9e35d8416f6188d7ef3a08e24d478ab6533f5e22c42f9ec261b",
-        "7d978b80579e93ff1e13fce1c833f5aa3475a14ac048b921651e4815ed333532"
+        "1e87f83f5646bde2e5db1de1a16adbffa51b90e6d8c5b6f318ca78c4c02e631e",
+        "5747f0d66c123705704b1528a0a2422a1a73ea61dd345c7e35cbe1bf3612783c",
+        "4a65ba77a9203f4c2845327c0637a0d455ef938c47f98aee1f58d5d2483d97c8"
       ],
       "errors": {
         "count": 3,
@@ -66,9 +66,9 @@
       },
       "warnings": {
         "count": 3,
-        "min": 9,
-        "max": 10,
-        "mean": 9.666667
+        "min": 8,
+        "max": 9,
+        "mean": 8.333333
       },
       "roads": {
         "count": 3,
@@ -85,16 +85,16 @@
       "buildings": {
         "count": 3,
         "min": 402,
-        "max": 403,
-        "mean": 402.666667
+        "max": 402,
+        "mean": 402
       }
     },
     "river_trade": {
       "runs": 3,
       "hashes": [
-        "0659ddf6bef23ac8bc097f53d95c0a976f8d15434c13f46bb33b64c2299adfb1",
-        "98014d0a113de3b26a1658261d69f5170d6437355a34d6e675575715fbe6ed85",
-        "5caee1ebe054a8aa0052eb28c26779bf5d9ad530767d3f3bcc19ac6b08f23f13"
+        "507876b75f84d21394c6b4d55a3551044c6d51c6356a0033b600695f782d0db1",
+        "ccc2cfe0ccf7380b521a020bfddbfd243c0b31acc8dd83d1b7086c8bf8ddf0dd",
+        "4c917971dd42bfa6477207f7ceb6317ae76e19d6b030843fd65624dc5ec0f1ef"
       ],
       "errors": {
         "count": 3,
@@ -104,9 +104,9 @@
       },
       "warnings": {
         "count": 3,
-        "min": 9,
-        "max": 11,
-        "mean": 9.666667
+        "min": 8,
+        "max": 10,
+        "mean": 8.666667
       },
       "roads": {
         "count": 3,

@@ -43,8 +43,11 @@ function footprintIntersectsRiver(fp, rivers = [], riverIndex = null, waterBuffe
   const corners = [[b.minX,b.minZ],[b.maxX,b.minZ],[b.maxX,b.maxZ],[b.minX,b.maxZ],[cx,cz]];
   const riverClearance = (rvOrSeg) => {
     // Prefer explicit easement buffer/floodplain (R1.4/R1.5): floodplain acts as real no-build constraint for buildings.
-    const id = rvOrSeg?.id ?? rvOrSeg?.riverId ?? null;
-    const meta = (id && waterBufferById) ? waterBufferById.get(id) : null;
+    const id = rvOrSeg?.id ?? null;
+    const riverId = rvOrSeg?.riverId ?? null;
+    const meta = (waterBufferById && (id || riverId))
+      ? (waterBufferById.get(id) || waterBufferById.get(riverId) || null)
+      : null;
     const buffer = Number.isFinite(Number(rvOrSeg?.buffer)) ? Number(rvOrSeg.buffer)
       : (Number.isFinite(Number(meta?.buffer)) ? Number(meta.buffer) : NaN);
     const floodplain = Number.isFinite(Number(rvOrSeg?.floodplain)) ? Number(rvOrSeg.floodplain)
@@ -55,7 +58,14 @@ function footprintIntersectsRiver(fp, rivers = [], riverIndex = null, waterBuffe
     return (Number(rvOrSeg?.width) || 10) * 0.5 + 20.0;
   };
   if (riverIndex) {
-    const pad = 30;
+    // Query pad must cover max clearance (buffer/floodplain can exceed fixed pad); use generous bound.
+    let pad = 80;
+    if (waterBufferById && waterBufferById.size) {
+      for (const w of waterBufferById.values()) {
+        const c = Math.max(Number(w?.buffer) || 0, Number(w?.floodplain) || 0, 6);
+        if (c + 2 > pad) pad = c + 2;
+      }
+    }
     const candidates = riverIndex.query({ minX: b.minX - pad, maxX: b.maxX + pad, minZ: b.minZ - pad, maxZ: b.maxZ + pad });
     for (const seg of candidates) {
       const clearance = riverClearance(seg);
@@ -660,7 +670,7 @@ export function makeStage4() {
       if (!Array.isArray(ctx.buildings)) { ctx.buildings = []; ctx.report.diagnostics.push(warn('buildings_invalid', stageId, 'buildings not an array')); }
       // Basic checks; detailed geometric validation happens in normalize/level schema pipeline.
       const seen = new Set();
-      const filtered = [];
+      let pre = [];
       for (const b of ctx.buildings) {
         if (!b || typeof b !== 'object' || !Array.isArray(b.footprint) || b.footprint.length < 3) {
           ctx.report.drops.push({ stage: stageId, id: b?.id ?? null, reason: 'invalid_building' });
@@ -669,8 +679,52 @@ export function makeStage4() {
         let id = String(b.id ?? 'b');
         if (seen.has(id)) { id = `${id}_2`; ctx.report.repairs.push({ stage: stageId, id: b.id, code: 'duplicate_building_id', to: id }); b.id = id; }
         seen.add(id);
+        pre.push(b);
+      }
+
+      // R1.4/R1.5: enforce terrain/hydrology downstream constraints (including passthrough buildings).
+      // Water hard-buffer/floodplain and steep slope zones are not buildable for generic buildings.
+      const rivers = ctx.masks?.easement?.rivers ?? ctx.hydrology?.rivers ?? ctx.input?.cityforge?.hydrology?.rivers ?? [];
+      const waterBufferById = (() => {
+        const src = Array.isArray(ctx.masks?.terrain?.waterBuffers) ? ctx.masks.terrain.waterBuffers : [];
+        const m = new Map();
+        for (const w of src) if (w?.id) m.set(w.id, w);
+        return m;
+      })();
+      const riverIndex = (rivers === (ctx.hydrology?.rivers ?? null) || rivers === (ctx.masks?.easement?.rivers ?? null)) ? (ctx.spatial?.riverSegments ?? null) : null;
+      const lakes = ctx.masks?.easement?.lakes ?? [];
+      const baseY = Number(ctx.input?.ground?.y ?? 0) || 0;
+      const mods = ctx.terrain?.modifiers ?? [];
+      const filtered = [];
+      let droppedWater = 0, droppedSlope = 0;
+      for (const b of pre) {
+        const fp = b.footprint;
+        if (footprintIntersectsRiver(fp, rivers, riverIndex, waterBufferById) || footprintIntersectsLake(fp, lakes)) {
+          ctx.report.drops.push({ stage: stageId, id: b.id ?? null, reason: 'building_in_water_constraint' });
+          droppedWater++;
+          continue;
+        }
+        const bb = aabbOfFootprint(fp);
+        const cx = (bb.minX + bb.maxX) / 2, cz = (bb.minZ + bb.maxZ) / 2;
+        // Local slope sample (R1.2/R4.1): slopes > 25% are not buildable.
+        const d = 8;
+        const y = (() => { let yy = baseY; for (const m of mods) { const type=m?.type; if(type!=='mountain'&&type!=='valley') continue; const h=Number(m.height)||0,r=Number(m.radius)||0; if(!(r>EPS)||!Number.isFinite(h)) continue; const c=Array.isArray(m.center)?m.center:[Number(m.center?.x)||0,Number(m.center?.z)||0]; const dx=cx-(Number(c[0])||0), dz=cz-(Number(c[1])||0); const dist=Math.hypot(dx,dz); if(dist>=r) continue; const t=1-dist/r; const e=t*t*(3-2*t); const signed=(m.operation==='subtract')?-h:h; yy+=signed*e; } return yy; })();
+        const heightAt = (x, z) => { let yy = baseY; for (const m of mods) { const type=m?.type; if(type!=='mountain'&&type!=='valley') continue; const h=Number(m.height)||0,r=Number(m.radius)||0; if(!(r>EPS)||!Number.isFinite(h)) continue; const c=Array.isArray(m.center)?m.center:[Number(m.center?.x)||0,Number(m.center?.z)||0]; const dx=x-(Number(c[0])||0), dz=z-(Number(c[1])||0); const dist=Math.hypot(dx,dz); if(dist>=r) continue; const t=1-dist/r; const e=t*t*(3-2*t); const signed=(m.operation==='subtract')?-h:h; yy+=signed*e; } return yy; };
+        const sMax = Math.max(
+          Math.abs(heightAt(cx + d, cz) - y),
+          Math.abs(heightAt(cx - d, cz) - y),
+          Math.abs(heightAt(cx, cz + d) - y),
+          Math.abs(heightAt(cx, cz - d) - y),
+        ) / d;
+        if (Number.isFinite(sMax) && sMax > 0.25) {
+          ctx.report.drops.push({ stage: stageId, id: b.id ?? null, reason: 'building_on_steep_slope' });
+          droppedSlope++;
+          continue;
+        }
         filtered.push(b);
       }
+      if (droppedWater > 0) ctx.report.diagnostics.push(warn('buildings_dropped_water_constraint', stageId, `dropped ${droppedWater} building(s) violating water buffer/floodplain constraints`, { count: droppedWater }));
+      if (droppedSlope > 0) ctx.report.diagnostics.push(warn('buildings_dropped_steep_slope', stageId, `dropped ${droppedSlope} building(s) on steep slopes (>25%)`, { count: droppedSlope }));
       ctx.buildings = filtered;
     },
     repair(_ctx) {},

@@ -389,9 +389,15 @@ function generateCityforge(raw, sourceName, opts = {}) {
       const fp = b.footprint;
       if (Array.isArray(fp) && fp.length >= 3 && !b.rotation) {
         const xs = fp.map(p => p.x), zs = fp.map(p => p.z);
-        const cx = (Math.min(...xs) + Math.max(...xs)) / 2;
-        const cz = (Math.min(...zs) + Math.max(...zs)) / 2;
+        let cx = (Math.min(...xs) + Math.max(...xs)) / 2;
+        let cz = (Math.min(...zs) + Math.max(...zs)) / 2;
         const hw = W / 2, hd = D / 2;
+        // clamp center so resized footprint stays within world bounds
+        const groundSize = Number(engine?.ground?.size ?? engine?.map?.ground?.size ?? raw?.ground?.size ?? 1280);
+        const half = groundSize / 2;
+        const margin = 0.5;
+        cx = Math.min(half - hw - margin, Math.max(-half + hw + margin, cx));
+        cz = Math.min(half - hd - margin, Math.max(-half + hd + margin, cz));
         nb.footprint = [
           { x: +(cx - hw).toFixed(3), z: +(cz - hd).toFixed(3) },
           { x: +(cx + hw).toFixed(3), z: +(cz - hd).toFixed(3) },

@@ -89,7 +89,7 @@ export const LEVEL_21 = {
         "file": "chunk-0-1.l14b",
         "id": "0_1",
         "objects": {
-          "buildings": 33,
+          "buildings": 27,
           "lights": 2,
           "props": 58,
           "roads": 2
@@ -105,10 +105,10 @@ export const LEVEL_21 = {
         "file": "chunk-1-0.l14b",
         "id": "1_0",
         "objects": {
-          "buildings": 152,
+          "buildings": 159,
           "channels": 1,
           "lights": 2,
-          "props": 149,
+          "props": 163,
           "roads": 39
         },
         "rect": {
@@ -125,7 +125,7 @@ export const LEVEL_21 = {
           "buildings": 139,
           "channels": 1,
           "lights": 2,
-          "props": 101,
+          "props": 87,
           "roads": 100
         },
         "rect": {

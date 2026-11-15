@@ -51,7 +51,7 @@
     {
       "id": "6_finalize_emit",
       "status": "ok",
-      "diagnostics": 10,
+      "diagnostics": 9,
       "repairs": 0,
       "drops": 0
     }
@@ -240,8 +240,8 @@
       "severity": "warn",
       "code": "chunk_buildings_heavy",
       "stage": "6_finalize_emit",
-      "message": "high building count in a single chunk (161)",
-      "maxBuildings": 161,
+      "message": "high building count in a single chunk (166)",
+      "maxBuildings": 166,
       "chunk": 640,
       "grid": 2
     },
@@ -249,17 +249,10 @@
       "severity": "warn",
       "code": "chunk_props_heavy",
       "stage": "6_finalize_emit",
-      "message": "high prop count in a single chunk (140)",
-      "maxProps": 140,
+      "message": "high prop count in a single chunk (146)",
+      "maxProps": 146,
       "chunk": 640,
       "grid": 2
-    },
-    {
-      "severity": "warn",
-      "code": "finalize_building_in_floodplain",
-      "stage": "6_finalize_emit",
-      "message": "22 building(s) inside floodplain zone",
-      "count": 22
     },
     {
       "severity": "info",
@@ -1804,7 +1797,7 @@
       "message": "generated buildings from parcels",
       "count": 403,
       "budget": 420,
-      "skippedConflict": 447
+      "skippedConflict": 715
     },
     {
       "severity": "info",
@@ -1819,22 +1812,22 @@
       "message": "generated district props",
       "count": 360,
       "budget": 360,
-      "attempts": 1133,
+      "attempts": 1181,
       "byDistrictType": {
-        "slums": 50,
+        "slums": 53,
         "old_town": 47,
-        "luxury": 41,
-        "campus": 10,
-        "residential": 72,
-        "industrial": 9,
-        "park": 17,
-        "commercial": 16,
-        "suburb": 21,
-        "office": 23,
-        "parking": 11,
+        "luxury": 40,
+        "campus": 7,
+        "residential": 73,
+        "industrial": 8,
+        "park": 20,
+        "commercial": 20,
+        "suburb": 20,
+        "office": 19,
+        "parking": 10,
         "market": 26,
-        "forest": 12,
-        "sports": 5
+        "forest": 7,
+        "sports": 10
       }
     },
     {
@@ -1986,17 +1979,17 @@
       },
       "buildings": 403,
       "buildingsByDistrictType": {
-        "residential": 86,
-        "slums": 102,
-        "commercial": 32,
-        "office": 46,
-        "luxury": 34,
-        "old_town": 54,
-        "suburb": 16,
-        "industrial": 7,
-        "parking": 7,
+        "residential": 92,
+        "office": 48,
+        "slums": 103,
+        "old_town": 49,
+        "luxury": 21,
+        "commercial": 29,
+        "suburb": 14,
+        "industrial": 10,
+        "parking": 9,
         "campus": 12,
-        "market": 4,
+        "market": 13,
         "park": 1,
         "forest": 1,
         "sports": 1
@@ -2004,25 +1997,25 @@
       "lights": 8,
       "props": 360,
       "propsByDistrictType": {
-        "slums": 50,
+        "slums": 53,
         "old_town": 47,
-        "luxury": 41,
-        "campus": 10,
-        "residential": 72,
-        "industrial": 9,
-        "park": 17,
-        "commercial": 16,
-        "suburb": 21,
-        "office": 23,
-        "parking": 11,
+        "luxury": 40,
+        "campus": 7,
+        "residential": 73,
+        "industrial": 8,
+        "park": 20,
+        "commercial": 20,
+        "suburb": 20,
+        "office": 19,
+        "parking": 10,
         "market": 26,
-        "forest": 12,
-        "sports": 5
+        "forest": 7,
+        "sports": 10
       },
       "chunkLoad": {
         "nonEmptyChunks": 4,
-        "maxBuildings": 161,
-        "maxProps": 140,
+        "maxBuildings": 166,
+        "maxProps": 146,
         "maxLights": 2,
         "avgBuildings": 100.75,
         "avgProps": 90
@@ -2046,7 +2039,7 @@
       },
       "violations": {
         "buildingsInWaterBuffer": 0,
-        "buildingsInFloodplain": 22,
+        "buildingsInFloodplain": 0,
         "propsInWaterBuffer": 0,
         "propsInFloodplain": 0
       }
@@ -2137,7 +2130,7 @@
   "drops": [],
   "summary": {
     "errors": 0,
-    "warnings": 9,
+    "warnings": 8,
     "repairs": 9,
     "drops": 0
   },
@@ -2275,7 +2268,7 @@
     },
     "report": {
       "diagnosticsErrors": 0,
-      "diagnosticsWarnings": 9,
+      "diagnosticsWarnings": 8,
       "repairs": 9,
       "drops": 0
     }

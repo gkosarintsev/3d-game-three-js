@@ -553,7 +553,7 @@ test('pilot level-16 v4: generateOutput deterministic (report and catalog conten
   assert.equal(fin?.roadComponents, 1, 'pilot road graph should be connected');
   assert.equal(fin?.roadSegments, 172);
   assert.equal(fin?.roadNodes, 142);
-  assert.equal(fin?.buildings, 401);
+  assert.equal(fin?.buildings, 402);
   assert.equal(fin?.props, 360);
   assert.equal(fin?.lights, 8);
   assert.equal(fin?.turnarounds, 1, 'pilot should include configured turnaround');

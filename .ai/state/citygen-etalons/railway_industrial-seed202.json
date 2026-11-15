@@ -2,10 +2,10 @@
   "profile": "railway_industrial",
   "seed": 202,
   "generatorVersion": "0.1.0",
-  "reportHash": "e24be3d89381d9e35d8416f6188d7ef3a08e24d478ab6533f5e22c42f9ec261b",
+  "reportHash": "5747f0d66c123705704b1528a0a2422a1a73ea61dd345c7e35cbe1bf3612783c",
   "summary": {
     "errors": 0,
-    "warnings": 9,
+    "warnings": 8,
     "repairs": 0,
     "drops": 0
   },
@@ -22,7 +22,7 @@
       "districts": 16,
       "parcels": 2202,
       "reservedParcels": 97,
-      "buildings": 403,
+      "buildings": 402,
       "enterableBuildings": 0,
       "props": 360,
       "lights": 0,
