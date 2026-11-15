@@ -113,6 +113,38 @@ function footprintIntersectsLake(fp, lakes = []) {
   return false;
 }
 
+function footprintIntersectsFloodplainMask(fp, floodplains = []) {
+  if (!Array.isArray(floodplains) || floodplains.length === 0) return false;
+  const b = aabbOfFootprint(fp);
+  const cx = (b.minX + b.maxX) / 2, cz = (b.minZ + b.maxZ) / 2;
+  const corners = [[b.minX, b.minZ], [b.maxX, b.minZ], [b.maxX, b.maxZ], [b.minX, b.maxZ], [cx, cz]];
+  for (const fpl of floodplains) {
+    if (!fpl) continue;
+    if (fpl.type === 'lake' && Array.isArray(fpl.center) && Number.isFinite(Number(fpl.radius))) {
+      const lx = Number(fpl.center[0]), lz = Number(fpl.center[1]);
+      const margin = Number.isFinite(Number(fpl.floodplain)) ? Number(fpl.floodplain) : 0;
+      const clearance = Number(fpl.radius) + Math.max(margin, 8);
+      for (const [px, pz] of corners) {
+        if (Math.hypot(px - lx, pz - lz) < clearance) return true;
+      }
+      continue;
+    }
+    if (fpl.type === 'river' && Array.isArray(fpl.path) && fpl.path.length >= 2) {
+      const margin = Number.isFinite(Number(fpl.floodplain)) ? Number(fpl.floodplain)
+        : Math.max((Number(fpl.width) || 0) * 0.5 + 12, (Number(fpl.width) || 0) * 3);
+      for (const [px, pz] of corners) {
+        let best = Infinity;
+        for (let i = 0; i + 1 < fpl.path.length; i++) {
+          const a = fpl.path[i], c = fpl.path[i + 1];
+          best = Math.min(best, pointSegDistXZ(px, pz, a[0], a[2], c[0], c[2]));
+        }
+        if (best < margin) return true;
+      }
+    }
+  }
+  return false;
+}
+
 function footprintIntersectsRoad(fp, roads = [], roadSegments = [], roadIndex = null, { ignoreEasements = false } = {}) {
   const b = aabbOfFootprint(fp);
   const cx = (b.minX + b.maxX) / 2, cz = (b.minZ + b.maxZ) / 2;
@@ -312,6 +344,8 @@ export function makeStage4() {
         for (const w of src) if (w?.id) m.set(w.id, w);
         return m;
       })();
+      const floodplainMasks = Array.isArray(ctx.masks?.terrain?.floodplains) ? ctx.masks.terrain.floodplains
+        : (Array.isArray(ctx.terrain?.analysis?.floodplains) ? ctx.terrain.analysis.floodplains : []);
       const roads = ctx.masks?.easement?.roads ?? [];
       const roadSegments = ctx.networks?.roads?.segments ?? ctx.input?.cityforge?.networks?.roads?.segments ?? [];
       const gp = ctx.input?.gameplay ?? {};
@@ -447,7 +481,7 @@ export function makeStage4() {
             const fp = footprintRect(cx, cz, w, d);
             const riverIndex = (rivers === (ctx.hydrology?.rivers ?? null) || rivers === (ctx.masks?.easement?.rivers ?? null)) ? (ctx.spatial?.riverSegments ?? null) : null;
             const lakes = ctx.masks?.easement?.lakes ?? [];
-            if (footprintNearAnchors(fp, anchors, 10) || footprintIntersectsRiver(fp, rivers, riverIndex, waterBufferById) || footprintIntersectsLake(fp, lakes) || footprintIntersectsRoad(fp, roads, roadSegments, ctx.spatial?.roadEasements, { ignoreEasements: !!force && !!relaxChunk })) continue;
+            if (footprintNearAnchors(fp, anchors, 10) || footprintIntersectsRiver(fp, rivers, riverIndex, waterBufferById) || footprintIntersectsLake(fp, lakes) || footprintIntersectsFloodplainMask(fp, floodplainMasks) || footprintIntersectsRoad(fp, roads, roadSegments, ctx.spatial?.roadEasements, { ignoreEasements: !!force && !!relaxChunk })) continue;
             footprint = fp;
             break;
           }
@@ -463,7 +497,7 @@ export function makeStage4() {
             const fp = footprintRect(cx, cz, w, d);
             const riverIndex = (rivers === (ctx.hydrology?.rivers ?? null) || rivers === (ctx.masks?.easement?.rivers ?? null)) ? (ctx.spatial?.riverSegments ?? null) : null;
             const lakes = ctx.masks?.easement?.lakes ?? [];
-            if (footprintNearAnchors(fp, anchors, 10) || footprintIntersectsRiver(fp, rivers, riverIndex, waterBufferById) || footprintIntersectsLake(fp, lakes) || footprintIntersectsRoad(fp, roads, roadSegments, ctx.spatial?.roadEasements, { ignoreEasements: !!force && !!relaxChunk })) continue;
+            if (footprintNearAnchors(fp, anchors, 10) || footprintIntersectsRiver(fp, rivers, riverIndex, waterBufferById) || footprintIntersectsLake(fp, lakes) || footprintIntersectsFloodplainMask(fp, floodplainMasks) || footprintIntersectsRoad(fp, roads, roadSegments, ctx.spatial?.roadEasements, { ignoreEasements: !!force && !!relaxChunk })) continue;
             footprint = fp;
             break;
           }
@@ -653,6 +687,7 @@ export function makeStage4() {
               if (footprintNearAnchors(fp, anchors, 10)) continue;
               if (footprintIntersectsRiver(fp, rivers, riverIndex, waterBufferById)) continue;
               if (footprintIntersectsLake(fp, lakes)) continue;
+              if (footprintIntersectsFloodplainMask(fp, floodplainMasks)) continue;
               if (footprintIntersectsRoad(fp, roads, roadSegments, ctx.spatial?.roadEasements, { ignoreEasements: true })) continue;
               footprint = fp;
               break;
@@ -739,6 +774,8 @@ export function makeStage4() {
         for (const w of src) if (w?.id) m.set(w.id, w);
         return m;
       })();
+      const floodplainMasks = Array.isArray(ctx.masks?.terrain?.floodplains) ? ctx.masks.terrain.floodplains
+        : (Array.isArray(ctx.terrain?.analysis?.floodplains) ? ctx.terrain.analysis.floodplains : []);
       const riverIndex = (rivers === (ctx.hydrology?.rivers ?? null) || rivers === (ctx.masks?.easement?.rivers ?? null)) ? (ctx.spatial?.riverSegments ?? null) : null;
       const lakes = ctx.masks?.easement?.lakes ?? [];
       const baseY = Number(ctx.input?.ground?.y ?? 0) || 0;
@@ -747,7 +784,7 @@ export function makeStage4() {
       let droppedWater = 0, droppedSlope = 0;
       for (const b of pre) {
         const fp = b.footprint;
-        if (footprintIntersectsRiver(fp, rivers, riverIndex, waterBufferById) || footprintIntersectsLake(fp, lakes)) {
+        if (footprintIntersectsRiver(fp, rivers, riverIndex, waterBufferById) || footprintIntersectsLake(fp, lakes) || footprintIntersectsFloodplainMask(fp, floodplainMasks)) {
           ctx.report.drops.push({ stage: stageId, id: b.id ?? null, reason: 'building_in_water_constraint' });
           droppedWater++;
           continue;
