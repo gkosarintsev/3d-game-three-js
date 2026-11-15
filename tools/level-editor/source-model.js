@@ -461,11 +461,11 @@ export function filletJoint(draft, firstId, secondId, radius = 15) {
   // Ориентируем первую дорогу «в узел», вторую — «из узла».
   if (String(a.to) !== String(shared)) {
     if (String(a.from) !== String(shared)) return { ok: false, message: 'первый сегмент не касается общего узла' };
-    if (!reverseSegment(a)) return { ok: false, message: 'первый сегмент нельзя развернуть: скругление работает только с plate-дорогами' };
+    if (!reverseSegment(a)) return { ok: false, message: 'первый сегмент нельзя развернуть: скругление работает только с plate- или path-дорогами' };
   }
   if (String(b.from) !== String(shared)) {
     if (String(b.to) !== String(shared)) return { ok: false, message: 'второй сегмент не касается общего узла' };
-    if (!reverseSegment(b)) return { ok: false, message: 'второй сегмент нельзя развернуть: скругление работает только с plate-дорогами' };
+    if (!reverseSegment(b)) return { ok: false, message: 'второй сегмент нельзя развернуть: скругление работает только с plate- или path-дорогами' };
   }
   if (!isStraightPath(a.path) || !isStraightPath(b.path)) {
     return { ok: false, message: 'скругление умеет работать только с прямой path-дорогой' };
@@ -473,6 +473,8 @@ export function filletJoint(draft, firstId, secondId, radius = 15) {
   if ((a.elements || []).some(el => !el.plate) || (b.elements || []).some(el => !el.plate)) {
     return { ok: false, message: 'пока поддерживаются только plate-элементы на стыке' };
   }
+  const aPathOnly = (a.elements || []).length === 0;
+  const bPathOnly = (b.elements || []).length === 0;
   const aPath = a.path, bPath = b.path;
   const aStart = aPath[0], aEnd = aPath[aPath.length - 1], bStart = bPath[0], bEnd = bPath[bPath.length - 1];
   const lenA = lenXZ(aStart[0], aStart[2], aEnd[0], aEnd[2]);
@@ -512,19 +514,33 @@ export function filletJoint(draft, firstId, secondId, radius = 15) {
   // подрезаем первую дорогу до T1
   a.path = [[r3(aStart[0]), r3(aStart[1]), r3(aStart[2])], [r3(T1.x), r3(T1.y), r3(T1.z)]];
   a.to = t1Id;
-  const lastA = [...(a.elements || [])].reverse().find(el => el.plate);
-  const idxA = a.elements.indexOf(lastA);
-  const oldA = a.elements[idxA].plate;
-  const yawA = r3(oldA.yaw ?? 0);
-  a.elements[idxA] = { plate: { ...oldA, x: r3((aStart[0] + T1.x) / 2), z: r3((aStart[2] + T1.z) / 2), yaw: yawA, length: r3(lenXZ(aStart[0], aStart[2], T1.x, T1.z)), y: r3(aStart[1]), rise: r3(yT1 - aStart[1]) } };
+  let widthA = 20, railsA = false;
+  if (aPathOnly) {
+    widthA = Number(a.lanes?.[0]?.width ?? a.width ?? 8) || 8;
+    railsA = !!a.rails;
+  } else {
+    const lastA = [...(a.elements || [])].reverse().find(el => el.plate);
+    const idxA = a.elements.indexOf(lastA);
+    const oldA = a.elements[idxA].plate;
+    const yawA = r3(oldA.yaw ?? 0);
+    a.elements[idxA] = { plate: { ...oldA, x: r3((aStart[0] + T1.x) / 2), z: r3((aStart[2] + T1.z) / 2), yaw: yawA, length: r3(lenXZ(aStart[0], aStart[2], T1.x, T1.z)), y: r3(aStart[1]), rise: r3(yT1 - aStart[1]) } };
+    widthA = Number(oldA.width) || 20; railsA = !!oldA.rails;
+  }
   // подрезаем вторую дорогу от T2
   b.path = [[r3(T2.x), r3(T2.y), r3(T2.z)], [r3(bEnd[0]), r3(bEnd[1]), r3(bEnd[2])]];
   b.from = t2Id;
-  const firstB = (b.elements || []).find(el => el.plate);
-  const idxB = b.elements.indexOf(firstB);
-  const oldB = b.elements[idxB].plate;
-  const yawB = r3(oldB.yaw ?? 0);
-  b.elements[idxB] = { plate: { ...oldB, x: r3((T2.x + bEnd[0]) / 2), z: r3((T2.z + bEnd[2]) / 2), yaw: yawB, length: r3(lenXZ(T2.x, T2.z, bEnd[0], bEnd[2])), y: r3(yT2), rise: r3(bEnd[1] - yT2) } };
+  let widthB = 20, railsB = false;
+  if (bPathOnly) {
+    widthB = Number(b.lanes?.[0]?.width ?? b.width ?? 8) || 8;
+    railsB = !!b.rails;
+  } else {
+    const firstB = (b.elements || []).find(el => el.plate);
+    const idxB = b.elements.indexOf(firstB);
+    const oldB = b.elements[idxB].plate;
+    const yawB = r3(oldB.yaw ?? 0);
+    b.elements[idxB] = { plate: { ...oldB, x: r3((T2.x + bEnd[0]) / 2), z: r3((T2.z + bEnd[2]) / 2), yaw: yawB, length: r3(lenXZ(T2.x, T2.z, bEnd[0], bEnd[2])), y: r3(yT2), rise: r3(bEnd[1] - yT2) } };
+    widthB = Number(oldB.width) || 20; railsB = !!oldB.rails;
+  }
   // удаляем старый общий узел, если он больше никому не нужен
   const oldShared = String(shared);
   const used = roads.segments.some(s => String(s.from) === oldShared || String(s.to) === oldShared);
@@ -532,9 +548,8 @@ export function filletJoint(draft, firstId, secondId, radius = 15) {
     const i = roads.nodes.findIndex(n => String(n.id) === oldShared);
     if (i >= 0) roads.nodes.splice(i, 1);
   }
-  const widthA = Number(oldA.width) || 20, widthB = Number(oldB.width) || 20;
   const width = r3(Math.min(widthA, widthB));
-  const rails = !!oldA.rails || !!oldB.rails;
+  const rails = !!railsA || !!railsB;
   const arcId = createSegmentId(draft, 'arc_');
   const arcSeg = {
     id: arcId,
