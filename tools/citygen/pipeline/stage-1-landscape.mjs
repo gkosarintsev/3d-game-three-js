@@ -297,26 +297,34 @@ function generateLandscape(ctx) {
   const profileRivers = Number.isFinite(Number(profile?.terrain?.rivers)) ? Number(profile.terrain.rivers) : null;
   const profileLakes = Number.isFinite(Number(profile?.terrain?.lakes)) ? Number(profile.terrain.lakes) : null;
   if (ls.profileDriven === true || (profile && ls.generate === true && ls.hills == null && ls.ordered == null)) {
-    // apply gentle defaults only when not explicitly specified
-    if (ls.ordered == null && reliefType !== 'plain') ls.ordered = true;
+    // apply gentle defaults only when not explicitly specified (profile-driven forms/presets, R1.1)
+    const formsPreset = (profile?.terrain?.forms && typeof profile.terrain.forms === 'object') ? profile.terrain.forms : null;
+    const reliefForms = (formsPreset?.[reliefType] && typeof formsPreset[reliefType] === 'object') ? formsPreset[reliefType] : null;
+    const pickForm = (key) => (reliefForms && Object.prototype.hasOwnProperty.call(reliefForms, key)) ? reliefForms[key]
+      : (formsPreset && Object.prototype.hasOwnProperty.call(formsPreset, key) ? formsPreset[key] : undefined);
+    if (ls.ordered == null) {
+      const ordPreset = pickForm('ordered');
+      if (ordPreset != null) ls.ordered = !!ordPreset;
+      else if (reliefType !== 'plain') ls.ordered = true;
+    }
     if (reliefType === 'hills') {
       // Hill town / rugged presets (§4.2): large forms + terraces/platforms for flat sites on slopes.
-      if (ls.largeForms == null) ls.largeForms = { count: 2, minHeight: 22, maxHeight: 55, minRadius: Math.max(120, size * 0.22), maxRadius: Math.max(220, size * 0.42) };
-      if (ls.terraces == null) ls.terraces = { count: 4, minRadius: 28, maxRadius: 80 };
-      if (ls.platforms == null) ls.platforms = { count: Math.max(2, Math.min(5, Math.round(size / 320))) };
-      if (ls.hills == null) ls.hills = { count: 9, minHeight: 12, maxHeight: 38, minRadius: 90, maxRadius: 240 };
+      if (ls.largeForms == null) ls.largeForms = pickForm('largeForms') ?? { count: 2, minHeight: 22, maxHeight: 55, minRadius: Math.max(120, size * 0.22), maxRadius: Math.max(220, size * 0.42) };
+      if (ls.terraces == null) ls.terraces = pickForm('terraces') ?? { count: 4, minRadius: 28, maxRadius: 80 };
+      if (ls.platforms == null) ls.platforms = pickForm('platforms') ?? { count: Math.max(2, Math.min(5, Math.round(size / 320))) };
+      if (ls.hills == null) ls.hills = pickForm('hills') ?? { count: 9, minHeight: 12, maxHeight: 38, minRadius: 90, maxRadius: 240 };
     } else if (reliefType === 'plain') {
       if (ls.ordered == null) ls.ordered = false; // keep simple forms by default on plains unless explicitly requested
-      if (ls.largeForms == null) ls.largeForms = { count: 0 };
-      if (ls.terraces == null) ls.terraces = { count: 0 };
-      if (ls.platforms == null) ls.platforms = { count: Math.max(1, Math.min(3, Math.round(size / 450))) };
-      if (ls.hills == null) ls.hills = { count: 4, minHeight: 5, maxHeight: 18, minRadius: 140, maxRadius: 340 };
+      if (ls.largeForms == null) ls.largeForms = pickForm('largeForms') ?? { count: 0 };
+      if (ls.terraces == null) ls.terraces = pickForm('terraces') ?? { count: 0 };
+      if (ls.platforms == null) ls.platforms = pickForm('platforms') ?? { count: Math.max(1, Math.min(3, Math.round(size / 450))) };
+      if (ls.hills == null) ls.hills = pickForm('hills') ?? { count: 4, minHeight: 5, maxHeight: 18, minRadius: 140, maxRadius: 340 };
     } else {
       // generic non-plain relief
-      if (ls.largeForms == null) ls.largeForms = { count: 1, minHeight: 18, maxHeight: 45 };
-      if (ls.terraces == null) ls.terraces = { count: 2 };
-      if (ls.platforms == null) ls.platforms = { count: Math.max(1, Math.min(4, Math.round(size / 400))) };
-      if (ls.hills == null) ls.hills = { count: 6, minHeight: 8, maxHeight: 30, minRadius: 100, maxRadius: 280 };
+      if (ls.largeForms == null) ls.largeForms = pickForm('largeForms') ?? { count: 1, minHeight: 18, maxHeight: 45 };
+      if (ls.terraces == null) ls.terraces = pickForm('terraces') ?? { count: 2 };
+      if (ls.platforms == null) ls.platforms = pickForm('platforms') ?? { count: Math.max(1, Math.min(4, Math.round(size / 400))) };
+      if (ls.hills == null) ls.hills = pickForm('hills') ?? { count: 6, minHeight: 8, maxHeight: 30, minRadius: 100, maxRadius: 280 };
     }
     if (ls.river == null && profileRivers != null) {
       const hydroPreset = (profile?.terrain?.hydrology && typeof profile.terrain.hydrology === 'object')
