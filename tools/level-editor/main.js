@@ -281,10 +281,10 @@ function findPickCandidates(clientX, clientY) {
   for (const hit of hits) {
     const ref = hit.object?.userData?.entityRef;
     if (!ref) continue;
-    if (ref.kind !== 'element' && ref.kind !== 'element-end') continue;
-    const segmentId = ref.segmentId;
+    if (ref.kind !== 'element' && ref.kind !== 'element-end' && ref.kind !== 'segment') continue;
+    const segmentId = ref.segmentId ?? (ref.kind === 'segment' ? ref.id : null);
     if (!segmentId || bySegment.has(segmentId)) continue;
-    bySegment.set(segmentId, { kind: 'element', segmentId, elementIndex: ref.elementIndex ?? 0, distance: hit.distance });
+    bySegment.set(segmentId, { kind: ref.kind, segmentId, elementIndex: ref.elementIndex ?? 0, distance: hit.distance });
   }
   return [...bySegment.values()].sort((a, b) => a.distance - b.distance);
 }
@@ -355,7 +355,7 @@ function handleCanvasPointerDown(e) {
   }
   if (state.tool === 'fillet-joint') {
     const candidates = findPickCandidates(e.clientX, e.clientY);
-    if (!candidates.length) { setStatus('Кликните по дороге (прямым plate-сегментам)'); return; }
+    if (!candidates.length) { setStatus('Кликните по прямой дороге (обычной path или plate)'); return; }
     let hit = candidates[0];
     if (state.filletFirst) {
       const other = candidates.find(c => c.segmentId !== state.filletFirst);
