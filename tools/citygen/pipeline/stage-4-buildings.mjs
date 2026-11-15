@@ -319,6 +319,46 @@ export function makeStage4() {
         { x: gp.spawn?.x ?? 0, z: gp.spawn?.z ?? 0 },
         { x: gp.exit?.x ?? 0, z: gp.exit?.z ?? 0 },
       ];
+      // R1.3/R1.5: crossing/landmark/reservation masks as downstream constraints (defense-in-depth; deterministic).
+      const crossingsMask = ctx.terrain?.analysis?.crossings ?? ctx.masks?.terrain?.crossings ?? [];
+      const landmarksMask = ctx.terrain?.analysis?.landmarks ?? ctx.masks?.terrain?.landmarks ?? [];
+      const reservationsMaskRaw = ctx.terrain?.analysis?.reservations ?? ctx.masks?.terrain?.reservations ?? [];
+      const reservationsMask = Array.isArray(reservationsMaskRaw)
+        ? reservationsMaskRaw
+        : [
+            ...(Array.isArray(reservationsMaskRaw?.road) ? reservationsMaskRaw.road : []),
+            ...(Array.isArray(reservationsMaskRaw?.water) ? reservationsMaskRaw.water : []),
+            ...(Array.isArray(reservationsMaskRaw?.buildable) ? reservationsMaskRaw.buildable : []),
+          ];
+      const footprintNearReservedMask = (fp) => {
+        if (!fp) return false;
+        const pts = Array.isArray(fp.points) ? fp.points : [];
+        if (!pts.length) return false;
+        let sx = 0, sz = 0;
+        for (const pt of pts) { sx += Number(pt?.[0]) || 0; sz += Number(pt?.[1]) || 0; }
+        const cx = sx / pts.length, cz = sz / pts.length;
+        for (const cr of crossingsMask) {
+          const kx = Number(cr?.x), kz = Number(cr?.z);
+          if (!Number.isFinite(kx) || !Number.isFinite(kz)) continue;
+          if (Math.abs(cx - kx) <= 12 && Math.abs(cz - kz) <= 12) return true;
+        }
+        for (const lm of landmarksMask) {
+          const lx = Number(lm?.x), lz = Number(lm?.z);
+          if (!Number.isFinite(lx) || !Number.isFinite(lz)) continue;
+          const role = String(lm?.role ?? lm?.kind ?? '');
+          const pad = role.includes('cross') ? 12 : 10;
+          if (Math.abs(cx - lx) <= pad && Math.abs(cz - lz) <= pad) return true;
+        }
+        for (const rs of reservationsMask) {
+          const rx = Number(rs?.x ?? rs?.cx ?? rs?.position?.[0]);
+          const rz = Number(rs?.z ?? rs?.cz ?? rs?.position?.[2]);
+          if (!Number.isFinite(rx) || !Number.isFinite(rz)) continue;
+          const role = String(rs?.role ?? '');
+          const pad = (role === 'core' || role === 'station' || role === 'interchange') ? 14 : (role === 'viewpoint' ? 12 : 8);
+          if (Math.abs(cx - rx) <= pad && Math.abs(cz - rz) <= pad) return true;
+        }
+        return false;
+      };
       let placed = 0, skippedConflict = 0;
       // Prioritize parcels with better road access so budget favors reachable built-up areas.
       const orderedParcels = parcels.map((p, idx) => {
@@ -429,6 +469,11 @@ export function makeStage4() {
           }
         }
         if (!footprint) {
+          if (!conflictParcel.has(p)) { conflictParcel.add(p); skippedConflict++; }
+          return false;
+        }
+        // Crossing/landmark/reservation masks as real downstream constraints (transport-compatible, deterministic degradation).
+        if (footprintNearReservedMask(footprint)) {
           if (!conflictParcel.has(p)) { conflictParcel.add(p); skippedConflict++; }
           return false;
         }
@@ -613,6 +658,7 @@ export function makeStage4() {
               break;
             }
             if (!footprint) continue;
+            if (footprintNearReservedMask(footprint)) continue;
             const kind = kinds[0] || 'generic';
             const arch = ARCHETYPES[kind] || null;
             const maxFloors = Math.max(1, Number(profile.buildings?.maxFloors ?? (arch ? arch.floors[1] : 2)));
