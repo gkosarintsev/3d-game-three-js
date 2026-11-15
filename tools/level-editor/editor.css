@@ -8,6 +8,7 @@
 .editor-tool-group { display: flex; gap: 4px; }
 .editor-tool.active { border-color: var(--editor-accent); color: #dffcff; box-shadow: 0 0 0 1px rgba(111,242,255,.35) inset; }
 .editor-snap-input { width: 54px; }
+.editor-fillet-input { width: 64px; }
 .editor-mid { flex: 1; min-height: 0; display: flex; }
 .editor-left, .editor-right {
   width: 280px; min-width: 230px; border-right: 1px solid var(--border); background: var(--panel);
@@ -17,7 +18,7 @@
 .editor-canvas-wrap { flex: 1; min-width: 0; position: relative; background: var(--bg); }
 .editor-canvas { width: 100%; height: 100%; display: block; outline: none; cursor: crosshair; }
 .editor-canvas.tool-select, .editor-canvas.tool-move { cursor: default; }
-.editor-canvas.tool-add-node, .editor-canvas.tool-add-segment, .editor-canvas.tool-add-arc { cursor: cell; }
+.editor-canvas.tool-add-node, .editor-canvas.tool-add-segment, .editor-canvas.tool-add-arc, .editor-canvas.tool-fillet-joint { cursor: cell; }
 .editor-canvas.tool-delete { cursor: not-allowed; }
 .editor-tree-body { font-size: 12px; max-height: 46vh; overflow: auto; }
 .editor-tree-row {

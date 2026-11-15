@@ -1,8 +1,8 @@
 /**
  * СГЕНЕРИРОВАННО — руками не править.
  *
- * Источник правки: src/levels/level-19.json. После его изменения запуск
- * `node tools/build-level.mjs src/levels/level-19.json` перезаписывает этот файл и все
+ * Источник правки: src\levels\level-19.json. После его изменения запуск
+ * `node tools/build-level.mjs src\levels\level-19.json` перезаписывает этот файл и все
  * бинарные файлы каталога побайтово одинаково (ГПСЧ в разрезке нет, ключи и
  * объекты отсортированы).
  *
@@ -65,8 +65,8 @@ export const LEVEL_19 = {
         "id": "0_0",
         "objects": {
           "buildings": 1,
-          "props": 60,
-          "roads": 3
+          "props": 112,
+          "roads": 6
         },
         "rect": {
           "maxX": -640,
@@ -79,9 +79,9 @@ export const LEVEL_19 = {
         "file": "chunk-0-1.l14b",
         "id": "0_1",
         "objects": {
-          "buildings": 2,
-          "props": 56,
-          "roads": 4
+          "buildings": 1,
+          "props": 96,
+          "roads": 8
         },
         "rect": {
           "maxX": -640,
@@ -94,7 +94,9 @@ export const LEVEL_19 = {
         "file": "chunk-0-2.l14b",
         "id": "0_2",
         "objects": {
-          "buildings": 5
+          "buildings": 1,
+          "props": 50,
+          "roads": 4
         },
         "rect": {
           "maxX": -640,
@@ -107,7 +109,7 @@ export const LEVEL_19 = {
         "file": "chunk-0-3.l14b",
         "id": "0_3",
         "objects": {
-          "buildings": 3
+          "buildings": 1
         },
         "rect": {
           "maxX": -640,
@@ -120,8 +122,9 @@ export const LEVEL_19 = {
         "file": "chunk-1-0.l14b",
         "id": "1_0",
         "objects": {
-          "buildings": 2,
-          "roads": 1
+          "buildings": 3,
+          "props": 14,
+          "roads": 3
         },
         "rect": {
           "maxX": 0,
@@ -134,9 +137,8 @@ export const LEVEL_19 = {
         "file": "chunk-1-1.l14b",
         "id": "1_1",
         "objects": {
-          "buildings": 3,
-          "props": 808,
-          "roads": 40
+          "props": 816,
+          "roads": 41
         },
         "rect": {
           "maxX": 0,
@@ -149,7 +151,7 @@ export const LEVEL_19 = {
         "file": "chunk-1-2.l14b",
         "id": "1_2",
         "objects": {
-          "buildings": 2,
+          "buildings": 3,
           "props": 468,
           "roads": 37
         },
@@ -164,7 +166,6 @@ export const LEVEL_19 = {
         "file": "chunk-1-3.l14b",
         "id": "1_3",
         "objects": {
-          "buildings": 2,
           "roads": 2
         },
         "rect": {
@@ -192,6 +193,7 @@ export const LEVEL_19 = {
         "file": "chunk-2-1.l14b",
         "id": "2_1",
         "objects": {
+          "buildings": 1,
           "props": 542,
           "roads": 36
         },
@@ -206,7 +208,6 @@ export const LEVEL_19 = {
         "file": "chunk-2-2.l14b",
         "id": "2_2",
         "objects": {
-          "buildings": 1,
           "props": 808,
           "roads": 44
         },
@@ -235,7 +236,7 @@ export const LEVEL_19 = {
         "file": "chunk-3-0.l14b",
         "id": "3_0",
         "objects": {
-          "buildings": 3
+          "buildings": 4
         },
         "rect": {
           "maxX": 1280,
@@ -248,7 +249,7 @@ export const LEVEL_19 = {
         "file": "chunk-3-1.l14b",
         "id": "3_1",
         "objects": {
-          "buildings": 1,
+          "buildings": 3,
           "roads": 1
         },
         "rect": {
@@ -262,7 +263,7 @@ export const LEVEL_19 = {
         "file": "chunk-3-2.l14b",
         "id": "3_2",
         "objects": {
-          "buildings": 1,
+          "buildings": 2,
           "roads": 1
         },
         "rect": {
@@ -276,7 +277,7 @@ export const LEVEL_19 = {
         "file": "chunk-3-3.l14b",
         "id": "3_3",
         "objects": {
-          "buildings": 3
+          "buildings": 1
         },
         "rect": {
           "maxX": 1280,
@@ -529,6 +530,74 @@ export const LEVEL_19 = {
           ],
           "shoulder": 1,
           "width": 10
+        },
+        {
+          "blend": 5,
+          "crossLevel": true,
+          "id": "arc_96",
+          "points": [
+            {
+              "x": -986.501,
+              "y": 0,
+              "z": -1000.322
+            },
+            {
+              "x": -986.01,
+              "y": 0.04,
+              "z": -997.722
+            },
+            {
+              "x": -985.984,
+              "y": 0.08,
+              "z": -995.077
+            },
+            {
+              "x": -986.423,
+              "y": 0.119,
+              "z": -992.468
+            },
+            {
+              "x": -987.313,
+              "y": 0.159,
+              "z": -989.977
+            }
+          ],
+          "shoulder": 1,
+          "width": 20
+        },
+        {
+          "blend": 5,
+          "crossLevel": true,
+          "id": "arc_97",
+          "points": [
+            {
+              "x": -896.471,
+              "y": 0.226,
+              "z": -345.088
+            },
+            {
+              "x": -895.561,
+              "y": 0.17,
+              "z": -342.714
+            },
+            {
+              "x": -894.262,
+              "y": 0.113,
+              "z": -340.527
+            },
+            {
+              "x": -892.614,
+              "y": 0.056,
+              "z": -338.592
+            },
+            {
+              "x": -890.662,
+              "y": 0,
+              "z": -336.962
+            }
+          ],
+          "shoulder": 1,
+          "width": 20
         }
       ]
     },

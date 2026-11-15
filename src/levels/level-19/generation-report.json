@@ -85,8 +85,8 @@
       "severity": "warn",
       "code": "road_graph_disconnected",
       "stage": "2_transport",
-      "message": "road graph has 7 connected components",
-      "components": 7
+      "message": "road graph has 14 connected components",
+      "components": 14
     },
     {
       "severity": "warn",
@@ -94,7 +94,7 @@
       "stage": "6_finalize_emit",
       "message": "spawn is far from generated road network",
       "anchor": "spawn",
-      "distance": 434.52
+      "distance": 179.21
     },
     {
       "severity": "warn",
@@ -117,8 +117,8 @@
       "severity": "warn",
       "code": "road_graph_disconnected_final",
       "stage": "6_finalize_emit",
-      "message": "road graph has 7 connected components at finalize",
-      "components": 7
+      "message": "road graph has 14 connected components at finalize",
+      "components": 14
     },
     {
       "severity": "warn",
@@ -153,9 +153,9 @@
       "code": "road_graph",
       "stage": "2_transport",
       "message": "road graph summary",
-      "nodes": 89,
-      "segments": 87,
-      "components": 7
+      "nodes": 106,
+      "segments": 97,
+      "components": 14
     },
     {
       "severity": "info",
@@ -168,8 +168,8 @@
       "code": "transport_passthrough",
       "stage": "2_transport",
       "message": "stage 2 using provided road network (procedural generation pending)",
-      "nodes": 89,
-      "segments": 87
+      "nodes": 106,
+      "segments": 97
     },
     {
       "severity": "info",
@@ -200,9 +200,9 @@
       "code": "buildings_generated",
       "stage": "4_buildings_structures",
       "message": "generated buildings from parcels",
-      "count": 27,
+      "count": 24,
       "budget": 420,
-      "skippedConflict": 5
+      "skippedConflict": 11
     },
     {
       "severity": "info",
@@ -239,10 +239,10 @@
         "grid": 4,
         "total": 16
       },
-      "roadNodes": 107,
-      "roadSegments": 123,
-      "roadComponents": 7,
-      "roadGraphNodes": 107,
+      "roadNodes": 124,
+      "roadSegments": 133,
+      "roadComponents": 14,
+      "roadGraphNodes": 124,
       "districts": 1,
       "districtTypes": [
         "forest"
@@ -250,23 +250,23 @@
       "parcels": 441,
       "reservedParcels": 2,
       "parcelAccess": {
-        "near": 71,
-        "mid": 90,
-        "far": 280
+        "near": 79,
+        "mid": 107,
+        "far": 255
       },
       "roadAccessByType": {},
-      "buildings": 27,
+      "buildings": 24,
       "buildingsByDistrictType": {
-        "forest": 27
+        "forest": 24
       },
       "lights": 0,
       "props": 0,
       "chunkLoad": {
-        "nonEmptyChunks": 13,
-        "maxBuildings": 3,
+        "nonEmptyChunks": 12,
+        "maxBuildings": 4,
         "maxProps": 0,
         "maxLights": 0,
-        "avgBuildings": 1.69,
+        "avgBuildings": 1.5,
         "avgProps": 0
       }
     },

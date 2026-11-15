@@ -311,6 +311,219 @@ export function moveElementEnd(draft, sel, x, z) {
 }
 function isNumT(v) { return typeof v === 'number' && Number.isFinite(v); }
 
+function findNearEndpointId(draft, a, b, tol = 1.5) {
+  const aPts = a.path?.length >= 2 ? [a.path[0], a.path[a.path.length - 1]] : null;
+  const bPts = b.path?.length >= 2 ? [b.path[0], b.path[b.path.length - 1]] : null;
+  const nodePt = (id) => {
+    const p = findNode(draft, id)?.position;
+    return Array.isArray(p) ? p : [0, 0, 0];
+  };
+  const pa = aPts ?? [nodePt(a.from), nodePt(a.to)];
+  const pb = bPts ?? [nodePt(b.from), nodePt(b.to)];
+  let best = null;
+  for (let i = 0; i < 2; i++) {
+    const ap = pa[i]; const aNodeId = i === 0 ? a.from : a.to;
+    for (let j = 0; j < 2; j++) {
+      const bp = pb[j]; const bNodeId = j === 0 ? b.from : b.to;
+      const dy = (ap[1] - bp[1]) * 2; // y весим строже: разные ярусы не склеиваем
+      const d = Math.hypot(ap[0] - bp[0], dy, ap[2] - bp[2]);
+      if (d <= tol && (!best || d < best.d)) best = { aIndex: i, bIndex: j, aNodeId: String(aNodeId), bNodeId: String(bNodeId), d };
+    }
+  }
+  return best;
+}
+function isStraightPath(path) {
+  if (!Array.isArray(path) || path.length < 2) return false;
+  for (let i = 2; i < path.length; i++) {
+    const a = path[0], b = path[1], p = path[i];
+    const cross = (b[0] - a[0]) * (p[2] - b[2]) - (b[2] - a[2]) * (p[0] - b[0]);
+    if (Math.abs(cross) > 1e-6) return false;
+  }
+  return true;
+}
+function plateEnd(d, which) { // which: 'start' | 'end'
+  const len = Math.max(0.1, d.length || 1);
+  const yaw = (isNumT(d.yaw) ? d.yaw : 0) * Math.PI / 180;
+  const ux = Math.cos(yaw), uz = Math.sin(yaw);
+  const s = which === 'start' ? -0.5 : 0.5;
+  const y = r3((d.y ?? 0) + (which === 'start' ? 0 : (d.rise ?? 0)));
+  return { x: r3(d.x + ux * len * s), z: r3(d.z + uz * len * s), y };
+}
+function reverseSegment(seg) {
+  if (!seg) return false;
+  for (const el of seg.elements || []) if (!el.plate) return false;
+  const oldFrom = seg.from;
+  const oldTo = seg.to;
+  seg.from = oldTo;
+  seg.to = oldFrom;
+  seg.path = [...(seg.path || [])].reverse();
+  seg.elements = [...(seg.elements || [])].reverse().map(el => {
+    const d = el.plate;
+    const yaw = r3(wrapDeg180((d.yaw ?? 0) + 180));
+    const width0 = d.widthEnd, width1 = d.width;
+    const cross0 = d.crossEnd, cross1 = d.crossStart;
+    const out = {
+      plate: {
+        ...d,
+        yaw,
+        y: r3((d.y ?? 0) + (d.rise ?? 0)),
+        rise: r3(-(d.rise ?? 0)),
+      },
+    };
+    if (width0 !== undefined) {
+      out.plate.width = width0;
+      out.plate.widthEnd = width1;
+      out.plate.crossStart = r3(-(cross0 ?? 0));
+      out.plate.crossEnd = r3(-(cross1 ?? 0));
+    }
+    return out;
+  });
+  return true;
+}
+function wrapDeg180(a) { let x = Number(a) || 0; while (x > 180) x -= 360; while (x < -180) x += 360; return x; }
+function sweepAngle(a0, a1, sign) {
+  let d = a1 - a0;
+  if (sign >= 0) { while (d <= 0) d += 360; while (d > 360) d -= 360; }
+  else { while (d >= 0) d -= 360; while (d < -360) d += 360; }
+  return d;
+}
+const MIN_PLATE_KEEP = 0.5;
+export function syncSegmentToElements(draft, seg) {
+  const els = seg?.elements ?? [];
+  if (!els.length) return false;
+  const first = els[0], last = els[els.length - 1];
+  const start = first.plate ? elementEndpoints(first.plate)[0] : first.arc ? arcEndpoints(first.arc)[0] : null;
+  const end = last.plate ? elementEndpoints(last.plate)[1] : last.arc ? arcEndpoints(last.arc)[1] : null;
+  if (!start || !end) return false;
+  seg.path = [[r3(start.x), r3(start.y), r3(start.z)], [r3(end.x), r3(end.y), r3(end.z)]];
+  const nodes = ensureRoads(draft).nodes;
+  for (const [key, p] of [['from', start], ['to', end]]) {
+    const n = nodes.find(n => String(n.id) === String(seg[key]));
+    if (n) n.position = [r3(p.x), r3(p.y), r3(p.z)];
+  }
+  return true;
+}
+
+export function filletJoint(draft, firstId, secondId, radius = 15) {
+  const roads = ensureRoads(draft);
+  const first = findSegment(draft, firstId), second = findSegment(draft, secondId);
+  if (!first || !second) return { ok: false, message: 'оба сегмента должны существовать' };
+  if (String(first.id) === String(second.id)) return { ok: false, message: 'выбран один и тот же сегмент дважды' };
+  // path/nodes могли разойтись с геометрией элементов: сначала чинить выбранные дороги
+  syncSegmentToElements(draft, first);
+  syncSegmentToElements(draft, second);
+  const a = first, b = second;
+  let shared = [String(a.from), String(a.to)].find(id => id === String(b.from) || id === String(b.to));
+  if (!shared) {
+    // если конечные точки совпали по координатам, но это разные узлы — склеиваем их в один
+    const near = findNearEndpointId(draft, a, b, 1.5);
+    if (near) {
+      const keepId = near.aNodeId, dropId = near.bNodeId;
+      if (dropId !== keepId) {
+        if (String(b.from) === dropId) b.from = keepId;
+        if (String(b.to) === dropId) b.to = keepId;
+        const stillUsed = roads.segments.some(s => s !== b && (String(s.from) === dropId || String(s.to) === dropId));
+        if (!stillUsed) {
+          const ni = roads.nodes.findIndex(n => String(n.id) === dropId);
+          if (ni >= 0) roads.nodes.splice(ni, 1);
+        }
+        shared = keepId;
+      }
+    }
+  }
+  if (!shared) return { ok: false, message: 'у выбранных дорог нет общего узла стыка' };
+  // Ориентируем первую дорогу «в узел», вторую — «из узла».
+  if (String(a.to) !== String(shared)) {
+    if (String(a.from) !== String(shared)) return { ok: false, message: 'первый сегмент не касается общего узла' };
+    if (!reverseSegment(a)) return { ok: false, message: 'первый сегмент нельзя развернуть: скругление работает только с plate-дорогами' };
+  }
+  if (String(b.from) !== String(shared)) {
+    if (String(b.to) !== String(shared)) return { ok: false, message: 'второй сегмент не касается общего узла' };
+    if (!reverseSegment(b)) return { ok: false, message: 'второй сегмент нельзя развернуть: скругление работает только с plate-дорогами' };
+  }
+  if (!isStraightPath(a.path) || !isStraightPath(b.path)) {
+    return { ok: false, message: 'скругление умеет работать только с прямой path-дорогой' };
+  }
+  if ((a.elements || []).some(el => !el.plate) || (b.elements || []).some(el => !el.plate)) {
+    return { ok: false, message: 'пока поддерживаются только plate-элементы на стыке' };
+  }
+  const aPath = a.path, bPath = b.path;
+  const aStart = aPath[0], aEnd = aPath[aPath.length - 1], bStart = bPath[0], bEnd = bPath[bPath.length - 1];
+  const lenA = lenXZ(aStart[0], aStart[2], aEnd[0], aEnd[2]);
+  const lenB = lenXZ(bStart[0], bStart[2], bEnd[0], bEnd[2]);
+  if (lenA < 1e-6 || lenB < 1e-6) return { ok: false, message: 'один из сегментов вырожден' };
+  const ux = (aEnd[0] - aStart[0]) / lenA, uz = (aEnd[2] - aStart[2]) / lenA;
+  const vx = (bEnd[0] - bStart[0]) / lenB, vz = (bEnd[2] - bStart[2]) / lenB;
+  const cross = ux * vz - uz * vx, dot = ux * vx + uz * vz;
+  const turn = Math.atan2(cross, dot), absTurn = Math.abs(turn);
+  if (absTurn < 0.01 || Math.abs(absTurn - Math.PI) < 0.01) {
+    return { ok: false, message: 'угол стыка почти прямой или почти 180° — скругление не строится' };
+  }
+  const requested = Math.max(2, Number(radius) || 15);
+  const tanHalf = Math.tan(absTurn / 2);
+  // длина от вершины до точки касания вдоль каждого плеча
+  const maxRadius = Math.min(lenA, lenB) / tanHalf - 0.1;
+  if (!Number.isFinite(maxRadius) || maxRadius < 2) {
+    return { ok: false, message: `недостаточно места на прямых для радиуса ${requested} м` };
+  }
+  const usedR = Math.min(requested, maxRadius);
+  const clamped = usedR < requested - 1e-6;
+  const t = usedR * tanHalf;
+  const yA0 = aStart[1], yA1 = aEnd[1], yB0 = bStart[1], yB1 = bEnd[1];
+  const yT1 = r3(yA1 - ((yA1 - yA0) / lenA) * t), yT2 = r3(yB0 + ((yB1 - yB0) / lenB) * t);
+  const T1 = { x: r3(aEnd[0] - ux * t), y: yT1, z: r3(aEnd[2] - uz * t) };
+  const T2 = { x: r3(bStart[0] + vx * t), y: yT2, z: r3(bStart[2] + vz * t) };
+  const sgn = cross >= 0 ? 1 : -1;
+  const nx = -uz * sgn, nz = ux * sgn;
+  const cx = r3(T1.x + nx * usedR), cz = r3(T1.z + nz * usedR);
+  const angleOf = (x, z) => Math.atan2(z - cz, x - cx) * 180 / Math.PI;
+  const from = angleOf(T1.x, T1.z), to = angleOf(T2.x, T2.z);
+  const sweep = sweepAngle(from, to, sgn);
+  // новые узлы
+  const t1Id = createNodeId(draft, T1.x, T1.z), t2Id = createNodeId(draft, T2.x, T2.z);
+  roads.nodes.push({ id: t1Id, position: [r3(T1.x), r3(T1.y), r3(T1.z)], layer: 'ground' });
+  roads.nodes.push({ id: t2Id, position: [r3(T2.x), r3(T2.y), r3(T2.z)], layer: 'ground' });
+  // подрезаем первую дорогу до T1
+  a.path = [[r3(aStart[0]), r3(aStart[1]), r3(aStart[2])], [r3(T1.x), r3(T1.y), r3(T1.z)]];
+  a.to = t1Id;
+  const lastA = [...(a.elements || [])].reverse().find(el => el.plate);
+  const idxA = a.elements.indexOf(lastA);
+  const oldA = a.elements[idxA].plate;
+  const yawA = r3(oldA.yaw ?? 0);
+  a.elements[idxA] = { plate: { ...oldA, x: r3((aStart[0] + T1.x) / 2), z: r3((aStart[2] + T1.z) / 2), yaw: yawA, length: r3(lenXZ(aStart[0], aStart[2], T1.x, T1.z)), y: r3(aStart[1]), rise: r3(yT1 - aStart[1]) } };
+  // подрезаем вторую дорогу от T2
+  b.path = [[r3(T2.x), r3(T2.y), r3(T2.z)], [r3(bEnd[0]), r3(bEnd[1]), r3(bEnd[2])]];
+  b.from = t2Id;
+  const firstB = (b.elements || []).find(el => el.plate);
+  const idxB = b.elements.indexOf(firstB);
+  const oldB = b.elements[idxB].plate;
+  const yawB = r3(oldB.yaw ?? 0);
+  b.elements[idxB] = { plate: { ...oldB, x: r3((T2.x + bEnd[0]) / 2), z: r3((T2.z + bEnd[2]) / 2), yaw: yawB, length: r3(lenXZ(T2.x, T2.z, bEnd[0], bEnd[2])), y: r3(yT2), rise: r3(bEnd[1] - yT2) } };
+  // удаляем старый общий узел, если он больше никому не нужен
+  const oldShared = String(shared);
+  const used = roads.segments.some(s => String(s.from) === oldShared || String(s.to) === oldShared);
+  if (!used) {
+    const i = roads.nodes.findIndex(n => String(n.id) === oldShared);
+    if (i >= 0) roads.nodes.splice(i, 1);
+  }
+  const widthA = Number(oldA.width) || 20, widthB = Number(oldB.width) || 20;
+  const width = r3(Math.min(widthA, widthB));
+  const rails = !!oldA.rails || !!oldB.rails;
+  const arcId = createSegmentId(draft, 'arc_');
+  const arcSeg = {
+    id: arcId,
+    from: t1Id,
+    to: t2Id,
+    type: 'ramp',
+    layer: a.layer ?? b.layer ?? 'ground',
+    path: [[r3(T1.x), r3(T1.y), r3(T1.z)], [r3(T2.x), r3(T2.y), r3(T2.z)]],
+    elements: [{ arc: { cx, cz, radius: r3(usedR), from: r3(from), to: r3(from + sweep), width, y: [r3(yT1), r3(yT2)], bank: 0, rails } }],
+    lanes: [],
+  };
+  roads.segments.push(arcSeg);
+  return { ok: true, message: `стык скруглён (R = ${r3(usedR)} м${clamped ? `, ограничено ${r3(usedR)} м` : ''})`, selectedId: arcId };
+}
+
 export function validateDraft(draft) {
   const issues = [];
   const roads = ensureRoads(draft);

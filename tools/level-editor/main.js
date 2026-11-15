@@ -6,7 +6,7 @@ import { EditorUI } from './editor-ui.js';
 import {
   deepClone, ensureRoads, readNetwork, findNode, findSegment, findElement, nodePos,
   addSegment, deleteSelected, moveSelection, moveElementEnd, validateDraft, r3, lenXZ, yawFrom,
-  duplicateSegment, createNodeId, MIN_SEGMENT_LENGTH,
+  duplicateSegment, createNodeId, MIN_SEGMENT_LENGTH, filletJoint, syncSegmentToElements,
 } from './source-model.js';
 
 const appEl = document.getElementById('app');
@@ -21,6 +21,8 @@ let state = {
   snap: 5,
   selected: null,
   pendingPoint: null,
+  filletFirst: null,
+  filletRadius: 15,
   autoBuild: false,
 };
 let rawSource = null;
@@ -37,8 +39,10 @@ let raf = 0;
 window.__levelEditor = {
   get state() { return state; },
   get viewManager() { return viewManager; },
+  get preview() { return preview; },
   get draft() { return draft; },
   screenToWorld(x, y) { return viewManager?.screenToWorld(x, y) ?? null; },
+  findPick(x, y) { return findPick(x, y); },
 };
 
 function parseUrl() {
@@ -175,6 +179,8 @@ function applyElementInputsToDraft(targetDraft, inputs, segmentId, elementIndex,
     const d = el.arc;
     d.cx = num(inputs.cx.value); d.cz = num(inputs.cz.value); d.radius = Math.max(2, num(inputs.radius.value)); d.width = Math.max(2, num(inputs.width.value)); d.from = num(inputs.from.value); d.to = num(inputs.to.value); d.y = [num(inputs.y0.value), num(inputs.y1.value)]; d.bank = num(inputs.bank.value); d.rails = !!inputs.rails.checked;
   }
+  const seg = findSegment(targetDraft, segmentId);
+  if (seg) syncSegmentToElements(targetDraft, seg);
   return true;
 }
 function applyEndpointInputsToDraft(targetDraft, inputs, segmentId, elementIndex, kind) {
@@ -182,6 +188,8 @@ function applyEndpointInputsToDraft(targetDraft, inputs, segmentId, elementIndex
   const ax = num(inputs.ax.value), az = num(inputs.az.value), ay = num(inputs.ay.value), bx = num(inputs.bx.value), bz = num(inputs.bz.value), by = num(inputs.by.value);
   const d = el.plate;
   d.x = r3((ax + bx) / 2); d.z = r3((az + bz) / 2); d.yaw = yawFrom(ax, az, bx, bz); d.length = Math.max(0.1, lenXZ(ax, az, bx, bz)); d.y = r3(ay); d.rise = r3(by - ay);
+  const seg = findSegment(targetDraft, segmentId);
+  if (seg) syncSegmentToElements(targetDraft, seg);
   return true;
 }
 function liveEditEndpointInput(inputs, key, segmentId, elementIndex, kind) {
@@ -257,6 +265,24 @@ function findPick(clientX, clientY) {
   const hits = ray.intersectObjects(preview.pickables, false);
   return hits[0]?.object?.userData?.entityRef || null;
 }
+function findPickCandidates(clientX, clientY) {
+  if (!viewManager) return [];
+  const rect = ui.canvas.getBoundingClientRect();
+  const ndc = new THREE.Vector2(((clientX - rect.left) / rect.width) * 2 - 1, -((clientY - rect.top) / rect.height) * 2 + 1);
+  const ray = new THREE.Raycaster();
+  ray.setFromCamera(ndc, viewManager.camera);
+  const hits = ray.intersectObjects(preview.pickables, false);
+  const bySegment = new Map();
+  for (const hit of hits) {
+    const ref = hit.object?.userData?.entityRef;
+    if (!ref) continue;
+    if (ref.kind !== 'element' && ref.kind !== 'element-end') continue;
+    const segmentId = ref.segmentId;
+    if (!segmentId || bySegment.has(segmentId)) continue;
+    bySegment.set(segmentId, { kind: 'element', segmentId, elementIndex: ref.elementIndex ?? 0, distance: hit.distance });
+  }
+  return [...bySegment.values()].sort((a, b) => a.distance - b.distance);
+}
 function deleteWithConfirm(sel) {
   if (!sel) return false;
   if (sel.kind === 'node') {
@@ -312,6 +338,40 @@ function handleCanvasPointerDown(e) {
     setStatus(`Сегмент ${seg.id} создан (${preset})`);
     return;
   }
+  if (state.tool === 'fillet-joint') {
+    const candidates = findPickCandidates(e.clientX, e.clientY);
+    if (!candidates.length) { setStatus('Кликните по дороге (прямым plate-сегментам)'); return; }
+    let hit = candidates[0];
+    if (state.filletFirst) {
+      const other = candidates.find(c => c.segmentId !== state.filletFirst);
+      if (other) hit = other; // берём нижележащую/соседнюю дорогу, а не ту, что сверху перекрывает первую
+    }
+    const segId = hit.segmentId;
+    if (!state.filletFirst) {
+      state.filletFirst = segId;
+      setStatus(`Первая дорога: ${segId} — кликните вторую`);
+      return;
+    }
+    const snapshot = cloneDraft();
+    const res = filletJoint(draft, state.filletFirst, segId, state.filletRadius);
+    if (!res.ok) {
+      draft = snapshot;
+      ui.addBanner(res.message || 'Не удалось скруглить стык', 'warn');
+      state.filletFirst = null;
+      commitDraft();
+      return;
+    }
+    undoStack.push(JSON.stringify(snapshot));
+    if (undoStack.length > 100) undoStack.shift();
+    redoStack = [];
+    state.filletFirst = null;
+    state.selected = res.selectedId ? { kind: 'segment', segmentId: res.selectedId } : null;
+    ui.setDirty(true, undoStack.length);
+    commitDraft();
+    ui.addBanner(res.message, 'info');
+    setStatus(res.message);
+    return;
+  }
   if (state.tool === 'delete') {
     const hit = findPick(e.clientX, e.clientY);
     if (hit) { deleteWithConfirm(hit); setStatus('Удалено'); }
@@ -350,7 +410,12 @@ function handlePointerMove(e) {
   dragState.raw = { dx: rawDx, dz: rawDz };
   if (Math.hypot(rawDx, rawDz) < 0.01 && dragState.sel.kind !== 'element-end') return;
   draft = deepClone(dragState.snapshot);
-  if (dragState.sel.kind === 'element-end') moveElementEnd(draft, dragState.sel, world.x, world.z);
+  if (dragState.sel.kind === 'element-end') {
+    if (moveElementEnd(draft, dragState.sel, world.x, world.z)) {
+      const s = findSegment(draft, dragState.sel.segmentId);
+      if (s) syncSegmentToElements(draft, s);
+    }
+  }
   else moveSelection(draft, dragState.sel, rawDx, rawDz);
   preview.rebuild(draft, state.selected);
   ui.setTree(draft, state.selected);
@@ -362,7 +427,10 @@ function handlePointerUp() {
   draft = deepClone(dragState.snapshot);
   if (dragState.sel.kind === 'element-end') {
     const p = dragState.lastWorld || dragState.start;
-    moveElementEnd(draft, dragState.sel, state.snap > 0 ? snapCoord(p.x) : r3(p.x), state.snap > 0 ? snapCoord(p.z) : r3(p.z));
+    if (moveElementEnd(draft, dragState.sel, state.snap > 0 ? snapCoord(p.x) : r3(p.x), state.snap > 0 ? snapCoord(p.z) : r3(p.z))) {
+      const s = findSegment(draft, dragState.sel.segmentId);
+      if (s) syncSegmentToElements(draft, s);
+    }
   } else {
     const raw = dragState.raw || { dx: 0, dz: 0 };
     moveSelection(draft, dragState.sel, snapCoord(raw.dx), snapCoord(raw.dz));
@@ -386,8 +454,9 @@ function handleUiChange(ev) {
   if (ev.type === 'level') { state.level = ev.value; state.pendingPoint = null; loadLevel(state.level); }
   else if (ev.type === 'view') { state.view = ev.value; viewManager?.setView(ev.value); ui.setViewButtons(state.view); markDirty(); }
   else if (ev.type === 'grid') { state.grid = !!ev.value; preview.setGridVisible(state.grid); markDirty(); }
-  else if (ev.type === 'tool') { state.tool = ev.value; ui.setTool(state.tool); ui.canvas.className = `viz-canvas editor-canvas tool-${state.tool}`; state.pendingPoint = null; setStatus(`Инструмент: ${state.tool}`); }
+  else if (ev.type === 'tool') { state.tool = ev.value; ui.setTool(state.tool); ui.canvas.className = `viz-canvas editor-canvas tool-${state.tool}`; state.pendingPoint = null; state.filletFirst = null; setStatus(`Инструмент: ${state.tool}`); }
   else if (ev.type === 'preset') { state.preset = ev.value; }
+  else if (ev.type === 'filletRadius') { state.filletRadius = Math.max(2, Number(ev.value) || 15); }
   else if (ev.type === 'autoBuild') { state.autoBuild = !!ev.value; setStatus(`Auto build+check after Save: ${state.autoBuild ? 'вкл' : 'выкл'}`); }
   else if (ev.type === 'snap') { state.snap = Number(ev.value) || 0; }
   else if (ev.type === 'select') { state.selected = ev.value; commitDraft(); }

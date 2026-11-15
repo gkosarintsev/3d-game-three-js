@@ -31,13 +31,14 @@ export class EditorUI {
     this.levelSelect = document.createElement('select'); this.levelSelect.addEventListener('change', () => this.onChange({ type: 'level', value: Number(this.levelSelect.value) }));
     this.toolButtons = {};
     const tools = el('div', 'editor-tool-group');
-    for (const [id, label] of [['select', 'Выбор'], ['move', 'Двигать'], ['add-node', '+ Узел'], ['add-segment', '+ Сегмент'], ['add-arc', '+ Дуга'], ['delete', 'Удалить']]) {
+    for (const [id, label] of [['select', 'Выбор'], ['move', 'Двигать'], ['add-node', '+ Узел'], ['add-segment', '+ Сегмент'], ['add-arc', '+ Дуга'], ['fillet-joint', 'Скруглить стык'], ['delete', 'Удалить']]) {
       const b = el('button', 'viz-btn editor-tool', label); b.dataset.tool = id; b.addEventListener('click', () => this.onChange({ type: 'tool', value: id })); this.toolButtons[id] = b; tools.append(b);
     }
     this.preset = document.createElement('select');
     for (const [v, label] of [['ground', 'Земля · ширина 20'], ['bridge', 'Мост · y 14'], ['ramp', 'Подъём · rise +10'], ['taper', 'Расширение → 30/+5'], ['arc-left', 'Левый съезд (arc)'], ['arc-right', 'Правый съезд (arc)']]) { const o = document.createElement('option'); o.value = v; o.textContent = label; this.preset.append(o); }
     this.preset.addEventListener('change', () => this.onChange({ type: 'preset', value: this.preset.value }));
     this.snapInput = document.createElement('input'); this.snapInput.type = 'number'; this.snapInput.min = '0'; this.snapInput.step = '1'; this.snapInput.value = '5'; this.snapInput.title = 'snap, м (0 — выкл.)'; this.snapInput.addEventListener('input', () => this.onChange({ type: 'snap', value: Number(this.snapInput.value) }));
+    this.filletInput = document.createElement('input'); this.filletInput.type = 'number'; this.filletInput.min = '1'; this.filletInput.step = '1'; this.filletInput.value = '15'; this.filletInput.className = 'editor-fillet-input'; this.filletInput.title = 'радиус скругления стыка, м'; this.filletInput.addEventListener('input', () => this.onChange({ type: 'filletRadius', value: Number(this.filletInput.value) }));
     const grid = el('label', 'viz-inline'); this.gridCheck = document.createElement('input'); this.gridCheck.type = 'checkbox'; this.gridCheck.checked = true; this.gridCheck.addEventListener('change', () => this.onChange({ type: 'grid', value: this.gridCheck.checked })); grid.append(this.gridCheck, ' grid');
     const views = el('div', 'viz-view-btns'); this.viewBtns = {};
     for (const [id, label] of [['top', '1 top'], ['free', '4 free'], ['front', '2 front'], ['side', '3 side']]) { const b = el('button', 'viz-btn', label); b.addEventListener('click', () => this.onChange({ type: 'view', value: id })); this.viewBtns[id] = b; views.append(b); }
@@ -49,7 +50,7 @@ export class EditorUI {
     this.copyBtn = addBtn('Copy JSON', 'Копировать черновик JSON в буфер обмена', { type: 'copyJson' });
     this.downloadBtn = addBtn('Download JSON', 'Скачать черновик level-NN.json', { type: 'download' });
     this.revertBtn = addBtn('Revert', 'Откатить все несохранённые изменения к src/levels/level-NN.json', { type: 'revert' });
-    this.toolbar.append(el('span', 'viz-tool-label', 'Level'), this.levelSelect, tools, el('span', 'viz-tool-label', 'Preset'), this.preset, el('span', 'viz-tool-label', 'snap'), this.snapInput, grid, views, this.undoBtn, this.redoBtn, this.validateBtn, autoWrap, this.saveBtn, this.rebuildBtn, this.downloadBtn, this.copyBtn, this.revertBtn);
+    this.toolbar.append(el('span', 'viz-tool-label', 'Level'), this.levelSelect, tools, el('span', 'viz-tool-label', 'Preset'), this.preset, el('span', 'viz-tool-label', 'snap'), this.snapInput, el('span', 'viz-tool-label', 'R'), this.filletInput, grid, views, this.undoBtn, this.redoBtn, this.validateBtn, autoWrap, this.saveBtn, this.rebuildBtn, this.downloadBtn, this.copyBtn, this.revertBtn);
   }
 
   buildLeft() {
