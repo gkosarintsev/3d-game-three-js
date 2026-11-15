@@ -22,6 +22,119 @@ function pathPoints(seg) {
   return pts.length >= 2 ? pts : null;
 }
 
+function normAngleRad(a) {
+  let x = a;
+  while (x <= -Math.PI) x += Math.PI * 2;
+  while (x > Math.PI) x -= Math.PI * 2;
+  return x;
+}
+
+function approachBearingAtNode(seg, nodeId) {
+  const pts = pathPoints(seg);
+  if (!pts || pts.length < 2) return null;
+  let fromNode = false;
+  if (seg.from === nodeId) fromNode = true;
+  else if (seg.to === nodeId) fromNode = false;
+  else return null;
+  // bearing pointing away from junction along the segment direction at junction end
+  const a = fromNode ? pts[0] : pts[pts.length - 1];
+  const b = fromNode ? pts[1] : pts[pts.length - 2];
+  if (!a || !b) return null;
+  const dx = Number(b[0]) - Number(a[0]);
+  const dz = Number(b[2]) - Number(a[2]);
+  if (!Number.isFinite(dx) || !Number.isFinite(dz) || (Math.abs(dx) < 1e-9 && Math.abs(dz) < 1e-9)) return null;
+  return Math.atan2(dz, dx);
+}
+
+function classifyMovement(deltaRad) {
+  // delta from incoming direction to outgoing direction in junction-local turn sense
+  const d = Math.abs(normAngleRad(deltaRad));
+  const deg = d * 180 / Math.PI;
+  if (deg >= 150) return 'straight';
+  if (deg <= 30) return 'uturn';
+  // In standard math coords (atan2(z,x)), positive delta is left turn in XZ? use sign of normalized delta
+  const s = normAngleRad(deltaRad);
+  return s > 0 ? 'left' : 'right';
+}
+
+function pickDefaultLane(seg) {
+  const lanes = Array.isArray(seg?.lanes) ? seg.lanes : [];
+  if (lanes.length === 1 && lanes[0]?.id) return lanes[0].id;
+  // prefer forward vehicle lane
+  const f = lanes.find(l => l && l.direction === 'forward' && l.id);
+  if (f) return f.id;
+  if (lanes[0]?.id) return lanes[0].id;
+  return null;
+}
+
+function junctionTypeForNode(nodeId, incidentSegs) {
+  const types = new Set(incidentSegs.map(s => s.type).filter(Boolean));
+  // heuristic R2.5-ish (simplified): roundabout segments => roundabout, highway/arterial crossings => signalized
+  const hasRoundabout = incidentSegs.some(s => String(s.id || '').includes('round') || String(s.interchange || '').includes('roundabout'));
+  if (hasRoundabout) return 'roundabout';
+  if (types.has('highway') || (types.has('arterial') && incidentSegs.length >= 4)) return 'signalized';
+  if (types.has('arterial') || types.has('collector')) return 'uncontrolled';
+  return 'uncontrolled';
+}
+
+function deriveRoadJunctions(nodes, segments) {
+  const nodeById = new Map((nodes ?? []).map(n => [n.id, n]));
+  const inc = new Map();
+  for (const s of segments ?? []) {
+    if (!s?.id || !s.from || !s.to) continue;
+    const laneId = pickDefaultLane(s);
+    if (!laneId) continue; // cannot form valid lane-level connections
+    for (const end of ['from', 'to']) {
+      const nid = end === 'from' ? s.from : s.to;
+      if (!nodeById.has(nid)) continue;
+      const bearing = approachBearingAtNode(s, nid); // away from node
+      if (!Number.isFinite(bearing)) continue;
+      if (!inc.has(nid)) inc.set(nid, []);
+      inc.get(nid).push({ segment: s.id, lane: laneId, end, bearing, seg: s });
+    }
+  }
+  const out = [];
+  for (const [nid, arr] of [...inc.entries()].sort((a,b)=>String(a[0]).localeCompare(String(b[0])))) {
+    // dedupe by segment+end
+    const uniq = [];
+    const seen = new Set();
+    for (const e of arr.sort((a,b)=>String(a.segment).localeCompare(String(b.segment)) || a.end.localeCompare(b.end))) {
+      const k = `${e.segment}|${e.end}`;
+      if (seen.has(k)) continue;
+      seen.add(k); uniq.push(e);
+    }
+    if (uniq.length < 3) continue; // junction in R2.5 sense
+    const connections = [];
+    // for each incoming movement (entering junction) allow to all other outgoing except same segment-end
+    for (const fromE of uniq) {
+      for (const toE of uniq) {
+        if (fromE.segment === toE.segment && fromE.end === toE.end) continue;
+        // avoid trivial U-turn back into same segment unless no alternative? keep simple: allow across different approaches
+        if (fromE.segment === toE.segment) continue;
+        // incoming travel direction toward node is opposite of bearing-away; outgoing is bearing-away of toE
+        const inDir = normAngleRad(fromE.bearing + Math.PI);
+        const outDir = normAngleRad(toE.bearing);
+        const movement = classifyMovement(outDir - inDir);
+        connections.push({
+          from: { segment: fromE.segment, lane: fromE.lane, end: fromE.end },
+          to: { segment: toE.segment, lane: toE.lane, end: toE.end },
+          movement,
+        });
+      }
+    }
+    if (connections.length < 1) continue;
+    // deterministic order
+    connections.sort((a,b)=>(a.from.segment+a.from.end+a.to.segment+a.to.end+a.movement).localeCompare(b.from.segment+b.from.end+b.to.segment+b.to.end+b.movement));
+    out.push({
+      id: `j_${nid}`,
+      type: junctionTypeForNode(nid, uniq.map(u => u.seg)),
+      connections,
+    });
+  }
+  out.sort((a,b)=>String(a.id).localeCompare(String(b.id)));
+  return out;
+}
+
 function segSlopeWarn(seg, maxSlope) {
   const pts = pathPoints(seg);
   if (!pts) return [];
@@ -2692,6 +2805,16 @@ export function makeStage2() {
       }
       ctx.networks.roads.nodes = nodes;
       ctx.networks.roads.segments = segments;
+      // R2.5 (partial, additive): derive basic junction records + lane connections when not authored.
+      // Best-effort: degree>=3 nodes, movements inferred from approach bearings in XZ.
+      if (!Array.isArray(ctx.networks.roads.junctions) || ctx.networks.roads.junctions.length === 0) {
+        try {
+          const derived = deriveRoadJunctions(nodes, segments);
+          if (derived.length) ctx.networks.roads.junctions = derived;
+        } catch (e) {
+          ctx.report.diagnostics.push(warn('transport_junction_derive_failed', stageId, `junction derivation failed: ${String(e?.message ?? e)}`));
+        }
+      }
       ctx.networks.roads.junctions = uniqById(ctx.networks.roads.junctions, 'junction', ctx, stageId);
       // Spatial index for road easement AABBs (TASK-002): deterministic, additive for stage queries.
       ctx.spatial = ctx.spatial || {};

@@ -94,6 +94,7 @@
 - 2026-11-15, R0.4/R1.5 (инкремент): `tools/citygen-etalon-check.mjs` добавлен в CI; stage 3/4 учитывают river/lake buffer metadata при резервировании участков и размещении зданий (без изменения derived-артефактов пилотов 16–19), scoped-гейты зелёные.
 - 2026-11-15, R0.4 (инкремент): `tools/citygen-etalon-check.mjs` поддерживает `--update`/`--generatorVersion` для контролируемого обновления эталонов/базовых снимков при намеренном изменении поведения (bump/regression workflow).
 - 2026-11-15, R1.3 (инкремент): stage 3 резервирует парсели, пересекающие terrain reservations (flat earmarked sites/landmarks), как non-generic; пересобраны derived каталоги/отчёты пилотов L16–L19 и обновлены baseline/etalon snapshots (`--update`), scoped-гейты зелёные.
+- 2026-11-15, R2.5 (инкремент, partial): `stage-2-transport` выводит базовые road junctions + `connections` (lane-level, движения по геометрии подходов) при пустом наборе junctions; IR/engine содержат junctions, пересобраны derived-артефакты пилотов, `build-level --check`/`check-levels`/`node --test`/`citygen-etalon-check` зелёные.
 
 ## Открытые вопросы / риски
 - GAP-01/06/07/08/11 из `docs/level_generation_rules_claude.md` §14 (см. план, раздел 2).
