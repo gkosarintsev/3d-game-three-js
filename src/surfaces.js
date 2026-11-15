@@ -426,6 +426,7 @@ export class SurfaceField extends SolidField {
           this.deckPlates.push({ ...d, road: road.id, roadType: road.type });
           continue;
         }
+        if (d.taper) { this._taperDeck(d, road); continue; }
         const frame = this._deckFrame(d);
         // знак разницы — направление подъёма: спуск с пролёта тоже наклонный.
         // Порог общий с нормализатором (`J.rampEps`): подъём меньше него лист
@@ -439,6 +440,81 @@ export class SurfaceField extends SolidField {
       // насыпь: грунт под настилом — и опора быть не может, и идти сквозь него нельзя
       for (const f of road.fill) this._box(f, f.bottomY, f.topY, 'earth', { collide: true });
       for (const a of road.aprons) this._apron(a);
+    }
+  }
+
+  /**
+   * Трапециевидный настил (плавное расширение/сужение) — один четырёхугольник в
+   * плане: ширина и поперечный сдвиг центра линейно меняются от начала к концу.
+   * Геометрия (картинка) — один трапециевидный меш и по одному непрерывному перилу
+   * на каждой внешней стороне; твёрдость/опора/навигация набираются внутренними
+   * сегментами без отдельной геометрии, чтобы не превращать расширение в видимые
+   * полоски.
+   */
+  _taperDeck(d, road) {
+    const L = d.length, W0 = d.width0 ?? d.width, W1 = d.width1 ?? d.width;
+    const C0 = d.cross0 ?? 0, C1 = d.cross1 ?? d.cross0 ?? 0;
+    const rad = (d.yaw ?? 0) * DEG;
+    const frame = this._deckFrame(d) ?? (d.yaw ? frameAt(d.cx ?? d.x ?? 0, d.cz ?? d.z ?? 0, d.yaw) : null);
+    const ax = Math.cos(rad), az = Math.sin(rad);
+    const cxv = -Math.sin(rad), czv = Math.cos(rad);
+    const px = d.cx ?? d.x ?? 0, pz = d.cz ?? d.z ?? 0;
+    const rise = (d.topAtMax ?? d.topY) - (d.topAtMin ?? d.topY);
+    const N = Math.max(4, Math.ceil(L / 2)); // внутренние сегменты для коллизий/опоры (без геометрии)
+    const prevMute = this._muteGeo;
+    for (let i = 0; i < N; i++) {
+      const t0 = i / N, t1 = (i + 1) / N, tm = (t0 + t1) / 2;
+      const uMid = (tm - 0.5) * L;
+      const w = W0 + (W1 - W0) * tm;
+      const cross = C0 + (C1 - C0) * tm;
+      const cxw = r3(px + ax * uMid + cxv * cross);
+      const czw = r3(pz + az * uMid + czv * cross);
+      const y0 = r3((d.topAtMin ?? d.topY) + rise * t0);
+      const y1 = r3((d.topAtMin ?? d.topY) + rise * t1);
+      const plan = { minX: cxw - (L / N) / 2, maxX: cxw + (L / N) / 2, minZ: czw - w / 2, maxZ: czw + w / 2 };
+      // план в локальных осях сегмента: сегмент выровнен по оси полотна (тот же yaw)
+      const sPlan = { minX: (px + (tm - 0.5) * L) - (L / N) / 2, maxX: (px + (tm - 0.5) * L) + (L / N) / 2, minZ: pz + cross - w / 2, maxZ: pz + cross + w / 2 };
+      this._muteGeo = true;
+      if (Math.abs(y1 - y0) > J.rampEps) {
+        // упрощённо: наклонный taper разбиваем на призмы по сегментам (редкий случай)
+        const lo = sPlan.minX, hi = sPlan.maxX, v0 = sPlan.minZ, v1 = sPlan.maxZ;
+        const k = (y1 - y0) / (hi - lo || 1), c = y0 - k * lo, t = J.deckThickness;
+        const wdg = makePrism('x', v0, v1, [[lo, k * lo + c], [hi, k * hi + c], [hi, k * hi + c - t], [lo, k * lo + c - t]], frame);
+        this.prisms.push(wdg);
+      } else {
+        this._box(sPlan, d.bottomY, d.topY, 'decks', { surface: true, frame });
+      }
+    }
+    this._muteGeo = prevMute;
+    // единая геометрия полотна (четырёхугольник) и два непрерывных перила по краям
+    this._addGeo('decks', { kind: 'taper', d, px, pz, L, W0, W1, C0, C1, ax, az, cxv, czv, frame });
+    if (d.rails) this._taperRails(d, px, pz, L, W0, W1, C0, C1, ax, az, cxv, czv, frame);
+    this.deckPlates.push({ ...d, road: road.id, roadType: road.type });
+  }
+
+  _taperRails(d, px, pz, L, W0, W1, C0, C1, ax, az, cxv, czv, frame) {
+    // Два непрерывных перила по внешним (левому/правому) краям трапеции.
+    // Геометрия — единая лента на сторону; твёрдость/проходимость — клинья вдоль края.
+    const t = J.railThickness, h = J.railHeight, sink = J.railSink;
+    const topY = d.topY ?? d.topAtMin;
+    const N = Math.max(8, Math.ceil(L / 2));
+    for (const side of [-1, 1]) {
+      // геометрия перил (непрерывная лента на сторону) — заявка для рендера
+      this._addGeo('rails', { kind: 'taperRail', px, pz, L, W0, W1, C0, C1, ax, az, cxv, czv, side, t, h, sink, topY, N });
+      // твёрдость/проходимость: клинья вдоль края
+      for (let i = 0; i < N; i++) {
+        const fm = (i + 0.5) / N;
+        const u = (fm - 0.5) * L;
+        const w = W0 + (W1 - W0) * fm;
+        const cross = C0 + (C1 - C0) * fm;
+        const vEdge = cross + side * w / 2;
+        const segL = L / N;
+        const uMid = px + u;
+        const plan = { minX: uMid - segL / 2, maxX: uMid + segL / 2, minZ: pz + vEdge - t / 2, maxZ: pz + vEdge + t / 2 };
+        const wdg = makePrism('x', plan.minZ, plan.maxZ, [[plan.minX, topY - sink], [plan.maxX, topY - sink], [plan.maxX, topY - sink + h], [plan.minX, topY - sink + h]], frame);
+        this.railWedges.push(wdg);
+        this.rails.push({ kind: 'wedge', w: wdg });
+      }
     }
   }
 
@@ -1264,6 +1340,22 @@ export class SurfaceField extends SolidField {
           y: d.y0 + (d.y1 - d.y0) * t,
           z: d.cz + Math.sin(ang) * d.R,
         });
+      }
+      return pts;
+    }
+    if (d.taper) {
+      const frame = this._deckFrame(d) ?? (d.yaw ? frameAt(d.cx ?? 0, d.cz ?? 0, d.yaw) : null);
+      const L = d.length;
+      const C0 = d.cross0 ?? 0, C1 = d.cross1 ?? C0;
+      const rise = Math.abs(d.topAtMax - d.topAtMin);
+      const perNode = rise > 0.01 ? Math.min(step, this.stepUp * 0.8 * L / rise) : step;
+      const count = Math.max(1, Math.ceil(L / perNode));
+      for (let k = 0; k <= count; k++) {
+        const t = k / count;
+        const u = (t - 0.5) * L;
+        const cross = C0 + (C1 - C0) * t;
+        const p = frame ? rotatePoint(frame, u, cross) : { x: (d.cx ?? 0) + u, z: (d.cz ?? 0) + cross };
+        pts.push({ x: p.x, y: d.topAtMin + (d.topAtMax - d.topAtMin) * t, z: p.z });
       }
       return pts;
     }

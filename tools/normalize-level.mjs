@@ -1359,38 +1359,45 @@ function normalizeRoadElements(road) {
       pushDeck(pl);
       continue;
     }
-    // Трапециевидная пластина: режем вдоль оси на прямые сегменты с линейной
-    // интерполяцией ширины/центра/верха. Шаг ограничивает и длину сегмента, и
-    // изменение ширины/поперечного смещения, чтобы кромка оставалась гладкой без
-    // избыточной сегментации (каждый сегмент — отдельный дек/перила/навигация в рантайме).
-    const stepL = Math.max(0.05, J.taperStep ?? 1);
-    const stepW = Math.max(0.01, J.taperWidthStep ?? 0.25);
-    const stepC = Math.max(0.01, J.taperCrossStep ?? 0.25);
-    const N = Math.max(4, Math.ceil(pl.length / stepL), Math.ceil(Math.abs(W1 - W0) / stepW), Math.ceil(Math.abs(C1 - C0) / stepC));
+    // Трапециевидная пластина (плавное расширение/сужение) — один четырёхугольник
+    // в плане с линейной шириной и поперечным смещением центра вдоль оси. Ранее
+    // раскладывалась в ряд узких прямых сегментов (визуальные «полоски»); теперь
+    // остаётся единым деком, а рендер/коллизии/перила обрабатывают его как трапецию.
+    const halfL = pl.length / 2;
     const rad = (pl.yaw ?? 0) * DEG;
-    const ax = Math.cos(rad), az = Math.sin(rad); // ось вперёд (u)
-    const cx = -Math.sin(rad), cz = Math.cos(rad); // поперёк (+v, local cross)
-    const L = pl.length;
-    const rise = pl.rise ?? 0;
-    for (let i = 0; i < N; i++) {
-      const t0 = i / N, t1 = (i + 1) / N;       // 0..1 от начала к концу
-      const tm = (t0 + t1) / 2;
-      const uMid = (tm - 0.5) * L;               // смещение вдоль оси от центра
-      const w = W0 + (W1 - W0) * tm;
-      const cross = C0 + (C1 - C0) * tm;
-      const y0 = r3(pl.y + rise * t0);
-      const y1 = r3(pl.y + rise * t1);
-      pushDeck({
-        x: r3(pl.x + ax * uMid + cx * cross),
-        z: r3(pl.z + az * uMid + cz * cross),
-        yaw: pl.yaw ?? 0,
-        length: r3(L / N),
-        width: r3(w),
-        y: y0,
-        rise: r3(y1 - y0),
-        rails: !!pl.rails,
-      });
-    }
+    const frame = frameAt(pl.x, pl.z, pl.yaw ?? 0);
+    const local = {
+      minX: pl.x - halfL, maxX: pl.x + halfL, minZ: pl.z - (W0 / 2) - Math.abs(C0), maxZ: pl.z + (W0 / 2) + Math.abs(C0),
+    };
+    // габарит трапеции в осях пластины: концы на ±L/2, поперёк — min/max (center+edge) по обоим концам
+    const vMin0 = C0 - W0 / 2, vMax0 = C0 + W0 / 2;
+    const vMin1 = C1 - W1 / 2, vMax1 = C1 + W1 / 2;
+    const tLocal = { minX: pl.x - halfL, maxX: pl.x + halfL, minZ: pl.z + Math.min(vMin0, vMin1), maxZ: pl.z + Math.max(vMax0, vMax1) };
+    const topLo = r3(pl.y), topHi = r3(pl.y + (pl.rise ?? 0));
+    const top = Math.min(topLo, topHi);
+    const world = frame ? obbOf(tLocal, frame) : tLocal;
+    decks.push({
+      ...rectOut(world),
+      ...(world.obb ? {
+        obb: {
+          cx: r3(world.obb.cx), cz: r3(world.obb.cz),
+          hx: r3(world.obb.hx), hz: r3(world.obb.hz), c: world.obb.c, s: world.obb.s,
+        },
+      } : {}),
+      ...(frame ? { cx: r3(frame.cx), cz: r3(frame.cz), yaw: pl.yaw } : { cx: r3(pl.x), cz: r3(pl.z) }),
+      length: r3(pl.length),
+      width: r3(Math.max(W0, W1)),
+      width0: r3(W0), width1: r3(W1),
+      cross0: r3(C0), cross1: r3(C1),
+      taper: true,
+      axis: 'x',
+      topY: top,
+      bottomY: r3(top - J.deckThickness),
+      topAtMin: topLo,
+      topAtMax: topHi,
+      ramp: Math.abs(topHi - topLo) > J.rampEps,
+      rails: !!pl.rails,
+    });
   }
   const width = road.width ?? Math.max(...decks.map(d => d.width || 0), 0);
   return {
@@ -1775,15 +1782,24 @@ function bridgePillars(road, ground, obstacles, warnings, water) {
     const landAt = landY(ground, (d.minX + d.maxX) / 2, (d.minZ + d.maxZ) / 2);
     if (!plate && (d.ramp || d.bottomY - landAt <= 1.0)) continue;
     // у повёрнутой пластины опоры стоят в её осях: ряд идёт вдоль полотна, а не
-    // вдоль мировой оси, иначе колонны выстроились бы поперёк косой эстакады
+    // вдоль мировой оси, иначе колонны выстроились бы поперёк косой эстакады.
+    // У трапециевидной (taper) пластины ширина и центр сечения меняются вдоль оси.
     const frame = deckFrame(d);
     const from = frame ? d.cx - d.length / 2 : (d.axis === 'x' ? d.minX : d.minZ);
     const to = frame ? d.cx + d.length / 2 : (d.axis === 'x' ? d.maxX : d.maxZ);
-    const cross = frame ? d.cz : (d.axis === 'x' ? (d.minZ + d.maxZ) / 2 : (d.minX + d.maxX) / 2);
-    const halfW = frame ? d.width / 2 : (d.axis === 'x' ? d.maxZ - d.minZ : d.maxX - d.minX) / 2;
-    const inset = halfW - J.pillarSection / 2 - J.pillarEdge;
-    const offs = inset >= J.pillarSection ? [-inset, inset] : [0];
+    const crossBase = frame ? d.cz : (d.axis === 'x' ? (d.minZ + d.maxZ) / 2 : (d.minX + d.maxX) / 2);
     for (let t = from + J.pillarSpacing / 2; t < to - 0.01; t += J.pillarSpacing) {
+      const frac = d.taper ? (t - (d.cx - d.length / 2)) / (d.length || 1) : 0;
+      const halfW = d.taper
+        ? ((d.width0 ?? d.width) + ((d.width1 ?? d.width) - (d.width0 ?? d.width)) * frac) / 2
+        : (frame ? d.width / 2 : (d.axis === 'x' ? d.maxZ - d.minZ : d.maxX - d.minX) / 2);
+      // у taper поперечный сдвиг (cross0/cross1) отсчитывается от оси полотна (d.cz),
+      // а не от центра габарита (bbox асимметричен при сдвиге)
+      const cross = d.taper
+        ? d.cz + (d.cross0 ?? 0) + ((d.cross1 ?? d.cross0 ?? 0) - (d.cross0 ?? 0)) * frac
+        : crossBase;
+      const inset = halfW - J.pillarSection / 2 - J.pillarEdge;
+      const offs = inset >= J.pillarSection ? [-inset, inset] : [0];
       for (const o of offs) {
         const p = frame
           ? rotatePoint(frame, t, cross + o)
@@ -1886,17 +1902,25 @@ function roadLamps(road, obstacles, warnings, water, face) {
     const frame = deckFrame(d);
     const from = frame ? d.cx - d.length / 2 : (d.axis === 'x' ? d.minX : d.minZ);
     const to = frame ? d.cx + d.length / 2 : (d.axis === 'x' ? d.maxX : d.maxZ);
+    const crossBase = frame ? d.cz : (d.axis === 'x' ? (d.minZ + d.maxZ) / 2 : (d.minX + d.maxX) / 2);
     for (let t = from + J.lampSpacing / 2; t < to - 0.01; t += J.lampSpacing) {
+      const frac = d.taper ? (t - (d.cx - d.length / 2)) / (d.length || 1) : 0;
+      const halfW = d.taper
+        ? ((d.width0 ?? d.width) + ((d.width1 ?? d.width) - (d.width0 ?? d.width)) * frac) / 2
+        : (frame ? d.width / 2 : (d.axis === 'x' ? d.maxZ - d.minZ : d.maxX - d.minX) / 2);
+      const cross = d.taper
+        ? d.cz + (d.cross0 ?? 0) + ((d.cross1 ?? d.cross0 ?? 0) - (d.cross0 ?? 0)) * frac
+        : crossBase;
       // фонари стоят по бортам полотна: у косой улицы борта тоже косые, поэтому
       // смещение берётся в её осях и поворачивается вместе с настилом
       const sides = frame
         ? [
-          rotatePoint(frame, t, d.cz - d.width / 2 - J.lampOffset),
-          rotatePoint(frame, t, d.cz + d.width / 2 + J.lampOffset),
+          rotatePoint(frame, t, cross - halfW - J.lampOffset),
+          rotatePoint(frame, t, cross + halfW + J.lampOffset),
         ]
         : d.axis === 'x'
-          ? [{ x: t, z: d.minZ - J.lampOffset }, { x: t, z: d.maxZ + J.lampOffset }]
-          : [{ x: d.minX - J.lampOffset, z: t }, { x: d.maxX + J.lampOffset, z: t }];
+          ? [{ x: t, z: cross - halfW - J.lampOffset }, { x: t, z: cross + halfW + J.lampOffset }]
+          : [{ x: cross - halfW - J.lampOffset, z: t }, { x: cross + halfW + J.lampOffset, z: t }];
       for (const p of sides) {
         const hit = obstacles.find(o => o.kind === 'building' && obbHitsRect(o.rect, pointRect(p), 0.05));
         if (hit) {
@@ -1910,11 +1934,12 @@ function roadLamps(road, obstacles, warnings, water, face) {
           warnings.push(`${road.id}: фонарь в ${r3(p.x)}, ${r3(p.z)} встал в русло — пропущен`);
           continue;
         }
-        out.push(makeProp(`lamp_${road.id}_${r3(p.x)}_${r3(p.z)}`, 'lamp_post', p.x, d.topY, p.z,
+        const axisPt = frame ? rotatePoint(frame, t, cross)
+          : d.axis === 'x' ? { x: t, z: cross } : { x: cross, z: t };
+        const topY = d.taper ? deckTopAt(d, p.x, p.z) : d.topY;
+        out.push(makeProp(`lamp_${road.id}_${r3(p.x)}_${r3(p.z)}`, 'lamp_post', p.x, topY, p.z,
           { x: 1, y: 1, z: 1 }, 'road_lamp',
-          faceRoad(frame ? rotatePoint(frame, t, d.cz)
-            : d.axis === 'x' ? { x: t, z: (d.minZ + d.maxZ) / 2 } : { x: (d.minX + d.maxX) / 2, z: t },
-            p, frame ? -d.yaw : 0)));
+          faceRoad(axisPt, p, frame ? -d.yaw : 0)));
       }
     }
   }
@@ -2513,8 +2538,8 @@ const deckFrame = d => (d.yaw ? frameAt(d.cx, d.cz, d.yaw) : null);
 
 /**
  * Точка в плане настила: у повёрнутой пластины — по её осям, а не по габариту.
- * Габарит здесь ошибся бы в углу, где асфальта нет: предмет, поставленный по
- * нему, висел бы над землёй, а точка B в «настиле» не имела бы опоры.
+ * У трапециевидной (taper) пластины ширина и поперечный сдвиг центра линейно
+ * меняются вдоль оси, поэтому принадлежность проверяется по сечению в точке.
  */
 function deckHolds(d, x, z) {
   if (d.arc) {
@@ -2527,8 +2552,14 @@ function deckHolds(d, x, z) {
   const frame = deckFrame(d);
   if (!frame) return inRect(x, z, d);
   const l = unrotatePoint(frame, x, z);
-  return Math.abs(l.x - d.cx) <= d.length / 2 + 1e-9
-    && Math.abs(l.z - d.cz) <= d.width / 2 + 1e-9;
+  if (Math.abs(l.x - d.cx) > d.length / 2 + 1e-9) return false;
+  if (d.taper) {
+    const t = (l.x - (d.cx - d.length / 2)) / (d.length || 1);
+    const w = (d.width0 ?? d.width) + ((d.width1 ?? d.width) - (d.width0 ?? d.width)) * t;
+    const cross = (d.cross0 ?? 0) + ((d.cross1 ?? d.cross0 ?? 0) - (d.cross0 ?? 0)) * t;
+    return Math.abs(l.z - d.cz - cross) <= w / 2 + 1e-9;
+  }
+  return Math.abs(l.z - d.cz) <= d.width / 2 + 1e-9;
 }
 
 /** Верх настила над мировой точкой: у наклонной пластины — её плоскость. */
@@ -2633,15 +2664,21 @@ function authoredCars(cars, support) {
  * снаружи. У дуги поперёк — это радиус, у пластины — её собственная координата
  * `v`: габарит дуги (`arcBounds`) для этого не годится, в его углу асфальта нет,
  * и корпус, выставленный по габариту, висел бы над водой там, где схема видела бы
- * «настил».
+ * «настил». У трапециевидной пластины ширина и центр сечения меняются вдоль оси.
  */
 function deckSideMargin(d, x, z) {
   if (d.arc) return d.halfW - Math.abs(Math.hypot(x - d.cx, z - d.cz) - d.R);
   const frame = deckFrame(d);
   if (!frame) return d.width / 2 - Math.abs(z - (d.minZ + d.maxZ) / 2);
-  return d.width / 2 - Math.abs(unrotatePoint(frame, x, z).z - d.cz);
+  const l = unrotatePoint(frame, x, z);
+  if (d.taper) {
+    const t = (l.x - (d.cx - d.length / 2)) / (d.length || 1);
+    const w = (d.width0 ?? d.width) + ((d.width1 ?? d.width) - (d.width0 ?? d.width)) * t;
+    const cross = (d.cross0 ?? 0) + ((d.cross1 ?? d.cross0 ?? 0) - (d.cross0 ?? 0)) * t;
+    return w / 2 - Math.abs(l.z - d.cz - cross);
+  }
+  return d.width / 2 - Math.abs(l.z - d.cz);
 }
-
 /**
  * Проверка точек стоянок: корпус обязан целиком остаться на том настиле, что его
  * держит, и не встать в русло. Идёт по нормализованным декам, а не по планам

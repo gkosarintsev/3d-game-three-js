@@ -180,7 +180,13 @@ export class JsonMap extends SurfaceField {
     // и это твёрдость полотна, а не картинка
     if (d.kind === 'arc') { this._sweepMesh(d.s); return; }
     if (this._muteGeo) return;
-    const g = d.kind === 'box' ? this._boxGeo(d.plan, d.y0, d.g1, d.frame) : this._prismGeo(d.w);
+    let g;
+    if (d.kind === 'box') g = this._boxGeo(d.plan, d.y0, d.g1, d.frame);
+    else if (d.kind === 'prism') g = this._prismGeo(d.w);
+    else if (d.kind === 'taper') g = this._taperGeo(d);
+    else if (d.kind === 'taperRail') g = this._taperRailGeo(d);
+    else g = this._prismGeo(d.w);
+    if (!g) return;
     if (group === 'walls' && d.material) {
       const m = this.geo._wallMats;
       if (!m.has(d.material)) m.set(d.material, []);
@@ -361,6 +367,74 @@ export class JsonMap extends SurfaceField {
     }
     s.hitTris = s.tris.concat(tris);
     if (!this._muteGeo) this.geo.rails.push(this._sweepGeo(tris));
+  }
+
+  /**
+   * Трапециевидный настил (плавное расширение/сужение) — единый четырёхугольный
+   * объём: верх и низ — трапеции в плане (ширина и поперечный сдвиг линейно
+   * меняются вдоль оси), бока и торцы закрывают толщину полотна.
+   */
+  _taperGeo(spec) {
+    const { px, pz, L, W0, W1, C0, C1, ax, az, cxv, czv } = spec;
+    const d = spec.d;
+    const top0 = d.topAtMin ?? d.topY, top1 = d.topAtMax ?? d.topY;
+    const bot0 = top0 - J.deckThickness, bot1 = top1 - J.deckThickness;
+    const P = (u, v, y) => [px + ax * u + cxv * v, y, pz + az * u + czv * v];
+    const u0 = -L / 2, u1 = L / 2;
+    const t00 = P(u0, C0 - W0 / 2, top0), t01 = P(u0, C0 + W0 / 2, top0);
+    const t10 = P(u1, C1 - W1 / 2, top1), t11 = P(u1, C1 + W1 / 2, top1);
+    const b00 = P(u0, C0 - W0 / 2, bot0), b01 = P(u0, C0 + W0 / 2, bot0);
+    const b10 = P(u1, C1 - W1 / 2, bot1), b11 = P(u1, C1 + W1 / 2, bot1);
+    const tris = [];
+    const add = (a, b, c, ref) => {
+      const nv = faceNormal(a, b, c);
+      if (nv[0] * ref[0] + nv[1] * ref[1] + nv[2] * ref[2] < 0) tris.push({ a, b: c, c: b, n: faceNormal(a, c, b) });
+      else tris.push({ a, b, c, n: nv });
+    };
+    const quad = (a, b, c, d2, ref) => { add(a, b, c, ref); add(a, c, d2, ref); };
+    quad(t00, t10, t11, t01, [0, 1, 0]);           // верх
+    quad(b00, b01, b11, b10, [0, -1, 0]);          // низ
+    quad(t00, b00, b10, t10, [-cxv, 0, -czv]);     // левый край
+    quad(t01, t11, b11, b01, [cxv, 0, czv]);       // правый край
+    quad(t00, t01, b01, b00, [-ax, 0, -az]);       // торец начала
+    quad(t10, b10, b11, t11, [ax, 0, az]);         // торец конца
+    return this._sweepGeo(tris);
+  }
+
+  /** Непрерывная лента перила вдоль кромки трапециевидного настила. */
+  _taperRailGeo(spec) {
+    const { px, pz, L, W0, W1, C0, C1, ax, az, cxv, czv, side, t, h, sink, topY, N } = spec;
+    const tris = [];
+    const rings = [];
+    for (let i = 0; i <= N; i++) {
+      const f = i / N;
+      const u = (f - 0.5) * L;
+      const w = W0 + (W1 - W0) * f;
+      const cross = C0 + (C1 - C0) * f;
+      const vEdge = cross + side * w / 2;
+      const c = px + ax * u + cxv * vEdge, zc = pz + az * u + czv * vEdge;
+      const nx = cxv * side, nz = czv * side;
+      const x0 = c - nx * t / 2, z0 = zc - nz * t / 2;
+      const x1 = c + nx * t / 2, z1 = zc + nz * t / 2;
+      const yb = topY - sink, yt = yb + h;
+      rings.push([[x0, yb, z0], [x1, yb, z1], [x1, yt, z1], [x0, yt, z0]]);
+    }
+    const add = (a, b, c2, ref) => {
+      const nv = faceNormal(a, b, c2);
+      if (nv[0] * ref[0] + nv[1] * ref[1] + nv[2] * ref[2] < 0) tris.push({ a, b: c2, c: b, n: faceNormal(a, c2, b) });
+      else tris.push({ a, b, c: c2, n: nv });
+    };
+    const quad = (a, b, c2, d2, ref) => { add(a, b, c2, ref); add(a, c2, d2, ref); };
+    for (let i = 0; i < N; i++) {
+      const p0 = rings[i], p1 = rings[i + 1];
+      quad(p0[0], p1[0], p1[1], p0[1], [0, -1, 0]);
+      quad(p0[1], p1[1], p1[2], p0[2], [cxv * side, 0, czv * side]);
+      quad(p0[2], p1[2], p1[3], p0[3], [0, 1, 0]);
+      quad(p0[3], p1[3], p1[0], p0[0], [-cxv * side, 0, -czv * side]);
+    }
+    const cap = (ring, ref) => quad(ring[0], ring[1], ring[2], ring[3], ref);
+    cap(rings[0], [-ax, 0, -az]); cap(rings[N], [ax, 0, az]);
+    return this._sweepGeo(tris);
   }
 
   /**
@@ -605,6 +679,14 @@ export class JsonMap extends SurfaceField {
       if (d.arc) {
         const a = (d.a0 + d.span / 2) * DEG;
         push(d.cx + Math.cos(a) * d.R, (d.y0 + d.y1) / 2, d.cz + Math.sin(a) * d.R);
+        continue;
+      }
+      // трапециевидный настил: опорная точка на осевой линии в середине длины
+      if (d.taper) {
+        const frame = this._deckFrame(d);
+        const crossMid = ((d.cross0 ?? 0) + (d.cross1 ?? d.cross0 ?? 0)) / 2;
+        const p = frame ? rotatePoint(frame, 0, crossMid) : { x: d.cx ?? 0, z: (d.cz ?? 0) + crossMid };
+        push(p.x, (d.topAtMin + d.topAtMax) / 2, p.z);
         continue;
       }
       if (d.ramp) continue;
