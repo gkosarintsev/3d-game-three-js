@@ -75,7 +75,7 @@ export const LEVEL_17 = {
           "buildings": 70,
           "channels": 1,
           "lights": 2,
-          "props": 64,
+          "props": 73,
           "roads": 38
         },
         "rect": {
@@ -91,7 +91,7 @@ export const LEVEL_17 = {
         "objects": {
           "buildings": 44,
           "lights": 2,
-          "props": 70,
+          "props": 69,
           "roads": 17
         },
         "rect": {
@@ -108,7 +108,7 @@ export const LEVEL_17 = {
           "buildings": 159,
           "channels": 2,
           "lights": 2,
-          "props": 153,
+          "props": 140,
           "roads": 20
         },
         "rect": {
@@ -125,7 +125,7 @@ export const LEVEL_17 = {
           "buildings": 121,
           "channels": 2,
           "lights": 2,
-          "props": 99,
+          "props": 106,
           "roads": 110
         },
         "rect": {

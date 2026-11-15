@@ -74,7 +74,7 @@ export const LEVEL_20 = {
         "objects": {
           "buildings": 96,
           "lights": 2,
-          "props": 60,
+          "props": 57,
           "roads": 24
         },
         "rect": {
@@ -90,7 +90,7 @@ export const LEVEL_20 = {
         "objects": {
           "buildings": 64,
           "lights": 1,
-          "props": 56,
+          "props": 59,
           "roads": 31
         },
         "rect": {
@@ -106,7 +106,7 @@ export const LEVEL_20 = {
         "objects": {
           "buildings": 158,
           "lights": 2,
-          "props": 150,
+          "props": 158,
           "roads": 10
         },
         "rect": {
@@ -122,7 +122,7 @@ export const LEVEL_20 = {
         "objects": {
           "buildings": 86,
           "lights": 3,
-          "props": 94,
+          "props": 86,
           "roads": 99
         },
         "rect": {

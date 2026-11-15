@@ -155,6 +155,7 @@ function generateProps(ctx, stageId, cfg) {
     ...(ctx.input?.cityforge?.landscape?.hydrology?.rivers ?? []),
   ];
   const rivers = riverLike.map(r => ({
+    id: r.id ?? null,
     width: r.width ?? 10,
     path: r.path ?? (Array.isArray(r.points) ? r.points.map(p => [p.x, 0, p.z]) : []),
   }));
@@ -166,6 +167,27 @@ function generateProps(ctx, stageId, cfg) {
     !(ctx.input?.cityforge?.landscape?.hydrology?.rivers?.length) &&
     (cfHydro === hydro || !cfHydro))
     ? ctx.spatial.riverSegments : null;
+  // R1.4/R1.5: stage-1 water buffers/floodplains as downstream constraints for props (avoid water/floodplain zones).
+  const waterBufferById = (() => {
+    const src = Array.isArray(ctx.masks?.terrain?.waterBuffers) ? ctx.masks.terrain.waterBuffers
+      : (Array.isArray(ctx.terrain?.analysis?.waterBuffers) ? ctx.terrain.analysis.waterBuffers : []);
+    const m = new Map();
+    for (const w of src) if (w?.id) m.set(w.id, w);
+    return m;
+  })();
+  const riverClearance = (rvOrSeg) => {
+    const id = rvOrSeg?.id ?? rvOrSeg?.riverId ?? null;
+    const meta = (id && waterBufferById.size) ? waterBufferById.get(id) : null;
+    const width = Number(rvOrSeg?.width) || 10;
+    const buffer = Number.isFinite(Number(rvOrSeg?.buffer)) ? Number(rvOrSeg.buffer)
+      : (Number.isFinite(Number(meta?.buffer)) ? Number(meta.buffer) : NaN);
+    const floodplain = Number.isFinite(Number(rvOrSeg?.floodplain)) ? Number(rvOrSeg.floodplain)
+      : (Number.isFinite(Number(meta?.floodplain)) ? Number(meta.floodplain) : NaN);
+    if (Number.isFinite(buffer) || Number.isFinite(floodplain)) {
+      return Math.max(Number.isFinite(buffer) ? buffer : 0, Number.isFinite(floodplain) ? floodplain : 0, width * 0.5 + 8, 6);
+    }
+    return width * 0.5 + 12.0;
+  };
   const buildings = ctx.buildings ?? [];
   const districts = ctx.districts ?? [];
   const parcels = ctx.parcels ?? [];
@@ -203,19 +225,33 @@ function generateProps(ctx, stageId, cfg) {
 
   const tooCloseToRiver = (x, z) => {
     if (riverIndex) {
-      const pad = 25;
+      const pad = 40;
       const candidates = riverIndex.query({ minX: x - pad, maxX: x + pad, minZ: z - pad, maxZ: z + pad });
       for (const seg of candidates) {
-        const w = (seg.width ?? 10) * 0.5 + 12.0;
+        const w = riverClearance(seg);
         if (pointSegDistXZ(x, z, seg.ax, seg.az, seg.bx, seg.bz) < w) return true;
       }
       return false;
     }
-    return rivers.some(rv => (rv.path || []).some((pt, i, a) => {
-      if (i + 1 >= a.length) return false;
-      const w = (rv.width ?? 10) * 0.5 + 12.0;
-      return pointSegDistXZ(x, z, pt[0], pt[2], a[i + 1][0], a[i + 1][2]) < w;
-    }));
+    return rivers.some(rv => {
+      const path = rv.path || [];
+      const w = riverClearance(rv);
+      for (let i = 0; i + 1 < path.length; i++) {
+        if (pointSegDistXZ(x, z, path[i][0], path[i][2], path[i + 1][0], path[i + 1][2]) < w) return true;
+      }
+      return false;
+    });
+  };
+  const terrainTooSteep = (x, z) => {
+    const y = landHeightAt(x, z);
+    const d = 2.5;
+    const s = Math.max(
+      Math.abs(landHeightAt(x + d, z) - y),
+      Math.abs(landHeightAt(x - d, z) - y),
+      Math.abs(landHeightAt(x, z + d) - y),
+      Math.abs(landHeightAt(x, z - d) - y),
+    ) / d;
+    return s > 0.5; // avoid very steep slopes for props
   };
   const roadEaseIndex = ctx.spatial?.roadEasements ?? null;
   const blocked = (x, z, roadPad = 4.0) => {
@@ -227,6 +263,7 @@ function generateProps(ctx, stageId, cfg) {
       if (maybeElevated && nearElevatedRoad(x, z, roads, baseGroundY)) return true;
     }
     if (tooCloseToRiver(x, z)) return true;
+    if (terrainTooSteep(x, z)) return true;
     if (anchors.some(a => distXZ(x, z, a.x, a.z) < 8)) return true;
     if (buildingIndex) {
       if (buildingIndex.query({ minX: x - 2.0, maxX: x + 2.0, minZ: z - 2.0, maxZ: z + 2.0 }).length) return true;
