@@ -1191,13 +1191,19 @@ function generateTransport(ctx) {
       const a = path[i], b = path[i + 1];
       if (segCrossesRiver(a[0], a[2], b[0], b[2], rivers)) return false;
     }
-    // Conservative pointwise clearance against river corridors/channels to stay compiler-safe.
+    // Conservative pointwise clearance against river corridors/channels/water buffers (stage 1 constraints).
+    // Ground paths must not enter hard buffer; floodplain is a stronger avoidance zone unless near marked crossing.
     for (const pt of path) {
       const near = riverMinDistXZAt(pt[0], pt[2], rivers);
       const rv = near.river;
       if (!rv) continue;
-      const margin = ((rv?.width ?? 10) * 0.5) + 35;
-      if (near.d < margin) return false;
+      const hardMargin = riverConstraintMargin(rv, 'ground');
+      if (near.d < hardMargin) return false;
+      const floodMargin = riverConstraintMargin(rv, 'floodplain');
+      if (floodMargin > hardMargin + 1 && near.d < floodMargin) {
+        // Allow only in vicinity of marked historical crossing (bridge-compatible intent), otherwise avoid floodplain.
+        if (!nearMarkedCrossing(pt[0], pt[2], rv.id, 18)) return false;
+      }
     }
     return true;
   };
@@ -1205,6 +1211,32 @@ function generateTransport(ctx) {
   // Deterministic terrain-following spurs from route endpoints (best-effort, engine-valid).
   const half = (ctx.meta.worldBounds?.size ?? ctx.input?.ground?.size ?? 256) / 2;
   const spurLen = clamp(Math.round(half * 0.15), 50, 96);
+  // R1.4/R1.5: water buffers/floodplains and crossings from stage 1 as downstream transport constraints.
+  const waterBufferInfo = (() => {
+    const src = Array.isArray(ctx.masks?.terrain?.waterBuffers) ? ctx.masks.terrain.waterBuffers
+      : (Array.isArray(ctx.terrain?.analysis?.waterBuffers) ? ctx.terrain.analysis.waterBuffers : []);
+    const byId = new Map();
+    for (const w of src) if (w?.id) byId.set(w.id, w);
+    return byId;
+  })();
+  const riverConstraintMargin = (rv, mode = 'ground') => {
+    const wb = rv?.id ? waterBufferInfo.get(rv.id) : null;
+    const halfW = (Number(rv?.width) || 10) * 0.5;
+    const hard = Number.isFinite(wb?.buffer) ? Number(wb.buffer) : Math.max(20, halfW + 8);
+    const flood = Number.isFinite(wb?.floodplain) ? Number(wb.floodplain) : hard;
+    // ground paths avoid hard buffer (+small safety); planning/floodplain used as stronger avoidance for generation
+    if (mode === 'floodplain') return halfW + flood;
+    return halfW + hard + 2;
+  };
+  const nearMarkedCrossing = (x, z, riverId = null, radius = 28) => {
+    const crossings = Array.isArray(ctx.terrain?.analysis?.crossings) ? ctx.terrain.analysis.crossings : (ctx.masks?.terrain?.crossings ?? []);
+    for (const c of crossings) {
+      if (!c) continue;
+      if (riverId && c.riverId && c.riverId !== riverId) continue;
+      if (Math.hypot(x - (Number(c.x) || 0), z - (Number(c.z) || 0)) <= radius) return true;
+    }
+    return false;
+  };
   const s0 = { x: spawnNode.position[0], z: spawnNode.position[2], y: spawnNode.position[1] };
   const s1 = { x: exitNode.position[0], z: exitNode.position[2], y: exitNode.position[1] };
   const candSpurs = [

@@ -38,7 +38,7 @@
       "id": "4_buildings_structures",
       "status": "ok",
       "diagnostics": 2,
-      "repairs": 9,
+      "repairs": 10,
       "drops": 0
     },
     {
@@ -63,7 +63,7 @@
       "profileId": "office",
       "cells": 1,
       "parcels": 121,
-      "reservedParcels": 4
+      "reservedParcels": 6
     },
     {
       "id": "district_0_1",
@@ -111,7 +111,7 @@
       "profileId": "sports",
       "cells": 1,
       "parcels": 49,
-      "reservedParcels": 2
+      "reservedParcels": 16
     },
     {
       "id": "district_1_3",
@@ -127,7 +127,7 @@
       "profileId": "park",
       "cells": 1,
       "parcels": 49,
-      "reservedParcels": 21
+      "reservedParcels": 17
     },
     {
       "id": "district_2_1",
@@ -135,7 +135,7 @@
       "profileId": "market",
       "cells": 1,
       "parcels": 196,
-      "reservedParcels": 57
+      "reservedParcels": 55
     },
     {
       "id": "district_2_2",
@@ -143,7 +143,7 @@
       "profileId": "luxury",
       "cells": 1,
       "parcels": 121,
-      "reservedParcels": 37
+      "reservedParcels": 46
     },
     {
       "id": "district_2_3",
@@ -151,7 +151,7 @@
       "profileId": "campus",
       "cells": 1,
       "parcels": 49,
-      "reservedParcels": 27
+      "reservedParcels": 21
     },
     {
       "id": "district_3_0",
@@ -159,7 +159,7 @@
       "profileId": "old_town",
       "cells": 1,
       "parcels": 289,
-      "reservedParcels": 15
+      "reservedParcels": 17
     },
     {
       "id": "district_3_1",
@@ -167,7 +167,7 @@
       "profileId": "slums",
       "cells": 1,
       "parcels": 400,
-      "reservedParcels": 37
+      "reservedParcels": 18
     },
     {
       "id": "district_3_2",
@@ -175,7 +175,7 @@
       "profileId": "residential",
       "cells": 1,
       "parcels": 225,
-      "reservedParcels": 0
+      "reservedParcels": 4
     },
     {
       "id": "district_3_3",
@@ -233,8 +233,8 @@
       "severity": "warn",
       "code": "chunk_buildings_heavy",
       "stage": "6_finalize_emit",
-      "message": "high building count in a single chunk (151)",
-      "maxBuildings": 151,
+      "message": "high building count in a single chunk (152)",
+      "maxBuildings": 152,
       "chunk": 640,
       "grid": 2
     },
@@ -242,8 +242,8 @@
       "severity": "warn",
       "code": "chunk_props_heavy",
       "stage": "6_finalize_emit",
-      "message": "high prop count in a single chunk (160)",
-      "maxProps": 160,
+      "message": "high prop count in a single chunk (166)",
+      "maxProps": 166,
       "chunk": 640,
       "grid": 2
     },
@@ -331,8 +331,8 @@
       "code": "road_graph",
       "stage": "2_transport",
       "message": "road graph summary",
-      "nodes": 104,
-      "segments": 131,
+      "nodes": 106,
+      "segments": 133,
       "components": 1
     },
     {
@@ -537,7 +537,7 @@
       "stage": "2_transport",
       "message": "added connected terrain-following branch",
       "id": "tr_gb_43",
-      "from": "tr_n_m1",
+      "from": "tr_n_spawn",
       "to": "tr_gn_44",
       "tag": "p0"
     },
@@ -547,7 +547,7 @@
       "stage": "2_transport",
       "message": "added connected terrain-following branch",
       "id": "tr_gb_44",
-      "from": "tr_n_m1",
+      "from": "tr_n_spawn",
       "to": "tr_gn_45",
       "tag": "p0"
     },
@@ -557,7 +557,7 @@
       "stage": "2_transport",
       "message": "added connected terrain-following branch",
       "id": "tr_gb_45",
-      "from": "tr_n_m1",
+      "from": "tr_n_spawn",
       "to": "tr_gn_46",
       "tag": "p0"
     },
@@ -950,39 +950,13 @@
       "code": "transport_coverage_branch",
       "stage": "2_transport",
       "message": "added coverage branch toward underserved area",
-      "id": "tr_gb_72",
-      "target": {
-        "x": 480,
-        "z": -480
-      },
-      "tag": "c0",
-      "from": "tr_gn_31"
-    },
-    {
-      "severity": "info",
-      "code": "transport_coverage_branch",
-      "stage": "2_transport",
-      "message": "added coverage branch toward underserved area",
-      "id": "tr_gb_73",
-      "target": {
-        "x": 480,
-        "z": -480
-      },
-      "tag": "c0",
-      "from": "tr_gn_49"
-    },
-    {
-      "severity": "info",
-      "code": "transport_coverage_branch",
-      "stage": "2_transport",
-      "message": "added coverage branch toward underserved area",
       "id": "tr_gb_74",
       "target": {
         "x": 480,
         "z": -480
       },
       "tag": "c0",
-      "from": "tr_gn_50"
+      "from": "tr_gn_31"
     },
     {
       "severity": "info",
@@ -1017,7 +991,7 @@
       "message": "added coverage branch toward underserved area",
       "id": "tr_gb_77",
       "target": {
-        "x": 160,
+        "x": 480,
         "z": -480
       },
       "tag": "c0",
@@ -1030,7 +1004,7 @@
       "message": "added coverage branch toward underserved area",
       "id": "tr_gb_78",
       "target": {
-        "x": 160,
+        "x": 480,
         "z": -480
       },
       "tag": "c0",
@@ -1044,7 +1018,7 @@
       "id": "tr_gb_79",
       "target": {
         "x": 160,
-        "z": -480
+        "z": -160
       },
       "tag": "c0",
       "from": "tr_gn_55"
@@ -1057,7 +1031,7 @@
       "id": "tr_gb_80",
       "target": {
         "x": 160,
-        "z": -480
+        "z": -160
       },
       "tag": "c0",
       "from": "tr_gn_56"
@@ -1070,7 +1044,7 @@
       "id": "tr_gb_81",
       "target": {
         "x": 160,
-        "z": -480
+        "z": -160
       },
       "tag": "c0",
       "from": "tr_gn_57"
@@ -1086,7 +1060,7 @@
         "z": -160
       },
       "tag": "c0",
-      "from": "tr_gn_57"
+      "from": "tr_gn_58"
     },
     {
       "severity": "info",
@@ -1096,7 +1070,7 @@
       "id": "tr_gb_83",
       "target": {
         "x": 160,
-        "z": -160
+        "z": -480
       },
       "tag": "c0",
       "from": "tr_gn_59"
@@ -1108,8 +1082,8 @@
       "message": "added coverage branch toward underserved area",
       "id": "tr_gb_84",
       "target": {
-        "x": -160,
-        "z": -160
+        "x": 160,
+        "z": -480
       },
       "tag": "c0",
       "from": "tr_gn_60"
@@ -1121,11 +1095,11 @@
       "message": "added coverage branch toward underserved area",
       "id": "tr_gb_85",
       "target": {
-        "x": -160,
-        "z": -160
+        "x": 160,
+        "z": -480
       },
       "tag": "c0",
-      "from": "tr_gn_60"
+      "from": "tr_gn_61"
     },
     {
       "severity": "info",
@@ -1134,8 +1108,8 @@
       "message": "added coverage branch toward underserved area",
       "id": "tr_gb_86",
       "target": {
-        "x": -160,
-        "z": -160
+        "x": 160,
+        "z": -480
       },
       "tag": "c0",
       "from": "tr_gn_62"
@@ -1147,11 +1121,11 @@
       "message": "added coverage branch toward underserved area",
       "id": "tr_gb_87",
       "target": {
-        "x": -160,
-        "z": -160
+        "x": 160,
+        "z": -480
       },
       "tag": "c0",
-      "from": "tr_gn_62"
+      "from": "tr_gn_63"
     },
     {
       "severity": "info",
@@ -1159,6 +1133,32 @@
       "stage": "2_transport",
       "message": "added coverage branch toward underserved area",
       "id": "tr_gb_88",
+      "target": {
+        "x": 480,
+        "z": -160
+      },
+      "tag": "c0",
+      "from": "tr_gn_55"
+    },
+    {
+      "severity": "info",
+      "code": "transport_coverage_branch",
+      "stage": "2_transport",
+      "message": "added coverage branch toward underserved area",
+      "id": "tr_gb_89",
+      "target": {
+        "x": 480,
+        "z": -160
+      },
+      "tag": "c0",
+      "from": "tr_gn_65"
+    },
+    {
+      "severity": "info",
+      "code": "transport_coverage_branch",
+      "stage": "2_transport",
+      "message": "added coverage branch toward underserved area",
+      "id": "tr_gb_90",
       "target": {
         "x": -160,
         "z": -160
@@ -1171,39 +1171,13 @@
       "code": "transport_coverage_branch",
       "stage": "2_transport",
       "message": "added coverage branch toward underserved area",
-      "id": "tr_gb_89",
-      "target": {
-        "x": -160,
-        "z": 160
-      },
-      "tag": "c0",
-      "from": "tr_gn_46"
-    },
-    {
-      "severity": "info",
-      "code": "transport_coverage_branch",
-      "stage": "2_transport",
-      "message": "added coverage branch toward underserved area",
-      "id": "tr_gb_90",
-      "target": {
-        "x": -160,
-        "z": 160
-      },
-      "tag": "c0",
-      "from": "tr_gn_66"
-    },
-    {
-      "severity": "info",
-      "code": "transport_coverage_branch",
-      "stage": "2_transport",
-      "message": "added coverage branch toward underserved area",
       "id": "tr_gb_91",
       "target": {
         "x": -160,
-        "z": 160
+        "z": -160
       },
       "tag": "c0",
-      "from": "tr_gn_67"
+      "from": "tr_gn_60"
     },
     {
       "severity": "info",
@@ -1213,10 +1187,10 @@
       "id": "tr_gb_92",
       "target": {
         "x": -160,
-        "z": 160
+        "z": -160
       },
       "tag": "c0",
-      "from": "tr_gn_68"
+      "from": "tr_gn_59"
     },
     {
       "severity": "info",
@@ -1226,10 +1200,10 @@
       "id": "tr_gb_93",
       "target": {
         "x": -160,
-        "z": 160
+        "z": -160
       },
       "tag": "c0",
-      "from": "tr_gn_69"
+      "from": "tr_gn_59"
     },
     {
       "severity": "info",
@@ -1239,10 +1213,10 @@
       "id": "tr_gb_94",
       "target": {
         "x": -160,
-        "z": -480
+        "z": -160
       },
       "tag": "c0",
-      "from": "tr_sp1_n"
+      "from": "tr_gn_58"
     },
     {
       "severity": "info",
@@ -1252,10 +1226,10 @@
       "id": "tr_gb_95",
       "target": {
         "x": -160,
-        "z": -480
+        "z": 160
       },
       "tag": "c0",
-      "from": "tr_gn_71"
+      "from": "tr_gn_70"
     },
     {
       "severity": "info",
@@ -1265,7 +1239,7 @@
       "id": "tr_gb_96",
       "target": {
         "x": -160,
-        "z": -480
+        "z": 160
       },
       "tag": "c0",
       "from": "tr_gn_72"
@@ -1277,11 +1251,11 @@
       "message": "added coverage branch toward underserved area",
       "id": "tr_gb_97",
       "target": {
-        "x": 160,
+        "x": -160,
         "z": 160
       },
       "tag": "c0",
-      "from": "tr_gn_69"
+      "from": "tr_gn_57"
     },
     {
       "severity": "info",
@@ -1290,7 +1264,7 @@
       "message": "added coverage branch toward underserved area",
       "id": "tr_gb_98",
       "target": {
-        "x": 160,
+        "x": -160,
         "z": 160
       },
       "tag": "c0",
@@ -1303,11 +1277,11 @@
       "message": "added coverage branch toward underserved area",
       "id": "tr_gb_99",
       "target": {
-        "x": 400,
-        "z": -560
+        "x": -160,
+        "z": 160
       },
-      "tag": "c0s",
-      "from": "tr_gn_58"
+      "tag": "c0",
+      "from": "tr_gn_74"
     },
     {
       "severity": "info",
@@ -1316,11 +1290,11 @@
       "message": "added coverage branch toward underserved area",
       "id": "tr_gb_100",
       "target": {
-        "x": 560,
-        "z": -560
+        "x": -160,
+        "z": -480
       },
-      "tag": "c0s",
-      "from": "tr_gn_76"
+      "tag": "c0",
+      "from": "tr_sp1_n"
     },
     {
       "severity": "info",
@@ -1329,10 +1303,10 @@
       "message": "added coverage branch toward underserved area",
       "id": "tr_gb_101",
       "target": {
-        "x": 560,
-        "z": -400
+        "x": -160,
+        "z": -480
       },
-      "tag": "c0s",
+      "tag": "c0",
       "from": "tr_gn_77"
     },
     {
@@ -1342,10 +1316,10 @@
       "message": "added coverage branch toward underserved area",
       "id": "tr_gb_102",
       "target": {
-        "x": 600,
+        "x": -160,
         "z": -480
       },
-      "tag": "c0s",
+      "tag": "c0",
       "from": "tr_gn_78"
     },
     {
@@ -1355,11 +1329,11 @@
       "message": "added coverage branch toward underserved area",
       "id": "tr_gb_103",
       "target": {
-        "x": 480,
-        "z": -600
+        "x": 400,
+        "z": -560
       },
       "tag": "c0s",
-      "from": "tr_gn_78"
+      "from": "tr_gn_63"
     },
     {
       "severity": "info",
@@ -1368,11 +1342,11 @@
       "message": "added coverage branch toward underserved area",
       "id": "tr_gb_104",
       "target": {
-        "x": 80,
+        "x": 560,
         "z": -560
       },
       "tag": "c0s",
-      "from": "tr_gn_76"
+      "from": "tr_gn_80"
     },
     {
       "severity": "info",
@@ -1381,8 +1355,8 @@
       "message": "added coverage branch toward underserved area",
       "id": "tr_gb_105",
       "target": {
-        "x": 240,
-        "z": -560
+        "x": 560,
+        "z": -400
       },
       "tag": "c0s",
       "from": "tr_gn_81"
@@ -1394,11 +1368,11 @@
       "message": "added coverage branch toward underserved area",
       "id": "tr_gb_106",
       "target": {
-        "x": 80,
-        "z": -400
+        "x": 600,
+        "z": -480
       },
       "tag": "c0s",
-      "from": "tr_gn_81"
+      "from": "tr_gn_82"
     },
     {
       "severity": "info",
@@ -1407,11 +1381,11 @@
       "message": "added coverage branch toward underserved area",
       "id": "tr_gb_107",
       "target": {
-        "x": 40,
-        "z": -480
+        "x": 480,
+        "z": -600
       },
       "tag": "c0s",
-      "from": "tr_gn_83"
+      "from": "tr_gn_82"
     },
     {
       "severity": "info",
@@ -1420,11 +1394,11 @@
       "message": "added coverage branch toward underserved area",
       "id": "tr_gb_108",
       "target": {
-        "x": 160,
-        "z": -600
+        "x": 80,
+        "z": -240
       },
       "tag": "c0s",
-      "from": "tr_gn_82"
+      "from": "tr_gn_68"
     },
     {
       "severity": "info",
@@ -1437,7 +1411,7 @@
         "z": -160
       },
       "tag": "c0s",
-      "from": "tr_gn_63"
+      "from": "tr_gn_70"
     },
     {
       "severity": "info",
@@ -1446,8 +1420,8 @@
       "message": "added coverage branch toward underserved area",
       "id": "tr_gb_110",
       "target": {
-        "x": 160,
-        "z": -40
+        "x": 80,
+        "z": -560
       },
       "tag": "c0s",
       "from": "tr_gn_64"
@@ -1459,11 +1433,11 @@
       "message": "added coverage branch toward underserved area",
       "id": "tr_gb_111",
       "target": {
-        "x": 560,
-        "z": -240
+        "x": 80,
+        "z": -400
       },
       "tag": "c0s",
-      "from": "tr_gn_56"
+      "from": "tr_gn_64"
     },
     {
       "severity": "info",
@@ -1472,21 +1446,8 @@
       "message": "added coverage branch toward underserved area",
       "id": "tr_gb_112",
       "target": {
-        "x": 560,
-        "z": -80
-      },
-      "tag": "c0s",
-      "from": "tr_gn_54"
-    },
-    {
-      "severity": "info",
-      "code": "transport_coverage_branch",
-      "stage": "2_transport",
-      "message": "added coverage branch toward underserved area",
-      "id": "tr_gb_113",
-      "target": {
-        "x": 600,
-        "z": -160
+        "x": 40,
+        "z": -480
       },
       "tag": "c0s",
       "from": "tr_gn_88"
@@ -1496,13 +1457,26 @@
       "code": "transport_coverage_branch",
       "stage": "2_transport",
       "message": "added coverage branch toward underserved area",
+      "id": "tr_gb_113",
+      "target": {
+        "x": 160,
+        "z": -600
+      },
+      "tag": "c0s",
+      "from": "tr_gn_87"
+    },
+    {
+      "severity": "info",
+      "code": "transport_coverage_branch",
+      "stage": "2_transport",
+      "message": "added coverage branch toward underserved area",
       "id": "tr_gb_114",
       "target": {
-        "x": -240,
+        "x": 400,
         "z": -240
       },
       "tag": "c0s",
-      "from": "tr_gn_73"
+      "from": "tr_gn_66"
     },
     {
       "severity": "info",
@@ -1511,39 +1485,63 @@
       "message": "added coverage branch toward underserved area",
       "id": "tr_gb_115",
       "target": {
-        "x": -80,
+        "x": 560,
         "z": -240
+      },
+      "tag": "c0s",
+      "from": "tr_gn_83"
+    },
+    {
+      "severity": "info",
+      "code": "transport_coverage_branch",
+      "stage": "2_transport",
+      "message": "added coverage branch toward underserved area",
+      "id": "tr_gb_116",
+      "target": {
+        "x": 560,
+        "z": -80
       },
       "tag": "c0s",
       "from": "tr_gn_65"
     },
     {
       "severity": "info",
-      "code": "transport_edge_branch",
+      "code": "transport_coverage_branch",
       "stage": "2_transport",
-      "message": "added edge outreach branch",
-      "id": "tr_gb_70",
-      "from": "tr_n_spawn",
-      "to": "tr_gn_47"
+      "message": "added coverage branch toward underserved area",
+      "id": "tr_gb_117",
+      "target": {
+        "x": 600,
+        "z": -160
+      },
+      "tag": "c0s",
+      "from": "tr_gn_93"
     },
     {
       "severity": "info",
       "code": "transport_edge_branch",
       "stage": "2_transport",
-      "message": "added edge outreach branch",
-      "id": "tr_gb_71",
+      "message": "added edge outreach L branch",
       "from": "tr_n_spawn",
       "to": "tr_gn_48"
+    },
+    {
+      "severity": "info",
+      "code": "transport_edge_branch",
+      "stage": "2_transport",
+      "message": "added edge outreach L branch",
+      "from": "tr_n_spawn",
+      "to": "tr_gn_50"
     },
     {
       "severity": "info",
       "code": "transport_generated",
       "stage": "2_transport",
       "message": "stage 2 generated road network",
-      "nodes": 104,
-      "segments": 131,
+      "nodes": 106,
+      "segments": 133,
       "seed": 2027986675,
-      "branches": 112,
+      "branches": 114,
       "profiled": true
     },
     {
@@ -1713,7 +1711,7 @@
       "message": "generated buildings from parcels",
       "count": 402,
       "budget": 420,
-      "skippedConflict": 478
+      "skippedConflict": 342
     },
     {
       "severity": "info",
@@ -1728,22 +1726,22 @@
       "message": "generated district props",
       "count": 360,
       "budget": 360,
-      "attempts": 842,
+      "attempts": 839,
       "byDistrictType": {
-        "parking": 8,
+        "parking": 10,
         "market": 35,
-        "suburb": 46,
+        "suburb": 49,
         "slums": 63,
-        "old_town": 50,
-        "sports": 12,
+        "old_town": 54,
+        "sports": 10,
         "campus": 18,
         "commercial": 18,
-        "luxury": 22,
+        "luxury": 20,
         "residential": 33,
-        "forest": 9,
-        "office": 24,
-        "park": 12,
-        "industrial": 8
+        "forest": 10,
+        "office": 20,
+        "park": 14,
+        "industrial": 4
       }
     },
     {
@@ -1787,10 +1785,10 @@
         "grid": 2,
         "total": 4
       },
-      "roadNodes": 124,
-      "roadSegments": 153,
+      "roadNodes": 126,
+      "roadSegments": 155,
       "roadComponents": 1,
-      "roadGraphNodes": 124,
+      "roadGraphNodes": 126,
       "interchanges": {
         "segments": 8,
         "junctions": 4,
@@ -1816,121 +1814,121 @@
       "parcels": 2098,
       "reservedParcels": 260,
       "parcelAccess": {
-        "near": 1058,
-        "mid": 854,
-        "far": 186
+        "near": 1026,
+        "mid": 780,
+        "far": 292
       },
       "roadAccessByType": {
         "industrial": {
           "parcels": 64,
           "unreserved": 64,
-          "good": 16,
-          "mid": 39,
-          "far": 9,
+          "good": 38,
+          "mid": 26,
+          "far": 0,
           "reserved": 0,
-          "goodOrMid": 55,
-          "accessibleRatio": 0.859
+          "goodOrMid": 64,
+          "accessibleRatio": 1
         },
         "luxury": {
           "parcels": 121,
-          "unreserved": 84,
-          "good": 23,
-          "mid": 38,
-          "far": 23,
-          "reserved": 37,
-          "goodOrMid": 61,
-          "accessibleRatio": 0.726
+          "unreserved": 75,
+          "good": 24,
+          "mid": 14,
+          "far": 37,
+          "reserved": 46,
+          "goodOrMid": 38,
+          "accessibleRatio": 0.507
         },
         "office": {
           "parcels": 121,
-          "unreserved": 117,
-          "good": 76,
-          "mid": 41,
+          "unreserved": 115,
+          "good": 94,
+          "mid": 21,
           "far": 0,
-          "reserved": 4,
-          "goodOrMid": 117,
+          "reserved": 6,
+          "goodOrMid": 115,
           "accessibleRatio": 1
         },
         "parking": {
           "parcels": 64,
           "unreserved": 64,
           "good": 20,
-          "mid": 44,
-          "far": 0,
+          "mid": 36,
+          "far": 8,
           "reserved": 0,
-          "goodOrMid": 64,
-          "accessibleRatio": 1
+          "goodOrMid": 56,
+          "accessibleRatio": 0.875
         },
         "residential": {
           "parcels": 225,
-          "unreserved": 225,
-          "good": 154,
-          "mid": 71,
-          "far": 0,
-          "reserved": 0,
-          "goodOrMid": 225,
-          "accessibleRatio": 1
+          "unreserved": 221,
+          "good": 128,
+          "mid": 91,
+          "far": 2,
+          "reserved": 4,
+          "goodOrMid": 219,
+          "accessibleRatio": 0.991
         },
         "slums": {
           "parcels": 400,
-          "unreserved": 363,
-          "good": 191,
-          "mid": 163,
-          "far": 9,
-          "reserved": 37,
-          "goodOrMid": 354,
-          "accessibleRatio": 0.975
+          "unreserved": 382,
+          "good": 183,
+          "mid": 199,
+          "far": 0,
+          "reserved": 18,
+          "goodOrMid": 382,
+          "accessibleRatio": 1
         },
         "sports": {
           "parcels": 49,
-          "unreserved": 47,
-          "good": 38,
-          "mid": 9,
-          "far": 0,
-          "reserved": 2,
-          "goodOrMid": 47,
-          "accessibleRatio": 1
+          "unreserved": 33,
+          "good": 0,
+          "mid": 4,
+          "far": 29,
+          "reserved": 16,
+          "goodOrMid": 4,
+          "accessibleRatio": 0.121
         }
       },
       "buildings": 402,
       "buildingsByDistrictType": {
-        "old_town": 39,
-        "market": 22,
-        "commercial": 44,
+        "market": 29,
+        "slums": 82,
+        "commercial": 38,
         "office": 47,
-        "residential": 87,
-        "slums": 85,
-        "suburb": 29,
-        "industrial": 17,
+        "residential": 81,
+        "old_town": 40,
+        "suburb": 30,
+        "industrial": 18,
         "parking": 5,
-        "park": 5,
-        "campus": 15,
-        "luxury": 5,
+        "luxury": 17,
+        "park": 1,
+        "campus": 12,
         "forest": 1,
         "sports": 1
       },
       "lights": 8,
       "props": 360,
       "propsByDistrictType": {
-        "parking": 8,
+        "parking": 10,
         "market": 35,
-        "suburb": 46,
+        "suburb": 49,
         "slums": 63,
-        "old_town": 50,
-        "sports": 12,
+        "old_town": 54,
+        "sports": 10,
         "campus": 18,
         "commercial": 18,
-        "luxury": 22,
+        "luxury": 20,
         "residential": 33,
-        "forest": 9,
-        "office": 24,
-        "park": 12,
-        "industrial": 8
+        "forest": 10,
+        "office": 20,
+        "park": 14,
+        "industrial": 4
       },
       "chunkLoad": {
         "nonEmptyChunks": 4,
-        "maxBuildings": 151,
-        "maxProps": 160,
+        "maxBuildings": 152,
+        "maxProps": 166,
         "maxLights": 2,
         "avgBuildings": 100.5,
         "avgProps": 90
@@ -1941,7 +1939,7 @@
       "code": "interchange_junction_candidates",
       "stage": "6_finalize_emit",
       "message": "identified junction nodes as grade-separation candidates",
-      "count": 5
+      "count": 6
     },
     {
       "severity": "info",
@@ -1964,8 +1962,8 @@
       "message": "repaired same-layer crossing by inserting junction 'tr_x_2'",
       "node": "tr_x_2",
       "segments": [
-        "tr_gb_86",
-        "tr_gb_88"
+        "tr_gb_93",
+        "tr_gb_94"
       ]
     },
     {
@@ -1975,8 +1973,8 @@
       "message": "repaired same-layer crossing by inserting junction 'tr_x'",
       "node": "tr_x",
       "segments": [
-        "tr_gb_84",
-        "tr_gb_115"
+        "tr_gb_90",
+        "tr_gb_92"
       ]
     },
     {
@@ -1991,63 +1989,69 @@
       "stage": "2_transport_access",
       "code": "access_roads_added",
       "id": "tr_acc_1_1,tr_acc_1_1_2",
-      "target": "district_0_0_p120"
+      "target": "district_3_2_p164"
     },
     {
       "stage": "2_transport_access",
       "code": "access_roads_added",
       "id": "tr_acc_1_3,tr_acc_1_3_2",
-      "target": "district_3_2_p105"
+      "target": "district_3_2_p88"
     },
     {
       "stage": "2_transport_access",
       "code": "access_roads_added",
       "id": "tr_acc_1_5,tr_acc_1_5_2",
-      "target": "district_3_2_p150"
+      "target": "district_3_2_p132"
     },
     {
       "stage": "2_transport_access",
       "code": "access_roads_added",
       "id": "tr_acc_1_7,tr_acc_1_7_2",
-      "target": "district_3_2_p60"
+      "target": "district_0_1_p16"
     },
     {
       "stage": "2_transport_access",
       "code": "access_roads_added",
       "id": "tr_acc_1_9,tr_acc_1_9_2",
-      "target": "district_1_2_p3"
+      "target": "district_0_1_p32"
     },
     {
       "stage": "2_transport_access",
       "code": "access_roads_added",
       "id": "tr_acc_1_11,tr_acc_1_11_2",
-      "target": "district_1_2_p9"
+      "target": "district_0_1_p48"
     },
     {
       "stage": "2_transport_access",
       "code": "access_roads_added",
-      "id": "tr_acc_1_13,tr_acc_1_13_2",
-      "target": "district_1_2_p5"
+      "id": "tr_acc_1_13",
+      "target": "district_0_1_p64"
+    },
+    {
+      "stage": "2_transport_access",
+      "code": "access_roads_added",
+      "id": "tr_acc_1_14",
+      "target": "district_0_2_p24"
     },
     {
       "stage": "2_transport_access",
       "code": "access_roads_added",
       "id": "tr_acc_1_15,tr_acc_1_15_2",
-      "target": "district_1_2_p1"
+      "target": "district_3_1_p160"
     },
     {
       "stage": "2_transport_access",
       "code": "access_roads_added",
       "id": "tr_acc_1_17,tr_acc_1_17_2",
-      "target": "district_1_2_p43"
+      "target": "district_0_2_p15"
     },
     {
       "stage": "6_finalize_emit",
       "code": "resolve_road_crossing",
       "node": "tr_x",
       "segments": [
-        "tr_gb_84",
-        "tr_gb_115"
+        "tr_gb_90",
+        "tr_gb_92"
       ]
     },
     {
@@ -2055,8 +2059,8 @@
       "code": "resolve_road_crossing",
       "node": "tr_x_2",
       "segments": [
-        "tr_gb_86",
-        "tr_gb_88"
+        "tr_gb_93",
+        "tr_gb_94"
       ]
     }
   ],
@@ -2064,15 +2068,15 @@
   "summary": {
     "errors": 0,
     "warnings": 9,
-    "repairs": 11,
+    "repairs": 12,
     "drops": 0
   },
   "metrics": {
     "version": 1,
     "partial": true,
     "counts": {
-      "roads": 153,
-      "roadNodes": 124,
+      "roads": 155,
+      "roadNodes": 126,
       "districts": 16,
       "parcels": 2098,
       "reservedParcels": 260,
@@ -2084,24 +2088,24 @@
       "lakes": 0
     },
     "graph": {
-      "nodes": 124,
-      "edges": 153,
+      "nodes": 126,
+      "edges": 155,
       "components": 1,
-      "largestComponent": 124,
+      "largestComponent": 126,
       "deadEnds": 35,
-      "deadEndRatio": 0.282258,
-      "avgDegree": 2.467742,
-      "gamma": 0.418033
+      "deadEndRatio": 0.277778,
+      "avgDegree": 2.460317,
+      "gamma": 0.416667
     },
     "roads": {
-      "totalLength": 13464.524,
+      "totalLength": 13161.856,
       "lengthByType": {
         "arterial": 2080,
-        "local": 11384.524
+        "local": 11081.856
       },
       "shareByType": {
-        "arterial": 0.15448,
-        "local": 0.84552
+        "arterial": 0.158032,
+        "local": 0.841968
       },
       "maxSlope": 0.297561,
       "slopeByClass": {
@@ -2112,7 +2116,7 @@
           "overAbsolute": 0
         },
         "local": {
-          "count": 150,
+          "count": 152,
           "maxSlope": 0.1,
           "overPolicy": 0,
           "overAbsolute": 0
@@ -2202,7 +2206,7 @@
     "report": {
       "diagnosticsErrors": 0,
       "diagnosticsWarnings": 9,
-      "repairs": 11,
+      "repairs": 12,
       "drops": 0
     }
   },

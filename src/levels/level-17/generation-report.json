@@ -23,7 +23,7 @@
     {
       "id": "2_transport",
       "status": "ok",
-      "diagnostics": 128,
+      "diagnostics": 131,
       "repairs": 0,
       "drops": 0
     },
@@ -63,7 +63,7 @@
       "profileId": "office",
       "cells": 1,
       "parcels": 121,
-      "reservedParcels": 11
+      "reservedParcels": 12
     },
     {
       "id": "district_0_1",
@@ -95,7 +95,7 @@
       "profileId": "suburb",
       "cells": 1,
       "parcels": 121,
-      "reservedParcels": 12
+      "reservedParcels": 13
     },
     {
       "id": "district_1_1",
@@ -103,7 +103,7 @@
       "profileId": "forest",
       "cells": 1,
       "parcels": 36,
-      "reservedParcels": 6
+      "reservedParcels": 4
     },
     {
       "id": "district_1_2",
@@ -135,7 +135,7 @@
       "profileId": "market",
       "cells": 1,
       "parcels": 196,
-      "reservedParcels": 63
+      "reservedParcels": 62
     },
     {
       "id": "district_2_2",
@@ -143,7 +143,7 @@
       "profileId": "luxury",
       "cells": 1,
       "parcels": 121,
-      "reservedParcels": 40
+      "reservedParcels": 37
     },
     {
       "id": "district_2_3",
@@ -167,7 +167,7 @@
       "profileId": "slums",
       "cells": 1,
       "parcels": 400,
-      "reservedParcels": 72
+      "reservedParcels": 70
     },
     {
       "id": "district_3_2",
@@ -175,7 +175,7 @@
       "profileId": "residential",
       "cells": 1,
       "parcels": 225,
-      "reservedParcels": 41
+      "reservedParcels": 42
     },
     {
       "id": "district_3_3",
@@ -192,7 +192,7 @@
       "code": "road_slope_over_class_policy",
       "stage": "2_transport",
       "message": "road segments exceed class slope policy (policies.slopeLimitPct)",
-      "segments": 64,
+      "segments": 61,
       "maxSlope": 0.3,
       "policy": {
         "highway": 6,
@@ -205,29 +205,36 @@
       "severity": "warn",
       "code": "segment_self_intersection",
       "stage": "2_transport",
-      "message": "segment 'tr_gb_103' has self-intersecting path",
-      "id": "tr_gb_103"
+      "message": "segment 'tr_gb_106' has self-intersecting path",
+      "id": "tr_gb_106"
     },
     {
       "severity": "warn",
       "code": "segment_self_intersection",
       "stage": "2_transport",
-      "message": "segment 'tr_gb_104' has self-intersecting path",
-      "id": "tr_gb_104"
+      "message": "segment 'tr_gb_107' has self-intersecting path",
+      "id": "tr_gb_107"
     },
     {
       "severity": "warn",
       "code": "segment_self_intersection",
       "stage": "2_transport",
-      "message": "segment 'tr_gb_86' has self-intersecting path",
-      "id": "tr_gb_86"
+      "message": "segment 'tr_gb_94' has self-intersecting path",
+      "id": "tr_gb_94"
     },
     {
       "severity": "warn",
       "code": "segment_self_intersection",
       "stage": "2_transport",
-      "message": "segment 'tr_gb_87' has self-intersecting path",
-      "id": "tr_gb_87"
+      "message": "segment 'tr_gb_95' has self-intersecting path",
+      "id": "tr_gb_95"
+    },
+    {
+      "severity": "warn",
+      "code": "segment_self_intersection",
+      "stage": "2_transport",
+      "message": "segment 'tr_gb_98' has self-intersecting path",
+      "id": "tr_gb_98"
     },
     {
       "severity": "warn",
@@ -242,8 +249,8 @@
       "severity": "warn",
       "code": "chunk_props_heavy",
       "stage": "6_finalize_emit",
-      "message": "high prop count in a single chunk (145)",
-      "maxProps": 145,
+      "message": "high prop count in a single chunk (153)",
+      "maxProps": 153,
       "chunk": 640,
       "grid": 2
     },
@@ -317,8 +324,8 @@
       "code": "road_graph",
       "stage": "2_transport",
       "message": "road graph summary",
-      "nodes": 117,
-      "segments": 145,
+      "nodes": 124,
+      "segments": 154,
       "components": 1
     },
     {
@@ -523,7 +530,7 @@
       "stage": "2_transport",
       "message": "added connected terrain-following branch",
       "id": "tr_gb_46",
-      "from": "tr_n_m1",
+      "from": "tr_n_spawn",
       "to": "tr_gn_46",
       "tag": "p0"
     },
@@ -914,26 +921,13 @@
       "code": "transport_coverage_branch",
       "stage": "2_transport",
       "message": "added coverage branch toward underserved area",
-      "id": "tr_gb_73",
-      "target": {
-        "x": 480,
-        "z": -480
-      },
-      "tag": "c0",
-      "from": "tr_gn_33"
-    },
-    {
-      "severity": "info",
-      "code": "transport_coverage_branch",
-      "stage": "2_transport",
-      "message": "added coverage branch toward underserved area",
       "id": "tr_gb_74",
       "target": {
         "x": 480,
         "z": -480
       },
       "tag": "c0",
-      "from": "tr_gn_49"
+      "from": "tr_gn_33"
     },
     {
       "severity": "info",
@@ -981,8 +975,8 @@
       "message": "added coverage branch toward underserved area",
       "id": "tr_gb_78",
       "target": {
-        "x": 160,
-        "z": -160
+        "x": 480,
+        "z": -480
       },
       "tag": "c0",
       "from": "tr_gn_53"
@@ -1024,7 +1018,7 @@
         "z": -160
       },
       "tag": "c0",
-      "from": "tr_gn_55"
+      "from": "tr_gn_56"
     },
     {
       "severity": "info",
@@ -1037,7 +1031,7 @@
         "z": -160
       },
       "tag": "c0",
-      "from": "tr_gn_54"
+      "from": "tr_gn_55"
     },
     {
       "severity": "info",
@@ -1047,10 +1041,10 @@
       "id": "tr_gb_83",
       "target": {
         "x": 160,
-        "z": -480
+        "z": -160
       },
       "tag": "c0",
-      "from": "tr_gn_54"
+      "from": "tr_gn_55"
     },
     {
       "severity": "info",
@@ -1111,11 +1105,11 @@
       "message": "added coverage branch toward underserved area",
       "id": "tr_gb_88",
       "target": {
-        "x": -160,
-        "z": -160
+        "x": 160,
+        "z": -480
       },
       "tag": "c0",
-      "from": "tr_gn_62"
+      "from": "tr_gn_63"
     },
     {
       "severity": "info",
@@ -1164,7 +1158,7 @@
       "id": "tr_gb_92",
       "target": {
         "x": -160,
-        "z": 160
+        "z": -160
       },
       "tag": "c0",
       "from": "tr_gn_67"
@@ -1215,11 +1209,11 @@
       "message": "added coverage branch toward underserved area",
       "id": "tr_gb_96",
       "target": {
-        "x": 160,
+        "x": -160,
         "z": 160
       },
       "tag": "c0",
-      "from": "tr_gn_57"
+      "from": "tr_gn_71"
     },
     {
       "severity": "info",
@@ -1228,7 +1222,7 @@
       "message": "added coverage branch toward underserved area",
       "id": "tr_gb_97",
       "target": {
-        "x": 160,
+        "x": -160,
         "z": 160
       },
       "tag": "c0",
@@ -1245,7 +1239,7 @@
         "z": 160
       },
       "tag": "c0",
-      "from": "tr_gn_72"
+      "from": "tr_gn_56"
     },
     {
       "severity": "info",
@@ -1258,7 +1252,7 @@
         "z": 160
       },
       "tag": "c0",
-      "from": "tr_gn_72"
+      "from": "tr_gn_74"
     },
     {
       "severity": "info",
@@ -1266,6 +1260,45 @@
       "stage": "2_transport",
       "message": "added coverage branch toward underserved area",
       "id": "tr_gb_100",
+      "target": {
+        "x": 160,
+        "z": 160
+      },
+      "tag": "c0",
+      "from": "tr_gn_75"
+    },
+    {
+      "severity": "info",
+      "code": "transport_coverage_branch",
+      "stage": "2_transport",
+      "message": "added coverage branch toward underserved area",
+      "id": "tr_gb_101",
+      "target": {
+        "x": 160,
+        "z": 160
+      },
+      "tag": "c0",
+      "from": "tr_gn_75"
+    },
+    {
+      "severity": "info",
+      "code": "transport_coverage_branch",
+      "stage": "2_transport",
+      "message": "added coverage branch toward underserved area",
+      "id": "tr_gb_102",
+      "target": {
+        "x": 160,
+        "z": 160
+      },
+      "tag": "c0",
+      "from": "tr_gn_74"
+    },
+    {
+      "severity": "info",
+      "code": "transport_coverage_branch",
+      "stage": "2_transport",
+      "message": "added coverage branch toward underserved area",
+      "id": "tr_gb_103",
       "target": {
         "x": 400,
         "z": -560
@@ -1278,7 +1311,7 @@
       "code": "transport_coverage_branch",
       "stage": "2_transport",
       "message": "added coverage branch toward underserved area",
-      "id": "tr_gb_101",
+      "id": "tr_gb_104",
       "target": {
         "x": 560,
         "z": -560
@@ -1291,49 +1324,10 @@
       "code": "transport_coverage_branch",
       "stage": "2_transport",
       "message": "added coverage branch toward underserved area",
-      "id": "tr_gb_102",
+      "id": "tr_gb_105",
       "target": {
         "x": 400,
         "z": -400
-      },
-      "tag": "c0s",
-      "from": "tr_gn_77"
-    },
-    {
-      "severity": "info",
-      "code": "transport_coverage_branch",
-      "stage": "2_transport",
-      "message": "added coverage branch toward underserved area",
-      "id": "tr_gb_103",
-      "target": {
-        "x": 560,
-        "z": -400
-      },
-      "tag": "c0s",
-      "from": "tr_gn_78"
-    },
-    {
-      "severity": "info",
-      "code": "transport_coverage_branch",
-      "stage": "2_transport",
-      "message": "added coverage branch toward underserved area",
-      "id": "tr_gb_104",
-      "target": {
-        "x": 480,
-        "z": -480
-      },
-      "tag": "c0s",
-      "from": "tr_gn_79"
-    },
-    {
-      "severity": "info",
-      "code": "transport_coverage_branch",
-      "stage": "2_transport",
-      "message": "added coverage branch toward underserved area",
-      "id": "tr_gb_105",
-      "target": {
-        "x": 360,
-        "z": -480
       },
       "tag": "c0s",
       "from": "tr_gn_80"
@@ -1345,8 +1339,8 @@
       "message": "added coverage branch toward underserved area",
       "id": "tr_gb_106",
       "target": {
-        "x": 600,
-        "z": -480
+        "x": 560,
+        "z": -400
       },
       "tag": "c0s",
       "from": "tr_gn_81"
@@ -1359,7 +1353,7 @@
       "id": "tr_gb_107",
       "target": {
         "x": 480,
-        "z": -600
+        "z": -480
       },
       "tag": "c0s",
       "from": "tr_gn_82"
@@ -1370,6 +1364,45 @@
       "stage": "2_transport",
       "message": "added coverage branch toward underserved area",
       "id": "tr_gb_108",
+      "target": {
+        "x": 360,
+        "z": -480
+      },
+      "tag": "c0s",
+      "from": "tr_gn_83"
+    },
+    {
+      "severity": "info",
+      "code": "transport_coverage_branch",
+      "stage": "2_transport",
+      "message": "added coverage branch toward underserved area",
+      "id": "tr_gb_109",
+      "target": {
+        "x": 600,
+        "z": -480
+      },
+      "tag": "c0s",
+      "from": "tr_gn_84"
+    },
+    {
+      "severity": "info",
+      "code": "transport_coverage_branch",
+      "stage": "2_transport",
+      "message": "added coverage branch toward underserved area",
+      "id": "tr_gb_110",
+      "target": {
+        "x": 480,
+        "z": -600
+      },
+      "tag": "c0s",
+      "from": "tr_gn_85"
+    },
+    {
+      "severity": "info",
+      "code": "transport_coverage_branch",
+      "stage": "2_transport",
+      "message": "added coverage branch toward underserved area",
+      "id": "tr_gb_111",
       "target": {
         "x": 80,
         "z": -240
@@ -1382,52 +1415,13 @@
       "code": "transport_coverage_branch",
       "stage": "2_transport",
       "message": "added coverage branch toward underserved area",
-      "id": "tr_gb_109",
+      "id": "tr_gb_112",
       "target": {
         "x": 240,
         "z": -240
       },
       "tag": "c0s",
-      "from": "tr_gn_79"
-    },
-    {
-      "severity": "info",
-      "code": "transport_coverage_branch",
-      "stage": "2_transport",
-      "message": "added coverage branch toward underserved area",
-      "id": "tr_gb_110",
-      "target": {
-        "x": 80,
-        "z": -80
-      },
-      "tag": "c0s",
-      "from": "tr_gn_84"
-    },
-    {
-      "severity": "info",
-      "code": "transport_coverage_branch",
-      "stage": "2_transport",
-      "message": "added coverage branch toward underserved area",
-      "id": "tr_gb_111",
-      "target": {
-        "x": 240,
-        "z": -80
-      },
-      "tag": "c0s",
-      "from": "tr_gn_55"
-    },
-    {
-      "severity": "info",
-      "code": "transport_coverage_branch",
-      "stage": "2_transport",
-      "message": "added coverage branch toward underserved area",
-      "id": "tr_gb_112",
-      "target": {
-        "x": 160,
-        "z": -160
-      },
-      "tag": "c0s",
-      "from": "tr_gn_86"
+      "from": "tr_gn_82"
     },
     {
       "severity": "info",
@@ -1436,11 +1430,11 @@
       "message": "added coverage branch toward underserved area",
       "id": "tr_gb_113",
       "target": {
-        "x": 280,
-        "z": -160
+        "x": 80,
+        "z": -80
       },
       "tag": "c0s",
-      "from": "tr_gn_85"
+      "from": "tr_gn_70"
     },
     {
       "severity": "info",
@@ -1449,11 +1443,11 @@
       "message": "added coverage branch toward underserved area",
       "id": "tr_gb_114",
       "target": {
-        "x": 160,
-        "z": -280
+        "x": 240,
+        "z": -80
       },
       "tag": "c0s",
-      "from": "tr_gn_86"
+      "from": "tr_gn_56"
     },
     {
       "severity": "info",
@@ -1463,10 +1457,10 @@
       "id": "tr_gb_115",
       "target": {
         "x": 160,
-        "z": -40
+        "z": -160
       },
       "tag": "c0s",
-      "from": "tr_gn_74"
+      "from": "tr_gn_87"
     },
     {
       "severity": "info",
@@ -1475,27 +1469,39 @@
       "message": "added coverage branch toward underserved area",
       "id": "tr_gb_116",
       "target": {
-        "x": 80,
-        "z": -560
+        "x": 280,
+        "z": -160
       },
       "tag": "c0s",
-      "from": "tr_gn_63"
+      "from": "tr_gn_88"
+    },
+    {
+      "severity": "info",
+      "code": "transport_coverage_branch",
+      "stage": "2_transport",
+      "message": "added coverage branch toward underserved area",
+      "id": "tr_gb_117",
+      "target": {
+        "x": 160,
+        "z": -280
+      },
+      "tag": "c0s",
+      "from": "tr_gn_87"
     },
     {
       "severity": "info",
       "code": "transport_edge_branch",
       "stage": "2_transport",
       "message": "added edge outreach branch",
-      "id": "tr_gb_71",
+      "id": "tr_gb_73",
       "from": "tr_n_spawn",
-      "to": "tr_gn_47"
+      "to": "tr_gn_49"
     },
     {
       "severity": "info",
       "code": "transport_edge_branch",
       "stage": "2_transport",
-      "message": "added edge outreach branch",
-      "id": "tr_gb_72",
+      "message": "added edge outreach L branch",
       "from": "tr_n_spawn",
       "to": "tr_gn_48"
     },
@@ -1504,10 +1510,10 @@
       "code": "transport_generated",
       "stage": "2_transport",
       "message": "stage 2 generated road network",
-      "nodes": 117,
-      "segments": 145,
+      "nodes": 124,
+      "segments": 154,
       "seed": 1865128548,
-      "branches": 113,
+      "branches": 114,
       "profiled": true
     },
     {
@@ -1515,18 +1521,38 @@
       "code": "transport_interchange_junction",
       "stage": "2_transport",
       "message": "applied junction grade-separation interchange prototype",
-      "nodeId": "tr_gn_62",
+      "nodeId": "tr_gn_56",
       "elevatedPair": [
-        "tr_gb_86",
-        "tr_gb_87"
+        "tr_gb_81",
+        "tr_gb_98"
       ],
       "ramps": [
-        "tr_jr_tr_gn_62_a",
-        "tr_jr_tr_gn_62_b"
+        "tr_jr_tr_gn_56_a",
+        "tr_jr_tr_gn_56_b"
       ],
-      "elevatedNode": "tr_jn_tr_gn_62_up",
-      "deckY": 15.92,
-      "clearance": 1.6,
+      "elevatedNode": "tr_jn_tr_gn_56_up",
+      "deckY": 2,
+      "clearance": 2,
+      "rampDist": 20,
+      "kind": "cross4"
+    },
+    {
+      "severity": "info",
+      "code": "transport_interchange_junction",
+      "stage": "2_transport",
+      "message": "applied junction grade-separation interchange prototype",
+      "nodeId": "tr_gn_67",
+      "elevatedPair": [
+        "tr_gb_92",
+        "tr_gb_111"
+      ],
+      "ramps": [
+        "tr_jr_tr_gn_67_a",
+        "tr_jr_tr_gn_67_b"
+      ],
+      "elevatedNode": "tr_jn_tr_gn_67_up",
+      "deckY": 19.16,
+      "clearance": 2,
       "rampDist": 20,
       "kind": "tee3"
     },
@@ -1535,16 +1561,36 @@
       "code": "transport_interchange_junction",
       "stage": "2_transport",
       "message": "applied junction grade-separation interchange prototype",
-      "nodeId": "tr_gn_79",
+      "nodeId": "tr_gn_70",
       "elevatedPair": [
-        "tr_gb_103",
-        "tr_gb_104"
+        "tr_gb_94",
+        "tr_gb_95"
       ],
       "ramps": [
-        "tr_jr_tr_gn_79_a",
-        "tr_jr_tr_gn_79_b"
+        "tr_jr_tr_gn_70_a",
+        "tr_jr_tr_gn_70_b"
       ],
-      "elevatedNode": "tr_jn_tr_gn_79_up",
+      "elevatedNode": "tr_jn_tr_gn_70_up",
+      "deckY": 19.19,
+      "clearance": 2,
+      "rampDist": 20,
+      "kind": "tee3"
+    },
+    {
+      "severity": "info",
+      "code": "transport_interchange_junction",
+      "stage": "2_transport",
+      "message": "applied junction grade-separation interchange prototype",
+      "nodeId": "tr_gn_82",
+      "elevatedPair": [
+        "tr_gb_106",
+        "tr_gb_107"
+      ],
+      "ramps": [
+        "tr_jr_tr_gn_82_a",
+        "tr_jr_tr_gn_82_b"
+      ],
+      "elevatedNode": "tr_jn_tr_gn_82_up",
       "deckY": 2.42,
       "clearance": 2,
       "rampDist": 20,
@@ -1766,22 +1812,22 @@
       "message": "generated district props",
       "count": 360,
       "budget": 360,
-      "attempts": 921,
+      "attempts": 860,
       "byDistrictType": {
-        "luxury": 44,
-        "residential": 74,
-        "slums": 44,
-        "campus": 9,
-        "sports": 4,
-        "suburb": 21,
-        "forest": 9,
-        "old_town": 39,
-        "market": 37,
-        "office": 18,
-        "park": 25,
-        "commercial": 23,
-        "industrial": 4,
-        "parking": 9
+        "slums": 55,
+        "old_town": 37,
+        "luxury": 36,
+        "campus": 11,
+        "residential": 73,
+        "industrial": 8,
+        "park": 26,
+        "commercial": 14,
+        "suburb": 20,
+        "office": 20,
+        "parking": 8,
+        "market": 35,
+        "forest": 8,
+        "sports": 9
       }
     },
     {
@@ -1825,13 +1871,13 @@
         "grid": 2,
         "total": 4
       },
-      "roadNodes": 135,
-      "roadSegments": 163,
+      "roadNodes": 142,
+      "roadSegments": 172,
       "roadComponents": 1,
-      "roadGraphNodes": 135,
+      "roadGraphNodes": 142,
       "interchanges": {
-        "segments": 9,
-        "junctions": 2,
+        "segments": 13,
+        "junctions": 4,
         "overpasses": 5
       },
       "turnarounds": 1,
@@ -1853,78 +1899,78 @@
         "suburb"
       ],
       "parcels": 2274,
-      "reservedParcels": 421,
+      "reservedParcels": 416,
       "parcelAccess": {
-        "near": 1115,
-        "mid": 953,
-        "far": 206
+        "near": 1107,
+        "mid": 964,
+        "far": 203
       },
       "roadAccessByType": {
         "industrial": {
           "parcels": 64,
           "unreserved": 63,
-          "good": 16,
-          "mid": 34,
-          "far": 13,
+          "good": 18,
+          "mid": 36,
+          "far": 9,
           "reserved": 1,
-          "goodOrMid": 50,
-          "accessibleRatio": 0.794
+          "goodOrMid": 54,
+          "accessibleRatio": 0.857
         },
         "luxury": {
           "parcels": 242,
-          "unreserved": 182,
-          "good": 71,
-          "mid": 92,
-          "far": 19,
-          "reserved": 60,
-          "goodOrMid": 163,
-          "accessibleRatio": 0.896
+          "unreserved": 185,
+          "good": 76,
+          "mid": 97,
+          "far": 12,
+          "reserved": 57,
+          "goodOrMid": 173,
+          "accessibleRatio": 0.935
         },
         "office": {
           "parcels": 121,
-          "unreserved": 110,
-          "good": 70,
-          "mid": 40,
+          "unreserved": 109,
+          "good": 85,
+          "mid": 24,
           "far": 0,
-          "reserved": 11,
-          "goodOrMid": 110,
+          "reserved": 12,
+          "goodOrMid": 109,
           "accessibleRatio": 1
         },
         "parking": {
           "parcels": 64,
           "unreserved": 63,
-          "good": 24,
-          "mid": 39,
-          "far": 0,
+          "good": 16,
+          "mid": 37,
+          "far": 10,
           "reserved": 1,
-          "goodOrMid": 63,
-          "accessibleRatio": 1
+          "goodOrMid": 53,
+          "accessibleRatio": 0.841
         },
         "residential": {
           "parcels": 450,
-          "unreserved": 386,
-          "good": 187,
-          "mid": 189,
-          "far": 10,
-          "reserved": 64,
-          "goodOrMid": 376,
-          "accessibleRatio": 0.974
+          "unreserved": 385,
+          "good": 173,
+          "mid": 211,
+          "far": 1,
+          "reserved": 65,
+          "goodOrMid": 384,
+          "accessibleRatio": 0.997
         },
         "slums": {
           "parcels": 400,
-          "unreserved": 328,
-          "good": 206,
+          "unreserved": 330,
+          "good": 208,
           "mid": 122,
           "far": 0,
-          "reserved": 72,
-          "goodOrMid": 328,
+          "reserved": 70,
+          "goodOrMid": 330,
           "accessibleRatio": 1
         },
         "sports": {
           "parcels": 49,
           "unreserved": 34,
-          "good": 28,
-          "mid": 6,
+          "good": 22,
+          "mid": 12,
           "far": 0,
           "reserved": 15,
           "goodOrMid": 34,
@@ -1933,17 +1979,17 @@
       },
       "buildings": 403,
       "buildingsByDistrictType": {
-        "slums": 110,
-        "residential": 87,
-        "commercial": 29,
-        "office": 43,
-        "old_town": 43,
-        "luxury": 32,
+        "residential": 86,
+        "slums": 102,
+        "commercial": 32,
+        "office": 46,
+        "luxury": 34,
+        "old_town": 54,
         "suburb": 16,
-        "industrial": 19,
+        "industrial": 7,
         "parking": 7,
-        "campus": 7,
-        "market": 7,
+        "campus": 12,
+        "market": 4,
         "park": 1,
         "forest": 1,
         "sports": 1
@@ -1951,26 +1997,26 @@
       "lights": 8,
       "props": 360,
       "propsByDistrictType": {
-        "luxury": 44,
-        "residential": 74,
-        "slums": 44,
-        "campus": 9,
-        "sports": 4,
-        "suburb": 21,
-        "forest": 9,
-        "old_town": 39,
-        "market": 37,
-        "office": 18,
-        "park": 25,
-        "commercial": 23,
-        "industrial": 4,
-        "parking": 9
+        "slums": 55,
+        "old_town": 37,
+        "luxury": 36,
+        "campus": 11,
+        "residential": 73,
+        "industrial": 8,
+        "park": 26,
+        "commercial": 14,
+        "suburb": 20,
+        "office": 20,
+        "parking": 8,
+        "market": 35,
+        "forest": 8,
+        "sports": 9
       },
       "chunkLoad": {
         "nonEmptyChunks": 4,
         "maxBuildings": 161,
-        "maxProps": 145,
-        "maxLights": 3,
+        "maxProps": 153,
+        "maxLights": 2,
         "avgBuildings": 100.75,
         "avgProps": 90
       }
@@ -1980,14 +2026,14 @@
       "code": "interchange_junction_candidates",
       "stage": "6_finalize_emit",
       "message": "identified junction nodes as grade-separation candidates",
-      "count": 8
+      "count": 6
     },
     {
       "severity": "info",
       "code": "interchange_validated",
       "stage": "6_finalize_emit",
       "message": "validated interchange/overpass segments",
-      "count": 9
+      "count": 13
     },
     {
       "severity": "info",
@@ -2007,61 +2053,61 @@
       "stage": "2_transport_access",
       "code": "access_roads_added",
       "id": "tr_acc_1_1,tr_acc_1_1_2",
-      "target": "district_1_3_p13"
+      "target": "district_1_3_p10"
     },
     {
       "stage": "2_transport_access",
       "code": "access_roads_added",
       "id": "tr_acc_1_3,tr_acc_1_3_2",
-      "target": "district_1_3_p37"
+      "target": "district_1_3_p13"
     },
     {
       "stage": "2_transport_access",
       "code": "access_roads_added",
       "id": "tr_acc_1_5,tr_acc_1_5_2",
-      "target": "district_1_2_p42"
+      "target": "district_1_3_p19"
     },
     {
       "stage": "2_transport_access",
       "code": "access_roads_added",
       "id": "tr_acc_1_7,tr_acc_1_7_2",
-      "target": "district_1_2_p38"
+      "target": "district_1_3_p37"
     },
     {
       "stage": "2_transport_access",
       "code": "access_roads_added",
       "id": "tr_acc_1_9,tr_acc_1_9_2",
-      "target": "district_1_2_p29"
+      "target": "district_1_3_p45"
     },
     {
       "stage": "2_transport_access",
       "code": "access_roads_added",
       "id": "tr_acc_1_11,tr_acc_1_11_2",
-      "target": "district_1_2_p14"
+      "target": "district_1_2_p15"
     },
     {
       "stage": "2_transport_access",
       "code": "access_roads_added",
       "id": "tr_acc_1_13,tr_acc_1_13_2",
-      "target": "district_2_2_p103"
+      "target": "district_2_2_p116"
     },
     {
       "stage": "2_transport_access",
       "code": "access_roads_added",
       "id": "tr_acc_1_15,tr_acc_1_15_2",
-      "target": "district_2_2_p35"
+      "target": "district_2_2_p59"
     },
     {
       "stage": "2_transport_access",
       "code": "access_roads_added",
       "id": "tr_acc_1_17,tr_acc_1_17_2",
-      "target": "district_0_2_p56"
+      "target": "district_0_1_p16"
     }
   ],
   "drops": [],
   "summary": {
     "errors": 0,
-    "warnings": 7,
+    "warnings": 8,
     "repairs": 9,
     "drops": 0
   },
@@ -2069,11 +2115,11 @@
     "version": 1,
     "partial": true,
     "counts": {
-      "roads": 163,
-      "roadNodes": 135,
+      "roads": 172,
+      "roadNodes": 142,
       "districts": 16,
       "parcels": 2274,
-      "reservedParcels": 421,
+      "reservedParcels": 416,
       "buildings": 403,
       "enterableBuildings": 0,
       "props": 360,
@@ -2082,24 +2128,24 @@
       "lakes": 0
     },
     "graph": {
-      "nodes": 135,
-      "edges": 163,
+      "nodes": 142,
+      "edges": 172,
       "components": 1,
-      "largestComponent": 135,
-      "deadEnds": 28,
-      "deadEndRatio": 0.207407,
-      "avgDegree": 2.414815,
-      "gamma": 0.408521
+      "largestComponent": 142,
+      "deadEnds": 30,
+      "deadEndRatio": 0.211268,
+      "avgDegree": 2.422535,
+      "gamma": 0.409524
     },
     "roads": {
-      "totalLength": 14092.68,
+      "totalLength": 14075.712,
       "lengthByType": {
         "arterial": 2080,
-        "local": 12012.68
+        "local": 11995.712
       },
       "shareByType": {
-        "arterial": 0.147594,
-        "local": 0.852406
+        "arterial": 0.147772,
+        "local": 0.852228
       },
       "maxSlope": 0.3,
       "slopeByClass": {
@@ -2110,9 +2156,9 @@
           "overAbsolute": 0
         },
         "local": {
-          "count": 160,
+          "count": 169,
           "maxSlope": 0.3,
-          "overPolicy": 70,
+          "overPolicy": 69,
           "overAbsolute": 0
         }
       },
@@ -2136,7 +2182,7 @@
       "shareByType": {}
     },
     "parcels": {
-      "reservedShare": 0.185136,
+      "reservedShare": 0.182938,
       "byDistrictCount": {
         "district_0_0": 121,
         "district_1_0": 121,
@@ -2199,7 +2245,7 @@
     },
     "report": {
       "diagnosticsErrors": 0,
-      "diagnosticsWarnings": 7,
+      "diagnosticsWarnings": 8,
       "repairs": 9,
       "drops": 0
     }
@@ -2213,7 +2259,7 @@
         "code": "road_slope_over_class_policy",
         "stage": "rules",
         "message": "road segments exceed class slope policy (see policies.slopeLimitPct)",
-        "segments": 73,
+        "segments": 72,
         "maxSlope": 0.3
       },
       {

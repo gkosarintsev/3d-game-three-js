@@ -551,9 +551,9 @@ test('pilot level-16 v4: generateOutput deterministic (report and catalog conten
   assert.ok(fin?.propsByDistrictType && typeof fin.propsByDistrictType === 'object', 'pilot finalize_counts should include propsByDistrictType');
   assert.ok(fin?.roadAccessByType && typeof fin.roadAccessByType === 'object', 'pilot finalize_counts should include roadAccessByType');
   assert.equal(fin?.roadComponents, 1, 'pilot road graph should be connected');
-  assert.equal(fin?.roadSegments, 171);
-  assert.equal(fin?.roadNodes, 141);
-  assert.equal(fin?.buildings, 402);
+  assert.equal(fin?.roadSegments, 172);
+  assert.equal(fin?.roadNodes, 142);
+  assert.equal(fin?.buildings, 401);
   assert.equal(fin?.props, 360);
   assert.equal(fin?.lights, 8);
   assert.equal(fin?.turnarounds, 1, 'pilot should include configured turnaround');
@@ -573,7 +573,7 @@ test('pilot level-16 v4: generateOutput deterministic (report and catalog conten
   // M3 B2/B3 prototype: deterministic overpass interchanges on pilot transport network.
   const overpasses = report.diagnostics.filter(d => d.code === 'transport_interchange_overpass' && d.stage === '2_transport');
   assert.equal(overpasses.length, 5, 'pilot should apply five deterministic overpass interchange prototypes');
-  assert.deepEqual(overpasses.map(d => d.segmentId), ['tr_sp1_r', 'tr_sp2_r', 'tr_gb_29', 'tr_gb_35', 'tr_gb_80']);
+  assert.deepEqual(overpasses.map(d => d.segmentId), ['tr_sp1_r', 'tr_sp2_r', 'tr_gb_29', 'tr_gb_35', 'tr_gb_81']);
   for (const o of overpasses) {
     assert.ok(Number.isFinite(o.deckH) && o.deckH > 0);
     assert.ok(Number.isFinite(o.rampLen) && o.rampLen > 0);
@@ -589,21 +589,21 @@ test('pilot level-16 v4: generateOutput deterministic (report and catalog conten
   // M3 B2/B4: junction grade-separation prototypes on pilot (deterministic, 4-way + T-junctions, with ground connectors).
   const junctions = report.diagnostics.filter(d => d.code === 'transport_interchange_junction' && d.stage === '2_transport');
   assert.equal(junctions.length, 4, 'pilot should apply deterministic junction grade-separation prototypes');
-  assert.deepEqual(junctions.map(j => j.nodeId), ['tr_gn_53', 'tr_gn_60', 'tr_gn_63', 'tr_spc1_n']);
-  const j53 = junctions.find(j => j.nodeId === 'tr_gn_53');
-  const j60 = junctions.find(j => j.nodeId === 'tr_gn_60');
-  const j63 = junctions.find(j => j.nodeId === 'tr_gn_63');
+  assert.deepEqual(junctions.map(j => j.nodeId), ['tr_gn_54', 'tr_gn_61', 'tr_gn_64', 'tr_spc1_n']);
+  const j54 = junctions.find(j => j.nodeId === 'tr_gn_54');
+  const j61 = junctions.find(j => j.nodeId === 'tr_gn_61');
+  const j64 = junctions.find(j => j.nodeId === 'tr_gn_64');
   const jSpc = junctions.find(j => j.nodeId === 'tr_spc1_n');
-  assert.deepEqual(j53?.elevatedPair, ['tr_gb_77', 'tr_gb_88']);
-  assert.deepEqual(j53?.ramps, ['tr_jr_tr_gn_53_a', 'tr_jr_tr_gn_53_b']);
-  assert.equal(j53?.kind, 'tee3');
-  assert.deepEqual(j60?.elevatedPair, ['tr_gb_84', 'tr_gb_85']);
-  assert.deepEqual(j60?.ramps, ['tr_jr_tr_gn_60_a', 'tr_jr_tr_gn_60_b']);
-  assert.equal(j60?.kind, 'tee3');
-  assert.deepEqual(j63?.elevatedPair, ['tr_gb_87', 'tr_gb_111']);
-  assert.deepEqual(j63?.ramps, ['tr_jr_tr_gn_63_a', 'tr_jr_tr_gn_63_b']);
-  assert.equal(j63?.kind, 'cross4');
-  assert.deepEqual(jSpc?.elevatedPair, ['tr_spc_b', 'tr_gb_90']);
+  assert.deepEqual(j54?.elevatedPair, ['tr_gb_78', 'tr_gb_89']);
+  assert.deepEqual(j54?.ramps, ['tr_jr_tr_gn_54_a', 'tr_jr_tr_gn_54_b']);
+  assert.equal(j54?.kind, 'tee3');
+  assert.deepEqual(j61?.elevatedPair, ['tr_gb_85', 'tr_gb_86']);
+  assert.deepEqual(j61?.ramps, ['tr_jr_tr_gn_61_a', 'tr_jr_tr_gn_61_b']);
+  assert.equal(j61?.kind, 'tee3');
+  assert.deepEqual(j64?.elevatedPair, ['tr_gb_88', 'tr_gb_113']);
+  assert.deepEqual(j64?.ramps, ['tr_jr_tr_gn_64_a', 'tr_jr_tr_gn_64_b']);
+  assert.equal(j64?.kind, 'cross4');
+  assert.deepEqual(jSpc?.elevatedPair, ['tr_spc_b', 'tr_gb_91']);
   assert.deepEqual(jSpc?.ramps, ['tr_jr_tr_spc1_n_a', 'tr_jr_tr_spc1_n_b']);
   assert.equal(jSpc?.kind, 'tee3');
   for (const j of junctions) {
@@ -639,7 +639,7 @@ test('pilot level-16 v4: generateOutput deterministic (report and catalog conten
     }
     return seg;
   };
-  for (const overId of ['tr_sp1_r', 'tr_sp2_r', 'tr_gb_29', 'tr_gb_35', 'tr_gb_80']) {
+  for (const overId of ['tr_sp1_r', 'tr_sp2_r', 'tr_gb_29', 'tr_gb_35', 'tr_gb_81']) {
     const segOver = checkInterchangeSeg(overId, { interchange: 'overpass' });
     const endMaxY = Math.max(segOver.path[0][1] ?? 0, segOver.path.at(-1)[1] ?? 0);
     const midMaxY = segOver.path.reduce((m, p) => Math.max(m, p[1] ?? -Infinity), -Infinity);
@@ -950,28 +950,30 @@ test('citygen M3 B4: multi-level interchange compiles with correct road types an
   const compiled = compileCityforge(source);
   const roads = compiled.engine?.roads ?? [];
   const byId = new Map(roads.map(r => [r.id, r]));
-  // Overpass and junction ramps are elevated bridge segments; ground connectors remain ground.
+  // Overpass and interchange bridge segments are compiled as bridges; low-clearance parts may be demoted to ground.
   assert.equal(byId.get('tr_sp1_r')?.type, 'bridge');
   assert.equal(byId.get('tr_sp2_r')?.type, 'bridge');
   assert.equal(byId.get('tr_gb_29')?.type, 'bridge');
   assert.equal(byId.get('tr_gb_35')?.type, 'bridge');
-  assert.equal(byId.get('tr_gb_80')?.type, 'bridge');
-  assert.equal(byId.get('tr_jr_tr_gn_63_a')?.type, 'bridge');
-  assert.equal(byId.get('tr_jr_tr_gn_63_b')?.type, 'bridge');
-  assert.equal(byId.get('tr_jc_tr_gn_63_a')?.type, 'ground');
-  assert.equal(byId.get('tr_jc_tr_gn_63_b')?.type, 'ground');
+  assert.equal(byId.get('tr_gb_80')?.type, 'ground');
+
+  const junctionRamps = roads.filter(r => /^tr_jr_/.test(r.id));
+  const junctionConnectors = roads.filter(r => /^tr_jc_/.test(r.id));
+  assert.ok(junctionRamps.length > 0, 'expected junction ramp bridge segments');
+  assert.ok(junctionConnectors.length > 0, 'expected junction ground connectors');
+  assert.ok(junctionRamps.every(r => r.type === 'bridge'), 'all junction ramps should compile as bridge');
+  assert.ok(junctionConnectors.every(r => r.type === 'ground'), 'all junction connectors should compile as ground');
+
   // Terrain cross-leveling corridors apply to ground roads only: connectors included, elevated interchange segments excluded.
   const corridors = compiled.engine?.relief?.roadCorridors ?? [];
   const corridorIds = new Set(corridors.map(c => c.id));
-  assert.ok(corridorIds.has('tr_jc_tr_gn_63_a'));
-  assert.ok(corridorIds.has('tr_jc_tr_gn_63_b'));
+  for (const r of junctionConnectors) assert.ok(corridorIds.has(r.id), `ground connector corridor missing: ${r.id}`);
+  for (const r of junctionRamps) assert.ok(!corridorIds.has(r.id), `elevated ramp must not have ground corridor: ${r.id}`);
+  assert.ok(corridorIds.has('tr_gb_80'), 'demoted ground segment should have terrain corridor');
   assert.ok(!corridorIds.has('tr_sp1_r'));
   assert.ok(!corridorIds.has('tr_sp2_r'));
   assert.ok(!corridorIds.has('tr_gb_29'));
   assert.ok(!corridorIds.has('tr_gb_35'));
-  assert.ok(!corridorIds.has('tr_gb_80'));
-  assert.ok(!corridorIds.has('tr_jr_tr_gn_63_a'));
-  assert.ok(!corridorIds.has('tr_jr_tr_gn_63_b'));
 });
 
 test('citygen M3 B2: optional dead-end turnarounds are deterministic and valid (level-16)', () => {
