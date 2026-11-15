@@ -710,15 +710,27 @@ function generateLandscape(ctx) {
   }
   if (riverCfg.enabled === true) ctx.hydrology.rivers = rivers;
 
-  // R1.4 (opt-in): simple procedural lake in a local low/flat basin when requested.
+  // R1.4 (opt-in/profile-driven): procedural lake in a local low/flat basin with deterministic repair against constraints.
   const lakeCfg = ls.lake || {};
   if (lakeCfg.enabled === true) {
     const lakes = Array.isArray(ctx.hydrology.lakes) ? [...ctx.hydrology.lakes] : [];
     const probeStep = Math.max(32, Math.min(128, size / 10));
-    let best = null;
+    const hydroPresetLakeGen = (profile?.terrain?.hydrology && typeof profile.terrain.hydrology === 'object')
+      ? profile.terrain.hydrology
+      : ((profile?.hydrology && typeof profile.hydrology === 'object') ? profile.hydrology : {});
+    const lakeRadiusDefault = Number.isFinite(Number(lakeCfg.radius)) ? Number(lakeCfg.radius)
+      : (Number.isFinite(Number(hydroPresetLakeGen.lakeRadius ?? profile?.terrain?.lakeRadius))
+        ? Number(hydroPresetLakeGen.lakeRadius ?? profile?.terrain?.lakeRadius)
+        : Math.max(30, size * 0.06));
+    const lakeR = clamp(lakeRadiusDefault, 15, Math.max(20, half * 0.4));
+    const riverBufAddL = Number.isFinite(Number(hydroPresetLakeGen.riverBufferMargin ?? hydroPresetLakeGen.bufferMargin ?? profile?.terrain?.riverBufferMargin))
+      ? Number(hydroPresetLakeGen.riverBufferMargin ?? hydroPresetLakeGen.bufferMargin ?? profile?.terrain?.riverBufferMargin) : 12;
+    const riverFloodMulL = Number.isFinite(Number(hydroPresetLakeGen.floodplainMultiplier ?? hydroPresetLakeGen.riverFloodplainMultiplier ?? profile?.terrain?.floodplainMultiplier))
+      ? Number(hydroPresetLakeGen.floodplainMultiplier ?? hydroPresetLakeGen.riverFloodplainMultiplier ?? profile?.terrain?.floodplainMultiplier) : 3;
+    const candidates = [];
     for (let z = -half * 0.7; z <= half * 0.7 + EPS; z += probeStep) {
       for (let x = -half * 0.7; x <= half * 0.7 + EPS; x += probeStep) {
-        if (!farFromAnchors(x, z, anchors, 60)) continue;
+        if (!farFromAnchors(x, z, anchors, Math.max(60, lakeR + 20))) continue;
         const y = terrainHeightAt(x, z, ctx.input?.ground?.y ?? 0, ctx.terrain.modifiers);
         const d = Math.min(24, probeStep / 2);
         const flat = Math.max(
@@ -727,30 +739,51 @@ function generateLandscape(ctx) {
           Math.abs(terrainHeightAt(x, z + d, ctx.input?.ground?.y ?? 0, ctx.terrain.modifiers) - y),
           Math.abs(terrainHeightAt(x, z - d, ctx.input?.ground?.y ?? 0, ctx.terrain.modifiers) - y),
         ) / Math.max(d, EPS);
-        // avoid placing inside river corridor
+        // avoid placing center inside river floodplain/buffer (conservative for profile-driven forms)
         let nearRiver = false;
-        for (const rv of rivers) if (riverMinDistToPoint(rv, x, z) < ((rv.width || 0) * 0.5 + 20)) { nearRiver = true; break; }
+        for (const rv of rivers) {
+          const rw = Number(rv?.width) || 0;
+          const riverClear = Math.max(rw * 0.5 + riverBufAddL, rw * clamp(riverFloodMulL, 2, 4));
+          if (riverMinDistToPoint(rv, x, z) < (riverClear + lakeR * 0.5 + 4)) { nearRiver = true; break; }
+        }
         if (nearRiver) continue;
         const score = y + flat * 5;
-        if (!best || score < best.score - 1e-9 || (Math.abs(score - best.score) <= 1e-9 && Math.hypot(x, z) < Math.hypot(best.x, best.z))) {
-          best = { x, z, y, score };
-        }
+        candidates.push({ x, z, y, score });
       }
     }
-    if (best) {
-      const r = clamp(Number.isFinite(lakeCfg.radius) ? lakeCfg.radius : Math.max(30, size * 0.06), 15, Math.max(20, half * 0.4));
-      const sides = 12;
+    candidates.sort((a, b) => (a.score - b.score) || (Math.hypot(a.x, a.z) - Math.hypot(b.x, b.z)) || (a.x - b.x) || (a.z - b.z));
+    let placed = false;
+    const sides = 12;
+    for (const cand of candidates.slice(0, 48)) {
+      // deterministic repair/validation: ensure ring in-bounds and clear of river floodplain/buffer and anchors
+      let ok = true;
+      if (!farFromAnchors(cand.x, cand.z, anchors, Math.max(60, lakeR + 20))) ok = false;
       const ring = [];
-      for (let i = 0; i < sides; i++) {
+      for (let i = 0; i < sides && ok; i++) {
         const a = (i / sides) * Math.PI * 2;
+        const px = cand.x + Math.cos(a) * lakeR;
+        const pz = cand.z + Math.sin(a) * lakeR;
+        if (Math.abs(px) > half - 2 || Math.abs(pz) > half - 2) { ok = false; break; }
+        if (!farFromAnchors(px, pz, anchors, 24)) { ok = false; break; }
+        for (const rv of rivers) {
+          const rw = Number(rv?.width) || 0;
+          const riverClear = Math.max(rw * 0.5 + riverBufAddL, rw * clamp(riverFloodMulL, 2, 4));
+          if (riverMinDistToPoint(rv, px, pz) < (riverClear + 1)) { ok = false; break; }
+        }
         ring.push([
-          Math.round((best.x + Math.cos(a) * r) * 1000) / 1000,
-          Math.round(best.y * 1000) / 1000,
-          Math.round((best.z + Math.sin(a) * r) * 1000) / 1000,
+          Math.round(px * 1000) / 1000,
+          Math.round(cand.y * 1000) / 1000,
+          Math.round(pz * 1000) / 1000,
         ]);
       }
-      lakes.push({ id: 'lake_1', area: { type: 'polygon', points: ring }, waterLevel: Math.round(best.y * 1000) / 1000 });
+      if (!ok || ring.length !== sides) continue;
+      lakes.push({ id: `lake_${lakes.length + 1}`, area: { type: 'polygon', points: ring }, waterLevel: Math.round(cand.y * 1000) / 1000 });
       ctx.hydrology.lakes = lakes;
+      placed = true;
+      break;
+    }
+    if (!placed) {
+      ctx.report.diagnostics.push(warn('lake_generation_skipped', stageId, 'procedural lake requested but no valid placement found (constraints/repair exhausted)', { requested: 1 }));
     }
   }
 
