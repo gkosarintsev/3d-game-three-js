@@ -63,7 +63,7 @@
       "profileId": "forest",
       "cells": 0,
       "parcels": 121,
-      "reservedParcels": 10
+      "reservedParcels": 14
     }
   ],
   "diagnostics": [
@@ -248,7 +248,7 @@
         "forest"
       ],
       "parcels": 121,
-      "reservedParcels": 10,
+      "reservedParcels": 14,
       "parcelAccess": {
         "near": 10,
         "mid": 21,
@@ -263,7 +263,7 @@
       "props": 0,
       "chunkLoad": {
         "nonEmptyChunks": 4,
-        "maxBuildings": 6,
+        "maxBuildings": 8,
         "maxProps": 0,
         "maxLights": 0,
         "avgBuildings": 3.75,
@@ -299,7 +299,7 @@
       "roadNodes": 11,
       "districts": 1,
       "parcels": 121,
-      "reservedParcels": 10,
+      "reservedParcels": 14,
       "buildings": 15,
       "enterableBuildings": 0,
       "props": 0,
@@ -370,7 +370,7 @@
       "shareByType": {}
     },
     "parcels": {
-      "reservedShare": 0.082645,
+      "reservedShare": 0.115702,
       "byDistrictCount": {
         "d0": 121
       }

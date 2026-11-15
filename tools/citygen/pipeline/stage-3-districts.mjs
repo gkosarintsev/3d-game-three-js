@@ -442,6 +442,16 @@ export function makeStage3() {
                 if (ax >= aabb.minX - pad && ax <= aabb.maxX + pad && az >= aabb.minZ - pad && az <= aabb.maxZ + pad) { reserved = true; break; }
               }
             }
+            // R1.3: respect terrain reservations (flat earmarked sites/landmarks) as non-generic build parcels.
+            if (!reserved) {
+              const reserves = ctx.terrain?.analysis?.reservations ?? ctx.masks?.terrain?.reservations ?? [];
+              for (const rs of reserves) {
+                const rx = Number(rs?.x), rz = Number(rs?.z);
+                if (!Number.isFinite(rx) || !Number.isFinite(rz)) continue;
+                const pad = 6;
+                if (rx >= aabb.minX - pad && rx <= aabb.maxX + pad && rz >= aabb.minZ - pad && rz <= aabb.maxZ + pad) { reserved = true; break; }
+              }
+            }
             // Reserve only very remote parcels in some road-dependent districts to keep access buffers without wiping sparse-network areas
             const hardReserveTypes = new Set(['parking', 'sports', 'industrial']);
             if (!reserved && hardReserveTypes.has(type) && Number.isFinite(rd) && rd > 300) reserved = true;

@@ -2,7 +2,7 @@
   "profile": "hill_town",
   "seed": 202,
   "generatorVersion": "0.1.0",
-  "reportHash": "768247588b8d3cd008aef777c08dab980075dbd323f1b3e5d7f295623699fd4e",
+  "reportHash": "365d8182c3c549337c5e39da3e814c6e471fee302dcddff1ac8db750cf83c862",
   "summary": {
     "errors": 0,
     "warnings": 8,
@@ -21,7 +21,7 @@
       "roadNodes": 0,
       "districts": 16,
       "parcels": 2202,
-      "reservedParcels": 5,
+      "reservedParcels": 10,
       "buildings": 404,
       "enterableBuildings": 0,
       "props": 360,
@@ -87,7 +87,7 @@
       }
     },
     "parcels": {
-      "reservedShare": 0.002271,
+      "reservedShare": 0.004541,
       "byDistrictCount": {
         "district_0_0": 400,
         "district_1_0": 225,

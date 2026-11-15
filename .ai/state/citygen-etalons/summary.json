@@ -1,9 +1,9 @@
 {
   "generatorVersion": "0.1.0",
   "profiles": [
-    "river_trade",
     "hill_town",
-    "railway_industrial"
+    "railway_industrial",
+    "river_trade"
   ],
   "seeds": [
     101,
@@ -13,12 +13,50 @@
   "runs": 9,
   "deterministic": true,
   "byProfile": {
-    "river_trade": {
+    "hill_town": {
       "runs": 3,
       "hashes": [
-        "3fb2b5967bf39f668e842c3606bbfa00c601af3978e42b7ba6a9dffa944fce23",
-        "1446d7603f24cf19d0dc1a693d16c9ea64f600a6d97b3a9b2fdacd8813827023",
-        "c9c4e0708a09af3d2da4e1b6fadbee9870757d0eb492fa6af0d9030192656c40"
+        "ed1a3e459e483f6d5018f79d185b0df2839bfc87fac177cbc250a2f80b39edc1",
+        "365d8182c3c549337c5e39da3e814c6e471fee302dcddff1ac8db750cf83c862",
+        "c6d43b35a29d1efff837e26191870032282ec3e60d1dc13745586f7dd80083bf"
+      ],
+      "errors": {
+        "count": 3,
+        "min": 0,
+        "max": 0,
+        "mean": 0
+      },
+      "warnings": {
+        "count": 3,
+        "min": 8,
+        "max": 8,
+        "mean": 8
+      },
+      "roads": {
+        "count": 3,
+        "min": 0,
+        "max": 0,
+        "mean": 0
+      },
+      "parcels": {
+        "count": 3,
+        "min": 2202,
+        "max": 2378,
+        "mean": 2309.666667
+      },
+      "buildings": {
+        "count": 3,
+        "min": 403,
+        "max": 404,
+        "mean": 403.333333
+      }
+    },
+    "railway_industrial": {
+      "runs": 3,
+      "hashes": [
+        "c84c2a571376578bb305b97f137185fc487919487ce498ebe3dfb73d906e73f0",
+        "365871b757f4e06fbf748b50cc600746786c45342a0d58ead550d7b55d8d8421",
+        "6cac67a68f090104d12813f4fe1e610c366137cfa964c8095957da167ded490e"
       ],
       "errors": {
         "count": 3,
@@ -51,50 +89,12 @@
         "mean": 402.333333
       }
     },
-    "hill_town": {
+    "river_trade": {
       "runs": 3,
       "hashes": [
-        "920aa37862fc65a8547d692a4c0b47f5b178cc0fd78e9a2b1fbe6cab85d745a9",
-        "768247588b8d3cd008aef777c08dab980075dbd323f1b3e5d7f295623699fd4e",
-        "6da3076c2ee99b5cec2933d551d70cfd2413804c09ef7d1f7d2240a48792e547"
-      ],
-      "errors": {
-        "count": 3,
-        "min": 0,
-        "max": 0,
-        "mean": 0
-      },
-      "warnings": {
-        "count": 3,
-        "min": 8,
-        "max": 8,
-        "mean": 8
-      },
-      "roads": {
-        "count": 3,
-        "min": 0,
-        "max": 0,
-        "mean": 0
-      },
-      "parcels": {
-        "count": 3,
-        "min": 2202,
-        "max": 2378,
-        "mean": 2309.666667
-      },
-      "buildings": {
-        "count": 3,
-        "min": 403,
-        "max": 404,
-        "mean": 403.666667
-      }
-    },
-    "railway_industrial": {
-      "runs": 3,
-      "hashes": [
-        "3fb2b5967bf39f668e842c3606bbfa00c601af3978e42b7ba6a9dffa944fce23",
-        "1446d7603f24cf19d0dc1a693d16c9ea64f600a6d97b3a9b2fdacd8813827023",
-        "c9c4e0708a09af3d2da4e1b6fadbee9870757d0eb492fa6af0d9030192656c40"
+        "c84c2a571376578bb305b97f137185fc487919487ce498ebe3dfb73d906e73f0",
+        "365871b757f4e06fbf748b50cc600746786c45342a0d58ead550d7b55d8d8421",
+        "6cac67a68f090104d12813f4fe1e610c366137cfa964c8095957da167ded490e"
       ],
       "errors": {
         "count": 3,

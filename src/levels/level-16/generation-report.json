@@ -71,7 +71,7 @@
       "profileId": "industrial",
       "cells": 1,
       "parcels": 64,
-      "reservedParcels": 1
+      "reservedParcels": 2
     },
     {
       "id": "district_0_2",
@@ -79,7 +79,7 @@
       "profileId": "parking",
       "cells": 1,
       "parcels": 64,
-      "reservedParcels": 0
+      "reservedParcels": 1
     },
     {
       "id": "district_0_3",
@@ -111,7 +111,7 @@
       "profileId": "sports",
       "cells": 1,
       "parcels": 49,
-      "reservedParcels": 16
+      "reservedParcels": 18
     },
     {
       "id": "district_1_3",
@@ -135,7 +135,7 @@
       "profileId": "market",
       "cells": 1,
       "parcels": 196,
-      "reservedParcels": 58
+      "reservedParcels": 59
     },
     {
       "id": "district_2_2",
@@ -512,7 +512,7 @@
         "suburb"
       ],
       "parcels": 2274,
-      "reservedParcels": 319,
+      "reservedParcels": 324,
       "parcelAccess": {
         "near": 1157,
         "mid": 1015,
@@ -521,12 +521,12 @@
       "roadAccessByType": {
         "industrial": {
           "parcels": 64,
-          "unreserved": 63,
+          "unreserved": 62,
           "good": 27,
-          "mid": 36,
+          "mid": 35,
           "far": 0,
-          "reserved": 1,
-          "goodOrMid": 63,
+          "reserved": 2,
+          "goodOrMid": 62,
           "accessibleRatio": 1
         },
         "luxury": {
@@ -551,13 +551,13 @@
         },
         "parking": {
           "parcels": 64,
-          "unreserved": 64,
+          "unreserved": 63,
           "good": 16,
-          "mid": 41,
+          "mid": 40,
           "far": 7,
-          "reserved": 0,
-          "goodOrMid": 57,
-          "accessibleRatio": 0.891
+          "reserved": 1,
+          "goodOrMid": 56,
+          "accessibleRatio": 0.889
         },
         "residential": {
           "parcels": 450,
@@ -581,13 +581,13 @@
         },
         "sports": {
           "parcels": 49,
-          "unreserved": 33,
-          "good": 14,
-          "mid": 17,
+          "unreserved": 31,
+          "good": 13,
+          "mid": 16,
           "far": 2,
-          "reserved": 16,
-          "goodOrMid": 31,
-          "accessibleRatio": 0.939
+          "reserved": 18,
+          "goodOrMid": 29,
+          "accessibleRatio": 0.935
         }
       },
       "buildings": 402,
@@ -692,7 +692,7 @@
       "roadNodes": 162,
       "districts": 16,
       "parcels": 2274,
-      "reservedParcels": 319,
+      "reservedParcels": 324,
       "buildings": 402,
       "enterableBuildings": 0,
       "props": 360,
@@ -771,7 +771,7 @@
       "shareByType": {}
     },
     "parcels": {
-      "reservedShare": 0.140281,
+      "reservedShare": 0.14248,
       "byDistrictCount": {
         "district_0_0": 121,
         "district_1_0": 121,
