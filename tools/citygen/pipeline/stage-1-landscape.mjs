@@ -446,100 +446,27 @@ function generateLandscape(ctx) {
   const rivers = [];
   if (riverCfg.enabled === true) {
     const profileId = ctx.meta?.activeCityProfileId ?? null;
-    // R1.1/R1.4: lightweight profile-driven river character (explicit config wins).
+    // R1.1/R1.4: profile-driven hydrology across scenarios (explicit config wins).
+    // Support multiple main rivers when requested by profile/config; preserve legacy behavior for count==1.
+    const profileRiversRequested = Number.isFinite(Number(profile?.terrain?.rivers)) ? Number(profile.terrain.rivers)
+      : (Number.isFinite(Number(profile?.hydrology?.rivers)) ? Number(profile.hydrology.rivers) : null);
+    const riverCount = Number.isFinite(Number(riverCfg.count)) ? clamp(Math.floor(Number(riverCfg.count)), 0, 4)
+      : (riverCfg.enabled === false ? 0
+        : Math.max(1, (profileRiversRequested != null && (ls.profileDriven === true || ls.generate === true))
+          ? clamp(Math.floor(profileRiversRequested), 0, 4) : 1));
+
     let width = clamp(Number.isFinite(riverCfg.width) ? riverCfg.width : 24, 4, 120);
     if (!Number.isFinite(Number(riverCfg.width)) && profileId === 'railway_industrial') width = clamp(width * 0.85, 4, 120);
     if (!Number.isFinite(Number(riverCfg.width)) && profileId === 'river_trade') width = clamp(width * 1.05, 4, 120);
     const depth = clamp(Number.isFinite(riverCfg.depth) ? riverCfg.depth : 4, 0.5, 30);
     const margin = half * 0.9;
     const axis = riverCfg.axis === 'x' ? 'x' : 'z';
-    const points = [];
     const steps = clamp(Number.isInteger(riverCfg.points) ? riverCfg.points : 6, 2, 24);
     const baseY0 = ctx.input?.ground?.y ?? 0;
 
     const useDownslope = (riverCfg.downslope === true)
       || (riverCfg.downslope == null && riverCfg.meander !== true && (ls.profileDriven === true || profile != null));
-    if (useDownslope) {
-      // R1.4: cost-traced downslope-biased path across the plate (deterministic greedy walk).
-      // Preferred for profile-driven generation unless explicitly overridden.
-      const crossStep = (margin * 2) / (steps - 1);
-      const lateralStep = Math.max(8, Math.min(32, crossStep));
-      const startAlong = -margin;
-      // choose start lateral offset with lowest terrain at source edge among sampled candidates
-      let bestLat = 0, bestH = Infinity;
-      for (let k = -4; k <= 4; k++) {
-        const lat = clamp((k / 4) * margin * 0.6, -margin * 0.7, margin * 0.7);
-        const sx = axis === 'z' ? lat : startAlong;
-        const sz = axis === 'z' ? startAlong : lat;
-        const h = terrainHeightAt(sx, sz, baseY0, ctx.terrain.modifiers);
-        if (h < bestH - 1e-9 || (Math.abs(h - bestH) <= 1e-9 && Math.abs(lat) < Math.abs(bestLat))) { bestH = h; bestLat = lat; }
-      }
-      let lat = bestLat;
-      let prevY = bestH;
-      const widthProfile = [];
-      for (let i = 0; i < steps; i++) {
-        const t = steps === 1 ? 0.5 : i / (steps - 1);
-        const along = lerp(-margin, margin, t);
-        let best = null;
-        // evaluate a few lateral moves biased to descent (cost-traced: prefer valleys, avoid uphill/turns)
-        for (let d = -2; d <= 2; d++) {
-          const nlat = clamp(lat + d * lateralStep, -margin * 0.75, margin * 0.75);
-          const x = axis === 'z' ? nlat : along;
-          const z = axis === 'z' ? along : nlat;
-          const y = terrainHeightAt(x, z, baseY0, ctx.terrain.modifiers);
-          const turn = Math.abs(nlat - lat);
-          const uphill = Math.max(0, y - prevY);
-          const downhill = Math.max(0, prevY - y);
-          // Strongly avoid uphill, prefer lower terrain and gentle descent, penalize sharp lateral turns.
-          const cost = y + uphill * 3.5 - downhill * 0.15 + turn * 0.06;
-          if (!best || cost < best.cost - 1e-9 || (Math.abs(cost - best.cost) <= 1e-9 && d === 0)) {
-            best = { x, z, y, nlat, cost };
-          }
-        }
-        lat = best.nlat;
-        prevY = best.y;
-        points.push([Math.round(best.x * 10) / 10, Math.round(best.y * 1000) / 1000, Math.round(best.z * 10) / 10]);
-        const lo = profileId === 'river_trade' ? 0.8 : 0.7;
-        const hi = profileId === 'river_trade' ? 1.35 : 1.3;
-        const w = Math.round(width * lerp(lo, hi, t) * 1000) / 1000;
-        widthProfile.push([+t.toFixed(4), w]);
-      }
-      const river = { id: 'river_1', path: points, width, depth, carveTerrain: riverCfg.carveTerrain !== false, downslope: true };
-      if (widthProfile.length >= 2) river.widthProfile = widthProfile;
-      rivers.push(river);
-    } else {
-      // Simple deterministic meandering river roughly across the map (west->east or north->south)
-      // R1.4: optional meander/widthProfile params (backward-compatible defaults keep prior shape family)
-      const profileId = ctx.meta?.activeCityProfileId ?? null;
-      const meander = riverCfg.meander === true || (riverCfg.meander == null && profileId === 'river_trade');
-      const baseAmp = Math.min(half * 0.35, Number.isFinite(riverCfg.amplitude) ? riverCfg.amplitude : (profileId === 'river_trade' ? half * 0.24 : half * 0.2));
-      const amp = meander ? clamp(baseAmp, width * 3, width * 6) : baseAmp;
-      const base = lerp(-amp, amp, rng());
-      const widthProfile = [];
-      for (let i = 0; i < steps; i++) {
-        const t = steps === 1 ? 0.5 : i / (steps - 1);
-        const along = lerp(-margin, margin, t);
-        const phase = t * Math.PI * (meander ? (profileId === 'river_trade' ? 2.8 : 2.5) : 2) + rng() * 0.5;
-        const wiggle = base + Math.sin(phase) * amp * 0.5 + (meander ? Math.sin(phase * 0.5) * amp * 0.15 : 0);
-        const x = axis === 'z' ? wiggle : along;
-        const z = axis === 'z' ? along : wiggle;
-        // sample terrain height for a more grounded path when modifiers exist
-        const y = Math.round(terrainHeightAt(x, z, baseY0, ctx.terrain.modifiers) * 1000) / 1000;
-        points.push([Math.round(x * 10) / 10, y, Math.round(z * 10) / 10]);
-        if (meander || profileId === 'river_trade') {
-          const lo = profileId === 'river_trade' ? 0.8 : 0.6;
-          const hi = profileId === 'river_trade' ? 1.35 : 1.4;
-          const w = Math.round(width * lerp(lo, hi, t) * 1000) / 1000;
-          widthProfile.push([+t.toFixed(4), w]);
-        }
-      }
-      const river = { id: 'river_1', path: points, width, depth, carveTerrain: riverCfg.carveTerrain !== false, meander: meander || undefined };
-      if (widthProfile.length >= 2) river.widthProfile = widthProfile;
-      rivers.push(river);
-    }
-    // R1.4 (profile-driven/opt-in): deterministic tributaries for main river(s).
-    // Cost-traced upstream-to-join path; preserves first-tributary RNG/behavior when count=1.
-    // Explicit riverCfg.tributaryCount/tributaries wins; otherwise use active profile terrain/hydrology spec.
+
     const profileTribRaw = profile?.terrain?.tributaries ?? profile?.hydrology?.tributaries;
     const resolveProfileTribCount = (raw, allowAuto) => {
       if (!allowAuto) return 0;
@@ -551,135 +478,231 @@ function generateLandscape(ctx) {
         const maxRaw = raw.max ?? raw.min ?? 0;
         const max = Math.max(min, clamp(Math.floor(Number(maxRaw) || 0), 0, 4));
         if (max === min) return min;
-        // Deterministic auto selection per scenario/profile (R1.4: across scenarios).
+        // Deterministic auto selection per scenario/profile/river (R1.4: across scenarios).
         return min + Math.floor(rng() * (max - min + 1));
       }
       return 0;
     };
     const allowProfileAutoTrib = (ls.profileDriven === true || ls.generate === true);
-    const profileTribCount = resolveProfileTribCount(profileTribRaw, allowProfileAutoTrib);
-    const legacyRiverTradeAuto = (profileId === 'river_trade' && profileTribCount === 0 && allowProfileAutoTrib) ? 1 : 0;
-    const tribCount = Number.isFinite(Number(riverCfg.tributaryCount))
-      ? clamp(Math.floor(Number(riverCfg.tributaryCount)), 0, 4)
-      : (riverCfg.tributaries === false ? 0
-        : (riverCfg.tributaries === true ? Math.max(1, profileTribCount || 1)
-          : Math.max(profileTribCount, legacyRiverTradeAuto)));
-    if (tribCount > 0 && rivers.length >= 1) {
-      const main = rivers[0];
-      const mpath = Array.isArray(main?.path) ? main.path : [];
-      if (mpath.length >= 4) {
-        for (let ti = 0; ti < tribCount; ti++) {
-          // For ti==0 keep legacy RNG sequence/params for deterministic compatibility.
-          const joinT = ti === 0 ? (0.38 + rng() * 0.18) : (0.22 + rng() * 0.56);
-          const joinIdx = clamp(Math.round(lerp(1, mpath.length - 2, joinT)), 1, mpath.length - 2);
-          const join = mpath[joinIdx];
-          const prev = mpath[Math.max(0, joinIdx - 1)];
-          const next = mpath[Math.min(mpath.length - 1, joinIdx + 1)];
-          const tdx = Number(next[0]) - Number(prev[0]);
-          const tdz = Number(next[2]) - Number(prev[2]);
-          const tlen = Math.hypot(tdx, tdz) || 1;
-          const side = rng() < 0.5 ? -1 : 1;
-          const nx = (-tdz / tlen) * side;
-          const nz = (tdx / tlen) * side;
-          // bias source slightly upstream of join to create a natural confluence
-          const flowx = (Number(next[0]) - Number(join[0])) / (Math.hypot(Number(next[0]) - Number(join[0]), Number(next[2]) - Number(join[2])) || 1);
-          const flowz = (Number(next[2]) - Number(join[2])) / (Math.hypot(Number(next[0]) - Number(join[0]), Number(next[2]) - Number(join[2])) || 1);
-          const tribLen = clamp(
-            Number.isFinite(riverCfg.tributaryLength) ? riverCfg.tributaryLength : size * ((ti === 0 ? 0.18 : 0.14) + rng() * (ti === 0 ? 0.08 : 0.1)),
-            80, half * 0.7
-          );
-          const tSteps = clamp(Number.isInteger(riverCfg.tributaryPoints) ? riverCfg.tributaryPoints : 4, 3, 8);
-          const tWidth = clamp((Number(main.width) || width) * ((ti === 0 ? 0.45 : 0.35) + rng() * 0.15), 4, Math.max(6, (Number(main.width) || width) * 0.8));
-          const tDepth = clamp((Number(main.depth) || depth) * (0.55 + rng() * 0.2), 0.5, Number(main.depth) || depth);
-          const minClear = (Number(main.width) || width) * 0.5 + 10;
-          const jx = Number(join[0]), jz = Number(join[2]), jy = Number(join[1]) || baseY0;
 
-          const buildGeometric = () => {
-            const tpath = [[jx, jy, jz]];
-            let ok = true;
-            for (let i = 1; i < tSteps; i++) {
-              const t = i / (tSteps - 1);
-              const along = tribLen * t;
-              const spread = lerp(0.15, 0.55, t) * tribLen * (0.6 + rng() * 0.4);
-              const x = jx + nx * along - flowx * spread * 0.25;
-              const z = jz + nz * along - flowz * spread * 0.25;
-              const cx = clamp(x, -half + 8, half - 8);
-              const cz = clamp(z, -half + 8, half - 8);
-              const y = Math.round(terrainHeightAt(cx, cz, baseY0, ctx.terrain.modifiers) * 1000) / 1000;
-              if (riverMinDistToPoint(main, cx, cz) < minClear && i < tSteps - 1) { ok = false; break; }
-              tpath.push([Math.round(cx * 10) / 10, y, Math.round(cz * 10) / 10]);
-            }
-            return ok && tpath.length >= 3 && !polylineSelfIntersects(tpath) ? tpath : null;
-          };
+    for (let ri = 0; ri < riverCount; ri++) {
+      const riverId = ri === 0 ? 'river_1' : `river_${ri + 1}`;
+      const lateralOffset = (riverCount <= 1) ? 0 : lerp(-margin * 0.35, margin * 0.35, (ri + 1) / (riverCount + 1));
+      const points = [];
+      let mainWidth = width;
+      let mainDepth = depth;
+      if (riverCount > 1 && ri > 0) {
+        mainWidth = clamp(width * (0.85 + ri * 0.05), 4, 120);
+        mainDepth = clamp(depth * (0.9 + ri * 0.03), 0.5, 30);
+      }
 
-          let tpath = null;
-          // Choose upstream source with deterministic local search (prefer valid, not too low vs join).
-          let bestSrc = null;
-          for (let k = -2; k <= 2; k++) {
-            const along = tribLen;
-            const lateral = k * tribLen * 0.12;
-            const sx = clamp(jx + nx * along - flowx * (tribLen * 0.2 + Math.abs(lateral) * 0.1) + (-flowz) * lateral, -half + 8, half - 8);
-            const sz = clamp(jz + nz * along - flowz * (tribLen * 0.2 + Math.abs(lateral) * 0.1) + (flowx) * lateral, -half + 8, half - 8);
-            if (riverMinDistToPoint(main, sx, sz) < minClear) continue;
-            const sy = terrainHeightAt(sx, sz, baseY0, ctx.terrain.modifiers);
-            const score = sy - Math.abs(k) * 0.35; // prefer higher/feasible source, mild center bias
-            if (!bestSrc || score > bestSrc.score + 1e-9 || (Math.abs(score - bestSrc.score) <= 1e-9 && Math.abs(k) < Math.abs(bestSrc.k))) {
-              bestSrc = { x: sx, z: sz, y: sy, k, score };
+      if (useDownslope) {
+        // R1.4: cost-traced downslope-biased path across the plate (deterministic greedy walk).
+        // Preferred for profile-driven generation unless explicitly overridden.
+        const crossStep = (margin * 2) / (steps - 1);
+        const lateralStep = Math.max(8, Math.min(32, crossStep));
+        const startAlong = -margin;
+        // choose start lateral offset with lowest terrain at source edge among sampled candidates
+        let bestLat = lateralOffset, bestH = Infinity;
+        for (let k = -4; k <= 4; k++) {
+          const lat = clamp(lateralOffset + (k / 4) * margin * 0.6, -margin * 0.7, margin * 0.7);
+          const sx = axis === 'z' ? lat : startAlong;
+          const sz = axis === 'z' ? startAlong : lat;
+          const h = terrainHeightAt(sx, sz, baseY0, ctx.terrain.modifiers);
+          if (h < bestH - 1e-9 || (Math.abs(h - bestH) <= 1e-9 && Math.abs(lat - lateralOffset) < Math.abs(bestLat - lateralOffset))) { bestH = h; bestLat = lat; }
+        }
+        let lat = bestLat;
+        let prevY = bestH;
+        const widthProfile = [];
+        for (let i = 0; i < steps; i++) {
+          const t = steps === 1 ? 0.5 : i / (steps - 1);
+          const along = lerp(-margin, margin, t);
+          let best = null;
+          // evaluate a few lateral moves biased to descent (cost-traced: prefer valleys, avoid uphill/turns)
+          for (let d = -2; d <= 2; d++) {
+            const nlat = clamp(lat + d * lateralStep, -margin * 0.75, margin * 0.75);
+            const x = axis === 'z' ? nlat : along;
+            const z = axis === 'z' ? along : nlat;
+            const y = terrainHeightAt(x, z, baseY0, ctx.terrain.modifiers);
+            const turn = Math.abs(nlat - lat);
+            const uphill = Math.max(0, y - prevY);
+            const downhill = Math.max(0, prevY - y);
+            // Strongly avoid uphill, prefer lower terrain and gentle descent, penalize sharp lateral turns.
+            const cost = y + uphill * 3.5 - downhill * 0.15 + turn * 0.06;
+            if (!best || cost < best.cost - 1e-9 || (Math.abs(cost - best.cost) <= 1e-9 && d === 0)) {
+              best = { x, z, y, nlat, cost };
             }
           }
-          if (bestSrc) {
-            // Trace from source down to join in (tSteps-1) segments, biased toward join and descent.
-            const rev = [];
-            let cx = bestSrc.x, cz = bestSrc.z, cy = bestSrc.y;
-            for (let i = 0; i < tSteps - 1; i++) {
-              rev.push([Math.round(cx * 10) / 10, Math.round(cy * 1000) / 1000, Math.round(cz * 10) / 10]);
-              if (i === tSteps - 2) break;
-              const remain = (tSteps - 2 - i);
-              const baseStepX = (jx - cx) / Math.max(1, remain);
-              const baseStepZ = (jz - cz) / Math.max(1, remain);
-              const baseLen = Math.hypot(baseStepX, baseStepZ) || 1;
-              const dirx = baseStepX / baseLen;
-              const dirz = baseStepZ / baseLen;
-              const px = -dirz, pz = dirx; // perpendicular
-              const stepLen = Math.min(tribLen / (tSteps - 1), Math.max(18, baseLen));
-              let cand = null;
-              for (const off of [0, -0.35, 0.35, -0.7, 0.7]) {
-                const tx = cx + dirx * stepLen + px * stepLen * off;
-                const tz = cz + dirz * stepLen + pz * stepLen * off;
-                const x = clamp(tx, -half + 8, half - 8);
-                const z = clamp(tz, -half + 8, half - 8);
-                const y = terrainHeightAt(x, z, baseY0, ctx.terrain.modifiers);
-                const dJoin = Math.hypot(jx - x, jz - z);
-                const uphill = Math.max(0, y - cy);
-                const downhill = Math.max(0, cy - y);
-                const clear = riverMinDistToPoint(main, x, z);
-                const clearPenalty = clear < minClear ? (minClear - clear) * 5 : 0;
-                const cost = dJoin * 0.03 + y * 0.25 + uphill * 2.2 - downhill * 0.12 + Math.abs(off) * 2.0 + clearPenalty;
-                if (!cand || cost < cand.cost - 1e-9 || (Math.abs(cost - cand.cost) <= 1e-9 && off === 0)) {
-                  cand = { x, z, y, cost, clear };
+          lat = best.nlat;
+          prevY = best.y;
+          points.push([Math.round(best.x * 10) / 10, Math.round(best.y * 1000) / 1000, Math.round(best.z * 10) / 10]);
+          const lo = profileId === 'river_trade' ? 0.8 : 0.7;
+          const hi = profileId === 'river_trade' ? 1.35 : 1.3;
+          const w = Math.round(mainWidth * lerp(lo, hi, t) * 1000) / 1000;
+          widthProfile.push([+t.toFixed(4), w]);
+        }
+        const river = { id: riverId, path: points, width: mainWidth, depth: mainDepth, carveTerrain: riverCfg.carveTerrain !== false, downslope: true };
+        if (widthProfile.length >= 2) river.widthProfile = widthProfile;
+        rivers.push(river);
+      } else {
+        // Simple deterministic meandering river roughly across the map (west->east or north->south)
+        // R1.4: optional meander/widthProfile params (backward-compatible defaults keep prior shape family)
+        const profileIdLocal = ctx.meta?.activeCityProfileId ?? null;
+        const meander = riverCfg.meander === true || (riverCfg.meander == null && profileIdLocal === 'river_trade');
+        const baseAmp = Math.min(half * 0.35, Number.isFinite(riverCfg.amplitude) ? riverCfg.amplitude : (profileIdLocal === 'river_trade' ? half * 0.24 : half * 0.2));
+        const amp = meander ? clamp(baseAmp, mainWidth * 3, mainWidth * 6) : baseAmp;
+        const base = lerp(-amp, amp, rng()) + lateralOffset;
+        const widthProfile = [];
+        for (let i = 0; i < steps; i++) {
+          const t = steps === 1 ? 0.5 : i / (steps - 1);
+          const along = lerp(-margin, margin, t);
+          const phase = t * Math.PI * (meander ? (profileIdLocal === 'river_trade' ? 2.8 : 2.5) : 2) + rng() * 0.5;
+          const wiggle = base + Math.sin(phase) * amp * 0.5 + (meander ? Math.sin(phase * 0.5) * amp * 0.15 : 0);
+          const x = axis === 'z' ? wiggle : along;
+          const z = axis === 'z' ? along : wiggle;
+          // sample terrain height for a more grounded path when modifiers exist
+          const y = Math.round(terrainHeightAt(x, z, baseY0, ctx.terrain.modifiers) * 1000) / 1000;
+          points.push([Math.round(x * 10) / 10, y, Math.round(z * 10) / 10]);
+          if (meander || profileIdLocal === 'river_trade') {
+            const lo = profileIdLocal === 'river_trade' ? 0.8 : 0.6;
+            const hi = profileIdLocal === 'river_trade' ? 1.35 : 1.4;
+            const w = Math.round(mainWidth * lerp(lo, hi, t) * 1000) / 1000;
+            widthProfile.push([+t.toFixed(4), w]);
+          }
+        }
+        const river = { id: riverId, path: points, width: mainWidth, depth: mainDepth, carveTerrain: riverCfg.carveTerrain !== false, meander: meander || undefined };
+        if (widthProfile.length >= 2) river.widthProfile = widthProfile;
+        rivers.push(river);
+      }
+
+      // R1.4 (profile-driven/opt-in): deterministic tributaries for main river(s).
+      // Cost-traced upstream-to-join path; preserves first-tributary RNG/behavior when count=1 and single main river.
+      // Explicit riverCfg.tributaryCount/tributaries wins; otherwise use active profile terrain/hydrology spec.
+      const main = rivers[rivers.length - 1];
+      const profileTribCount = resolveProfileTribCount(profileTribRaw, allowProfileAutoTrib);
+      const legacyRiverTradeAuto = (profileId === 'river_trade' && profileTribCount === 0 && allowProfileAutoTrib && ri === 0) ? 1 : 0;
+      const tribCount = Number.isFinite(Number(riverCfg.tributaryCount))
+        ? clamp(Math.floor(Number(riverCfg.tributaryCount)), 0, 4)
+        : (riverCfg.tributaries === false ? 0
+          : (riverCfg.tributaries === true ? Math.max(1, profileTribCount || 1)
+            : Math.max(profileTribCount, legacyRiverTradeAuto)));
+      if (tribCount > 0) {
+        const mpath = Array.isArray(main?.path) ? main.path : [];
+        if (mpath.length >= 4) {
+          for (let ti = 0; ti < tribCount; ti++) {
+            // For ti==0 keep legacy RNG sequence/params for deterministic compatibility (single-main-river legacy path).
+            const joinT = ti === 0 ? (0.38 + rng() * 0.18) : (0.22 + rng() * 0.56);
+            const joinIdx = clamp(Math.round(lerp(1, mpath.length - 2, joinT)), 1, mpath.length - 2);
+            const join = mpath[joinIdx];
+            const prev = mpath[Math.max(0, joinIdx - 1)];
+            const next = mpath[Math.min(mpath.length - 1, joinIdx + 1)];
+            const tdx = Number(next[0]) - Number(prev[0]);
+            const tdz = Number(next[2]) - Number(prev[2]);
+            const tlen = Math.hypot(tdx, tdz) || 1;
+            const side = rng() < 0.5 ? -1 : 1;
+            const nx = (-tdz / tlen) * side;
+            const nz = (tdx / tlen) * side;
+            // bias source slightly upstream of join to create a natural confluence
+            const flowx = (Number(next[0]) - Number(join[0])) / (Math.hypot(Number(next[0]) - Number(join[0]), Number(next[2]) - Number(join[2])) || 1);
+            const flowz = (Number(next[2]) - Number(join[2])) / (Math.hypot(Number(next[0]) - Number(join[0]), Number(next[2]) - Number(join[2])) || 1);
+            const tribLen = clamp(
+              Number.isFinite(riverCfg.tributaryLength) ? riverCfg.tributaryLength : size * ((ti === 0 ? 0.18 : 0.14) + rng() * (ti === 0 ? 0.08 : 0.1)),
+              80, half * 0.7
+            );
+            const tSteps = clamp(Number.isInteger(riverCfg.tributaryPoints) ? riverCfg.tributaryPoints : 4, 3, 8);
+            const tWidth = clamp((Number(main.width) || mainWidth) * ((ti === 0 ? 0.45 : 0.35) + rng() * 0.15), 4, Math.max(6, (Number(main.width) || mainWidth) * 0.8));
+            const tDepth = clamp((Number(main.depth) || mainDepth) * (0.55 + rng() * 0.2), 0.5, Number(main.depth) || mainDepth);
+            const minClear = (Number(main.width) || mainWidth) * 0.5 + 10;
+            const jx = Number(join[0]), jz = Number(join[2]), jy = Number(join[1]) || baseY0;
+
+            const buildGeometric = () => {
+              const tpath = [[jx, jy, jz]];
+              let ok = true;
+              for (let i = 1; i < tSteps; i++) {
+                const t = i / (tSteps - 1);
+                const along = tribLen * t;
+                const spread = lerp(0.15, 0.55, t) * tribLen * (0.6 + rng() * 0.4);
+                const x = jx + nx * along - flowx * spread * 0.25;
+                const z = jz + nz * along - flowz * spread * 0.25;
+                const cx = clamp(x, -half + 8, half - 8);
+                const cz = clamp(z, -half + 8, half - 8);
+                const y = Math.round(terrainHeightAt(cx, cz, baseY0, ctx.terrain.modifiers) * 1000) / 1000;
+                if (riverMinDistToPoint(main, cx, cz) < minClear && i < tSteps - 1) { ok = false; break; }
+                tpath.push([Math.round(cx * 10) / 10, y, Math.round(cz * 10) / 10]);
+              }
+              return ok && tpath.length >= 3 && !polylineSelfIntersects(tpath) ? tpath : null;
+            };
+
+            let tpath = null;
+            // Choose upstream source with deterministic local search (prefer valid, not too low vs join).
+            let bestSrc = null;
+            for (let k = -2; k <= 2; k++) {
+              const along = tribLen;
+              const lateral = k * tribLen * 0.12;
+              const sx = clamp(jx + nx * along - flowx * (tribLen * 0.2 + Math.abs(lateral) * 0.1) + (-flowz) * lateral, -half + 8, half - 8);
+              const sz = clamp(jz + nz * along - flowz * (tribLen * 0.2 + Math.abs(lateral) * 0.1) + (flowx) * lateral, -half + 8, half - 8);
+              if (riverMinDistToPoint(main, sx, sz) < minClear) continue;
+              const sy = terrainHeightAt(sx, sz, baseY0, ctx.terrain.modifiers);
+              const score = sy - Math.abs(k) * 0.35; // prefer higher/feasible source, mild center bias
+              if (!bestSrc || score > bestSrc.score + 1e-9 || (Math.abs(score - bestSrc.score) <= 1e-9 && Math.abs(k) < Math.abs(bestSrc.k))) {
+                bestSrc = { x: sx, z: sz, y: sy, k, score };
+              }
+            }
+            if (bestSrc) {
+              // Trace from source down to join in (tSteps-1) segments, biased toward join and descent.
+              const rev = [];
+              let cx = bestSrc.x, cz = bestSrc.z, cy = bestSrc.y;
+              for (let i = 0; i < tSteps - 1; i++) {
+                rev.push([Math.round(cx * 10) / 10, Math.round(cy * 1000) / 1000, Math.round(cz * 10) / 10]);
+                if (i === tSteps - 2) break;
+                const remain = (tSteps - 2 - i);
+                const baseStepX = (jx - cx) / Math.max(1, remain);
+                const baseStepZ = (jz - cz) / Math.max(1, remain);
+                const baseLen = Math.hypot(baseStepX, baseStepZ) || 1;
+                const dirx = baseStepX / baseLen;
+                const dirz = baseStepZ / baseLen;
+                const px = -dirz, pz = dirx; // perpendicular
+                const stepLen = Math.min(tribLen / (tSteps - 1), Math.max(18, baseLen));
+                let cand = null;
+                for (const off of [0, -0.35, 0.35, -0.7, 0.7]) {
+                  const tx = cx + dirx * stepLen + px * stepLen * off;
+                  const tz = cz + dirz * stepLen + pz * stepLen * off;
+                  const x = clamp(tx, -half + 8, half - 8);
+                  const z = clamp(tz, -half + 8, half - 8);
+                  const y = terrainHeightAt(x, z, baseY0, ctx.terrain.modifiers);
+                  const dJoin = Math.hypot(jx - x, jz - z);
+                  const uphill = Math.max(0, y - cy);
+                  const downhill = Math.max(0, cy - y);
+                  const clear = riverMinDistToPoint(main, x, z);
+                  const clearPenalty = clear < minClear ? (minClear - clear) * 5 : 0;
+                  const cost = dJoin * 0.03 + y * 0.25 + uphill * 2.2 - downhill * 0.12 + Math.abs(off) * 2.0 + clearPenalty;
+                  if (!cand || cost < cand.cost - 1e-9 || (Math.abs(cost - cand.cost) <= 1e-9 && off === 0)) {
+                    cand = { x, z, y, cost, clear };
+                  }
                 }
+                if (!cand) break;
+                if (cand.clear < minClear * 0.85 && remain > 1) { cand = null; break; }
+                cx = cand.x; cz = cand.z; cy = cand.y;
               }
-              if (!cand) break;
-              if (cand.clear < minClear * 0.85 && remain > 1) { cand = null; break; }
-              cx = cand.x; cz = cand.z; cy = cand.y;
-            }
-            rev.push([jx, Math.round(jy * 1000) / 1000, jz]); // join last
-            // reverse to [join ... source] for existing convention
-            const traced = rev.reverse();
-            if (traced.length >= 3 && !polylineSelfIntersects(traced)) {
-              // ensure intermediate points keep clearance
-              let okTrace = true;
-              for (let i = 1; i < traced.length - 1; i++) {
-                if (riverMinDistToPoint(main, traced[i][0], traced[i][2]) < minClear * 0.8) { okTrace = false; break; }
+              rev.push([jx, Math.round(jy * 1000) / 1000, jz]); // join last
+              // reverse to [join ... source] for existing convention
+              const traced = rev.reverse();
+              if (traced.length >= 3 && !polylineSelfIntersects(traced)) {
+                // ensure intermediate points keep clearance
+                let okTrace = true;
+                for (let i = 1; i < traced.length - 1; i++) {
+                  if (riverMinDistToPoint(main, traced[i][0], traced[i][2]) < minClear * 0.8) { okTrace = false; break; }
+                }
+                if (okTrace) tpath = traced;
               }
-              if (okTrace) tpath = traced;
             }
-          }
-          if (!tpath) tpath = buildGeometric();
-          if (tpath && tpath.length >= 3 && !polylineSelfIntersects(tpath)) {
-            const tid = ti === 0 ? 'river_1_trib1' : `river_1_trib${ti + 1}`;
-            const trib = { id: tid, path: tpath, width: Math.round(tWidth * 1000) / 1000, depth: Math.round(tDepth * 1000) / 1000, carveTerrain: riverCfg.carveTerrain !== false, tributaryOf: main.id ?? 'river_1' };
-            rivers.push(trib);
+            if (!tpath) tpath = buildGeometric();
+            if (tpath && tpath.length >= 3 && !polylineSelfIntersects(tpath)) {
+              const baseId = main.id ?? riverId;
+              const tid = ti === 0 ? `${baseId}_trib1` : `${baseId}_trib${ti + 1}`;
+              const trib = { id: tid, path: tpath, width: Math.round(tWidth * 1000) / 1000, depth: Math.round(tDepth * 1000) / 1000, carveTerrain: riverCfg.carveTerrain !== false, tributaryOf: baseId };
+              rivers.push(trib);
+            }
           }
         }
       }
