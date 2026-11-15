@@ -1,0 +1,111 @@
+{
+  "profile": "railway_industrial",
+  "seed": 303,
+  "generatorVersion": "0.1.0",
+  "reportHash": "f6b8fc48318103e4f0554efe9c360fa13bc2602a0ef496f8819507df15049459",
+  "summary": {
+    "errors": 0,
+    "warnings": 8,
+    "repairs": 0,
+    "drops": 0
+  },
+  "rules": {
+    "errors": 0,
+    "warnings": 0,
+    "infos": 1
+  },
+  "metrics": {
+    "partial": true,
+    "counts": {
+      "roads": 0,
+      "roadNodes": 0,
+      "districts": 16,
+      "parcels": 2349,
+      "reservedParcels": 110,
+      "buildings": 402,
+      "enterableBuildings": 0,
+      "props": 360,
+      "lights": 0,
+      "rivers": 1,
+      "lakes": 0
+    },
+    "graph": {
+      "nodes": 0,
+      "edges": 0,
+      "components": 0,
+      "largestComponent": 0,
+      "deadEnds": 0,
+      "deadEndRatio": null,
+      "avgDegree": null,
+      "gamma": null
+    },
+    "roads": {
+      "totalLength": 0,
+      "lengthByType": {},
+      "shareByType": {},
+      "maxSlope": 0,
+      "slopeByClass": {},
+      "slopePolicy": {
+        "highway": 6,
+        "arterial": 8,
+        "collector": 10,
+        "local": 12
+      }
+    },
+    "gameplay": {
+      "spawnToRoad": null,
+      "exitToRoad": null,
+      "enterableShare": 0,
+      "enterableTarget": 0.2
+    },
+    "terrain": {
+      "slope": {
+        "step": 16,
+        "grid": 80,
+        "cells": 6400,
+        "maxSlope": 0.13097,
+        "share": {
+          "flat_lt3": 0.735625,
+          "gentle_3_8": 0.218281,
+          "moderate_8_15": 0.046094,
+          "steep_15_25": 0,
+          "very_steep_gt25": 0
+        },
+        "counts": {
+          "flat_lt3": 4708,
+          "gentle_3_8": 1397,
+          "moderate_8_15": 295,
+          "steep_15_25": 0,
+          "very_steep_gt25": 0
+        }
+      },
+      "crossings": 3,
+      "reservations": {
+        "road": 0,
+        "water": 0,
+        "buildable": 0
+      }
+    },
+    "parcels": {
+      "reservedShare": 0.046828,
+      "byDistrictCount": {
+        "district_0_0": 121,
+        "district_1_0": 121,
+        "district_2_0": 49,
+        "district_3_0": 289,
+        "district_0_1": 64,
+        "district_1_1": 36,
+        "district_2_1": 196,
+        "district_3_1": 400,
+        "district_0_2": 64,
+        "district_1_2": 49,
+        "district_2_2": 121,
+        "district_3_2": 225,
+        "district_0_3": 49,
+        "district_1_3": 225,
+        "district_2_3": 196,
+        "district_3_3": 144
+      }
+    }
+  }
+}

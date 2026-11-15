@@ -9,7 +9,7 @@
   - [x] R0.1 Матрица соответствия §3–13 ↔ модули (зафиксирована ниже, 2026-11-15)
   - [~] R0.2 Валидатор инвариантов §12.1 (read-only) + baseline на 16–19 — `tools/citygen/rules.mjs`: подмножество инвариантов/проверок + проверки уклонов дорог (абсолютный предел/политика классов `slopeLimitPct`), удалённость spawn/exit от сети, контроль целей enterable-share (info), снимок baseline 16–19
   - [~] R0.3 Каркас метрик §12.2 в report — `report.metrics`/`report.rules` (детерминированно, partial): дороги/уклоны/политики, gameplay/stream, terrain analysis (slope/share/crossings/reservations), parcels/reserved share, counts rivers/lakes; отчёты пилотов 16–19 пересобраны
-  - [~] R0.4 Эталоны (3 seed × профили), процедура bump `generatorVersion` — `tools/citygen-baseline.mjs` поддерживает `--out <dir>` для сохранения детерминированных JSON-снимков по уровням; набор эталонов 3×профиль/процедура bump и хранение артефактов не завершены
+  - [~] R0.4 Эталоны (3 seed × профили), процедура bump `generatorVersion` — `tools/citygen-baseline.mjs` поддерживает `--out <dir>`; добавлен `tools/citygen-etalon.mjs` (синтетические прогоны profile×seed, hash/metrics/summary); сохранены снимки пилотов (`.ai/state/citygen-baselines/`) и синтетические эталоны 3×3 для `river_trade`/`hill_town`/`railway_industrial`, seeds 101/202/303, `generatorVersion=0.1.0` (`.ai/state/citygen-etalons/`); формализованная процедура bump/регрессионная проверка в CI не завершены
   - [~] R0.5 Структура `generator.profiles`/`generator.policies` + чтение/fallback — `tools/citygen/config.mjs`, нормализация в `ctx.meta.{policies,cityProfiles,activeCityProfile*}` (дефолты §13.2)
 - [ ] **R1** Рельеф и вода (§4, §5)
   - [~] R1.1 Профили рельефа и порядок модификаторов — в `stage-1-landscape` добавлена opt-in упорядоченная генерация форм (`ordered/profileDriven`: крупные формы, средние холмы, террасы `replace/step`, платформы `replace/smooth`) с детерминированным порядком §4.2; при наличии `activeCityProfile`/`profileDriven` подставляются профильные дефолты рельефа/воды (если не заданы явно); полный цикл профилей рельефа и влияние всех параметров ещё не завершены
@@ -89,6 +89,7 @@
 - 2026-11-15, R2.3 (инкремент): `stage-2-transport` добавляет диагностику превышения уклона по классу относительно `policies.slopeLimitPct` (без изменения геометрии/лимитов); отчёты L16–L19 пересобраны, гейты зелёные.
 - 2026-11-15, R2.1 (инкремент): `stage-2-transport` проставляет дефолты параметров сегментов по классу (в т.ч. `speedLimit` км/ч) при отсутствии значений; геометрия/компилируемые артефакты без регрессий, гейты зелёные.
 - 2026-11-15, R0 (инкремент): `rules.mjs`/`diagnostics` расширены метриками terrain/parcels/hydrology (read-only), `citygen-baseline.mjs` поддерживает `--out` для детерминированных снимков; пересобраны отчёты L16–L19, `build-level --check`/`check-levels`/`node --test tools/citygen.test.mjs` зелёные.
+- 2026-11-15, R0.4/R6 prep (инкремент): добавлен `tools/citygen-etalon.mjs` и сохранены детерминированные синтетические эталоны 3 профиля × 3 seed (`.ai/state/citygen-etalons/`, gv 0.1.0). Наблюдение: `railway_industrial` совпал по hash с `river_trade` на тех же seed (дифференциация профилей неполная, требуется R1/R3/R6).
 
 ## Открытые вопросы / риски
 - GAP-01/06/07/08/11 из `docs/level_generation_rules_claude.md` §14 (см. план, раздел 2).
