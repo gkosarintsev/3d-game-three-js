@@ -679,6 +679,41 @@ export function makeStage1() {
         lakes.push(ll);
       }
       ctx.hydrology.lakes = uniqIds(lakes, 'lake', ctx, stageId);
+      // R1.4/R1.5: lake buffers (additive). §5.4: 5–10m non-buildable strip from water.
+      ctx.masks.terrain = ctx.masks.terrain || {};
+      if (!Array.isArray(ctx.masks.terrain.waterBuffers)) ctx.masks.terrain.waterBuffers = [];
+      if (!ctx.masks.easement.lakes) ctx.masks.easement.lakes = [];
+      for (const ll of ctx.hydrology.lakes) {
+        const area = ll?.area;
+        let cx = null, cz = null, r = null;
+        const pts = Array.isArray(area?.points) ? area.points : (Array.isArray(area) ? area : null);
+        if (Array.isArray(pts) && pts.length >= 3) {
+          let sx = 0, sz = 0, n = 0;
+          for (const p of pts) {
+            const x = Number(Array.isArray(p) ? p[0] : p?.x), z = Number(Array.isArray(p) ? p[2] : p?.z);
+            if (!Number.isFinite(x) || !Number.isFinite(z)) continue;
+            sx += x; sz += z; n++;
+          }
+          if (n > 0) {
+            cx = sx / n; cz = sz / n;
+            let maxD = 0;
+            for (const p of pts) {
+              const x = Number(Array.isArray(p) ? p[0] : p?.x), z = Number(Array.isArray(p) ? p[2] : p?.z);
+              if (!Number.isFinite(x) || !Number.isFinite(z)) continue;
+              maxD = Math.max(maxD, Math.hypot(x - cx, z - cz));
+            }
+            r = maxD;
+          }
+        }
+        const buffer = 8; // 5–10m strip (default 8m)
+        if (Number.isFinite(cx) && Number.isFinite(cz) && Number.isFinite(r) && r > 0) {
+          const wb = { id: ll.id ?? null, type: 'lake', center: [Math.round(cx*1000)/1000, Math.round(cz*1000)/1000], radius: Math.round(r*1000)/1000, buffer, buildableBuffer: true };
+          ctx.masks.terrain.waterBuffers.push(wb);
+          ctx.masks.easement.lakes.push(wb);
+        } else {
+          ctx.masks.terrain.waterBuffers.push({ id: ll.id ?? null, type: 'lake', buffer, buildableBuffer: true });
+        }
+      }
 
       // terrain/river profile checks (approximate, deterministic): slopes and bed-vs-terrain
       const baseY = Number(ctx.input?.ground?.y ?? 0) || 0;
