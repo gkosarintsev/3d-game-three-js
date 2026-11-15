@@ -537,119 +537,130 @@ function generateLandscape(ctx) {
       if (widthProfile.length >= 2) river.widthProfile = widthProfile;
       rivers.push(river);
     }
-    // R1.4 (opt-in/profile-driven): deterministic tributary for main river (river_trade profile default).
-    // Cost-traced upstream-to-join path: prefer higher/feasible sources descending toward the main river.
+    // R1.4 (opt-in/profile-driven): deterministic tributaries for main river (default: river_trade profile).
+    // Cost-traced upstream-to-join path; preserves first-tributary RNG/behavior when count=1.
     const wantTributary = (riverCfg.tributaries === true)
       || (riverCfg.tributaries !== false && profileId === 'river_trade' && (ls.profileDriven === true || ls.generate === true));
-    if (wantTributary && rivers.length >= 1) {
+    const tribCount = Number.isFinite(Number(riverCfg.tributaryCount))
+      ? clamp(Math.floor(Number(riverCfg.tributaryCount)), 0, 4)
+      : (wantTributary ? 1 : 0);
+    if (tribCount > 0 && rivers.length >= 1) {
       const main = rivers[0];
       const mpath = Array.isArray(main?.path) ? main.path : [];
       if (mpath.length >= 4) {
-        const joinIdx = clamp(Math.round(lerp(1, mpath.length - 2, 0.38 + rng() * 0.18)), 1, mpath.length - 2);
-        const join = mpath[joinIdx];
-        const prev = mpath[Math.max(0, joinIdx - 1)];
-        const next = mpath[Math.min(mpath.length - 1, joinIdx + 1)];
-        const tdx = Number(next[0]) - Number(prev[0]);
-        const tdz = Number(next[2]) - Number(prev[2]);
-        const tlen = Math.hypot(tdx, tdz) || 1;
-        const side = rng() < 0.5 ? -1 : 1;
-        const nx = (-tdz / tlen) * side;
-        const nz = (tdx / tlen) * side;
-        // bias source slightly upstream of join to create a natural confluence
-        const flowx = (Number(next[0]) - Number(join[0])) / (Math.hypot(Number(next[0]) - Number(join[0]), Number(next[2]) - Number(join[2])) || 1);
-        const flowz = (Number(next[2]) - Number(join[2])) / (Math.hypot(Number(next[0]) - Number(join[0]), Number(next[2]) - Number(join[2])) || 1);
-        const tribLen = clamp(Number.isFinite(riverCfg.tributaryLength) ? riverCfg.tributaryLength : size * (0.18 + rng() * 0.08), 80, half * 0.7);
-        const tSteps = clamp(Number.isInteger(riverCfg.tributaryPoints) ? riverCfg.tributaryPoints : 4, 3, 8);
-        const tWidth = clamp((Number(main.width) || width) * (0.45 + rng() * 0.15), 4, Math.max(6, (Number(main.width) || width) * 0.8));
-        const tDepth = clamp((Number(main.depth) || depth) * (0.55 + rng() * 0.2), 0.5, Number(main.depth) || depth);
-        const minClear = (Number(main.width) || width) * 0.5 + 10;
-        const jx = Number(join[0]), jz = Number(join[2]), jy = Number(join[1]) || baseY0;
+        for (let ti = 0; ti < tribCount; ti++) {
+          // For ti==0 keep legacy RNG sequence/params for deterministic compatibility.
+          const joinT = ti === 0 ? (0.38 + rng() * 0.18) : (0.22 + rng() * 0.56);
+          const joinIdx = clamp(Math.round(lerp(1, mpath.length - 2, joinT)), 1, mpath.length - 2);
+          const join = mpath[joinIdx];
+          const prev = mpath[Math.max(0, joinIdx - 1)];
+          const next = mpath[Math.min(mpath.length - 1, joinIdx + 1)];
+          const tdx = Number(next[0]) - Number(prev[0]);
+          const tdz = Number(next[2]) - Number(prev[2]);
+          const tlen = Math.hypot(tdx, tdz) || 1;
+          const side = rng() < 0.5 ? -1 : 1;
+          const nx = (-tdz / tlen) * side;
+          const nz = (tdx / tlen) * side;
+          // bias source slightly upstream of join to create a natural confluence
+          const flowx = (Number(next[0]) - Number(join[0])) / (Math.hypot(Number(next[0]) - Number(join[0]), Number(next[2]) - Number(join[2])) || 1);
+          const flowz = (Number(next[2]) - Number(join[2])) / (Math.hypot(Number(next[0]) - Number(join[0]), Number(next[2]) - Number(join[2])) || 1);
+          const tribLen = clamp(
+            Number.isFinite(riverCfg.tributaryLength) ? riverCfg.tributaryLength : size * ((ti === 0 ? 0.18 : 0.14) + rng() * (ti === 0 ? 0.08 : 0.1)),
+            80, half * 0.7
+          );
+          const tSteps = clamp(Number.isInteger(riverCfg.tributaryPoints) ? riverCfg.tributaryPoints : 4, 3, 8);
+          const tWidth = clamp((Number(main.width) || width) * ((ti === 0 ? 0.45 : 0.35) + rng() * 0.15), 4, Math.max(6, (Number(main.width) || width) * 0.8));
+          const tDepth = clamp((Number(main.depth) || depth) * (0.55 + rng() * 0.2), 0.5, Number(main.depth) || depth);
+          const minClear = (Number(main.width) || width) * 0.5 + 10;
+          const jx = Number(join[0]), jz = Number(join[2]), jy = Number(join[1]) || baseY0;
 
-        const buildGeometric = () => {
-          const tpath = [[jx, jy, jz]];
-          let ok = true;
-          for (let i = 1; i < tSteps; i++) {
-            const t = i / (tSteps - 1);
-            const along = tribLen * t;
-            const spread = lerp(0.15, 0.55, t) * tribLen * (0.6 + rng() * 0.4);
-            const x = jx + nx * along - flowx * spread * 0.25;
-            const z = jz + nz * along - flowz * spread * 0.25;
-            const cx = clamp(x, -half + 8, half - 8);
-            const cz = clamp(z, -half + 8, half - 8);
-            const y = Math.round(terrainHeightAt(cx, cz, baseY0, ctx.terrain.modifiers) * 1000) / 1000;
-            if (riverMinDistToPoint(main, cx, cz) < minClear && i < tSteps - 1) { ok = false; break; }
-            tpath.push([Math.round(cx * 10) / 10, y, Math.round(cz * 10) / 10]);
-          }
-          return ok && tpath.length >= 3 && !polylineSelfIntersects(tpath) ? tpath : null;
-        };
+          const buildGeometric = () => {
+            const tpath = [[jx, jy, jz]];
+            let ok = true;
+            for (let i = 1; i < tSteps; i++) {
+              const t = i / (tSteps - 1);
+              const along = tribLen * t;
+              const spread = lerp(0.15, 0.55, t) * tribLen * (0.6 + rng() * 0.4);
+              const x = jx + nx * along - flowx * spread * 0.25;
+              const z = jz + nz * along - flowz * spread * 0.25;
+              const cx = clamp(x, -half + 8, half - 8);
+              const cz = clamp(z, -half + 8, half - 8);
+              const y = Math.round(terrainHeightAt(cx, cz, baseY0, ctx.terrain.modifiers) * 1000) / 1000;
+              if (riverMinDistToPoint(main, cx, cz) < minClear && i < tSteps - 1) { ok = false; break; }
+              tpath.push([Math.round(cx * 10) / 10, y, Math.round(cz * 10) / 10]);
+            }
+            return ok && tpath.length >= 3 && !polylineSelfIntersects(tpath) ? tpath : null;
+          };
 
-        let tpath = null;
-        // Choose upstream source with deterministic local search (prefer valid, not too low vs join).
-        let bestSrc = null;
-        for (let k = -2; k <= 2; k++) {
-          const along = tribLen;
-          const lateral = k * tribLen * 0.12;
-          const sx = clamp(jx + nx * along - flowx * (tribLen * 0.2 + Math.abs(lateral) * 0.1) + (-flowz) * lateral, -half + 8, half - 8);
-          const sz = clamp(jz + nz * along - flowz * (tribLen * 0.2 + Math.abs(lateral) * 0.1) + (flowx) * lateral, -half + 8, half - 8);
-          if (riverMinDistToPoint(main, sx, sz) < minClear) continue;
-          const sy = terrainHeightAt(sx, sz, baseY0, ctx.terrain.modifiers);
-          const score = sy - Math.abs(k) * 0.35; // prefer higher/feasible source, mild center bias
-          if (!bestSrc || score > bestSrc.score + 1e-9 || (Math.abs(score - bestSrc.score) <= 1e-9 && Math.abs(k) < Math.abs(bestSrc.k))) {
-            bestSrc = { x: sx, z: sz, y: sy, k, score };
+          let tpath = null;
+          // Choose upstream source with deterministic local search (prefer valid, not too low vs join).
+          let bestSrc = null;
+          for (let k = -2; k <= 2; k++) {
+            const along = tribLen;
+            const lateral = k * tribLen * 0.12;
+            const sx = clamp(jx + nx * along - flowx * (tribLen * 0.2 + Math.abs(lateral) * 0.1) + (-flowz) * lateral, -half + 8, half - 8);
+            const sz = clamp(jz + nz * along - flowz * (tribLen * 0.2 + Math.abs(lateral) * 0.1) + (flowx) * lateral, -half + 8, half - 8);
+            if (riverMinDistToPoint(main, sx, sz) < minClear) continue;
+            const sy = terrainHeightAt(sx, sz, baseY0, ctx.terrain.modifiers);
+            const score = sy - Math.abs(k) * 0.35; // prefer higher/feasible source, mild center bias
+            if (!bestSrc || score > bestSrc.score + 1e-9 || (Math.abs(score - bestSrc.score) <= 1e-9 && Math.abs(k) < Math.abs(bestSrc.k))) {
+              bestSrc = { x: sx, z: sz, y: sy, k, score };
+            }
           }
-        }
-        if (bestSrc) {
-          // Trace from source down to join in (tSteps-1) segments, biased toward join and descent.
-          const rev = [];
-          let cx = bestSrc.x, cz = bestSrc.z, cy = bestSrc.y;
-          for (let i = 0; i < tSteps - 1; i++) {
-            rev.push([Math.round(cx * 10) / 10, Math.round(cy * 1000) / 1000, Math.round(cz * 10) / 10]);
-            if (i === tSteps - 2) break;
-            const remain = (tSteps - 2 - i);
-            const baseStepX = (jx - cx) / Math.max(1, remain);
-            const baseStepZ = (jz - cz) / Math.max(1, remain);
-            const baseLen = Math.hypot(baseStepX, baseStepZ) || 1;
-            const dirx = baseStepX / baseLen;
-            const dirz = baseStepZ / baseLen;
-            const px = -dirz, pz = dirx; // perpendicular
-            const stepLen = Math.min(tribLen / (tSteps - 1), Math.max(18, baseLen));
-            let cand = null;
-            for (const off of [0, -0.35, 0.35, -0.7, 0.7]) {
-              const tx = cx + dirx * stepLen + px * stepLen * off;
-              const tz = cz + dirz * stepLen + pz * stepLen * off;
-              const x = clamp(tx, -half + 8, half - 8);
-              const z = clamp(tz, -half + 8, half - 8);
-              const y = terrainHeightAt(x, z, baseY0, ctx.terrain.modifiers);
-              const dJoin = Math.hypot(jx - x, jz - z);
-              const uphill = Math.max(0, y - cy);
-              const downhill = Math.max(0, cy - y);
-              const clear = riverMinDistToPoint(main, x, z);
-              const clearPenalty = clear < minClear ? (minClear - clear) * 5 : 0;
-              const cost = dJoin * 0.03 + y * 0.25 + uphill * 2.2 - downhill * 0.12 + Math.abs(off) * 2.0 + clearPenalty;
-              if (!cand || cost < cand.cost - 1e-9 || (Math.abs(cost - cand.cost) <= 1e-9 && off === 0)) {
-                cand = { x, z, y, cost, clear };
+          if (bestSrc) {
+            // Trace from source down to join in (tSteps-1) segments, biased toward join and descent.
+            const rev = [];
+            let cx = bestSrc.x, cz = bestSrc.z, cy = bestSrc.y;
+            for (let i = 0; i < tSteps - 1; i++) {
+              rev.push([Math.round(cx * 10) / 10, Math.round(cy * 1000) / 1000, Math.round(cz * 10) / 10]);
+              if (i === tSteps - 2) break;
+              const remain = (tSteps - 2 - i);
+              const baseStepX = (jx - cx) / Math.max(1, remain);
+              const baseStepZ = (jz - cz) / Math.max(1, remain);
+              const baseLen = Math.hypot(baseStepX, baseStepZ) || 1;
+              const dirx = baseStepX / baseLen;
+              const dirz = baseStepZ / baseLen;
+              const px = -dirz, pz = dirx; // perpendicular
+              const stepLen = Math.min(tribLen / (tSteps - 1), Math.max(18, baseLen));
+              let cand = null;
+              for (const off of [0, -0.35, 0.35, -0.7, 0.7]) {
+                const tx = cx + dirx * stepLen + px * stepLen * off;
+                const tz = cz + dirz * stepLen + pz * stepLen * off;
+                const x = clamp(tx, -half + 8, half - 8);
+                const z = clamp(tz, -half + 8, half - 8);
+                const y = terrainHeightAt(x, z, baseY0, ctx.terrain.modifiers);
+                const dJoin = Math.hypot(jx - x, jz - z);
+                const uphill = Math.max(0, y - cy);
+                const downhill = Math.max(0, cy - y);
+                const clear = riverMinDistToPoint(main, x, z);
+                const clearPenalty = clear < minClear ? (minClear - clear) * 5 : 0;
+                const cost = dJoin * 0.03 + y * 0.25 + uphill * 2.2 - downhill * 0.12 + Math.abs(off) * 2.0 + clearPenalty;
+                if (!cand || cost < cand.cost - 1e-9 || (Math.abs(cost - cand.cost) <= 1e-9 && off === 0)) {
+                  cand = { x, z, y, cost, clear };
+                }
               }
+              if (!cand) break;
+              if (cand.clear < minClear * 0.85 && remain > 1) { cand = null; break; }
+              cx = cand.x; cz = cand.z; cy = cand.y;
             }
-            if (!cand) break;
-            if (cand.clear < minClear * 0.85 && remain > 1) { cand = null; break; }
-            cx = cand.x; cz = cand.z; cy = cand.y;
-          }
-          rev.push([jx, Math.round(jy * 1000) / 1000, jz]); // join last
-          // reverse to [join ... source] for existing convention
-          const traced = rev.reverse();
-          if (traced.length >= 3 && !polylineSelfIntersects(traced)) {
-            // ensure intermediate points keep clearance
-            let okTrace = true;
-            for (let i = 1; i < traced.length - 1; i++) {
-              if (riverMinDistToPoint(main, traced[i][0], traced[i][2]) < minClear * 0.8) { okTrace = false; break; }
+            rev.push([jx, Math.round(jy * 1000) / 1000, jz]); // join last
+            // reverse to [join ... source] for existing convention
+            const traced = rev.reverse();
+            if (traced.length >= 3 && !polylineSelfIntersects(traced)) {
+              // ensure intermediate points keep clearance
+              let okTrace = true;
+              for (let i = 1; i < traced.length - 1; i++) {
+                if (riverMinDistToPoint(main, traced[i][0], traced[i][2]) < minClear * 0.8) { okTrace = false; break; }
+              }
+              if (okTrace) tpath = traced;
             }
-            if (okTrace) tpath = traced;
           }
-        }
-        if (!tpath) tpath = buildGeometric();
-        if (tpath && tpath.length >= 3 && !polylineSelfIntersects(tpath)) {
-          const trib = { id: 'river_1_trib1', path: tpath, width: Math.round(tWidth * 1000) / 1000, depth: Math.round(tDepth * 1000) / 1000, carveTerrain: riverCfg.carveTerrain !== false, tributaryOf: main.id ?? 'river_1' };
-          rivers.push(trib);
+          if (!tpath) tpath = buildGeometric();
+          if (tpath && tpath.length >= 3 && !polylineSelfIntersects(tpath)) {
+            const tid = ti === 0 ? 'river_1_trib1' : `river_1_trib${ti + 1}`;
+            const trib = { id: tid, path: tpath, width: Math.round(tWidth * 1000) / 1000, depth: Math.round(tDepth * 1000) / 1000, carveTerrain: riverCfg.carveTerrain !== false, tributaryOf: main.id ?? 'river_1' };
+            rivers.push(trib);
+          }
         }
       }
     }
