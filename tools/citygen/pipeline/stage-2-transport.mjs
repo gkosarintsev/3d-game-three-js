@@ -707,7 +707,7 @@ export function buildAxisAlignedTerrainPath(ax, az, bx, bz, sampler, rivers, ste
   return enforceSlope(pts, MAX_ROAD_SLOPE, '2_transport', 'terrain_path', null);
 }
 
-export function isValidAxisAlignedTerrainPath(path, rivers = []) {
+export function isValidAxisAlignedTerrainPath(path, rivers = [], waterBufferById = null, opts = {}) {
   if (!Array.isArray(path) || path.length < 2) return false;
   if (!isAxisAlignedPath(path)) return false;
   if (pathMaxSlope(path) > 0.3005) return false;
@@ -715,11 +715,20 @@ export function isValidAxisAlignedTerrainPath(path, rivers = []) {
     const a = path[i], b = path[i + 1];
     if (segCrossesRiver(a[0], a[2], b[0], b[2], rivers)) return false;
   }
-  // Conservative pointwise clearance against river corridors/channels (compiler-safe margin).
+  const includeFloodplain = opts?.includeFloodplain === true;
+  // Conservative pointwise clearance against river corridors/channels/water buffers (downstream constraints).
   for (const pt of path) {
     const near = riverMinDistXZAt(pt[0], pt[2], rivers);
     const rv = near.river;
-    const margin = ((rv?.width ?? 10) * 0.5) + 35;
+    if (!rv) continue;
+    const wb = (waterBufferById && rv.id && typeof waterBufferById.get === 'function') ? waterBufferById.get(rv.id) : null;
+    const halfW = ((Number(rv?.width) || 10) * 0.5);
+    const hard = Number.isFinite(Number(wb?.buffer)) ? Number(wb.buffer) : (halfW + 12);
+    const flood = Number.isFinite(Number(wb?.floodplain)) ? Number(wb.floodplain) : hard;
+    // Backward-compatible default: preserve legacy conservative margin when no metadata and floodplain mode not requested.
+    const margin = (wb || includeFloodplain)
+      ? (halfW + (includeFloodplain ? Math.max(hard, flood) : hard) + 2)
+      : (halfW + 35);
     if (near.d < margin) return false;
   }
   return true;
@@ -2273,6 +2282,13 @@ export function addAxisAlignedAccessRoadsForParcels(ctx) {
   const half = (ctx.meta.worldBounds?.size ?? ctx.input?.ground?.size ?? 256) / 2;
   const sampler = makeTerrainSampler(ctx);
   const rivers = ctx.hydrology?.rivers ?? ctx.input?.cityforge?.hydrology?.rivers ?? [];
+  const waterBufferById = (() => {
+    const src = Array.isArray(ctx.masks?.terrain?.waterBuffers) ? ctx.masks.terrain.waterBuffers
+      : (Array.isArray(ctx.terrain?.analysis?.waterBuffers) ? ctx.terrain.analysis.waterBuffers : []);
+    const byId = new Map();
+    for (const w of src) if (w?.id) byId.set(w.id, w);
+    return byId;
+  })();
 
   const riverClear = (path) => {
     if (!Array.isArray(path)) return false;
@@ -2280,7 +2296,12 @@ export function addAxisAlignedAccessRoadsForParcels(ctx) {
       const near = riverMinDistXZAt(pt[0], pt[2], rivers);
       const rv = near.river;
       if (!rv) continue;
-      const margin = ((rv?.width ?? 10) * 0.5) + 50;
+      const wb = rv?.id ? waterBufferById.get(rv.id) : null;
+      const halfW = ((Number(rv?.width) || 10) * 0.5);
+      const hard = Number.isFinite(Number(wb?.buffer)) ? Number(wb.buffer) : (halfW + 12);
+      const flood = Number.isFinite(Number(wb?.floodplain)) ? Number(wb.floodplain) : hard;
+      // Transport-compatible degradation: avoid floodplain zones for new ground access roads (deterministic reroute/skip).
+      const margin = halfW + Math.max(hard, flood) + 2;
       if (near.d < margin) return false;
     }
     return true;
@@ -2341,7 +2362,8 @@ export function addAxisAlignedAccessRoadsForParcels(ctx) {
     if (Math.abs(tx - fp.x) > 0.01 && Math.abs(tz - fp.z) > 0.01) return null;
     if (Math.hypot(tx - fp.x, tz - fp.z) < 12) return null;
     const path = buildAxisAlignedTerrainPath(fp.x, fp.z, tx, tz, sampler, rivers, 12);
-    if (!isValidAxisAlignedTerrainPath(path, rivers)) return null;
+    // Access roads are ground infrastructure: treat water buffer/floodplain masks as real constraints (deterministic skip/degradation).
+    if (!isValidAxisAlignedTerrainPath(path, rivers, waterBufferById, { includeFloodplain: true })) return null;
     if (!riverClear(path)) return null;
     const end = path[path.length - 1];
     const toNode = getOrCreateNodeAt(end[0], end[1], end[2], `${idBase}_n`);
