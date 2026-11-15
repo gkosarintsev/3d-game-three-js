@@ -117,15 +117,6 @@
       "roads": {
         "nodes": [
           {
-            "id": "eb_ws",
-            "position": [
-              -1200,
-              0,
-              -12
-            ],
-            "layer": "ground"
-          },
-          {
             "id": "eb_m450",
             "position": [
               -450,
@@ -282,15 +273,6 @@
             "id": "wb_m450",
             "position": [
               -450,
-              0,
-              12
-            ],
-            "layer": "ground"
-          },
-          {
-            "id": "wb_ws",
-            "position": [
-              -1200,
               0,
               12
             ],
@@ -835,43 +817,108 @@
               60
             ],
             "layer": "ground"
+          },
+          {
+            "id": "n_m985_m185",
+            "position": [
+              -985,
+              0,
+              -185
+            ],
+            "layer": "ground"
+          },
+          {
+            "id": "n_m1010_m975",
+            "position": [
+              -1010,
+              0,
+              -975
+            ],
+            "layer": "bridge_01"
+          },
+          {
+            "id": "n_m990_m790_2",
+            "position": [
+              -990,
+              10,
+              -790
+            ],
+            "layer": "bridge_01"
+          },
+          {
+            "id": "n_m1040_m1190",
+            "position": [
+              -1040,
+              0,
+              -1190
+            ],
+            "layer": "ground"
+          },
+          {
+            "id": "n_m1010_m970",
+            "position": [
+              -1010,
+              0,
+              -970
+            ],
+            "layer": "ground"
+          },
+          {
+            "id": "n_m895_m340",
+            "position": [
+              -895,
+              0,
+              -340
+            ],
+            "layer": "bridge_01"
+          },
+          {
+            "id": "n_m960_m565_2",
+            "position": [
+              -960,
+              10,
+              -565
+            ],
+            "layer": "bridge_01"
+          },
+          {
+            "id": "n_m695_m200",
+            "position": [
+              -695,
+              0,
+              -200
+            ],
+            "layer": "ground"
+          },
+          {
+            "id": "n_m895_m350",
+            "position": [
+              -895,
+              0,
+              -350
+            ],
+            "layer": "ground"
+          },
+          {
+            "id": "n_m1130_m680",
+            "position": [
+              -1130,
+              0,
+              -680
+            ],
+            "layer": "bridge_01"
+          },
+          {
+            "id": "n_m960_m565",
+            "position": [
+              -960,
+              14,
+              -565
+            ],
+            "layer": "bridge_01"
           }
         ],
         "segments": [
-          {
-            "id": "eb_1",
-            "from": "eb_ws",
-            "to": "eb_m450",
-            "type": "local",
-            "layer": "ground",
-            "path": [
-              [
-                -1200,
-                0,
-                -12
-              ],
-              [
-                -450,
-                0,
-                -12
-              ]
-            ],
-            "elements": [
-              {
-                "plate": {
-                  "rails": false,
-                  "x": -825,
-                  "z": -12,
-                  "yaw": 0,
-                  "length": 750,
-                  "width": 20,
-                  "y": 0,
-                  "rise": 0
-                }
-              }
-            ],
-            "lanes": []
-          },
           {
             "id": "eb_2",
             "from": "eb_m450",
@@ -1408,40 +1455,6 @@
                   "z": 12,
                   "yaw": 180,
                   "length": 100,
-                  "width": 20,
-                  "y": 0,
-                  "rise": 0
-                }
-              }
-            ],
-            "lanes": []
-          },
-          {
-            "id": "wb_9",
-            "from": "wb_m450",
-            "to": "wb_ws",
-            "type": "local",
-            "layer": "ground",
-            "path": [
-              [
-                -450,
-                0,
-                12
-              ],
-              [
-                -1200,
-                0,
-                12
-              ]
-            ],
-            "elements": [
-              {
-                "plate": {
-                  "rails": false,
-                  "x": -825,
-                  "z": 12,
-                  "yaw": 180,
-                  "length": 750,
                   "width": 20,
                   "y": 0,
                   "rise": 0
@@ -3704,6 +3717,176 @@
                   "length": 48,
                   "width": 10,
                   "y": 0,
+                  "rise": 0
+                }
+              }
+            ],
+            "lanes": []
+          },
+          {
+            "id": "ramp_85",
+            "from": "n_m1010_m975",
+            "to": "n_m990_m790_2",
+            "type": "ramp",
+            "layer": "bridge_01",
+            "path": [
+              [
+                -1010,
+                0,
+                -975
+              ],
+              [
+                -990,
+                10,
+                -790
+              ]
+            ],
+            "elements": [
+              {
+                "plate": {
+                  "rails": true,
+                  "x": -1057.5,
+                  "z": -837.5,
+                  "yaw": 114.718,
+                  "length": 346.771,
+                  "width": 20,
+                  "y": 0,
+                  "rise": 10
+                }
+              }
+            ],
+            "lanes": []
+          },
+          {
+            "id": "road_85",
+            "from": "n_m1040_m1190",
+            "to": "n_m1010_m970",
+            "type": "highway",
+            "layer": "ground",
+            "path": [
+              [
+                -1040,
+                0,
+                -1190
+              ],
+              [
+                -1010,
+                0,
+                -970
+              ]
+            ],
+            "elements": [
+              {
+                "plate": {
+                  "rails": true,
+                  "x": -1012.5,
+                  "z": -1092.5,
+                  "yaw": 74.249,
+                  "length": 202.608,
+                  "width": 20,
+                  "y": 0,
+                  "rise": 0
+                }
+              }
+            ],
+            "lanes": []
+          },
+          {
+            "id": "ramp_86",
+            "from": "n_m895_m340",
+            "to": "n_m960_m565_2",
+            "type": "ramp",
+            "layer": "bridge_01",
+            "path": [
+              [
+                -895,
+                0,
+                -340
+              ],
+              [
+                -960,
+                10,
+                -565
+              ]
+            ],
+            "elements": [
+              {
+                "plate": {
+                  "rails": true,
+                  "x": -927.5,
+                  "z": -452.5,
+                  "yaw": -106.113,
+                  "length": 234.201,
+                  "width": 20,
+                  "y": 0,
+                  "rise": 10
+                }
+              }
+            ],
+            "lanes": []
+          },
+          {
+            "id": "road_87",
+            "from": "n_m695_m200",
+            "to": "n_m895_m350",
+            "type": "highway",
+            "layer": "ground",
+            "path": [
+              [
+                -695,
+                0,
+                -200
+              ],
+              [
+                -895,
+                0,
+                -350
+              ]
+            ],
+            "elements": [
+              {
+                "plate": {
+                  "rails": true,
+                  "x": -795,
+                  "z": -275,
+                  "yaw": -143.13,
+                  "length": 250,
+                  "width": 20,
+                  "y": 0,
+                  "rise": 0
+                }
+              }
+            ],
+            "lanes": []
+          },
+          {
+            "id": "bridge_87",
+            "from": "n_m1130_m680",
+            "to": "n_m960_m565",
+            "type": "highway",
+            "layer": "bridge_01",
+            "path": [
+              [
+                -1130,
+                0,
+                -680
+              ],
+              [
+                -960,
+                14,
+                -565
+              ]
+            ],
+            "elements": [
+              {
+                "plate": {
+                  "rails": true,
+                  "x": -1045,
+                  "z": -622.5,
+                  "yaw": 34.077,
+                  "length": 205.24375751773792,
+                  "width": 20,
+                  "y": 10,
                   "rise": 0
                 }
               }

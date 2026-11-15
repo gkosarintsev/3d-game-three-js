@@ -187,6 +187,9 @@ export class JsonMap extends SurfaceField {
     else if (d.kind === 'taperRail') g = this._taperRailGeo(d);
     else g = this._prismGeo(d.w);
     if (!g) return;
+    // Со-плоскостные грани полотно/грунт мигают в z-buffer. Поднимаем именно картинку
+    // на `J.floorRise` (как крыша/пол), не трогая твёрдость и опору.
+    if (group === 'decks') g.translate(0, J.floorRise, 0);
     if (group === 'walls' && d.material) {
       const m = this.geo._wallMats;
       if (!m.has(d.material)) m.set(d.material, []);
@@ -276,7 +279,11 @@ export class JsonMap extends SurfaceField {
     cap(rings[0], [-t0[0], 0, -t0[2]]);
     cap(rings[rings.length - 1], t1);
     s.tris = tris;
-    if (!this._muteGeo) this.geo.decks.push(this._sweepGeo(tris));
+    if (!this._muteGeo) {
+      const g = this._sweepGeo(tris);
+      g.translate(0, J.floorRise, 0); // картинка выше опоры — та же величина, что у прямых плит
+      this.geo.decks.push(g);
+    }
     if (s.rails) this._sweepRails(s, fr);
   }
 

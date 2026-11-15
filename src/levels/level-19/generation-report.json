@@ -23,7 +23,7 @@
     {
       "id": "2_transport",
       "status": "ok",
-      "diagnostics": 5,
+      "diagnostics": 6,
       "repairs": 0,
       "drops": 0
     },
@@ -51,7 +51,7 @@
     {
       "id": "6_finalize_emit",
       "status": "ok",
-      "diagnostics": 25,
+      "diagnostics": 26,
       "repairs": 18,
       "drops": 0
     }
@@ -83,6 +83,21 @@
     },
     {
       "severity": "warn",
+      "code": "road_graph_disconnected",
+      "stage": "2_transport",
+      "message": "road graph has 7 connected components",
+      "components": 7
+    },
+    {
+      "severity": "warn",
+      "code": "anchor_far_from_roads_final",
+      "stage": "6_finalize_emit",
+      "message": "spawn is far from generated road network",
+      "anchor": "spawn",
+      "distance": 434.52
+    },
+    {
+      "severity": "warn",
       "code": "road_conflicts_unresolved",
       "stage": "6_finalize_emit",
       "message": "could not safely repair 1 same-layer crossing conflict(s)",
@@ -97,6 +112,13 @@
         "nb_9",
         "lt1_s4"
       ]
+    },
+    {
+      "severity": "warn",
+      "code": "road_graph_disconnected_final",
+      "stage": "6_finalize_emit",
+      "message": "road graph has 7 connected components at finalize",
+      "components": 7
     },
     {
       "severity": "warn",
@@ -131,9 +153,9 @@
       "code": "road_graph",
       "stage": "2_transport",
       "message": "road graph summary",
-      "nodes": 80,
-      "segments": 84,
-      "components": 1
+      "nodes": 89,
+      "segments": 87,
+      "components": 7
     },
     {
       "severity": "info",
@@ -146,8 +168,8 @@
       "code": "transport_passthrough",
       "stage": "2_transport",
       "message": "stage 2 using provided road network (procedural generation pending)",
-      "nodes": 80,
-      "segments": 84
+      "nodes": 89,
+      "segments": 87
     },
     {
       "severity": "info",
@@ -178,9 +200,9 @@
       "code": "buildings_generated",
       "stage": "4_buildings_structures",
       "message": "generated buildings from parcels",
-      "count": 28,
+      "count": 27,
       "budget": 420,
-      "skippedConflict": 7
+      "skippedConflict": 5
     },
     {
       "severity": "info",
@@ -202,15 +224,6 @@
     },
     {
       "severity": "info",
-      "code": "anchors_connected_network",
-      "stage": "6_finalize_emit",
-      "message": "spawn and exit are near a single connected road graph component",
-      "spawnDistance": 0,
-      "exitDistance": 0,
-      "roadComponents": 1
-    },
-    {
-      "severity": "info",
       "code": "finalize_counts",
       "stage": "6_finalize_emit",
       "message": "generation summary",
@@ -226,10 +239,10 @@
         "grid": 4,
         "total": 16
       },
-      "roadNodes": 98,
-      "roadSegments": 120,
-      "roadComponents": 1,
-      "roadGraphNodes": 98,
+      "roadNodes": 107,
+      "roadSegments": 123,
+      "roadComponents": 7,
+      "roadGraphNodes": 107,
       "districts": 1,
       "districtTypes": [
         "forest"
@@ -237,23 +250,23 @@
       "parcels": 441,
       "reservedParcels": 2,
       "parcelAccess": {
-        "near": 68,
-        "mid": 85,
-        "far": 288
+        "near": 71,
+        "mid": 90,
+        "far": 280
       },
       "roadAccessByType": {},
-      "buildings": 28,
+      "buildings": 27,
       "buildingsByDistrictType": {
-        "forest": 28
+        "forest": 27
       },
       "lights": 0,
       "props": 0,
       "chunkLoad": {
-        "nonEmptyChunks": 15,
-        "maxBuildings": 4,
+        "nonEmptyChunks": 13,
+        "maxBuildings": 3,
         "maxProps": 0,
         "maxLights": 0,
-        "avgBuildings": 1.75,
+        "avgBuildings": 1.69,
         "avgProps": 0
       }
     },
@@ -636,7 +649,7 @@
   "drops": [],
   "summary": {
     "errors": 0,
-    "warnings": 5,
+    "warnings": 8,
     "repairs": 18,
     "drops": 0
   }

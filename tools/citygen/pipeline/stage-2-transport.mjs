@@ -2640,6 +2640,9 @@ export function makeStage2() {
     },
     repair(ctx) {
       const stageId = '2_transport';
+      // Authored road networks (transport.generate === false) may be intentionally
+      // grade-separated/disconnected; auto-connectors would inject arbitrary segments.
+      if (!shouldGenerateTransport(ctx)) return;
       const gp = ctx.input?.gameplay ?? {};
       const spawnPos = { x: gp.spawn?.x ?? 0, z: gp.spawn?.z ?? 0 };
       const exitPos = { x: gp.exit?.x ?? 0, z: gp.exit?.z ?? 0 };
