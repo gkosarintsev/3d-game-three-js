@@ -973,6 +973,8 @@ export function makeStage1() {
         ctx.masks.terrain = ctx.masks.terrain || {};
         if (!Array.isArray(ctx.masks.terrain.waterBuffers)) ctx.masks.terrain.waterBuffers = [];
         ctx.masks.terrain.waterBuffers.push({ id: rr.id ?? null, type: 'river', buffer, floodplain, buildableBuffer: true });
+        if (!Array.isArray(ctx.masks.terrain.floodplains)) ctx.masks.terrain.floodplains = [];
+        ctx.masks.terrain.floodplains.push({ id: rr.id ?? null, type: 'river', floodplain, path, width: w });
         rivers.push(rr);
       }
       ctx.hydrology.rivers = uniqIds(rivers, 'river', ctx, stageId);
@@ -1054,9 +1056,13 @@ export function makeStage1() {
           };
           ctx.masks.terrain.waterBuffers.push(wb);
           ctx.masks.easement.lakes.push(wb);
+          if (!Array.isArray(ctx.masks.terrain.floodplains)) ctx.masks.terrain.floodplains = [];
+          ctx.masks.terrain.floodplains.push({ id: ll.id ?? null, type: 'lake', floodplain, center: wb.center, radius: wb.radius });
         } else {
           // Fallback without reliable geometry: keep conservative buffer metadata for analysis/reporting.
           ctx.masks.terrain.waterBuffers.push({ id: ll.id ?? null, type: 'lake', buffer, floodplain, buildableBuffer: true });
+          if (!Array.isArray(ctx.masks.terrain.floodplains)) ctx.masks.terrain.floodplains = [];
+          ctx.masks.terrain.floodplains.push({ id: ll.id ?? null, type: 'lake', floodplain });
         }
       }
 
