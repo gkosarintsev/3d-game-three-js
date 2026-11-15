@@ -899,10 +899,18 @@ export function makeStage1() {
         }
 
         // easement mask: reserve corridor around river centerline (approx by width)
-        // R1.4/R1.5: include buffer/floodplain metadata (additive) for downstream planning/diagnostics
+        // R1.4/R1.5/R0.4: buffer/floodplain metadata (profile-driven presets; defaults preserve prior behavior)
         const w = Number(rr.width ?? 0) || 0;
-        const buffer = +(w * 0.5 + 12).toFixed(3); // conservative non-buildable corridor (aligns with parcel/stage-3 checks)
-        const floodplain = +(w * 3).toFixed(3);    // §5.3: ~2–4 widths (low-density/park/embankment planning hint)
+        const _cfProfile = (ctx.meta?.activeCityProfile && typeof ctx.meta.activeCityProfile === 'object') ? ctx.meta.activeCityProfile : null;
+        const hydroPreset = (_cfProfile?.terrain?.hydrology && typeof _cfProfile.terrain.hydrology === 'object')
+          ? _cfProfile.terrain.hydrology
+          : ((_cfProfile?.hydrology && typeof _cfProfile.hydrology === 'object') ? _cfProfile.hydrology : {});
+        const riverBufAdd = Number.isFinite(Number(hydroPreset.riverBufferMargin ?? hydroPreset.bufferMargin ?? _cfProfile?.terrain?.riverBufferMargin))
+          ? Number(hydroPreset.riverBufferMargin ?? hydroPreset.bufferMargin ?? _cfProfile?.terrain?.riverBufferMargin) : 12;
+        const riverFloodMul = Number.isFinite(Number(hydroPreset.floodplainMultiplier ?? hydroPreset.riverFloodplainMultiplier ?? _cfProfile?.terrain?.floodplainMultiplier))
+          ? Number(hydroPreset.floodplainMultiplier ?? hydroPreset.riverFloodplainMultiplier ?? _cfProfile?.terrain?.floodplainMultiplier) : 3;
+        const buffer = +(w * 0.5 + riverBufAdd).toFixed(3); // conservative non-buildable corridor (aligns with parcel/stage-3 checks)
+        const floodplain = +(w * clamp(riverFloodMul, 2, 4)).toFixed(3); // §5.3: ~2–4 widths (profile-driven preset, default 3)
         ctx.masks.easement.rivers.push({ id: rr.id ?? null, path, width: w, buffer, floodplain });
         ctx.masks.terrain = ctx.masks.terrain || {};
         if (!Array.isArray(ctx.masks.terrain.waterBuffers)) ctx.masks.terrain.waterBuffers = [];
@@ -939,11 +947,19 @@ export function makeStage1() {
         lakes.push(ll);
       }
       ctx.hydrology.lakes = uniqIds(lakes, 'lake', ctx, stageId);
-      // R1.4/R1.5: lake buffers/floodplain margins (additive). §5.4: 5–10m non-buildable strip from water;
-      // treat a modest floodplain/no-build margin around lakes as downstream constraint for parcels/buildings/props.
+      // R1.4/R1.5/R0.4: lake buffers/floodplain margins (additive, profile-driven presets). §5.4: 5–10m strip from water;
+      // treat floodplain/no-build margin around lakes as downstream constraint for parcels/buildings/props/finalize.
       ctx.masks.terrain = ctx.masks.terrain || {};
       if (!Array.isArray(ctx.masks.terrain.waterBuffers)) ctx.masks.terrain.waterBuffers = [];
       if (!ctx.masks.easement.lakes) ctx.masks.easement.lakes = [];
+      const _cfProfileLake = (ctx.meta?.activeCityProfile && typeof ctx.meta.activeCityProfile === 'object') ? ctx.meta.activeCityProfile : null;
+      const hydroPresetLake = (_cfProfileLake?.terrain?.hydrology && typeof _cfProfileLake.terrain.hydrology === 'object')
+        ? _cfProfileLake.terrain.hydrology
+        : ((_cfProfileLake?.hydrology && typeof _cfProfileLake.hydrology === 'object') ? _cfProfileLake.hydrology : {});
+      const lakeBufferMargin = Number.isFinite(Number(hydroPresetLake.lakeBufferMargin ?? hydroPresetLake.lakeBuffer ?? _cfProfileLake?.terrain?.lakeBufferMargin))
+        ? Number(hydroPresetLake.lakeBufferMargin ?? hydroPresetLake.lakeBuffer ?? _cfProfileLake?.terrain?.lakeBufferMargin) : 8; // 5–10m (default 8m)
+      const lakeFloodplainMargin = Number.isFinite(Number(hydroPresetLake.lakeFloodplainMargin ?? hydroPresetLake.lakeFloodplain ?? _cfProfileLake?.terrain?.lakeFloodplainMargin))
+        ? Number(hydroPresetLake.lakeFloodplainMargin ?? hydroPresetLake.lakeFloodplain ?? _cfProfileLake?.terrain?.lakeFloodplainMargin) : 16;
       for (const ll of ctx.hydrology.lakes) {
         const area = ll?.area;
         let cx = null, cz = null, r = null;
@@ -966,8 +982,8 @@ export function makeStage1() {
             r = maxD;
           }
         }
-        const buffer = 8; // 5–10m hard strip (default 8m)
-        const floodplain = 16; // modest no-build/floodplain margin for downstream constraints
+        const buffer = +clamp(lakeBufferMargin, 5, 20).toFixed(3);
+        const floodplain = +Math.max(buffer, clamp(lakeFloodplainMargin, 8, 40)).toFixed(3);
         if (Number.isFinite(cx) && Number.isFinite(cz) && Number.isFinite(r) && r > 0) {
           const wb = {
             id: ll.id ?? null,
@@ -1025,12 +1041,14 @@ export function makeStage1() {
       ctx.spatial = ctx.spatial || {};
       const rIdx = createSpatialIndex(ctx.meta.worldBounds ?? { size: ctx.input?.ground?.size ?? 256 });
       const wbById = new Map((ctx.masks?.terrain?.waterBuffers ?? []).filter(w => w?.id).map(w => [w.id, w]));
+      const riverFloodMulIdx = (typeof riverFloodMul !== 'undefined' && Number.isFinite(Number(riverFloodMul))) ? Number(riverFloodMul) : 3;
+      const riverBufAddIdx = (typeof riverBufAdd !== 'undefined' && Number.isFinite(Number(riverBufAdd))) ? Number(riverBufAdd) : 12;
       for (const rv of ctx.hydrology.rivers) {
         const path = Array.isArray(rv.path) ? rv.path : [];
         const w = Number(rv.width) || 10;
         const meta = wbById.get(rv.id ?? null) || null;
-        const buffer = Number.isFinite(Number(meta?.buffer)) ? Number(meta.buffer) : (w * 0.5 + 12);
-        const floodplain = Number.isFinite(Number(meta?.floodplain)) ? Number(meta.floodplain) : Math.max(buffer, w * 3);
+        const buffer = Number.isFinite(Number(meta?.buffer)) ? Number(meta.buffer) : (w * 0.5 + riverBufAddIdx);
+        const floodplain = Number.isFinite(Number(meta?.floodplain)) ? Number(meta.floodplain) : Math.max(buffer, w * clamp(riverFloodMulIdx, 2, 4));
         const pad = Math.max(w * 0.5 + 20.0, buffer, floodplain);
         for (let i = 0; i + 1 < path.length; i++) {
           const a = path[i], b = path[i + 1];

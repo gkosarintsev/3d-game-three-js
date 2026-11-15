@@ -501,9 +501,12 @@ export function makeStage6() {
             if (!w) continue;
             if (w.type === 'lake' && Array.isArray(w.center) && Number.isFinite(Number(w.radius))) {
               const d = Math.hypot(x - Number(w.center[0]), z - Number(w.center[1]));
-              const hard = Number(w.radius) + (Number.isFinite(Number(w.buffer)) ? Number(w.buffer) : 8);
-              if (kind === 'floodplain') { if (d <= hard) return { id: w.id ?? null, type: 'lake', zone: 'buffer' }; continue; }
+              const buf = Number.isFinite(Number(w.buffer)) ? Number(w.buffer) : 8;
+              const floodplain = Number.isFinite(Number(w.floodplain)) ? Number(w.floodplain) : 0;
+              const hard = Number(w.radius) + buf;
+              const flood = Number(w.radius) + Math.max(buf, floodplain, 8);
               if (d <= hard) return { id: w.id ?? null, type: 'lake', zone: 'buffer' };
+              if (kind === 'floodplain' && d <= flood) return { id: w.id ?? null, type: 'lake', zone: 'floodplain' };
               continue;
             }
             const rv = w._river || (w.id ? riverById.get(w.id) : null);
