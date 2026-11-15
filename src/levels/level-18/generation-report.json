@@ -311,12 +311,40 @@
         "highway": 0.629255,
         "local": 0.080904,
         "ramp": 0.289841
+      },
+      "maxSlope": 0.188562,
+      "slopeByClass": {
+        "local": {
+          "count": 3,
+          "maxSlope": 0,
+          "overPolicy": 0,
+          "overAbsolute": 0
+        },
+        "ramp": {
+          "count": 3,
+          "maxSlope": 0.188562,
+          "overPolicy": 1,
+          "overAbsolute": 0
+        },
+        "highway": {
+          "count": 4,
+          "maxSlope": 0,
+          "overPolicy": 0,
+          "overAbsolute": 0
+        }
+      },
+      "slopePolicy": {
+        "highway": 6,
+        "arterial": 8,
+        "collector": 10,
+        "local": 12
       }
     },
     "gameplay": {
       "spawnToRoad": 0,
       "exitToRoad": 0,
-      "enterableShare": 0
+      "enterableShare": 0,
+      "enterableTarget": 0.2
     },
     "districts": {
       "plateArea": 1638400,
@@ -347,11 +375,28 @@
   "rules": {
     "version": 1,
     "partial": true,
-    "violations": [],
+    "violations": [
+      {
+        "severity": "warn",
+        "code": "road_slope_over_class_policy",
+        "stage": "rules",
+        "message": "road segments exceed class slope policy (see policies.slopeLimitPct)",
+        "segments": 1,
+        "maxSlope": 0.188562
+      },
+      {
+        "severity": "info",
+        "code": "enterable_share_far_from_target",
+        "stage": "rules",
+        "message": "enterable building share differs from policy target (informational)",
+        "share": 0,
+        "target": 0.2
+      }
+    ],
     "summary": {
       "errors": 0,
-      "warnings": 0,
-      "infos": 0
+      "warnings": 1,
+      "infos": 1
     }
   }
 }

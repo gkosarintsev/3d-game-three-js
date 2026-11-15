@@ -329,12 +329,40 @@
         "highway": 0.20235,
         "local": 0.203707,
         "ramp": 0.593943
+      },
+      "maxSlope": 0.275,
+      "slopeByClass": {
+        "highway": {
+          "count": 60,
+          "maxSlope": 0.08733,
+          "overPolicy": 1,
+          "overAbsolute": 0
+        },
+        "local": {
+          "count": 6,
+          "maxSlope": 0,
+          "overPolicy": 0,
+          "overAbsolute": 0
+        },
+        "ramp": {
+          "count": 67,
+          "maxSlope": 0.275,
+          "overPolicy": 13,
+          "overAbsolute": 0
+        }
+      },
+      "slopePolicy": {
+        "highway": 6,
+        "arterial": 8,
+        "collector": 10,
+        "local": 12
       }
     },
     "gameplay": {
       "spawnToRoad": 179.213,
       "exitToRoad": 0,
-      "enterableShare": 0
+      "enterableShare": 0,
+      "enterableTarget": 0.2
     },
     "districts": {
       "plateArea": 6553600,
@@ -373,12 +401,35 @@
         "message": "road graph has 14 connected components",
         "components": 14,
         "nodes": 124
+      },
+      {
+        "severity": "warn",
+        "code": "road_slope_over_class_policy",
+        "stage": "rules",
+        "message": "road segments exceed class slope policy (see policies.slopeLimitPct)",
+        "segments": 14,
+        "maxSlope": 0.275
+      },
+      {
+        "severity": "warn",
+        "code": "spawn_far_from_road",
+        "stage": "rules",
+        "message": "gameplay.spawn is far from road network (>20m)",
+        "distance": 179.213
+      },
+      {
+        "severity": "info",
+        "code": "enterable_share_far_from_target",
+        "stage": "rules",
+        "message": "enterable building share differs from policy target (informational)",
+        "share": 0,
+        "target": 0.2
       }
     ],
     "summary": {
       "errors": 0,
-      "warnings": 1,
-      "infos": 0
+      "warnings": 3,
+      "infos": 1
     }
   }
 }

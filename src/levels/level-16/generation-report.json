@@ -687,24 +687,58 @@
       "gamma": 0.389583
     },
     "roads": {
-      "totalLength": 15105.51,
+      "totalLength": 16512.943,
       "lengthByType": {
         "arterial": 2080,
         "highway": 202.321,
-        "local": 12777.438,
-        "ramp": 45.751
+        "local": 13053.898,
+        "ramp": 1176.725
       },
       "shareByType": {
-        "arterial": 0.137698,
-        "highway": 0.013394,
-        "local": 0.845879,
-        "ramp": 0.003029
+        "arterial": 0.125962,
+        "highway": 0.012252,
+        "local": 0.790525,
+        "ramp": 0.071261
+      },
+      "maxSlope": 0.3,
+      "slopeByClass": {
+        "arterial": {
+          "count": 3,
+          "maxSlope": 0.29561,
+          "overPolicy": 3,
+          "overAbsolute": 0
+        },
+        "local": {
+          "count": 179,
+          "maxSlope": 0.3,
+          "overPolicy": 80,
+          "overAbsolute": 0
+        },
+        "ramp": {
+          "count": 3,
+          "maxSlope": 0.106585,
+          "overPolicy": 1,
+          "overAbsolute": 0
+        },
+        "highway": {
+          "count": 2,
+          "maxSlope": 0,
+          "overPolicy": 0,
+          "overAbsolute": 0
+        }
+      },
+      "slopePolicy": {
+        "highway": 6,
+        "arterial": 8,
+        "collector": 10,
+        "local": 12
       }
     },
     "gameplay": {
       "spawnToRoad": 0,
       "exitToRoad": 0,
-      "enterableShare": 0
+      "enterableShare": 0,
+      "enterableTarget": 0.2
     },
     "districts": {
       "plateArea": 1638400,
@@ -743,12 +777,28 @@
         "message": "road graph has 7 connected components",
         "components": 7,
         "nodes": 162
+      },
+      {
+        "severity": "warn",
+        "code": "road_slope_over_class_policy",
+        "stage": "rules",
+        "message": "road segments exceed class slope policy (see policies.slopeLimitPct)",
+        "segments": 84,
+        "maxSlope": 0.3
+      },
+      {
+        "severity": "info",
+        "code": "enterable_share_far_from_target",
+        "stage": "rules",
+        "message": "enterable building share differs from policy target (informational)",
+        "share": 0,
+        "target": 0.2
       }
     ],
     "summary": {
       "errors": 0,
-      "warnings": 1,
-      "infos": 0
+      "warnings": 2,
+      "infos": 1
     }
   }
 }

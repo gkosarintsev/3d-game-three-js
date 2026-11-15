@@ -43,7 +43,61 @@ function segLengthXZ(seg) {
     if (!a || !b) continue;
     len += Math.hypot((b[0] ?? 0) - (a[0] ?? 0), (b[2] ?? 0) - (a[2] ?? 0));
   }
+  // element/arc-based segments may not carry path length in IR snapshots; best-effort from elements
+  if (len <= 0 && Array.isArray(seg?.elements) && seg.elements.length) {
+    for (const el of seg.elements) {
+      if (el?.arc) {
+        const r = Number(el.arc.radius) || 0;
+        const from = Number(el.arc.from) || 0;
+        const to = Number(el.arc.to) || 0;
+        len += Math.abs((to - from) * Math.PI / 180) * r;
+      } else if (el?.plate) {
+        const l = Number(el.plate.length);
+        if (Number.isFinite(l) && l > 0) len += l;
+      }
+    }
+  }
   return len;
+}
+
+function segMaxSlope(seg) {
+  const pts = Array.isArray(seg?.path) ? seg.path : [];
+  let maxS = 0;
+  for (let i = 0; i + 1 < pts.length; i++) {
+    const a = pts[i], b = pts[i + 1];
+    if (!a || !b) continue;
+    const dx = (b[0] ?? 0) - (a[0] ?? 0);
+    const dz = (b[2] ?? 0) - (a[2] ?? 0);
+    const dy = (b[1] ?? 0) - (a[1] ?? 0);
+    const run = Math.hypot(dx, dz);
+    if (run <= 1e-9) continue;
+    const s = Math.abs(dy) / run;
+    if (s > maxS) maxS = s;
+  }
+  if (maxS <= 0 && Array.isArray(seg?.elements) && seg.elements.length) {
+    for (const el of seg.elements) {
+      if (el?.arc && Array.isArray(el.arc.y) && el.arc.y.length === 2) {
+        const r = Number(el.arc.radius) || 0;
+        const span = Math.abs(((Number(el.arc.to) || 0) - (Number(el.arc.from) || 0)) * Math.PI / 180) * r;
+        if (span > 1e-9) maxS = Math.max(maxS, Math.abs((Number(el.arc.y[1]) || 0) - (Number(el.arc.y[0]) || 0)) / span);
+      }
+      if (el?.plate) {
+        const l = Number(el.plate.length) || 0;
+        const rise = Number(el.plate.rise) || 0;
+        if (l > 1e-9) maxS = Math.max(maxS, Math.abs(rise) / l);
+      }
+    }
+  }
+  return maxS;
+}
+
+function classSlopeLimitPct(type, policies) {
+  const t = String(type || 'local');
+  const sl = policies?.slopeLimitPct && typeof policies.slopeLimitPct === 'object' ? policies.slopeLimitPct : null;
+  const map = { highway: 'highway', arterial: 'arterial', collector: 'collector', local: 'local', ramp: 'collector', merge: 'collector', split: 'collector', connector: 'local' };
+  const key = map[t] || 'local';
+  const pct = Number(sl?.[key]);
+  return Number.isFinite(pct) ? pct : null;
 }
 
 function roadGraphStats(nodes = [], segments = []) {
@@ -141,6 +195,7 @@ export function evaluateRules(ctx) {
   const report = ctx?.report ?? {};
   const input = ctx?.input ?? {};
   const meta = ctx?.meta ?? {};
+  const policies = meta?.policies ?? {};
   const roads = ctx?.networks?.roads?.segments ?? input?.cityforge?.networks?.roads?.segments ?? [];
   const nodes = ctx?.networks?.roads?.nodes ?? input?.cityforge?.networks?.roads?.nodes ?? [];
   const districts = Array.isArray(ctx?.districts) ? ctx.districts : (Array.isArray(input?.generator?.districts) ? input.generator.districts : []);
@@ -178,16 +233,57 @@ export function evaluateRules(ctx) {
 
   const graph = roadGraphStats(nodes, roads);
   if (graph.nodes > 0 && graph.components > 1) {
-    // Report as info/warn signal in rules layer; stage diagnostics already warn in many cases.
     v('warn', 'road_graph_not_single_component', `road graph has ${graph.components} connected components`, { components: graph.components, nodes: graph.nodes });
   }
   const spawnDist = gp.spawn ? minRoadDist(gp.spawn.x, gp.spawn.z, roads) : null;
   const exitDist = gp.exit ? minRoadDist(gp.exit.x, gp.exit.z, roads) : null;
+  if (spawnDist != null && spawnDist > 20) {
+    v('warn', 'spawn_far_from_road', 'gameplay.spawn is far from road network (>20m)', { distance: round(spawnDist, 3) });
+  }
+  if (exitDist != null && exitDist > 20) {
+    v('warn', 'exit_far_from_road', 'gameplay.exit is far from road network (>20m)', { distance: round(exitDist, 3) });
+  }
+
+  // R0.2/R2 prep: road slope vs class policy (read-only; absolute engine limit J.maxSlope=0.3 remains authoritative)
+  let roadSlopeViolations = 0;
+  let roadSlopeWarns = 0;
+  let maxObservedRoadSlope = 0;
+  const slopeByClass = Object.create(null);
+  for (const s of roads) {
+    const ms = segMaxSlope(s);
+    if (ms > maxObservedRoadSlope) maxObservedRoadSlope = ms;
+    const t = String(s?.type || s?.class || 'unknown');
+    if (!slopeByClass[t]) slopeByClass[t] = { count: 0, maxSlope: 0, overPolicy: 0, overAbsolute: 0 };
+    const rec = slopeByClass[t];
+    rec.count++;
+    if (ms > rec.maxSlope) rec.maxSlope = ms;
+    const pct = classSlopeLimitPct(t, policies);
+    if (pct != null) {
+      const lim = pct / 100;
+      if (ms > lim + 1e-9) { rec.overPolicy++; roadSlopeWarns++; }
+    }
+    if (ms > 0.3005) { rec.overAbsolute++; roadSlopeViolations++; }
+  }
+  for (const [t, rec] of Object.entries(slopeByClass)) {
+    rec.maxSlope = round(rec.maxSlope, 6);
+  }
+  if (roadSlopeViolations > 0) {
+    v('error', 'road_slope_over_absolute_limit', `road segments exceed absolute slope limit (>0.3)`, { segments: roadSlopeViolations, maxSlope: round(maxObservedRoadSlope, 6) });
+  } else if (roadSlopeWarns > 0) {
+    v('warn', 'road_slope_over_class_policy', `road segments exceed class slope policy (see policies.slopeLimitPct)`, { segments: roadSlopeWarns, maxSlope: round(maxObservedRoadSlope, 6) });
+  }
 
   const enterable = buildings.filter(b => b?.isEnterable === true).length;
   const enterableShare = buildings.length > 0 ? round(enterable / buildings.length, 6) : null;
   const roadShares = roadClassShares(roads);
   const districtShare = districtAreaShare(districts, groundSize);
+  const targetEnterable = Number.isFinite(Number(policies?.enterableShare)) ? Number(policies.enterableShare) : null;
+  if (buildings.length > 0 && targetEnterable != null && enterableShare != null) {
+    // мягкая цель §9.8: 15–25% (policy default 0.2)
+    if (Math.abs(enterableShare - targetEnterable) > 0.15) {
+      v('info', 'enterable_share_far_from_target', 'enterable building share differs from policy target (informational)', { share: enterableShare, target: targetEnterable });
+    }
+  }
 
   const diagErrors = (report.diagnostics ?? []).filter(d => d?.severity === 'error').length;
   const diagWarns = (report.diagnostics ?? []).filter(d => d?.severity === 'warn').length;
@@ -207,11 +303,17 @@ export function evaluateRules(ctx) {
       lights: lights.length,
     },
     graph,
-    roads: roadShares,
+    roads: {
+      ...roadShares,
+      maxSlope: round(maxObservedRoadSlope, 6),
+      slopeByClass,
+      slopePolicy: policies?.slopeLimitPct ?? null,
+    },
     gameplay: {
       spawnToRoad: round(spawnDist, 3),
       exitToRoad: round(exitDist, 3),
       enterableShare,
+      enterableTarget: targetEnterable,
     },
     districts: districtShare,
     stream: stream ? {

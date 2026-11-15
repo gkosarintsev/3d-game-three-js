@@ -7,8 +7,8 @@
 
 - [ ] **R0** Спецификация/валидатор/метрики/baseline/конфиг профилей
   - [x] R0.1 Матрица соответствия §3–13 ↔ модули (зафиксирована ниже, 2026-11-15)
-  - [~] R0.2 Валидатор инвариантов §12.1 (read-only) + baseline на 16–19 — добавлен `tools/citygen/rules.mjs` (подмножество инвариантов/проверок) и снимок baseline по 16–19 (2026-11-15)
-  - [~] R0.3 Каркас метрик §12.2 в report — `report.metrics`/`report.rules` (детерминированно, partial) подключены в `diagnostics.mjs`/`index.mjs`
+  - [~] R0.2 Валидатор инвариантов §12.1 (read-only) + baseline на 16–19 — `tools/citygen/rules.mjs`: подмножество инвариантов/проверок + проверки уклонов дорог (абсолютный предел/политика классов `slopeLimitPct`), удалённость spawn/exit от сети, контроль целей enterable-share (info), снимок baseline 16–19
+  - [~] R0.3 Каркас метрик §12.2 в report — `report.metrics`/`report.rules` (детерминированно, partial): добавлены `roads.maxSlope`, `roads.slopeByClass`, `roads.slopePolicy`, `gameplay.enterableTarget`; отчёты пилотов 16–19 пересобраны
   - [ ] R0.4 Эталоны (3 seed × профили), процедура bump `generatorVersion`
   - [~] R0.5 Структура `generator.profiles`/`generator.policies` + чтение/fallback — `tools/citygen/config.mjs`, нормализация в `ctx.meta.{policies,cityProfiles,activeCityProfile*}` (дефолты §13.2)
 - [ ] **R1** Рельеф и вода (§4, §5)
@@ -85,6 +85,7 @@
   - **L19**: errors 0, warnings 5, rules {0,1,0}; graph 124/133, components 14, deadEndRatio 0.177419, gamma 0.363388; counts roads 133, districts 1, parcels 441, buildings 24, props 0, lights 0; spawnToRoad 179.213, exitToRoad 0.
 - Примечание: это runtime-снимок IR/контекста citygen (частичный), не замена закоммиченных `generation-report.json` каталогов; R0.4 (эталоны/хэши, ≥3 seed × профиль) не выполнен.
 - 2026-11-15, R1 анализ (stage 1): для L16 вычислен slope-grid 80×80 (step 16 м, maxSlope 0.37447 м/м, share по классам §4.3) и 3 кандидата переправ; отчёты пересобраны детерминированно.
+- 2026-11-15, R0 (инкремент): расширены read-only rules/metrics (`road_slope_over_class_policy`, `enterable_share_far_from_target`, метрики уклонов по классам/политике); каталоги/`generation-report.json` L16–L19 пересобраны, `build-level --check`/`check-levels`/`node --test tools/citygen.test.mjs` зелёные.
 
 ## Открытые вопросы / риски
 - GAP-01/06/07/08/11 из `docs/level_generation_rules_claude.md` §14 (см. план, раздел 2).
