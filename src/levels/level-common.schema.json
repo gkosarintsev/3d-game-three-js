@@ -330,8 +330,9 @@
             "up": {
               "type": "string",
               "enum": [
-                "Z"
-              ]
+                "Y"
+              ],
+              "description": "Вертикальная ось мира: Y вверх, как в рантайме/движке и в интерпретации point3 [x, y_up, z]."
             }
           },
           "required": [
@@ -363,7 +364,7 @@
         "bounds"
       ],
       "additionalProperties": false,
-      "description": "Local right-handed meter space, Z up."
+      "description": "Локальное правое метрическое пространство, Y вверх; point3 задаётся как [x, y_up, z] (вертикаль — y)."
     },
     "generation": {
       "type": "object",
@@ -483,7 +484,8 @@
               "items": {
                 "type": "number",
                 "minimum": 1
-              }
+              },
+              "description": "этажи: [minFloors, maxFloors] — диапазон этажности зданий района."
             },
             "maxFootprintRatio": {
               "type": "number",
@@ -550,7 +552,8 @@
                 },
                 "speedLimit": {
                   "type": "number",
-                  "minimum": 0
+                  "minimum": 0,
+                  "description": "км/ч: ограничение скорости на дорогах района."
                 }
               },
               "additionalProperties": false
@@ -1230,7 +1233,8 @@
         },
         "speedLimit": {
           "type": "number",
-          "minimum": 0
+          "minimum": 0,
+          "description": "км/ч: ограничение скорости на сегменте."
         }
       },
       "required": [

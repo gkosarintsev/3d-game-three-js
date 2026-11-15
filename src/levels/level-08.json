@@ -464,7 +464,7 @@
       "coordinateSystem": {
         "type": "local",
         "handedness": "right",
-        "up": "Z"
+        "up": "Y"
       },
       "origin": [
         0,

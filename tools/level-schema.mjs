@@ -573,11 +573,11 @@ const CF_WORLD = obj({
   coordinateSystem: obj({
     type: str({ enum: ['local'], req: true }),
     handedness: str({ enum: ['right'], req: true }),
-    up: str({ enum: ['Z'], req: true }),
+    up: str({ enum: ['Y'], req: true, doc: 'Вертикальная ось мира: Y вверх, как в рантайме/движке и в интерпретации point3 [x, y_up, z].' }),
   }, { req: true }),
   origin: ref('point3'),
   bounds: obj({ min: ref('point3'), max: ref('point3') }, { req: true }),
-}, { req: true, doc: 'Local right-handed meter space, Z up.' });
+}, { req: true, doc: 'Локальное правое метрическое пространство, Y вверх; point3 задаётся как [x, y_up, z] (вертикаль — y).' });
 
 const CF_GENERATION = obj({
   seed: num({ req: true, doc: 'Deterministic seed; local seeds derive from it and entity ids.' }),
@@ -615,7 +615,7 @@ const CF_DISTRICT = obj({
   style: str({}),
   rules: obj({
     buildingDensity: num({ min: 0, max: 1 }),
-    heightRange: arr(num({ min: 1 }), { minItems: 2, maxItems: 2 }),
+    heightRange: arr(num({ min: 1 }), { minItems: 2, maxItems: 2, doc: 'этажи: [minFloors, maxFloors] — диапазон этажности зданий района.' }),
     maxFootprintRatio: num({ min: 0, max: 1 }),
     setback: num({ min: 0 }),
     buildingPalette: arr(CF_PALETTE_ENTRY, { minItems: 1 }),
@@ -625,7 +625,7 @@ const CF_DISTRICT = obj({
     }),
     roadStyle: obj({
       type: str({ enum: ['local', 'collector', 'arterial', 'highway'] }),
-      speedLimit: num({ min: 0 }),
+      speedLimit: num({ min: 0, doc: 'км/ч: ограничение скорости на дорогах района.' }),
     }),
   }),
 }, { doc: 'District extent plus generation rules and style.' });
@@ -751,7 +751,7 @@ const CF_SEGMENT = obj({
   fillet: num({ min: 0, doc: 'м: псевдоним filletRadius' }),
   sidewalk: bool({ default: false }),
   surface: str({ enum: ['asphalt', 'gravel', 'earth'] }),
-  speedLimit: num({ min: 0 }),
+  speedLimit: num({ min: 0, doc: 'км/ч: ограничение скорости на сегменте.' }),
 });
 
 const CF_JUNCTION = obj({

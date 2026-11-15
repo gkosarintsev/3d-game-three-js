@@ -165,7 +165,7 @@ t('v3 принимает минимальный CityForge-бриф и не ос�
       version: '0.1',
       world: {
         units: 'meters',
-        coordinateSystem: { type: 'local', handedness: 'right', up: 'Z' },
+        coordinateSystem: { type: 'local', handedness: 'right', up: 'Y' },
         bounds: { min: [0, 0, 0], max: [256, 0, 256] },
       },
     },
@@ -212,7 +212,7 @@ t('validateLevel принимает минимальные v3/v4 по DSL и б�
       version: '0.1',
       world: {
         units: 'meters',
-        coordinateSystem: { type: 'local', handedness: 'right', up: 'Z' },
+        coordinateSystem: { type: 'local', handedness: 'right', up: 'Y' },
         bounds: { min: [0, 0, 0], max: [256, 0, 256] },
       },
     },
@@ -241,7 +241,7 @@ t('косой path-отрезок: схема принимает, нормали
       format: 'cityforge', version: '0.1',
       world: {
         units: 'meters',
-        coordinateSystem: { type: 'local', handedness: 'right', up: 'Z' },
+        coordinateSystem: { type: 'local', handedness: 'right', up: 'Y' },
         origin: [0, 0, 0],
         bounds: { min: [-200, -200, -80], max: [200, 200, 160] },
       },
