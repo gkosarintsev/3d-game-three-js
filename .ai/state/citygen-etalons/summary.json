@@ -16,9 +16,9 @@
     "hill_town": {
       "runs": 3,
       "hashes": [
-        "e144a0c5de2f0edfd14dd3e359d34ea114b64f1c01ca21f5431eb01000a4a7b4",
-        "fae25f706e8ed9c6631b0d9acb41ad362b36f81294c44c9c6ddc7ed46e36624a",
-        "59947f82079c744eea391275dfd4dfe3e8cdd37a72a018477abc335d605c249c"
+        "092aad7daa8410adabf18e34d242b64faa9445ce49299102eeccdf9e47cbffa2",
+        "dfa724339327a612d455913b71f60fce9899df89833c9a565c5312121073a671",
+        "750dab68093e6c819872ac06bcb81ef74bfbabe86a0753f0de028e92ffa114b1"
       ],
       "errors": {
         "count": 3,
@@ -46,17 +46,17 @@
       },
       "buildings": {
         "count": 3,
-        "min": 403,
+        "min": 404,
         "max": 404,
-        "mean": 403.333333
+        "mean": 404
       }
     },
     "railway_industrial": {
       "runs": 3,
       "hashes": [
-        "103c0e3c657d9d10c2dcbe10ef0853cd006290bd557614e2ae3ca67bdaa65fc9",
-        "fa412c021627b57675af7408aedb9b9219b28e8c4ef16f392381136cbee00951",
-        "c852f86d3180ac69e297a73ccad2a0be46e7368231bbfd4f416c78d9adfe8626"
+        "f0bc77c57120105e61754a338d00a38898bc8bdff9a13632f271a8415c67403a",
+        "4183cfdcf69b6ae6030459e0f0f0b437912af37e9b5c10ec9f66258a70733df0",
+        "cbbdf54e6f77d5c5b6ef3ae3d63a48fcc7b73769f8be4c9b2b4c27a564374c27"
       ],
       "errors": {
         "count": 3,
@@ -92,9 +92,9 @@
     "river_trade": {
       "runs": 3,
       "hashes": [
-        "50b224ccc07087eff851d4d2b771b222acd308508b5a3dc33ddd513776a08c26",
-        "9c54f4bcfc52cdab3577fbfd79ffd6788cea9bc499f21ddd16c16b0a57bea835",
-        "c8dfd6fbeb4596d00c25d7c40a4408e3fa6b880f332b021152dc78ff631c68c3"
+        "0e70a41ef8814dedae24df406e1cef47f337b2a7ddd82726eb7c7994b4431585",
+        "a312ad1dabced446b0aceba5f306155a9e63cb9c1d7e8f532350ec944aed4e1e",
+        "db3f59d368332726d28d73c80ade7a43847093b8bf30a750b8b57057b6080af5"
       ],
       "errors": {
         "count": 3,

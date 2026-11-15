@@ -1,0 +1,168 @@
+{
+  "$schema": "./level-v4.schema.json",
+  "kind": "cityforge",
+  "schemaVersion": 4,
+  "metadata": {
+    "levelName": "level-20",
+    "name": "Пилот: Город на холме (hill_town)",
+    "hint": "Профильный пилот hill_town. Доберитесь до маяка.",
+    "units": "meters"
+  },
+  "ground": {
+    "y": 0,
+    "size": 1280,
+    "color": 7322954
+  },
+  "windows": {
+    "spacing": 12
+  },
+  "gameplay": {
+    "goal": "exit",
+    "spawn": {
+      "x": -520,
+      "z": -520
+    },
+    "exit": {
+      "x": 520,
+      "z": 520
+    },
+    "exitRadius": 4,
+    "enemies": {
+      "count": 6
+    },
+    "alienEnemies": {
+      "count": 3
+    },
+    "cars": {
+      "count": 1,
+      "spots": [
+        {
+          "x": -560,
+          "z": -520,
+          "yaw": 90
+        }
+      ]
+    }
+  },
+  "stream": {
+    "chunk": 640,
+    "keep": 1,
+    "aheadMin": 200,
+    "aheadMax": 900,
+    "budgetMs": 120
+  },
+  "cityforge": {
+    "format": "cityforge",
+    "version": "0.1",
+    "world": {
+      "units": "meters",
+      "coordinateSystem": {
+        "type": "local",
+        "handedness": "right",
+        "up": "Y"
+      },
+      "origin": [
+        0,
+        0,
+        0
+      ],
+      "bounds": {
+        "min": [
+          -640,
+          -640,
+          -80
+        ],
+        "max": [
+          640,
+          640,
+          160
+        ]
+      }
+    },
+    "assets": [
+      {
+        "id": "ground.placeholder",
+        "kind": "procedural",
+        "generator": "placeholder.flat",
+        "bounds": [
+          1280,
+          1280,
+          1
+        ]
+      }
+    ],
+    "terrain": {
+      "base": {
+        "type": "heightfield",
+        "source": "procedural",
+        "resolution": 4
+      },
+      "modifiers": [
+        {
+          "id": "seed_hill",
+          "type": "mountain",
+          "center": [
+            0,
+            0
+          ],
+          "radius": 120,
+          "height": 8,
+          "falloff": "smooth",
+          "operation": "add",
+          "sourceRef": "terrain.base",
+          "parameters": {}
+        }
+      ]
+    },
+    "hydrology": {
+      "rivers": [],
+      "lakes": []
+    },
+    "networks": {
+      "roads": {
+        "nodes": [],
+        "segments": [],
+        "junctions": []
+      },
+      "railways": {
+        "nodes": [],
+        "segments": [],
+        "junctions": []
+      },
+      "paths": {
+        "nodes": [],
+        "segments": [],
+        "junctions": []
+      }
+    },
+    "structures": {
+      "bridges": [],
+      "tunnels": []
+    },
+    "instances": [],
+    "chunks": []
+  },
+  "generator": {
+    "generatorVersion": "0.1.0",
+    "seed": 20,
+    "deterministic": true,
+    "profile": "hill_town",
+    "stages": [],
+    "layers": [],
+    "budgets": {},
+    "districts": [],
+    "profiles": {},
+    "catalogs": {},
+    "refs": {},
+    "policies": {},
+    "landscape": {
+      "generate": true,
+      "profileDriven": true
+    },
+    "transport": {
+      "generate": true
+    }
+  },
+  "navEdgeProbe": 1.2,
+  "bodyProbe": 1.2
+}

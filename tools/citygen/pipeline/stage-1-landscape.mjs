@@ -390,15 +390,18 @@ function generateLandscape(ctx) {
     const z = lerp(-half * 0.7, half * 0.7, rng());
     if (!farFromAnchors(x, z, anchors, 50)) continue;
     const radius = lerp(Number.isFinite(terraceCfg.minRadius) ? terraceCfg.minRadius : 30, Number.isFinite(terraceCfg.maxRadius) ? terraceCfg.maxRadius : 90, rng());
-    const levelY = Math.round(terrainHeightAt(x, z, ctx.input?.ground?.y ?? 0, [...largeForms, ...mediumHills]) * 1000) / 1000;
+    const baseY = ctx.input?.ground?.y ?? 0;
+    const levelY = Math.round(terrainHeightAt(x, z, baseY, [...largeForms, ...mediumHills]) * 1000) / 1000;
+    // Compiler-safe approximation (mountain/valley only): represent terrace as additive local raise.
+    const tDelta = Math.max(0, levelY - baseY);
     terraces.push({
       id: `terrace_${i + 1}`,
-      type: 'terrain_modifier',
+      type: 'mountain',
       center: [Math.round(x * 10) / 10, Math.round(z * 10) / 10],
       radius: Math.round(radius * 10) / 10,
-      height: levelY,
-      falloff: 'step',
-      operation: 'replace',
+      height: Math.round(tDelta * 1000) / 1000,
+      falloff: 'smooth',
+      operation: 'add',
     });
   }
 
@@ -412,24 +415,31 @@ function generateLandscape(ctx) {
     const x = clamp(ax + lerp(-120, 120, rng()), -half * 0.85, half * 0.85);
     const z = clamp(az + lerp(-120, 120, rng()), -half * 0.85, half * 0.85);
     const radius = lerp(Number.isFinite(platformCfg.minRadius) ? platformCfg.minRadius : 40, Number.isFinite(platformCfg.maxRadius) ? platformCfg.maxRadius : 120, rng());
-    const levelY = Math.round(terrainHeightAt(x, z, ctx.input?.ground?.y ?? 0, [...largeForms, ...mediumHills, ...terraces]) * 1000) / 1000;
+    const baseY = ctx.input?.ground?.y ?? 0;
+    const levelY = Math.round(terrainHeightAt(x, z, baseY, [...largeForms, ...mediumHills, ...terraces]) * 1000) / 1000;
+    // Compiler-safe approximation (mountain/valley only): represent platform as additive local raise.
+    const pDelta = Math.max(0, levelY - baseY);
     platforms.push({
       id: `platform_${i + 1}`,
-      type: 'terrain_modifier',
+      type: 'mountain',
       center: [Math.round(x * 10) / 10, Math.round(z * 10) / 10],
       radius: Math.round(radius * 10) / 10,
-      height: levelY,
+      height: Math.round(pDelta * 1000) / 1000,
       falloff: 'smooth',
-      operation: 'replace',
+      operation: 'add',
     });
   }
 
+  const MAX_TERRAIN_MODIFIERS = 16; // engine/compiler relief.hills limit
   if (wantHills && count > 0) {
     ctx.terrain.modifiers = ordered
       ? [...largeForms, ...mediumHills, ...terraces, ...platforms]
       : mediumHills;
   } else if (ordered && (largeForms.length || terraces.length || platforms.length)) {
     ctx.terrain.modifiers = [...largeForms, ...terraces, ...platforms];
+  }
+  if (Array.isArray(ctx.terrain.modifiers) && ctx.terrain.modifiers.length > MAX_TERRAIN_MODIFIERS) {
+    ctx.terrain.modifiers = ctx.terrain.modifiers.slice(0, MAX_TERRAIN_MODIFIERS);
   }
 
   const riverCfg = ls.river || {};

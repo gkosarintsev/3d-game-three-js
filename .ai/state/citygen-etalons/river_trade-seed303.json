@@ -2,7 +2,7 @@
   "profile": "river_trade",
   "seed": 303,
   "generatorVersion": "0.1.0",
-  "reportHash": "c8dfd6fbeb4596d00c25d7c40a4408e3fa6b880f332b021152dc78ff631c68c3",
+  "reportHash": "db3f59d368332726d28d73c80ade7a43847093b8bf30a750b8b57057b6080af5",
   "summary": {
     "errors": 0,
     "warnings": 10,
@@ -65,15 +65,15 @@
         "cells": 6400,
         "maxSlope": 0.125704,
         "share": {
-          "flat_lt3": 0.714531,
-          "gentle_3_8": 0.23625,
+          "flat_lt3": 0.713281,
+          "gentle_3_8": 0.2375,
           "moderate_8_15": 0.049219,
           "steep_15_25": 0,
           "very_steep_gt25": 0
         },
         "counts": {
-          "flat_lt3": 4573,
-          "gentle_3_8": 1512,
+          "flat_lt3": 4565,
+          "gentle_3_8": 1520,
           "moderate_8_15": 315,
           "steep_15_25": 0,
           "very_steep_gt25": 0

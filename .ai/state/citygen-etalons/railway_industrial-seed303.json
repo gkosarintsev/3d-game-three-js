@@ -2,7 +2,7 @@
   "profile": "railway_industrial",
   "seed": 303,
   "generatorVersion": "0.1.0",
-  "reportHash": "c852f86d3180ac69e297a73ccad2a0be46e7368231bbfd4f416c78d9adfe8626",
+  "reportHash": "cbbdf54e6f77d5c5b6ef3ae3d63a48fcc7b73769f8be4c9b2b4c27a564374c27",
   "summary": {
     "errors": 0,
     "warnings": 9,
@@ -65,15 +65,15 @@
         "cells": 6400,
         "maxSlope": 0.125704,
         "share": {
-          "flat_lt3": 0.714531,
-          "gentle_3_8": 0.23625,
+          "flat_lt3": 0.713281,
+          "gentle_3_8": 0.2375,
           "moderate_8_15": 0.049219,
           "steep_15_25": 0,
           "very_steep_gt25": 0
         },
         "counts": {
-          "flat_lt3": 4573,
-          "gentle_3_8": 1512,
+          "flat_lt3": 4565,
+          "gentle_3_8": 1520,
           "moderate_8_15": 315,
           "steep_15_25": 0,
           "very_steep_gt25": 0

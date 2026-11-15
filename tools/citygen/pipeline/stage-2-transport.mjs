@@ -925,11 +925,14 @@ function generateTransport(ctx) {
       return false;
     };
     // Mark bridge spans: elevated above terrain, including ramp approaches near river crossings.
-    const mark = path.map((p, i) => {
+    // Bridge-typed segments must keep deck >= groundY + BRIDGE_DECK_MIN to avoid compiler/schema warnings.
+    const minBridgeY = groundY + BRIDGE_DECK_MIN - 0.01;
+    const mark = path.map((p) => {
       const c = terrainClear(p);
-      if (c >= 0.9) return true;
-      if (riverSpan(p)) return true; // river crossing span (including ramps/approaches) must be bridge segment
-      if (c >= 0.35) return true;
+      const highEnough = (p[1] ?? 0) >= minBridgeY;
+      if (riverSpan(p)) return highEnough; // river spans should be profiled high; if not, do not emit invalid bridge
+      if (c >= 0.9 && highEnough) return true;
+      if (c >= 0.35 && highEnough) return true;
       return false;
     });
     // Expand to cover contiguous crossing ramps adjacent to marked span
@@ -938,6 +941,8 @@ function generateTransport(ctx) {
         if (mark[i]) continue;
         if (!(mark[i - 1] || mark[i + 1])) continue;
         const c = terrainClear(path[i]);
+        const highEnough = (path[i][1] ?? 0) >= minBridgeY;
+        if (!highEnough) continue;
         if (c >= 0.2 || riverSpan(path[i])) mark[i] = true;
       }
     }
@@ -958,6 +963,13 @@ function generateTransport(ctx) {
     }
     if (cur.length >= 2) parts.push({ bridge: curBridge, path: cur });
     else if (parts.length) parts[parts.length - 1].path.push(path[path.length - 1].slice());
+    // Bridge parts must satisfy minimum deck height over ground to pass schema/validation; demote invalid ones.
+    for (const part of parts) {
+      if (!part.bridge) continue;
+      let minY = Infinity;
+      for (const p of part.path) minY = Math.min(minY, p[1] ?? 0);
+      if (minY < groundY + BRIDGE_DECK_MIN - 0.05) part.bridge = false;
+    }
     // merge tiny segments into neighbors
     const merged = [];
     const segLen = (pth) => { let l = 0; for (let i=1;i<pth.length;i++) l += Math.hypot(pth[i][0]-pth[i-1][0], pth[i][2]-pth[i-1][2]); return l; };
@@ -1101,6 +1113,13 @@ function generateTransport(ctx) {
 
   const mainParts = splitMainSegments(mainPath);
   tryApplyOverpassPrototype(mainParts);
+  // Overpass/profiling may re-mark parts as bridge; ensure bridge parts keep minimum deck clearance over ground.
+  for (const part of mainParts) {
+    if (!part.bridge) continue;
+    let minY = Infinity;
+    for (const p of part.path) minY = Math.min(minY, p[1] ?? 0);
+    if (minY < groundY + BRIDGE_DECK_MIN - 0.05) part.bridge = false;
+  }
   const nodes = [
     { id: 'tr_n_spawn', position: mainPath[0].slice(), layer: 'ground' },
   ];
