@@ -1,8 +1,19 @@
 import { Game } from './game.js';
-
 import { CONFIG } from './config.js';
+import { LEVEL_NUMBERS } from './levels/index.js';
 
-const game = new Game();
+const params = new URLSearchParams(location.search);
+// ?level=16 — номер главы из реестра (LEVEL_NUMBERS), не индекс массива.
+const levelParam = params.get('level');
+let initialLevel = 0;
+if (levelParam != null) {
+  const n = Number(levelParam);
+  const idx = Number.isInteger(n) ? LEVEL_NUMBERS.indexOf(n) : -1;
+  if (idx >= 0) initialLevel = idx;
+  else console.warn(`?level=${levelParam}: глава не найдена в реестре, старт с первой`);
+}
+
+const game = new Game(initialLevel);
 game.start();
 // отладочная точка входа для консоли страницы (см. AGENTS.md); модули её не используют
 window.game = game;

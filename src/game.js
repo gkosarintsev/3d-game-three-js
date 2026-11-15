@@ -46,7 +46,7 @@ const MAP_KINDS = {
  * перезагрузки страницы. Смерть перезапускает текущую главу.
  */
 export class Game {
-  constructor() {
+  constructor(initialLevel = 0) {
     this._initRenderer();
 
     // одна камера живёт между сценами всех глав
@@ -79,16 +79,19 @@ export class Game {
     this._tick = this._tick.bind(this);
 
     // обзорный вид улицы за экраном выбора персонажа
-    this._previewLevel(0);
+    this._initialLevel = Number.isInteger(initialLevel) && initialLevel >= 0 && initialLevel < LEVELS.length
+      ? initialLevel
+      : 0;
+    this._previewLevel(this._initialLevel);
     this.hud.showCharacterSelect(role => this._startRole(role));
   }
 
-  /** Выбор роли: создаёт персонажа при каждой загрузке главы, затем глава 1. */
+  /** Выбор роли: создаёт персонажа при каждой загрузке главы, затем выбранная глава. */
   _startRole(role) {
     this.role = role;
     this.hud.setRole(role);
     this.totalTime = 0;
-    this._loadLevel(0);
+    this._loadLevel(this._initialLevel ?? 0);
   }
 
   /**
