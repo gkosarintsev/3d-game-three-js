@@ -489,6 +489,16 @@ export function makeStage3() {
                 if (rx >= aabb.minX - pad && rx <= aabb.maxX + pad && rz >= aabb.minZ - pad && rz <= aabb.maxZ + pad) { reserved = true; break; }
               }
             }
+            // R1.5: keep historical crossing vicinities available for bridge/approach infrastructure (not generic parcels).
+            if (!reserved) {
+              const crossings = ctx.terrain?.analysis?.crossings ?? ctx.masks?.terrain?.crossings ?? [];
+              for (const cr of crossings) {
+                const kx = Number(cr?.x), kz = Number(cr?.z);
+                if (!Number.isFinite(kx) || !Number.isFinite(kz)) continue;
+                const pad = 12;
+                if (kx >= aabb.minX - pad && kx <= aabb.maxX + pad && kz >= aabb.minZ - pad && kz <= aabb.maxZ + pad) { reserved = true; break; }
+              }
+            }
             // R1.2/R4.1: steep terrain parcels are not buildable as generic parcels (§9.1, slopes > 25%).
             if (!reserved) {
               const baseY = Number(ctx.input?.ground?.y ?? 0) || 0;
