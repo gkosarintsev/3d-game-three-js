@@ -686,6 +686,7 @@
       "stage": "6_finalize_emit",
       "message": "terrain/hydrology masks available as downstream constraints at finalize",
       "waterBuffers": 1,
+      "floodplains": 1,
       "crossings": 3,
       "landmarks": 5,
       "reservations": 10,

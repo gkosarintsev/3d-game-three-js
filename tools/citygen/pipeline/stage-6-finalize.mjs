@@ -554,9 +554,13 @@ export function makeStage6() {
         const crossingsN = Array.isArray(ctx.terrain?.analysis?.crossings) ? ctx.terrain.analysis.crossings.length : (Array.isArray(ctx.masks?.terrain?.crossings) ? ctx.masks.terrain.crossings.length : 0);
         const landmarksN = Array.isArray(ctx.terrain?.analysis?.landmarks) ? ctx.terrain.analysis.landmarks.length : (Array.isArray(ctx.masks?.terrain?.landmarks) ? ctx.masks.terrain.landmarks.length : 0);
         const reservationsN = Array.isArray(ctx.terrain?.analysis?.reservations) ? ctx.terrain.analysis.reservations.length : (Array.isArray(ctx.masks?.terrain?.reservations) ? ctx.masks.terrain.reservations.length : 0);
-        if (waterBuffers.length || crossingsN || landmarksN || reservationsN || slopeShare) {
+        const floodplains = Array.isArray(ctx.masks?.terrain?.floodplains) ? ctx.masks.terrain.floodplains
+          : (Array.isArray(ctx.terrain?.analysis?.floodplains) ? ctx.terrain.analysis.floodplains : []);
+        const floodplainsN = floodplains.length;
+        if (waterBuffers.length || floodplainsN || crossingsN || landmarksN || reservationsN || slopeShare) {
           ctx.report.diagnostics.push(info('finalize_terrain_masks_applied', stageId, 'terrain/hydrology masks available as downstream constraints at finalize', {
             waterBuffers: waterBuffers.length,
+            floodplains: floodplainsN,
             crossings: crossingsN,
             landmarks: landmarksN,
             reservations: reservationsN,
