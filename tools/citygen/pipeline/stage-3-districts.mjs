@@ -430,6 +430,31 @@ export function makeStage3() {
             }
           }
         }
+        // Explicit floodplain masks as downstream constraints (defense-in-depth, deterministic).
+        const floodplainMasks = Array.isArray(ctx.masks?.terrain?.floodplains) ? ctx.masks.terrain.floodplains
+          : (Array.isArray(ctx.terrain?.analysis?.floodplains) ? ctx.terrain.analysis.floodplains : []);
+        for (const fpl of floodplainMasks) {
+          if (!fpl) continue;
+          if (fpl.type === 'lake' && Array.isArray(fpl.center) && Number.isFinite(Number(fpl.radius))) {
+            const lx = Number(fpl.center[0]), lz = Number(fpl.center[1]);
+            const margin = Number.isFinite(Number(fpl.floodplain)) ? Number(fpl.floodplain) : 0;
+            const clearance = Number(fpl.radius) + Math.max(margin, 8);
+            for (const [px, pz] of corners) {
+              if (Math.hypot(px - lx, pz - lz) < clearance) return true;
+            }
+            continue;
+          }
+          if (fpl.type === 'river' && Array.isArray(fpl.path) && fpl.path.length >= 2) {
+            const margin = Number.isFinite(Number(fpl.floodplain)) ? Number(fpl.floodplain)
+              : Math.max((Number(fpl.width) || 0) * 0.5 + 12, (Number(fpl.width) || 0) * 3);
+            for (let pi = 0; pi + 1 < fpl.path.length; pi++) {
+              const a = fpl.path[pi], b = fpl.path[pi + 1];
+              for (const [px, pz] of corners) {
+                if (pointSegDistXZ(px, pz, a[0], a[2], b[0], b[2]) < margin) return true;
+              }
+            }
+          }
+        }
         return false;
       };
       const reservedByReason = { water: 0, road_corridor: 0, anchor: 0, reservation: 0, crossing: 0, steep_slope: 0, remote_access: 0 };
