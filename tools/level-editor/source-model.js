@@ -551,16 +551,36 @@ export function filletJoint(draft, firstId, secondId, radius = 15) {
   const width = r3(Math.min(widthA, widthB));
   const rails = !!railsA || !!railsB;
   const arcId = createSegmentId(draft, 'arc_');
+  const layer = a.layer ?? b.layer ?? 'ground';
   const arcSeg = {
     id: arcId,
     from: t1Id,
     to: t2Id,
-    type: 'ramp',
-    layer: a.layer ?? b.layer ?? 'ground',
+    type: (aPathOnly && bPathOnly) ? (a.type ?? b.type ?? 'local') : 'ramp',
+    layer,
     path: [[r3(T1.x), r3(T1.y), r3(T1.z)], [r3(T2.x), r3(T2.y), r3(T2.z)]],
-    elements: [{ arc: { cx, cz, radius: r3(usedR), from: r3(from), to: r3(from + sweep), width, y: [r3(yT1), r3(yT2)], bank: 0, rails } }],
+    elements: [],
     lanes: [],
   };
+  if (aPathOnly && bPathOnly) {
+    // Обычные path-дороги (в т.ч. по рельефу) нормализатор драпирует по точкам
+    // пути; arc-элемент с явным y=[yT1,yT2] остался бы на авторских отметках и
+    // на холме ушёл под землю. Поэтому скругление — полилиния, которую дрейп поднимет.
+    const n = Math.max(4, Math.ceil(Math.abs(sweep) / 12));
+    const arcPath = [];
+    for (let i = 0; i <= n; i++) {
+      const tA = i / n;
+      const ang = (from + sweep * tA) * Math.PI / 180;
+      const x = r3(cx + Math.cos(ang) * usedR);
+      const z = r3(cz + Math.sin(ang) * usedR);
+      const y = r3(yT1 + (yT2 - yT1) * tA);
+      arcPath.push([x, y, z]);
+    }
+    arcSeg.path = arcPath;
+    arcSeg.lanes = [{ id: `${arcId}_lane_1`, direction: 'forward', width, type: 'vehicle' }];
+  } else {
+    arcSeg.elements = [{ arc: { cx, cz, radius: r3(usedR), from: r3(from), to: r3(from + sweep), width, y: [r3(yT1), r3(yT2)], bank: 0, rails } }];
+  }
   roads.segments.push(arcSeg);
   return { ok: true, message: `стык скруглён (R = ${r3(usedR)} м${clamped ? `, ограничено ${r3(usedR)} м` : ''})`, selectedId: arcId };
 }
