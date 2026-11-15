@@ -6,6 +6,7 @@
  */
 import { readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
+import { createHash } from 'node:crypto';
 import { runCitygen } from './citygen/index.mjs';
 
 const defaults = [16, 17, 18, 19].map(n => `src/levels/level-${n}.json`);
@@ -17,10 +18,12 @@ for (const file of files) {
   const r = runCitygen(raw);
   const m = r.report.metrics ?? null;
   const ru = r.report.rules ?? null;
+  const hash = createHash('sha256').update(r.reportJson).digest('hex');
   const out = {
     file,
     levelName: raw?.metadata?.levelName ?? null,
     generator: r.report.generator ?? null,
+    reportHash: hash,
     stages: (r.report.stages ?? []).length,
     summary: r.report.summary ?? null,
     rules: ru?.summary ?? null,

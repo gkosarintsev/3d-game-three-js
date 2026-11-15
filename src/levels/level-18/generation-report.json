@@ -16,7 +16,7 @@
     {
       "id": "1_landscape_hydrology",
       "status": "ok",
-      "diagnostics": 3,
+      "diagnostics": 4,
       "repairs": 0,
       "drops": 0
     },
@@ -101,6 +101,13 @@
       "code": "stage_ok",
       "stage": "1_landscape_hydrology",
       "message": "stage 1_landscape_hydrology completed"
+    },
+    {
+      "severity": "info",
+      "code": "terrain_reservations_marked",
+      "stage": "1_landscape_hydrology",
+      "message": "reserved 5 flat site candidate(s)",
+      "count": 5
     },
     {
       "severity": "info",

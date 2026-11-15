@@ -180,6 +180,37 @@ function findCrossingCandidates(ctx, baseY, size) {
   return out.slice(0, 8);
 }
 
+function buildReservations(ctx, baseY, size, slope) {
+  const half = size / 2;
+  const mods = ctx.terrain.modifiers || [];
+  const step = Math.max(16, Math.min(64, slope?.step || 16));
+  // R1.3: reserve the flattest large-enough samples for core/interchange/station/plaza candidates.
+  const samples = [];
+  for (let z = -half + step / 2; z <= half - step / 2 + EPS; z += step) {
+    for (let x = -half + step / 2; x <= half - step / 2 + EPS; x += step) {
+      const y = terrainHeightAt(x, z, baseY, mods);
+      const d = step / 2;
+      const sx = Math.abs(terrainHeightAt(x + d, z, baseY, mods) - y) / Math.max(d, EPS);
+      const sz = Math.abs(terrainHeightAt(x, z + d, baseY, mods) - y) / Math.max(d, EPS);
+      const s = Math.max(sx, sz);
+      // keep reasonably flat and away from plate edge
+      const edge = Math.min(half - Math.abs(x), half - Math.abs(z));
+      if (edge < size * 0.12) continue;
+      samples.push({ x: +x.toFixed(3), z: +z.toFixed(3), slope: +s.toFixed(6) });
+    }
+  }
+  samples.sort((a, b) => a.slope - b.slope || Math.hypot(a.x, a.z) - Math.hypot(b.x, b.z) || a.x - b.x || a.z - b.z);
+  const roles = ['core', 'station', 'interchange', 'plaza', 'industrial'];
+  const picked = [];
+  const minSep = Math.max(120, size * 0.12);
+  for (const s of samples) {
+    if (picked.length >= roles.length) break;
+    if (picked.some(p => Math.hypot(p.x - s.x, p.z - s.z) < minSep)) continue;
+    picked.push({ id: `reserve_${roles[picked.length]}`, role: roles[picked.length], x: s.x, z: s.z, slope: s.slope });
+  }
+  return picked;
+}
+
 function shouldGenerate(ctx) {
   const ls = ctx.input?.generator?.landscape;
   if (!ls || typeof ls !== 'object') return false;
@@ -245,17 +276,30 @@ function generateLandscape(ctx) {
     const axis = riverCfg.axis === 'x' ? 'x' : 'z';
     const points = [];
     const steps = clamp(Number.isInteger(riverCfg.points) ? riverCfg.points : 6, 2, 12);
-    const amp = Math.min(half * 0.35, Number.isFinite(riverCfg.amplitude) ? riverCfg.amplitude : half * 0.2);
+    // R1.4: optional meander/widthProfile params (backward-compatible defaults keep prior shape family)
+    const meander = riverCfg.meander === true;
+    const baseAmp = Math.min(half * 0.35, Number.isFinite(riverCfg.amplitude) ? riverCfg.amplitude : half * 0.2);
+    const amp = meander ? clamp(baseAmp, width * 3, width * 6) : baseAmp;
     const base = lerp(-amp, amp, rng());
+    const widthProfile = [];
     for (let i = 0; i < steps; i++) {
       const t = steps === 1 ? 0.5 : i / (steps - 1);
       const along = lerp(-margin, margin, t);
-      const wiggle = base + Math.sin(t * Math.PI * 2 + rng() * 0.5) * amp * 0.5;
+      const phase = t * Math.PI * (meander ? 2.5 : 2) + rng() * 0.5;
+      const wiggle = base + Math.sin(phase) * amp * 0.5 + (meander ? Math.sin(phase * 0.5) * amp * 0.15 : 0);
       const x = axis === 'z' ? wiggle : along;
       const z = axis === 'z' ? along : wiggle;
-      points.push([Math.round(x * 10) / 10, 0, Math.round(z * 10) / 10]);
+      // sample terrain height for a more grounded path when modifiers exist
+      const y = Math.round(terrainHeightAt(x, z, ctx.input?.ground?.y ?? 0, ctx.terrain.modifiers) * 1000) / 1000;
+      points.push([Math.round(x * 10) / 10, y, Math.round(z * 10) / 10]);
+      if (meander) {
+        const w = Math.round(width * lerp(0.6, 1.4, t) * 1000) / 1000;
+        widthProfile.push([+t.toFixed(4), w]);
+      }
     }
-    rivers.push({ id: 'river_1', path: points, width, depth, carveTerrain: riverCfg.carveTerrain !== false });
+    const river = { id: 'river_1', path: points, width, depth, carveTerrain: riverCfg.carveTerrain !== false };
+    if (widthProfile.length >= 2) river.widthProfile = widthProfile;
+    rivers.push(river);
   }
   if (riverCfg.enabled === true) ctx.hydrology.rivers = rivers;
 
@@ -520,14 +564,18 @@ export function makeStage1() {
       }
       ctx.terrain.modifiers = repairedMods;
 
-      // R1.2/R1.5 (analysis, read-only): slope classification grid and river crossing candidates.
+      // R1.2/R1.3/R1.5 (analysis, read-only): slope classification, reservations, crossing candidates.
       const analysisSize = ctx.meta.worldBounds?.size ?? ctx.input?.ground?.size ?? g;
       const slope = buildSlopeAnalysis(ctx, baseY, analysisSize);
       const crossings = findCrossingCandidates(ctx, baseY, analysisSize);
-      ctx.terrain.analysis = { slope, crossings };
-      ctx.masks.terrain = { slopeShare: slope.share, maxSlope: slope.maxSlope, crossings };
+      const reservations = buildReservations(ctx, baseY, analysisSize, slope);
+      ctx.terrain.analysis = { slope, crossings, reservations };
+      ctx.masks.terrain = { slopeShare: slope.share, maxSlope: slope.maxSlope, crossings, reservations };
       if (crossings.length) {
         ctx.report.diagnostics.push(info('historical_crossings_marked', stageId, `marked ${crossings.length} historical crossing candidate(s)`, { count: crossings.length }));
+      }
+      if (reservations.length) {
+        ctx.report.diagnostics.push(info('terrain_reservations_marked', stageId, `reserved ${reservations.length} flat site candidate(s)`, { count: reservations.length }));
       }
       ctx.report.diagnostics.push(info('terrain_slope_analysis', stageId, 'terrain slope analysis computed', {
         step: slope.step, grid: slope.grid, maxSlope: slope.maxSlope, share: slope.share,
