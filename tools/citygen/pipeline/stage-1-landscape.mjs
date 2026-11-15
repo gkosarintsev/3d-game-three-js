@@ -447,8 +447,11 @@ function generateLandscape(ctx) {
     const steps = clamp(Number.isInteger(riverCfg.points) ? riverCfg.points : 6, 2, 24);
     const baseY0 = ctx.input?.ground?.y ?? 0;
 
-    if (riverCfg.downslope === true) {
-      // R1.4 (opt-in): trace a downslope-biased path across the plate (deterministic greedy walk).
+    const useDownslope = (riverCfg.downslope === true)
+      || (riverCfg.downslope == null && riverCfg.meander !== true && (ls.profileDriven === true || profile != null));
+    if (useDownslope) {
+      // R1.4: cost-traced downslope-biased path across the plate (deterministic greedy walk).
+      // Preferred for profile-driven generation unless explicitly overridden.
       const crossStep = (margin * 2) / (steps - 1);
       const lateralStep = Math.max(8, Math.min(32, crossStep));
       const startAlong = -margin;
@@ -486,7 +489,7 @@ function generateLandscape(ctx) {
         const w = Math.round(width * lerp(lo, hi, t) * 1000) / 1000;
         widthProfile.push([+t.toFixed(4), w]);
       }
-      const river = { id: 'river_1', path: points, width, depth, carveTerrain: riverCfg.carveTerrain !== false };
+      const river = { id: 'river_1', path: points, width, depth, carveTerrain: riverCfg.carveTerrain !== false, downslope: true };
       if (widthProfile.length >= 2) river.widthProfile = widthProfile;
       rivers.push(river);
     } else {

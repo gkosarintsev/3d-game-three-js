@@ -2,10 +2,10 @@
   "profile": "railway_industrial",
   "seed": 101,
   "generatorVersion": "0.1.0",
-  "reportHash": "8268fb87d7bb61540ff07e654e6862a3931dee9150fe043d593e3d3e43fe66b9",
+  "reportHash": "667db014e499d5b6ee8fed0a1cc9b4b8e97fdfa919f7671a9eeafe99f2dea903",
   "summary": {
     "errors": 0,
-    "warnings": 8,
+    "warnings": 9,
     "repairs": 0,
     "drops": 0
   },
@@ -21,8 +21,8 @@
       "roadNodes": 0,
       "districts": 16,
       "parcels": 2378,
-      "reservedParcels": 119,
-      "buildings": 403,
+      "reservedParcels": 109,
+      "buildings": 402,
       "enterableBuildings": 0,
       "props": 360,
       "lights": 0,
@@ -87,7 +87,7 @@
       }
     },
     "parcels": {
-      "reservedShare": 0.050042,
+      "reservedShare": 0.045837,
       "byDistrictCount": {
         "district_0_0": 121,
         "district_1_0": 121,
