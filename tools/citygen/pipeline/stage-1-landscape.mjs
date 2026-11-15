@@ -319,10 +319,27 @@ function generateLandscape(ctx) {
       if (ls.hills == null) ls.hills = { count: 6, minHeight: 8, maxHeight: 30, minRadius: 100, maxRadius: 280 };
     }
     if (ls.river == null && profileRivers != null) {
-      ls.river = { enabled: profileRivers > 0, axis: 'z', points: 7, width: 22, depth: 4 };
+      const hydroPreset = (profile?.terrain?.hydrology && typeof profile.terrain.hydrology === 'object')
+        ? profile.terrain.hydrology
+        : ((profile?.hydrology && typeof profile.hydrology === 'object') ? profile.hydrology : {});
+      const riverPreset = (hydroPreset.river && typeof hydroPreset.river === 'object') ? hydroPreset.river : null;
+      ls.river = {
+        enabled: riverPreset?.enabled != null ? riverPreset.enabled : profileRivers > 0,
+        axis: riverPreset?.axis === 'x' ? 'x' : 'z',
+        points: Number.isInteger(riverPreset?.points) ? riverPreset.points : 7,
+        width: Number.isFinite(Number(riverPreset?.width)) ? Number(riverPreset.width) : 22,
+        depth: Number.isFinite(Number(riverPreset?.depth)) ? Number(riverPreset.depth) : 4,
+      };
     }
     if (ls.lake == null && profileLakes != null) {
-      ls.lake = { enabled: profileLakes > 0 };
+      const hydroPreset = (profile?.terrain?.hydrology && typeof profile.terrain.hydrology === 'object')
+        ? profile.terrain.hydrology
+        : ((profile?.hydrology && typeof profile.hydrology === 'object') ? profile.hydrology : {});
+      const lakePreset = (hydroPreset.lake && typeof hydroPreset.lake === 'object') ? hydroPreset.lake : null;
+      ls.lake = {
+        enabled: lakePreset?.enabled != null ? lakePreset.enabled : profileLakes > 0,
+        ...(Number.isFinite(Number(lakePreset?.radius)) ? { radius: Number(lakePreset.radius) } : {}),
+      };
     }
   }
 

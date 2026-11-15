@@ -23,7 +23,13 @@ export const DEFAULT_CITY_POLICIES = Object.freeze({
 export const DEFAULT_CITY_PROFILES = Object.freeze({
   river_trade: {
     id: 'river_trade',
-    terrain: { relief: 'plain', rivers: 1, lakes: 0, tributaries: 1 },
+    terrain: {
+      relief: 'plain', rivers: 1, lakes: 0, tributaries: 1,
+      hydrology: {
+        river: { enabled: true, axis: 'z', points: 7, width: 22, depth: 4 },
+        floodplainMultiplier: 3, riverBufferMargin: 12, lakeBufferMargin: 8, lakeFloodplainMargin: 16,
+      },
+    },
     landValueWeights: [0.4, 0.25, 0.15, 0.15, 0.05],
     interchanges: [2, 3],
     parkShare: [0.08, 0.15],
@@ -31,7 +37,12 @@ export const DEFAULT_CITY_PROFILES = Object.freeze({
   },
   hill_town: {
     id: 'hill_town',
-    terrain: { relief: 'hills', rivers: 0, lakes: 0, tributaries: 0 },
+    terrain: {
+      relief: 'hills', rivers: 0, lakes: 0, tributaries: 0,
+      hydrology: {
+        floodplainMultiplier: 3, riverBufferMargin: 12, lakeBufferMargin: 8, lakeFloodplainMargin: 16,
+      },
+    },
     landValueWeights: [0.35, 0.2, 0.1, 0.3, 0.05],
     interchanges: [0, 1],
     parkShare: [0.1, 0.18],
@@ -39,7 +50,13 @@ export const DEFAULT_CITY_PROFILES = Object.freeze({
   },
   railway_industrial: {
     id: 'railway_industrial',
-    terrain: { relief: 'plain', rivers: 1, lakes: 0, tributaries: { min: 0, max: 1 } },
+    terrain: {
+      relief: 'plain', rivers: 1, lakes: 0, tributaries: { min: 0, max: 1 },
+      hydrology: {
+        river: { enabled: true, axis: 'z', points: 7, width: 22, depth: 4 },
+        floodplainMultiplier: 3, riverBufferMargin: 12, lakeBufferMargin: 8, lakeFloodplainMargin: 16,
+      },
+    },
     landValueWeights: [0.35, 0.3, 0.1, 0.15, 0.1],
     interchanges: [3, 4],
     parkShare: [0.05, 0.08],
