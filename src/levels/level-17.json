@@ -147,6 +147,7 @@
     "generatorVersion": "0.1.0",
     "seed": 16,
     "deterministic": true,
+    "profile": "river_trade",
     "stages": [],
     "layers": [],
     "budgets": {},

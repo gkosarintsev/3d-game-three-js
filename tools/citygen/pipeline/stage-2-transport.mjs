@@ -2648,18 +2648,31 @@ export function makeStage2() {
           // Gate: emit only if every generated road segment is valid.
           // Axis-aligned path segments: must be axis-aligned and within slope limit.
           // Element segments (arc/plate): validated by element fields/slope (curved roads are allowed).
+          // Generated terrain-following branches may be diagonal when transport.diagonal is enabled (default).
           const segs = ctx.networks?.roads?.segments ?? [];
+          const tc = ctx.input?.generator?.transport ?? {};
+          const diagonalAllowed = tc.diagonal !== false && tc.diagonal !== 0 && tc.diagonal !== 'false';
           let bad = 0;
+          const badReasons = [];
+          const noteBad = (s, reason, extra = null) => {
+            bad++;
+            if (badReasons.length < 6) {
+              const sample = Array.isArray(s?.path) ? s.path.slice(0, 4) : (Array.isArray(s?.elements) ? s.elements.slice(0, 1) : null);
+              badReasons.push({ id: s?.id ?? null, reason, ...(extra ? { extra } : {}), ...(sample ? { sample } : {}) });
+            }
+          };
           for (const s of segs) {
             const pts = pathPoints(s);
             const hasElements = Array.isArray(s.elements) && s.elements.length > 0;
-            if (!pts && !hasElements) { bad++; continue; }
+            if (!pts && !hasElements) { noteBad(s, 'no_geometry'); continue; }
             if (pts) {
               // помеченные на филет сегменты станут element-дорогами при нормализации; не требуем axis-aligned формы после скругления
               if (!Number.isFinite(Number(s.filletRadius ?? s.fillet)) || Number(s.filletRadius ?? s.fillet) <= 0.01) {
-                if (!isAxisAlignedPath(pts)) { bad++; continue; }
+                const shapeOk = isAxisAlignedPath(pts) || (diagonalAllowed && isAnyDirectionPath(pts));
+                if (!shapeOk) { noteBad(s, 'not_axis_aligned'); continue; }
               }
-              if (pathMaxSlope(pts) > 0.3005) { bad++; continue; }
+              const ms = pathMaxSlope(pts);
+              if (ms > 0.3005) { noteBad(s, 'slope_too_steep', +ms.toFixed(6)); continue; }
             }
             if (!pts && hasElements) {
               let ok = true;
@@ -2679,12 +2692,12 @@ export function makeStage2() {
                   ok = false;
                 }
               }
-              if (!ok) { bad++; continue; }
+              if (!ok) { noteBad(s, 'invalid_elements'); continue; }
             }
           }
           if (bad > 0 || segs.length === 0) {
             ctx.networks.roads = prev;
-            ctx.report.diagnostics.push(info('transport_emit_deferred', stageId, 'generated road network computed but emission deferred pending engine-valid profiling/geometry', { bad, generatedSegments: segs.length }));
+            ctx.report.diagnostics.push(info('transport_emit_deferred', stageId, 'generated road network computed but emission deferred pending engine-valid profiling/geometry', { bad, generatedSegments: segs.length, reasons: badReasons }));
           }
         } catch (e) {
           ctx.networks.roads = prev;
