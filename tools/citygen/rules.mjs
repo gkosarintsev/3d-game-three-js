@@ -235,6 +235,15 @@ export function evaluateRules(ctx) {
   if (graph.nodes > 0 && graph.components > 1) {
     v('warn', 'road_graph_not_single_component', `road graph has ${graph.components} connected components`, { components: graph.components, nodes: graph.nodes });
   }
+  // R2.3/R2.4 (read-only targets, §7.5/§12.2): connectivity density and dead-end ratio
+  if (graph.nodes > 2 && Number.isFinite(graph.gamma)) {
+    if (graph.gamma < 0.3 || graph.gamma > 0.6) {
+      v('info', 'road_graph_gamma_out_of_target', 'road graph gamma outside target range [0.3, 0.6] (informational)', { gamma: graph.gamma, target: [0.3, 0.6] });
+    }
+  }
+  if (graph.nodes > 0 && Number.isFinite(graph.deadEndRatio) && graph.deadEndRatio > 0.35) {
+    v('info', 'road_graph_dead_end_ratio_high', 'road dead-end ratio above 0.35 (informational)', { deadEndRatio: graph.deadEndRatio });
+  }
   // R2.4: soft topology targets (§7.5, §12.2)
   if (graph.gamma != null) {
     if (graph.gamma < 0.3 || graph.gamma > 0.6) {
