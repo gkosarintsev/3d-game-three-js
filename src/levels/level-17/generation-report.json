@@ -2266,7 +2266,8 @@
       "crossings": 6,
       "reservations": 11,
       "landmarks": 6,
-      "waterBuffers": 2
+      "waterBuffers": 2,
+      "floodplains": 2
     },
     "stream": {
       "chunk": 640,

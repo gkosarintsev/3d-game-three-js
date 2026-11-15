@@ -316,6 +316,8 @@ export function evaluateRules(ctx) {
   const lakes = ctx?.hydrology?.lakes ?? [];
   const waterBuffers = Array.isArray(ctx?.masks?.terrain?.waterBuffers) ? ctx.masks.terrain.waterBuffers
     : (Array.isArray(ctx?.terrain?.analysis?.waterBuffers) ? ctx.terrain.analysis.waterBuffers : []);
+  const floodplains = Array.isArray(ctx?.masks?.terrain?.floodplains) ? ctx.masks.terrain.floodplains
+    : (Array.isArray(ctx?.terrain?.analysis?.floodplains) ? ctx.terrain.analysis.floodplains : []);
   const reservedParcels = parcels.filter(p => p?.reserved === true).length;
   const reservedShare = parcels.length > 0 ? round(reservedParcels / parcels.length, 6) : null;
   const parcelsByDistrict = Object.create(null);
@@ -330,6 +332,14 @@ export function evaluateRules(ctx) {
   } else if ((rivers.length + lakes.length) > 0) {
     const missingMeta = waterBuffers.filter(w => !(Number.isFinite(Number(w?.buffer)) || Number.isFinite(Number(w?.floodplain)))).length;
     if (missingMeta > 0) v('info', 'terrain_water_buffer_metadata_incomplete', 'some water buffers are missing buffer/floodplain metadata (informational)', { missing: missingMeta, total: waterBuffers.length });
+    if (floodplains.length === 0) {
+      v('warn', 'terrain_floodplain_masks_missing', 'hydrology present but floodplain masks are missing', { rivers: rivers.length, lakes: lakes.length, waterBuffers: waterBuffers.length });
+    } else if (floodplains.length < (rivers.length + lakes.length)) {
+      v('info', 'terrain_floodplain_masks_partial', 'floodplain masks cover fewer hydrology features than present (informational)', { floodplains: floodplains.length, hydrology: rivers.length + lakes.length });
+    } else {
+      const missingFp = floodplains.filter(f => !Number.isFinite(Number(f?.floodplain)) || Number(f.floodplain) <= 0).length;
+      if (missingFp > 0) v('info', 'terrain_floodplain_metadata_incomplete', 'some floodplain masks are missing/invalid floodplain margin (informational)', { missing: missingFp, total: floodplains.length });
+    }
   }
   if (terrainAnalysis) {
     if (!terrainAnalysis.slope) v('info', 'terrain_slope_analysis_missing', 'terrain analysis missing slope mask/classification (informational)');
@@ -398,7 +408,8 @@ export function evaluateRules(ctx) {
         } : null),
       landmarks: Array.isArray(terrainAnalysis.landmarks) ? terrainAnalysis.landmarks.length : (terrainAnalysis.landmarks ?? null),
       waterBuffers: waterBuffers.length,
-    } : ((rivers.length + lakes.length) > 0 ? { waterBuffers: waterBuffers.length } : null),
+      floodplains: floodplains.length,
+    } : ((rivers.length + lakes.length) > 0 ? { waterBuffers: waterBuffers.length, floodplains: floodplains.length } : null),
     stream: stream ? {
       chunk: stream.chunk ?? null,
       keep: stream.keep ?? null,

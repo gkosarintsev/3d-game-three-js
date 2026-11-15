@@ -1175,7 +1175,8 @@ export function makeStage1() {
         ? ctx.masks.terrain.waterBuffers
         : (Array.isArray(ctx.terrain?.analysis?.waterBuffers) ? ctx.terrain.analysis.waterBuffers : []);
       ctx.terrain.analysis = { slope, crossings, reservations, landmarks, waterBuffers };
-      ctx.masks.terrain = { slopeShare: slope.share, maxSlope: slope.maxSlope, crossings, reservations, landmarks, waterBuffers };
+      const prevFloodplains = Array.isArray(ctx.masks.terrain?.floodplains) ? ctx.masks.terrain.floodplains : [];
+      ctx.masks.terrain = { slopeShare: slope.share, maxSlope: slope.maxSlope, crossings, reservations, landmarks, waterBuffers, floodplains: prevFloodplains };
       if (crossings.length) {
         ctx.report.diagnostics.push(info('historical_crossings_marked', stageId, `marked ${crossings.length} historical crossing candidate(s)`, { count: crossings.length }));
       }

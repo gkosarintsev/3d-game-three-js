@@ -2,7 +2,7 @@
   "profile": "hill_town",
   "seed": 101,
   "generatorVersion": "0.1.0",
-  "reportHash": "fdde121b479ff27bd3df447104360df70ec4d14b6a6bcd0652068984dcc01845",
+  "reportHash": "1e6c188163f6cd2468b658f40b6c7466aac9653777be771e01dbd030b57bd974",
   "summary": {
     "errors": 0,
     "warnings": 8,
@@ -82,7 +82,8 @@
       "crossings": 0,
       "reservations": 9,
       "landmarks": 4,
-      "waterBuffers": 0
+      "waterBuffers": 0,
+      "floodplains": 0
     },
     "parcels": {
       "reservedShare": 0.020185,

@@ -2204,7 +2204,8 @@
       "crossings": 0,
       "reservations": 9,
       "landmarks": 4,
-      "waterBuffers": 0
+      "waterBuffers": 0,
+      "floodplains": 0
     },
     "stream": {
       "chunk": 640,

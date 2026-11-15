@@ -2,7 +2,7 @@
   "profile": "river_trade",
   "seed": 303,
   "generatorVersion": "0.1.0",
-  "reportHash": "74eb8951a1ec7bb548a3ffb3c2a900e0e3f941e787ccea4a06175746118ce9fb",
+  "reportHash": "2bafb87378c0f21467835511a989843fde0ddd2b214704dc36faa146b2d39f88",
   "summary": {
     "errors": 0,
     "warnings": 10,
@@ -82,7 +82,8 @@
       "crossings": 6,
       "reservations": 10,
       "landmarks": 5,
-      "waterBuffers": 2
+      "waterBuffers": 2,
+      "floodplains": 2
     },
     "parcels": {
       "reservedShare": 0.111111,
