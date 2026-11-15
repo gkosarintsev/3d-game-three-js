@@ -639,10 +639,21 @@ export function makeStage1() {
         }
 
         // easement mask: reserve corridor around river centerline (approx by width)
-        ctx.masks.easement.rivers.push({ id: rr.id ?? null, path, width: rr.width ?? 0 });
+        // R1.4/R1.5: include buffer/floodplain metadata (additive) for downstream planning/diagnostics
+        const w = Number(rr.width ?? 0) || 0;
+        const buffer = +(w * 0.5 + 12).toFixed(3); // conservative non-buildable corridor (aligns with parcel/stage-3 checks)
+        const floodplain = +(w * 3).toFixed(3);    // §5.3: ~2–4 widths (low-density/park/embankment planning hint)
+        ctx.masks.easement.rivers.push({ id: rr.id ?? null, path, width: w, buffer, floodplain });
+        ctx.masks.terrain = ctx.masks.terrain || {};
+        if (!Array.isArray(ctx.masks.terrain.waterBuffers)) ctx.masks.terrain.waterBuffers = [];
+        ctx.masks.terrain.waterBuffers.push({ id: rr.id ?? null, type: 'river', buffer, floodplain, buildableBuffer: true });
         rivers.push(rr);
       }
       ctx.hydrology.rivers = uniqIds(rivers, 'river', ctx, stageId);
+      // R1.4/R1.5: expose water buffer metadata in terrain analysis for downstream stages (additive)
+      if (!ctx.terrain || typeof ctx.terrain !== 'object') ctx.terrain = { modifiers: Array.isArray(cf.terrain?.modifiers) ? structuredClone(cf.terrain.modifiers) : [] };
+      if (!ctx.terrain.analysis || typeof ctx.terrain.analysis !== 'object') ctx.terrain.analysis = {};
+      ctx.terrain.analysis.waterBuffers = ctx.masks?.terrain?.waterBuffers ?? ctx.terrain.analysis.waterBuffers ?? [];
 
       // lakes: basic validation (compiler support limited; keep deterministic/safe)
       const lakes = [];
@@ -760,13 +771,19 @@ export function makeStage1() {
       const slope = buildSlopeAnalysis(ctx, baseY, analysisSize);
       const crossings = findCrossingCandidates(ctx, baseY, analysisSize);
       const reservations = buildReservations(ctx, baseY, analysisSize, slope);
-      ctx.terrain.analysis = { slope, crossings, reservations };
-      ctx.masks.terrain = { slopeShare: slope.share, maxSlope: slope.maxSlope, crossings, reservations };
+      const waterBuffers = (ctx.masks?.terrain?.waterBuffers && Array.isArray(ctx.masks.terrain.waterBuffers))
+        ? ctx.masks.terrain.waterBuffers
+        : (Array.isArray(ctx.terrain?.analysis?.waterBuffers) ? ctx.terrain.analysis.waterBuffers : []);
+      ctx.terrain.analysis = { slope, crossings, reservations, waterBuffers };
+      ctx.masks.terrain = { slopeShare: slope.share, maxSlope: slope.maxSlope, crossings, reservations, waterBuffers };
       if (crossings.length) {
         ctx.report.diagnostics.push(info('historical_crossings_marked', stageId, `marked ${crossings.length} historical crossing candidate(s)`, { count: crossings.length }));
       }
       if (reservations.length) {
         ctx.report.diagnostics.push(info('terrain_reservations_marked', stageId, `reserved ${reservations.length} flat site candidate(s)`, { count: reservations.length }));
+      }
+      if (waterBuffers.length) {
+        ctx.report.diagnostics.push(info('terrain_water_buffers_marked', stageId, `marked ${waterBuffers.length} water buffer zone(s)`, { count: waterBuffers.length }));
       }
       ctx.report.diagnostics.push(info('terrain_slope_analysis', stageId, 'terrain slope analysis computed', {
         step: slope.step, grid: slope.grid, maxSlope: slope.maxSlope, share: slope.share,

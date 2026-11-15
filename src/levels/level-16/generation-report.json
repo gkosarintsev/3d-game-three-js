@@ -16,7 +16,7 @@
     {
       "id": "1_landscape_hydrology",
       "status": "ok",
-      "diagnostics": 5,
+      "diagnostics": 6,
       "repairs": 0,
       "drops": 0
     },
@@ -321,6 +321,13 @@
         "steep_15_25": 0.259219,
         "very_steep_gt25": 0.044844
       }
+    },
+    {
+      "severity": "info",
+      "code": "terrain_water_buffers_marked",
+      "stage": "1_landscape_hydrology",
+      "message": "marked 1 water buffer zone(s)",
+      "count": 1
     },
     {
       "severity": "info",
