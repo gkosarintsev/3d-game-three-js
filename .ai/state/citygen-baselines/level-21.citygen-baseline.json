@@ -6,7 +6,7 @@
     "seed": 21,
     "deterministic": true
   },
-  "reportHash": "0a01ebf140a2f62ec8cf1ef9773edfb329141ecb8d226dcc14a84529d5ffd42e",
+  "reportHash": "00e3d09fa92293bca796bed7987a6bbca9c82c2ce407b91e46a274a42bfa3d61",
   "stages": 7,
   "summary": {
     "errors": 0,
@@ -26,7 +26,7 @@
       "roadNodes": 126,
       "districts": 16,
       "parcels": 2098,
-      "reservedParcels": 260,
+      "reservedParcels": 378,
       "buildings": 402,
       "enterableBuildings": 0,
       "props": 360,
@@ -89,7 +89,7 @@
       "shareByType": {}
     },
     "parcels": {
-      "reservedShare": 0.123928,
+      "reservedShare": 0.180172,
       "byDistrictCount": {
         "district_0_0": 121,
         "district_1_0": 121,

@@ -382,10 +382,11 @@ export function makeStage3() {
       const riverEasements = Array.isArray(ctx.masks?.easement?.rivers) ? ctx.masks.easement.rivers : [];
       const riversForReserve = riverEasements.length ? riverEasements : rivers;
       const riverClearance = (rv) => {
-        // R1.4/R1.5: hard non-buildable water buffer strip. Floodplain is tracked in metadata for planning/zoning (R3/R5),
-        // but not treated as a blanket hard exclusion for all parcels in early stages.
-        if (Number.isFinite(Number(rv?.buffer))) return Number(rv.buffer);
-        return (Number(rv?.width) || 10) * 0.5 + 12;
+        // R1.4/R1.5: water buffer/floodplain as real downstream no-build constraint for generic parcels.
+        // Crossing vicinities are reserved separately as infrastructure (bridge/approach) areas.
+        const buffer = Number.isFinite(Number(rv?.buffer)) ? Number(rv.buffer) : ((Number(rv?.width) || 10) * 0.5 + 12);
+        const floodplain = Number.isFinite(Number(rv?.floodplain)) ? Number(rv.floodplain) : 0;
+        return Math.max(buffer, floodplain, 6);
       };
       const riverIndex = (!riverEasements.length && ctx.spatial?.riverSegments && rivers.length === hydro.length &&
         !(ctx.input?.waterways?.length) && (cfHydro === hydro || !cfHydro))
