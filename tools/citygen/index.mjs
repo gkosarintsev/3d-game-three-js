@@ -29,8 +29,8 @@ export function runCitygen(raw) {
   for (const s of STAGES) runStage(s, ctx);
   // Stages emit into ctx.input/ctx.engine; prefer transformed source for compilation.
   if (!ctx.engine) ctx.engine = ctx.input ?? raw;
-  finalizeReport(ctx.report);
-  return { engine: ctx.engine, report: ctx.report, reportJson: reportToJson(ctx.report), ctx };
+  finalizeReport(ctx.report, ctx);
+  return { engine: ctx.engine, report: ctx.report, reportJson: reportToJson(ctx.report, ctx), ctx };
 }
 
 export { reportToJson, finalizeReport };

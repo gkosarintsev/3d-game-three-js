@@ -21,7 +21,7 @@ function v4Base(over = {}) {
     stream: { chunk: 256, keep: 1, aheadMin: 50, aheadMax: 100, budgetMs: 20 },
     cityforge: {
       format: 'cityforge', version: '0.1',
-      world: { units: 'meters', coordinateSystem: { type: 'local', handedness: 'right', up: 'Z' }, bounds: { min: [-128,-128,0], max: [128,128,50] } },
+      world: { units: 'meters', coordinateSystem: { type: 'local', handedness: 'right', up: 'Y' }, bounds: { min: [-128,-128,0], max: [128,128,50] } },
       terrain: { base: { type: 'heightfield', source: 'procedural', resolution: 4 }, modifiers: [] },
       hydrology: { rivers: [], lakes: [] },
       networks: { roads: { nodes: [], segments: [], junctions: [] }, railways: { nodes: [], segments: [], junctions: [] }, paths: { nodes: [], segments: [], junctions: [] } },
@@ -255,7 +255,7 @@ test('citygen v4 end-to-end: generated landscape+transport compiles to open cata
     stream: { chunk: 256, keep: 1, aheadMin: 80, aheadMax: 200, budgetMs: 40 },
     cityforge: {
       format: 'cityforge', version: '0.1',
-      world: { units: 'meters', coordinateSystem: { type: 'local', handedness: 'right', up: 'Z' }, origin:[0,0,0], bounds: { min: [-128,-128,-50], max: [128,128,100] } },
+      world: { units: 'meters', coordinateSystem: { type: 'local', handedness: 'right', up: 'Y' }, origin:[0,0,0], bounds: { min: [-128,-128,-50], max: [128,128,100] } },
       assets: [{ id: 'ground.placeholder', kind: 'procedural', generator: 'placeholder.flat', bounds: [256,256,1] }],
       hydrology: { rivers: [], lakes: [] },
       networks: { roads: { nodes: [], segments: [], junctions: [] }, railways: { nodes: [], segments: [], junctions: [] }, paths: { nodes: [], segments: [], junctions: [] } },
@@ -405,7 +405,7 @@ test('cityforge v3 build: fails on road crossing river without bridge', () => {
     stream: { chunk: 256, keep: 1, aheadMin: 50, aheadMax: 100, budgetMs: 20 },
     cityforge: {
       format: 'cityforge', version: '0.1',
-      world: { units: 'meters', coordinateSystem: { type: 'local', handedness: 'right', up: 'Z' }, origin: [0,0,0], bounds: { min: [-128,-128,-50], max: [128,128,50] } },
+      world: { units: 'meters', coordinateSystem: { type: 'local', handedness: 'right', up: 'Y' }, origin: [0,0,0], bounds: { min: [-128,-128,-50], max: [128,128,50] } },
       generation: { seed: 1, generatorVersion: '0.1', deterministic: true },
       assets: [{ id: 'ground.placeholder', kind: 'procedural', generator: 'placeholder.flat', bounds: [256,256,1] }],
       districts: [], blocks: [], parcels: [], instances: [],
