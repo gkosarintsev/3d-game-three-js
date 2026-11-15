@@ -37,14 +37,21 @@ function pointSegDistXZ(px, pz, ax, az, bx, bz) {
   return Math.hypot(px - (ax + abx * t), pz - (az + abz * t));
 }
 
-function footprintIntersectsRiver(fp, rivers = [], riverIndex = null) {
+function footprintIntersectsRiver(fp, rivers = [], riverIndex = null, waterBufferById = null) {
   const b = aabbOfFootprint(fp);
   const cx = (b.minX + b.maxX) / 2, cz = (b.minZ + b.maxZ) / 2;
   const corners = [[b.minX,b.minZ],[b.maxX,b.minZ],[b.maxX,b.maxZ],[b.minX,b.maxZ],[cx,cz]];
   const riverClearance = (rvOrSeg) => {
-    // Prefer explicit easement buffer (R1.4/R1.5 hard strip). Floodplain is advisory for zoning (R3/R5).
-    // Fallback keeps prior conservative margin for compiled channel checks when no buffer metadata is present.
-    if (Number.isFinite(Number(rvOrSeg?.buffer))) return Math.max(Number(rvOrSeg.buffer), 6);
+    // Prefer explicit easement buffer/floodplain (R1.4/R1.5): floodplain acts as real no-build constraint for buildings.
+    const id = rvOrSeg?.id ?? rvOrSeg?.riverId ?? null;
+    const meta = (id && waterBufferById) ? waterBufferById.get(id) : null;
+    const buffer = Number.isFinite(Number(rvOrSeg?.buffer)) ? Number(rvOrSeg.buffer)
+      : (Number.isFinite(Number(meta?.buffer)) ? Number(meta.buffer) : NaN);
+    const floodplain = Number.isFinite(Number(rvOrSeg?.floodplain)) ? Number(rvOrSeg.floodplain)
+      : (Number.isFinite(Number(meta?.floodplain)) ? Number(meta.floodplain) : NaN);
+    if (Number.isFinite(buffer) || Number.isFinite(floodplain)) {
+      return Math.max(Number.isFinite(buffer) ? buffer : 6, Number.isFinite(floodplain) ? floodplain : 0, 6);
+    }
     return (Number(rvOrSeg?.width) || 10) * 0.5 + 20.0;
   };
   if (riverIndex) {
@@ -287,6 +294,12 @@ export function makeStage4() {
       const budget = Math.min(420, Math.max(40, Math.floor(size * size / 3000))); // overall cap (+headroom for district representation)
       const normalBudget = Math.min(budget, 400);
       const rivers = ctx.masks?.easement?.rivers ?? ctx.hydrology?.rivers ?? ctx.input?.cityforge?.hydrology?.rivers ?? [];
+      const waterBufferById = (() => {
+        const src = Array.isArray(ctx.masks?.terrain?.waterBuffers) ? ctx.masks.terrain.waterBuffers : [];
+        const m = new Map();
+        for (const w of src) if (w?.id) m.set(w.id, w);
+        return m;
+      })();
       const roads = ctx.masks?.easement?.roads ?? [];
       const roadSegments = ctx.networks?.roads?.segments ?? ctx.input?.cityforge?.networks?.roads?.segments ?? [];
       const gp = ctx.input?.gameplay ?? {};
@@ -382,7 +395,7 @@ export function makeStage4() {
             const fp = footprintRect(cx, cz, w, d);
             const riverIndex = (rivers === (ctx.hydrology?.rivers ?? null) || rivers === (ctx.masks?.easement?.rivers ?? null)) ? (ctx.spatial?.riverSegments ?? null) : null;
             const lakes = ctx.masks?.easement?.lakes ?? [];
-            if (footprintNearAnchors(fp, anchors, 10) || footprintIntersectsRiver(fp, rivers, riverIndex) || footprintIntersectsLake(fp, lakes) || footprintIntersectsRoad(fp, roads, roadSegments, ctx.spatial?.roadEasements, { ignoreEasements: !!force && !!relaxChunk })) continue;
+            if (footprintNearAnchors(fp, anchors, 10) || footprintIntersectsRiver(fp, rivers, riverIndex, waterBufferById) || footprintIntersectsLake(fp, lakes) || footprintIntersectsRoad(fp, roads, roadSegments, ctx.spatial?.roadEasements, { ignoreEasements: !!force && !!relaxChunk })) continue;
             footprint = fp;
             break;
           }
@@ -398,7 +411,7 @@ export function makeStage4() {
             const fp = footprintRect(cx, cz, w, d);
             const riverIndex = (rivers === (ctx.hydrology?.rivers ?? null) || rivers === (ctx.masks?.easement?.rivers ?? null)) ? (ctx.spatial?.riverSegments ?? null) : null;
             const lakes = ctx.masks?.easement?.lakes ?? [];
-            if (footprintNearAnchors(fp, anchors, 10) || footprintIntersectsRiver(fp, rivers, riverIndex) || footprintIntersectsLake(fp, lakes) || footprintIntersectsRoad(fp, roads, roadSegments, ctx.spatial?.roadEasements, { ignoreEasements: !!force && !!relaxChunk })) continue;
+            if (footprintNearAnchors(fp, anchors, 10) || footprintIntersectsRiver(fp, rivers, riverIndex, waterBufferById) || footprintIntersectsLake(fp, lakes) || footprintIntersectsRoad(fp, roads, roadSegments, ctx.spatial?.roadEasements, { ignoreEasements: !!force && !!relaxChunk })) continue;
             footprint = fp;
             break;
           }
@@ -581,7 +594,7 @@ export function makeStage4() {
               const riverIndex = (rivers === (ctx.hydrology?.rivers ?? null) || rivers === (ctx.masks?.easement?.rivers ?? null)) ? (ctx.spatial?.riverSegments ?? null) : null;
               const lakes = ctx.masks?.easement?.lakes ?? [];
               if (footprintNearAnchors(fp, anchors, 10)) continue;
-              if (footprintIntersectsRiver(fp, rivers, riverIndex)) continue;
+              if (footprintIntersectsRiver(fp, rivers, riverIndex, waterBufferById)) continue;
               if (footprintIntersectsLake(fp, lakes)) continue;
               if (footprintIntersectsRoad(fp, roads, roadSegments, ctx.spatial?.roadEasements, { ignoreEasements: true })) continue;
               footprint = fp;
