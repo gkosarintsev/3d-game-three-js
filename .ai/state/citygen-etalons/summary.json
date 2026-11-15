@@ -92,9 +92,9 @@
     "river_trade": {
       "runs": 3,
       "hashes": [
-        "2d0fe7d980e489dc4b7906984cec3f098e8d37168d32638830b1a81ae376c737",
-        "e6e0a25239e9f2f448291d09a0c5fa7daf5cddb7194b4cb4ab404e411e21c461",
-        "de2f95ecef08dee8ae1f358fdab3789e4a19973bca99e7b12de2b49c0f80fd90"
+        "90890833abd6e216580dac1fe2187319440d3a38cff9664bdce13354950ece7b",
+        "660adcc2e8e91a9e0d6935e1238a8463576e144fe834df7a4b154a86a458eb6a",
+        "a28a7e04b034fb638305c6bcdab8801a5743b59f57e474395cda3785697ddce5"
       ],
       "errors": {
         "count": 3,
@@ -105,8 +105,8 @@
       "warnings": {
         "count": 3,
         "min": 8,
-        "max": 8,
-        "mean": 8
+        "max": 9,
+        "mean": 8.333333
       },
       "roads": {
         "count": 3,

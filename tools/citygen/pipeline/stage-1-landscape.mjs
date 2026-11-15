@@ -519,6 +519,52 @@ function generateLandscape(ctx) {
       if (widthProfile.length >= 2) river.widthProfile = widthProfile;
       rivers.push(river);
     }
+    // R1.4 (opt-in/profile-driven): simple deterministic tributary for main river (river_trade profile default).
+    const wantTributary = (riverCfg.tributaries === true)
+      || (riverCfg.tributaries !== false && profileId === 'river_trade' && (ls.profileDriven === true || ls.generate === true));
+    if (wantTributary && rivers.length >= 1) {
+      const main = rivers[0];
+      const mpath = Array.isArray(main?.path) ? main.path : [];
+      if (mpath.length >= 4) {
+        const joinIdx = clamp(Math.round(lerp(1, mpath.length - 2, 0.38 + rng() * 0.18)), 1, mpath.length - 2);
+        const join = mpath[joinIdx];
+        const prev = mpath[Math.max(0, joinIdx - 1)];
+        const next = mpath[Math.min(mpath.length - 1, joinIdx + 1)];
+        const tdx = Number(next[0]) - Number(prev[0]);
+        const tdz = Number(next[2]) - Number(prev[2]);
+        const tlen = Math.hypot(tdx, tdz) || 1;
+        // perpendicular in XZ, choose side deterministically by rng
+        const side = rng() < 0.5 ? -1 : 1;
+        let nx = (-tdz / tlen) * side;
+        let nz = (tdx / tlen) * side;
+        // bias slightly downstream (along river flow direction at join)
+        const fdx = (Number(next[0]) - Number(join[0])) / (Math.hypot(Number(next[0]) - Number(join[0]), Number(next[2]) - Number(join[2])) || 1);
+        const fdz = (Number(next[2]) - Number(join[2])) / (Math.hypot(Number(next[0]) - Number(join[0]), Number(next[2]) - Number(join[2])) || 1);
+        const tribLen = clamp(Number.isFinite(riverCfg.tributaryLength) ? riverCfg.tributaryLength : size * (0.18 + rng() * 0.08), 80, half * 0.7);
+        const tSteps = clamp(Number.isInteger(riverCfg.tributaryPoints) ? riverCfg.tributaryPoints : 4, 3, 8);
+        const tWidth = clamp((Number(main.width) || width) * (0.45 + rng() * 0.15), 4, Math.max(6, (Number(main.width) || width) * 0.8));
+        const tDepth = clamp((Number(main.depth) || depth) * (0.55 + rng() * 0.2), 0.5, Number(main.depth) || depth);
+        const tpath = [[Number(join[0]), Number(join[1]) || baseY0, Number(join[2])]];
+        let ok = true;
+        for (let i = 1; i < tSteps; i++) {
+          const t = i / (tSteps - 1);
+          const along = tribLen * t;
+          const spread = lerp(0.15, 0.55, t) * tribLen * (0.6 + rng() * 0.4);
+          const x = Number(join[0]) + nx * along + fdx * spread * 0.25;
+          const z = Number(join[2]) + nz * along + fdz * spread * 0.25;
+          const cx = clamp(x, -half + 8, half - 8);
+          const cz = clamp(z, -half + 8, half - 8);
+          const y = Math.round(terrainHeightAt(cx, cz, baseY0, ctx.terrain.modifiers) * 1000) / 1000;
+          // avoid getting too close to main river away from join
+          if (riverMinDistToPoint(main, cx, cz) < (Number(main.width) || width) * 0.5 + 10 && i < tSteps - 1) { ok = false; break; }
+          tpath.push([Math.round(cx * 10) / 10, y, Math.round(cz * 10) / 10]);
+        }
+        if (ok && tpath.length >= 3 && !polylineSelfIntersects(tpath)) {
+          const trib = { id: 'river_1_trib1', path: tpath, width: Math.round(tWidth * 1000) / 1000, depth: Math.round(tDepth * 1000) / 1000, carveTerrain: riverCfg.carveTerrain !== false, tributaryOf: main.id ?? 'river_1' };
+          rivers.push(trib);
+        }
+      }
+    }
   }
   if (riverCfg.enabled === true) ctx.hydrology.rivers = rivers;
 

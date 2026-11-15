@@ -2,10 +2,10 @@
   "profile": "river_trade",
   "seed": 202,
   "generatorVersion": "0.1.0",
-  "reportHash": "e6e0a25239e9f2f448291d09a0c5fa7daf5cddb7194b4cb4ab404e411e21c461",
+  "reportHash": "660adcc2e8e91a9e0d6935e1238a8463576e144fe834df7a4b154a86a458eb6a",
   "summary": {
     "errors": 0,
-    "warnings": 8,
+    "warnings": 9,
     "repairs": 0,
     "drops": 0
   },
@@ -21,12 +21,12 @@
       "roadNodes": 0,
       "districts": 16,
       "parcels": 2202,
-      "reservedParcels": 111,
+      "reservedParcels": 116,
       "buildings": 403,
       "enterableBuildings": 0,
       "props": 360,
       "lights": 0,
-      "rivers": 1,
+      "rivers": 2,
       "lakes": 0
     },
     "graph": {
@@ -79,7 +79,7 @@
           "very_steep_gt25": 0
         }
       },
-      "crossings": 3,
+      "crossings": 6,
       "reservations": {
         "road": 0,
         "water": 0,
@@ -87,7 +87,7 @@
       }
     },
     "parcels": {
-      "reservedShare": 0.050409,
+      "reservedShare": 0.052679,
       "byDistrictCount": {
         "district_0_0": 400,
         "district_1_0": 225,
