@@ -300,6 +300,18 @@ export function evaluateRules(ctx) {
   const diagErrors = (report.diagnostics ?? []).filter(d => d?.severity === 'error').length;
   const diagWarns = (report.diagnostics ?? []).filter(d => d?.severity === 'warn').length;
 
+  // R1/R3: terrain/hydrology analysis and parcel reservation metrics when available (read-only)
+  const terrainAnalysis = ctx?.terrain?.analysis ?? null;
+  const rivers = ctx?.hydrology?.rivers ?? [];
+  const lakes = ctx?.hydrology?.lakes ?? [];
+  const reservedParcels = parcels.filter(p => p?.reserved === true).length;
+  const reservedShare = parcels.length > 0 ? round(reservedParcels / parcels.length, 6) : null;
+  const parcelsByDistrict = Object.create(null);
+  for (const p of parcels) {
+    const k = String(p?.districtId ?? p?.type ?? 'unknown');
+    parcelsByDistrict[k] = (parcelsByDistrict[k] || 0) + 1;
+  }
+
   // §12.2 subset metrics (deterministic snapshot). Many targets need richer IR; marked partial.
   const metrics = {
     version: 1,
@@ -309,10 +321,13 @@ export function evaluateRules(ctx) {
       roadNodes: nodes.length,
       districts: districts.length,
       parcels: parcels.length,
+      reservedParcels,
       buildings: buildings.length,
       enterableBuildings: enterable,
       props: props.length,
       lights: lights.length,
+      rivers: rivers.length,
+      lakes: lakes.length,
     },
     graph,
     roads: {
@@ -328,6 +343,26 @@ export function evaluateRules(ctx) {
       enterableTarget: targetEnterable,
     },
     districts: districtShare,
+    parcels: {
+      reservedShare,
+      byDistrictCount: parcels.length ? parcelsByDistrict : null,
+    },
+    terrain: terrainAnalysis ? {
+      slope: terrainAnalysis.slope ? {
+        step: terrainAnalysis.slope.step ?? null,
+        grid: terrainAnalysis.slope.grid ?? null,
+        cells: terrainAnalysis.slope.cells ?? null,
+        maxSlope: round(terrainAnalysis.slope.maxSlope, 6),
+        share: terrainAnalysis.slope.share ?? null,
+        counts: terrainAnalysis.slope.counts ?? null,
+      } : null,
+      crossings: Array.isArray(terrainAnalysis.crossings) ? terrainAnalysis.crossings.length : (terrainAnalysis.crossings ?? null),
+      reservations: terrainAnalysis.reservations ? {
+        road: Array.isArray(terrainAnalysis.reservations.road) ? terrainAnalysis.reservations.road.length : 0,
+        water: Array.isArray(terrainAnalysis.reservations.water) ? terrainAnalysis.reservations.water.length : 0,
+        buildable: Array.isArray(terrainAnalysis.reservations.buildable) ? terrainAnalysis.reservations.buildable.length : 0,
+      } : null,
+    } : null,
     stream: stream ? {
       chunk: stream.chunk ?? null,
       keep: stream.keep ?? null,

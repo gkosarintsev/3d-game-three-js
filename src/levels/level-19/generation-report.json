@@ -317,10 +317,13 @@
       "roadNodes": 124,
       "districts": 1,
       "parcels": 441,
+      "reservedParcels": 2,
       "buildings": 24,
       "enterableBuildings": 0,
       "props": 0,
-      "lights": 0
+      "lights": 0,
+      "rivers": 0,
+      "lakes": 0
     },
     "graph": {
       "nodes": 124,
@@ -383,6 +386,40 @@
       "knownArea": 0,
       "areaByType": {},
       "shareByType": {}
+    },
+    "parcels": {
+      "reservedShare": 0.004535,
+      "byDistrictCount": {
+        "d0": 441
+      }
+    },
+    "terrain": {
+      "slope": {
+        "step": 16,
+        "grid": 160,
+        "cells": 25600,
+        "maxSlope": 0,
+        "share": {
+          "flat_lt3": 1,
+          "gentle_3_8": 0,
+          "moderate_8_15": 0,
+          "steep_15_25": 0,
+          "very_steep_gt25": 0
+        },
+        "counts": {
+          "flat_lt3": 25600,
+          "gentle_3_8": 0,
+          "moderate_8_15": 0,
+          "steep_15_25": 0,
+          "very_steep_gt25": 0
+        }
+      },
+      "crossings": 0,
+      "reservations": {
+        "road": 0,
+        "water": 0,
+        "buildable": 0
+      }
     },
     "stream": {
       "chunk": 640,
