@@ -22,7 +22,7 @@
   - [~] R2.1 Иерархия и параметры сегментов — stage 2 заполняет дефолты класса (в т.ч. `speedLimit` км/ч, lanes/surface) при отсутствии значений в сегментах IR (без изменения геометрии)
   - [ ] R2.2 Каркас/заполнение/постобработка
   - [~] R2.3 Рельеф и уклоны дорог — stage 2 учитывает `policies.slopeLimitPct` в read-only диагностике (`road_slope_over_class_policy` по классу сегмента), абсолютный предел ~0.3 сохранён; целевое профилирование/уклоны по классам в генерации ещё не реализованы
-  - [~] R2.4 Топология и инварианты связности — read-only метрики/проверки γ, dead-end ratio, компонент/связности (частично в `rules.mjs`/stage 2), целевые инварианты и repair-политики не завершены
+  - [~] R2.4 Топология и инварианты связности — read-only метрики/проверки γ, dead-end ratio, компонент/связности (частично в `rules.mjs`/stage 2); stage 2 repair (generated transport) пытается соединять компоненты с перебором альтернативных пар узлов (bounded) и диагностикой неуспеха; целевые инварианты/каркас→заполнение и repair-политики не завершены
   - [ ] R2.5 Перекрёстки и connections
   - [ ] R2.6 Мосты, тоннели, жд/тропы
   - [ ] R2.7 Развязки (шаблоны, геометрия, полнота)
@@ -99,6 +99,7 @@
 - 2026-11-15, R1.1/R1.4 (инкремент): усилена profile-driven дифференциация гидрологии в stage 1 (river_trade: процедурный meander/widthProfile по умолчанию при генерации; профильные параметры рек), синтетические эталоны `river_trade` отличаются от `railway_industrial` на тех же seed; обновлены etalon snapshots, пилоты 16–19 без регрессии, scoped-гейты зелёные.
 - 2026-11-15, R1.2/R4.1 (инкремент): stage 3 резервирует парсели с локальным уклоном >25% (terrain slope sampling по модификаторам) как non-buildable/generic-reserved; пересобраны derived каталоги/отчёты пилотов L16–L19 и обновлены baseline snapshots (L16/L17 изменились, L18/L19 без hash-изменений), `build-level --check`/`check-levels`/`node --test`/`citygen-etalon-check` зелёные.
 - 2026-11-15, R1.4 (инкремент): profile-driven/opt-in детерминированный приток (`river_1_trib1`) для `river_trade` в stage 1 (с буферами/easements как у рек); обновлены synthetic `river_trade` etalons 3×3, пилоты 16–19 без изменений derived/hash; scoped-гейты зелёные.
+- 2026-11-15, R2.4 (инкремент): stage 2 repair для generated transport перебирает ограниченный набор ближайших пар узлов при соединении компонент и сообщает `transport_component_connect_failed` при неуспехе; пилоты/etalons без изменения derived/hash, scoped-гейты зелёные.
 - 2026-11-15, R1.1 (инкремент): усилены profile-driven пресеты рельефа в stage 1 (relief→largeForms/terraces/platforms/hills/ordered defaults при `generate/profileDriven`), синтетические эталоны 3×3 обновлены (hill_town более рельефный, профили различаются), пилоты 16–19 без изменений derived/hash; scoped-гейты зелёные.
 
 ## Процедура bump/versioning и регрессии (R0.4, формализовано частично)

@@ -3010,21 +3010,31 @@ export function makeStage2() {
           const mainNodes = nodes.filter(n => compOf.get(n.id) === mainC);
           const compNodes = byComp.get(c) || [];
           if (!mainNodes.length || !compNodes.length) continue;
-          let best = null;
+          // R2.4: try nearest candidate pairs (bounded) so repair can succeed when the closest pair is infeasible.
+          const pairs = [];
           for (const a of mainNodes) {
             const ap = nodePos(a);
             for (const b of compNodes) {
               const bp = nodePos(b);
               const d = Math.hypot(ap.x - bp.x, ap.z - bp.z);
-              if (!best || d < best.d - 1e-9 ||
-                (Math.abs(d - best.d) <= 1e-9 && (String(a.id) < String(best.a.id) || (String(a.id) === String(best.a.id) && String(b.id) < String(best.b.id))))) {
-                best = { a, b, d };
-              }
+              pairs.push({ a, b, d });
             }
           }
-          if (!best) continue;
-          extra++;
-          addConnector(`tr_repair_connect_extra_${extra}`, best.a, best.b, 'connect_road_component', 'added connector segment to join disconnected road component');
+          pairs.sort((p, q) => p.d - q.d
+            || String(p.a.id).localeCompare(String(q.a.id))
+            || String(p.b.id).localeCompare(String(q.b.id)));
+          let connected = false;
+          for (const cand of pairs.slice(0, 12)) {
+            const tryId = `tr_repair_connect_extra_${extra + 1}`;
+            if (addConnector(tryId, cand.a, cand.b, 'connect_road_component', 'added connector segment to join disconnected road component')) {
+              extra++;
+              connected = true;
+              break;
+            }
+          }
+          if (!connected) {
+            ctx.report.diagnostics.push(warn('transport_component_connect_failed', stageId, 'could not connect disconnected road component to main network', { component: c, candidates: Math.min(12, pairs.length) }));
+          }
         }
       }
 
