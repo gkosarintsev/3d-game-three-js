@@ -42,7 +42,8 @@ function footprintIntersectsRiver(fp, rivers = [], riverIndex = null) {
   const cx = (b.minX + b.maxX) / 2, cz = (b.minZ + b.maxZ) / 2;
   const corners = [[b.minX,b.minZ],[b.maxX,b.minZ],[b.maxX,b.maxZ],[b.minX,b.maxZ],[cx,cz]];
   const riverClearance = (rvOrSeg) => {
-    // Prefer explicit easement buffer (R1.4/R1.5). Fallback keeps prior conservative margin for compiled channel checks.
+    // Prefer explicit easement buffer (R1.4/R1.5 hard strip). Floodplain is advisory for zoning (R3/R5).
+    // Fallback keeps prior conservative margin for compiled channel checks when no buffer metadata is present.
     if (Number.isFinite(Number(rvOrSeg?.buffer))) return Math.max(Number(rvOrSeg.buffer), 6);
     return (Number(rvOrSeg?.width) || 10) * 0.5 + 20.0;
   };
