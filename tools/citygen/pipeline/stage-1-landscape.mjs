@@ -1,10 +1,11 @@
 /**
- * Stage 1: landscape and hydrology (TASK-003, incremental).
+ * Stage 1: landscape and hydrology (TASK-003, incremental; R1 progress §4–5).
  * Validates/repairs terrain modifiers and waterways in IR; emits sanitized data
  * back into the source cityforge for compilation. Deterministic, local repairs.
  * Procedural generation: when `generator.landscape` requests it (or provides
  * config and there is no authored terrain/hydrology), produces hills/rivers
  * from seed/subseed without Math.random.
+ * R1: adds read-only analysis (slope grid/classification, crossing candidates) to ctx.
  */
 import { warn, info } from '../diagnostics.mjs';
 import { makeRng, mix } from '../rng.mjs';
@@ -90,6 +91,93 @@ function terrainHeightAt(x, z, baseY, modifiers = []) {
   let y = Number.isFinite(baseY) ? baseY : 0;
   for (const m of modifiers) y += hillContribution(m, x, z);
   return y;
+}
+
+function classifySlope(s) {
+  // м/м (док §4.3 в процентах: 3/8/15/25%)
+  if (s < 0.03) return 'flat_lt3';
+  if (s < 0.08) return 'gentle_3_8';
+  if (s < 0.15) return 'moderate_8_15';
+  if (s < 0.25) return 'steep_15_25';
+  return 'very_steep_gt25';
+}
+
+function buildSlopeAnalysis(ctx, baseY, size) {
+  const step = Math.max(8, Math.min(16, Number(ctx.input?.generator?.landscape?.analysisStep) || 16));
+  const half = size / 2;
+  const mods = ctx.terrain.modifiers || [];
+  // sample on cell centers of an analysis grid
+  const n = Math.max(2, Math.ceil(size / step));
+  const actualStep = size / n;
+  const h = (ix, iz) => {
+    const x = -half + (ix + 0.5) * actualStep;
+    const z = -half + (iz + 0.5) * actualStep;
+    return terrainHeightAt(x, z, baseY, mods);
+  };
+  const counts = { flat_lt3: 0, gentle_3_8: 0, moderate_8_15: 0, steep_15_25: 0, very_steep_gt25: 0 };
+  let maxSlope = 0;
+  for (let iz = 0; iz < n; iz++) {
+    for (let ix = 0; ix < n; ix++) {
+      const hc = h(ix, iz);
+      let sMax = 0;
+      const nb = [[1, 0], [-1, 0], [0, 1], [0, -1]];
+      for (const [dx, dz] of nb) {
+        const jx = ix + dx, jz = iz + dz;
+        if (jx < 0 || jz < 0 || jx >= n || jz >= n) continue;
+        const hn = h(jx, jz);
+        const s = Math.abs(hn - hc) / actualStep;
+        if (s > sMax) sMax = s;
+      }
+      if (sMax > maxSlope) maxSlope = sMax;
+      counts[classifySlope(sMax)]++;
+    }
+  }
+  const total = n * n;
+  const share = Object.fromEntries(Object.entries(counts).map(([k, v]) => [k, +(v / total).toFixed(6)]));
+  return { step: +actualStep.toFixed(3), grid: n, cells: total, maxSlope: +maxSlope.toFixed(6), counts, share };
+}
+
+function findCrossingCandidates(ctx, baseY, size) {
+  const rivers = ctx.hydrology.rivers || [];
+  const mods = ctx.terrain.modifiers || [];
+  const half = size / 2;
+  const out = [];
+  for (const rv of rivers) {
+    const path = Array.isArray(rv.path) ? rv.path : [];
+    if (path.length < 2) continue;
+    const width = Number(rv.width) || 10;
+    // evaluate interior vertices and midpoints as candidates
+    const samples = [];
+    for (let i = 1; i < path.length - 1; i++) samples.push({ x: path[i][0], z: path[i][2], t: i / (path.length - 1), kind: 'vertex' });
+    for (let i = 0; i + 1 < path.length; i++) {
+      const a = path[i], b = path[i + 1];
+      samples.push({ x: (a[0] + b[0]) / 2, z: (a[2] + b[2]) / 2, t: (i + 0.5) / (path.length - 1), kind: 'mid' });
+    }
+    if (!samples.length && path.length >= 2) samples.push({ x: (path[0][0] + path[1][0]) / 2, z: (path[0][2] + path[1][2]) / 2, t: 0.5, kind: 'mid' });
+    const scored = [];
+    for (const s of samples) {
+      if (Math.abs(s.x) > half || Math.abs(s.z) > half) continue;
+      // local terrain flatness probe (small cross offsets approximated by sampling around)
+      const y = terrainHeightAt(s.x, s.z, baseY, mods);
+      const d = 8;
+      const s1 = Math.abs(terrainHeightAt(s.x + d, s.z, baseY, mods) - y) / d;
+      const s2 = Math.abs(terrainHeightAt(s.x - d, s.z, baseY, mods) - y) / d;
+      const s3 = Math.abs(terrainHeightAt(s.x, s.z + d, baseY, mods) - y) / d;
+      const s4 = Math.abs(terrainHeightAt(s.x, s.z - d, baseY, mods) - y) / d;
+      const bankSlope = Math.max(s1, s2, s3, s4);
+      // prefer narrower parts and flatter banks; penalty near plate edge
+      const edgeDist = Math.min(half - Math.abs(s.x), half - Math.abs(s.z));
+      const edgePenalty = edgeDist < width * 2 ? 1 : 0;
+      const score = bankSlope + width * 0.002 + edgePenalty * 10;
+      scored.push({ riverId: rv.id ?? null, x: +s.x.toFixed(3), z: +s.z.toFixed(3), t: +s.t.toFixed(4), width, bankSlope: +bankSlope.toFixed(6), score: +score.toFixed(6) });
+    }
+    scored.sort((a, b) => a.score - b.score || a.t - b.t || a.x - b.x || a.z - b.z);
+    const take = Math.min(4, Math.max(2, Math.min(scored.length, 3)));
+    out.push(...scored.slice(0, take));
+  }
+  // global deterministic order and cap
+  out.sort((a, b) => String(a.riverId ?? '').localeCompare(String(b.riverId ?? '')) || a.score - b.score || a.t - b.t);
+  return out.slice(0, 8);
 }
 
 function shouldGenerate(ctx) {
@@ -431,6 +519,19 @@ export function makeStage1() {
         repairedMods.push(mm);
       }
       ctx.terrain.modifiers = repairedMods;
+
+      // R1.2/R1.5 (analysis, read-only): slope classification grid and river crossing candidates.
+      const analysisSize = ctx.meta.worldBounds?.size ?? ctx.input?.ground?.size ?? g;
+      const slope = buildSlopeAnalysis(ctx, baseY, analysisSize);
+      const crossings = findCrossingCandidates(ctx, baseY, analysisSize);
+      ctx.terrain.analysis = { slope, crossings };
+      ctx.masks.terrain = { slopeShare: slope.share, maxSlope: slope.maxSlope, crossings };
+      if (crossings.length) {
+        ctx.report.diagnostics.push(info('historical_crossings_marked', stageId, `marked ${crossings.length} historical crossing candidate(s)`, { count: crossings.length }));
+      }
+      ctx.report.diagnostics.push(info('terrain_slope_analysis', stageId, 'terrain slope analysis computed', {
+        step: slope.step, grid: slope.grid, maxSlope: slope.maxSlope, share: slope.share,
+      }));
     },
     repair(_ctx) {
       // Repairs applied during validate for locality/determinism in this skeleton.

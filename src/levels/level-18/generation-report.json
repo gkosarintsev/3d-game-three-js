@@ -16,7 +16,7 @@
     {
       "id": "1_landscape_hydrology",
       "status": "ok",
-      "diagnostics": 2,
+      "diagnostics": 3,
       "repairs": 0,
       "drops": 0
     },
@@ -101,6 +101,22 @@
       "code": "stage_ok",
       "stage": "1_landscape_hydrology",
       "message": "stage 1_landscape_hydrology completed"
+    },
+    {
+      "severity": "info",
+      "code": "terrain_slope_analysis",
+      "stage": "1_landscape_hydrology",
+      "message": "terrain slope analysis computed",
+      "step": 16,
+      "grid": 80,
+      "maxSlope": 0,
+      "share": {
+        "flat_lt3": 1,
+        "gentle_3_8": 0,
+        "moderate_8_15": 0,
+        "steep_15_25": 0,
+        "very_steep_gt25": 0
+      }
     },
     {
       "severity": "info",

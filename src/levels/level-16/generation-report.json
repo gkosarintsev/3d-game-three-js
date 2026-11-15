@@ -16,7 +16,7 @@
     {
       "id": "1_landscape_hydrology",
       "status": "ok",
-      "diagnostics": 2,
+      "diagnostics": 4,
       "repairs": 0,
       "drops": 0
     },
@@ -265,6 +265,13 @@
     },
     {
       "severity": "info",
+      "code": "historical_crossings_marked",
+      "stage": "1_landscape_hydrology",
+      "message": "marked 3 historical crossing candidate(s)",
+      "count": 3
+    },
+    {
+      "severity": "info",
       "code": "landscape_passthrough",
       "stage": "1_landscape_hydrology",
       "message": "stage 1 using provided terrain/hydrology (procedural generation pending)",
@@ -277,6 +284,22 @@
       "code": "stage_ok",
       "stage": "1_landscape_hydrology",
       "message": "stage 1_landscape_hydrology completed"
+    },
+    {
+      "severity": "info",
+      "code": "terrain_slope_analysis",
+      "stage": "1_landscape_hydrology",
+      "message": "terrain slope analysis computed",
+      "step": 16,
+      "grid": 80,
+      "maxSlope": 0.37447,
+      "share": {
+        "flat_lt3": 0.325625,
+        "gentle_3_8": 0.1775,
+        "moderate_8_15": 0.192812,
+        "steep_15_25": 0.259219,
+        "very_steep_gt25": 0.044844
+      }
     },
     {
       "severity": "info",

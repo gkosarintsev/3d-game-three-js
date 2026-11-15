@@ -13,10 +13,10 @@
   - [~] R0.5 Структура `generator.profiles`/`generator.policies` + чтение/fallback — `tools/citygen/config.mjs`, нормализация в `ctx.meta.{policies,cityProfiles,activeCityProfile*}` (дефолты §13.2)
 - [ ] **R1** Рельеф и вода (§4, §5)
   - [ ] R1.1 Профили рельефа и порядок модификаторов
-  - [ ] R1.2 Карта уклонов (8–16 м) и классификация
+  - [~] R1.2 Карта уклонов (8–16 м) и классификация — `stage-1-landscape`: `ctx.terrain.analysis.slope` (grid/step/maxSlope/share по классам §4.3), диагностика `terrain_slope_analysis`
   - [ ] R1.3 Бронирование плоских участков и ориентиры
   - [ ] R1.4 Гидрология (река вниз, меандры, поймы, озёра, запреты)
-  - [ ] R1.5 Исторические переправы
+  - [~] R1.5 Исторические переправы — детерминированные кандидаты переправ по рекам в `ctx.terrain.analysis.crossings`/`ctx.masks.terrain.crossings`, диагностика `historical_crossings_marked`
   - [ ] R1.6 Тесты детерминизма/пределов
 - [ ] **R2** Сеть, перекрёстки, мосты/тоннели/развязки (§7, §8)
   - [ ] R2.1 Иерархия и параметры сегментов
@@ -84,6 +84,7 @@
   - **L18**: errors 0, warnings 2, rules {0,0,0}; graph 11/10, components 1, deadEndRatio 0.272727, gamma 0.37037; counts roads 10, districts 1, parcels 121, buildings 15, props 0, lights 0.
   - **L19**: errors 0, warnings 5, rules {0,1,0}; graph 124/133, components 14, deadEndRatio 0.177419, gamma 0.363388; counts roads 133, districts 1, parcels 441, buildings 24, props 0, lights 0; spawnToRoad 179.213, exitToRoad 0.
 - Примечание: это runtime-снимок IR/контекста citygen (частичный), не замена закоммиченных `generation-report.json` каталогов; R0.4 (эталоны/хэши, ≥3 seed × профиль) не выполнен.
+- 2026-11-15, R1 анализ (stage 1): для L16 вычислен slope-grid 80×80 (step 16 м, maxSlope 0.37447 м/м, share по классам §4.3) и 3 кандидата переправ; отчёты пересобраны детерминированно.
 
 ## Открытые вопросы / риски
 - GAP-01/06/07/08/11 из `docs/level_generation_rules_claude.md` §14 (см. план, раздел 2).
