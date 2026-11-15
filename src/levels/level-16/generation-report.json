@@ -111,7 +111,7 @@
       "profileId": "sports",
       "cells": 1,
       "parcels": 49,
-      "reservedParcels": 18
+      "reservedParcels": 27
     },
     {
       "id": "district_1_3",
@@ -119,7 +119,7 @@
       "profileId": "residential",
       "cells": 1,
       "parcels": 225,
-      "reservedParcels": 55
+      "reservedParcels": 59
     },
     {
       "id": "district_2_0",
@@ -143,7 +143,7 @@
       "profileId": "luxury",
       "cells": 1,
       "parcels": 121,
-      "reservedParcels": 13
+      "reservedParcels": 19
     },
     {
       "id": "district_2_3",
@@ -175,7 +175,7 @@
       "profileId": "residential",
       "cells": 1,
       "parcels": 225,
-      "reservedParcels": 27
+      "reservedParcels": 44
     },
     {
       "id": "district_3_3",
@@ -183,7 +183,7 @@
       "profileId": "commercial",
       "cells": 1,
       "parcels": 144,
-      "reservedParcels": 61
+      "reservedParcels": 87
     }
   ],
   "diagnostics": [
@@ -519,7 +519,7 @@
         "suburb"
       ],
       "parcels": 2274,
-      "reservedParcels": 331,
+      "reservedParcels": 393,
       "parcelAccess": {
         "near": 1157,
         "mid": 1015,
@@ -538,12 +538,12 @@
         },
         "luxury": {
           "parcels": 242,
-          "unreserved": 220,
-          "good": 110,
+          "unreserved": 214,
+          "good": 104,
           "mid": 105,
           "far": 5,
-          "reserved": 22,
-          "goodOrMid": 215,
+          "reserved": 28,
+          "goodOrMid": 209,
           "accessibleRatio": 0.977
         },
         "office": {
@@ -568,13 +568,13 @@
         },
         "residential": {
           "parcels": 450,
-          "unreserved": 368,
-          "good": 175,
-          "mid": 191,
+          "unreserved": 347,
+          "good": 164,
+          "mid": 181,
           "far": 2,
-          "reserved": 82,
-          "goodOrMid": 366,
-          "accessibleRatio": 0.995
+          "reserved": 103,
+          "goodOrMid": 345,
+          "accessibleRatio": 0.994
         },
         "slums": {
           "parcels": 400,
@@ -588,13 +588,13 @@
         },
         "sports": {
           "parcels": 49,
-          "unreserved": 31,
-          "good": 13,
-          "mid": 16,
+          "unreserved": 22,
+          "good": 5,
+          "mid": 15,
           "far": 2,
-          "reserved": 18,
-          "goodOrMid": 29,
-          "accessibleRatio": 0.935
+          "reserved": 27,
+          "goodOrMid": 20,
+          "accessibleRatio": 0.909
         }
       },
       "buildings": 402,
@@ -699,7 +699,7 @@
       "roadNodes": 162,
       "districts": 16,
       "parcels": 2274,
-      "reservedParcels": 331,
+      "reservedParcels": 393,
       "buildings": 402,
       "enterableBuildings": 0,
       "props": 360,
@@ -778,7 +778,7 @@
       "shareByType": {}
     },
     "parcels": {
-      "reservedShare": 0.145558,
+      "reservedShare": 0.172823,
       "byDistrictCount": {
         "district_0_0": 121,
         "district_1_0": 121,

@@ -7,6 +7,7 @@ import { warn, info } from '../diagnostics.mjs';
 import { makeRng, mix } from '../rng.mjs';
 
 const clamp = (v, lo, hi) => Math.max(lo, Math.min(hi, v));
+const EPS = 1e-9;
 
 function pointSegDistXZ(px, pz, ax, az, bx, bz) {
   const abx = bx - ax, abz = bz - az, apx = px - ax, apz = pz - az;
@@ -25,6 +26,42 @@ function minRoadDist(x, z, segments = []) {
     }
   }
   return best;
+}
+
+// R1.2/R4.1 helpers: approximate terrain slope at parcel center (aligned with stage-1 modifier sampling).
+function hillContribution(mod, x, z) {
+  const type = mod?.type;
+  if (type !== 'mountain' && type !== 'valley') return 0;
+  const h = Number(mod.height) || 0;
+  const r = Number(mod.radius) || 0;
+  if (!(r > EPS) || !Number.isFinite(h)) return 0;
+  const c = Array.isArray(mod.center) ? mod.center : [Number(mod.center?.x) || 0, Number(mod.center?.z) || 0];
+  const dx = x - (Number(c[0]) || 0);
+  const dz = z - (Number(c[1]) || 0);
+  const d = Math.hypot(dx, dz);
+  if (d >= r) return 0;
+  const t = 1 - d / r;
+  const e = t * t * (3 - 2 * t);
+  const signed = (mod.operation === 'subtract') ? -h : h;
+  return signed * e;
+}
+function terrainHeightAt(x, z, baseY, modifiers = []) {
+  let y = Number.isFinite(baseY) ? baseY : 0;
+  for (const m of modifiers) y += hillContribution(m, x, z);
+  return y;
+}
+function sampleTerrainSlope(x, z, baseY, modifiers = []) {
+  const d = 8;
+  const y = terrainHeightAt(x, z, baseY, modifiers);
+  const sx = Math.max(
+    Math.abs(terrainHeightAt(x + d, z, baseY, modifiers) - y),
+    Math.abs(terrainHeightAt(x - d, z, baseY, modifiers) - y),
+  ) / d;
+  const sz = Math.max(
+    Math.abs(terrainHeightAt(x, z + d, baseY, modifiers) - y),
+    Math.abs(terrainHeightAt(x, z - d, baseY, modifiers) - y),
+  ) / d;
+  return Math.max(sx, sz);
 }
 
 export const DEFAULT_PROFILES = {
@@ -451,6 +488,13 @@ export function makeStage3() {
                 const pad = 6;
                 if (rx >= aabb.minX - pad && rx <= aabb.maxX + pad && rz >= aabb.minZ - pad && rz <= aabb.maxZ + pad) { reserved = true; break; }
               }
+            }
+            // R1.2/R4.1: steep terrain parcels are not buildable as generic parcels (§9.1, slopes > 25%).
+            if (!reserved) {
+              const baseY = Number(ctx.input?.ground?.y ?? 0) || 0;
+              const mods = ctx.terrain?.modifiers ?? [];
+              const slope = sampleTerrainSlope(cx, cz, baseY, mods);
+              if (Number.isFinite(slope) && slope > 0.25) reserved = true;
             }
             // Reserve only very remote parcels in some road-dependent districts to keep access buffers without wiping sparse-network areas
             const hardReserveTypes = new Set(['parking', 'sports', 'industrial']);
