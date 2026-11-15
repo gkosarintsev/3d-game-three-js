@@ -14,7 +14,7 @@ import { mkdirSync, writeFileSync } from 'node:fs';
 import { resolve, join } from 'node:path';
 import { createHash } from 'node:crypto';
 import { runCitygen } from './citygen/index.mjs';
-import { DEFAULT_CITY_PROFILES } from './citygen/config.mjs';
+import { DEFAULT_CITY_PROFILES, DEFAULT_GENERATOR_VERSION } from './citygen/config.mjs';
 
 function parseList(v) { return String(v || '').split(',').map(s => s.trim()).filter(Boolean); }
 function parseNums(v) { return parseList(v).map(x => Number(x)).filter(n => Number.isFinite(n)); }
@@ -23,7 +23,7 @@ const args = process.argv.slice(2);
 let outDir = null;
 let profiles = ['river_trade', 'hill_town', 'railway_industrial'];
 let seeds = [101, 202, 303];
-let generatorVersion = '0.1.0';
+let generatorVersion = DEFAULT_GENERATOR_VERSION;
 let size = 1280;
 let chunk = 256;
 for (let i = 0; i < args.length; i++) {

@@ -3,7 +3,7 @@
  */
 import { createReport } from './diagnostics.mjs';
 import { makeRng } from './rng.mjs';
-import { resolveGeneratorConfig } from './config.mjs';
+import { resolveGeneratorConfig, DEFAULT_GENERATOR_VERSION } from './config.mjs';
 
 export function createContext(input) {
   const gen = input?.generator ?? {};
@@ -14,7 +14,7 @@ export function createContext(input) {
     input,
     meta: {
       seed,
-      generatorVersion: gen.generatorVersion ?? '0.0.0',
+      generatorVersion: gen.generatorVersion ?? DEFAULT_GENERATOR_VERSION,
       deterministic: gen.deterministic !== false,
       worldBounds,
       stream: input?.stream ?? null,

@@ -465,24 +465,29 @@ function generateLandscape(ctx) {
         if (h < bestH - 1e-9 || (Math.abs(h - bestH) <= 1e-9 && Math.abs(lat) < Math.abs(bestLat))) { bestH = h; bestLat = lat; }
       }
       let lat = bestLat;
+      let prevY = bestH;
       const widthProfile = [];
       for (let i = 0; i < steps; i++) {
         const t = steps === 1 ? 0.5 : i / (steps - 1);
         const along = lerp(-margin, margin, t);
         let best = null;
-        // evaluate a few lateral moves biased to descent
+        // evaluate a few lateral moves biased to descent (cost-traced: prefer valleys, avoid uphill/turns)
         for (let d = -2; d <= 2; d++) {
           const nlat = clamp(lat + d * lateralStep, -margin * 0.75, margin * 0.75);
           const x = axis === 'z' ? nlat : along;
           const z = axis === 'z' ? along : nlat;
           const y = terrainHeightAt(x, z, baseY0, ctx.terrain.modifiers);
           const turn = Math.abs(nlat - lat);
-          const cost = y + turn * 0.05; // prefer lower terrain, penalize sharp lateral turns
+          const uphill = Math.max(0, y - prevY);
+          const downhill = Math.max(0, prevY - y);
+          // Strongly avoid uphill, prefer lower terrain and gentle descent, penalize sharp lateral turns.
+          const cost = y + uphill * 3.5 - downhill * 0.15 + turn * 0.06;
           if (!best || cost < best.cost - 1e-9 || (Math.abs(cost - best.cost) <= 1e-9 && d === 0)) {
             best = { x, z, y, nlat, cost };
           }
         }
         lat = best.nlat;
+        prevY = best.y;
         points.push([Math.round(best.x * 10) / 10, Math.round(best.y * 1000) / 1000, Math.round(best.z * 10) / 10]);
         const lo = profileId === 'river_trade' ? 0.8 : 0.7;
         const hi = profileId === 'river_trade' ? 1.35 : 1.3;

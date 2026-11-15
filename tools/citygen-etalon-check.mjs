@@ -17,7 +17,7 @@ import { readFileSync, readdirSync, existsSync, writeFileSync } from 'node:fs';
 import { resolve, join } from 'node:path';
 import { createHash } from 'node:crypto';
 import { runCitygen } from './citygen/index.mjs';
-import { DEFAULT_CITY_PROFILES } from './citygen/config.mjs';
+import { DEFAULT_CITY_PROFILES, DEFAULT_GENERATOR_VERSION } from './citygen/config.mjs';
 
 const args = process.argv.slice(2);
 let etalonsDir = '.ai/state/citygen-etalons';
@@ -52,7 +52,7 @@ function writeJson(filePath, obj) {
   writeFileSync(filePath, JSON.stringify(obj, null, 2).replace(/\r\n/g, '\n') + '\n', 'utf8');
 }
 
-function makeSynthetic(profileId, seed, generatorVersion = '0.1.0', size = 1280, chunk = 256) {
+function makeSynthetic(profileId, seed, generatorVersion = DEFAULT_GENERATOR_VERSION, size = 1280, chunk = 256) {
   return {
     schemaVersion: 4,
     $schema: './level-v4.schema.json',
@@ -86,7 +86,7 @@ function makeSynthetic(profileId, seed, generatorVersion = '0.1.0', size = 1280,
 
 function computeEtalonRun(expected) {
   const { profile, seed } = expected;
-  const gv = generatorVersionOverride ?? expected.generatorVersion ?? '0.1.0';
+  const gv = generatorVersionOverride ?? expected.generatorVersion ?? DEFAULT_GENERATOR_VERSION;
   if (!DEFAULT_CITY_PROFILES[profile]) return { error: `unknown profile ${profile}` };
   const raw = makeSynthetic(profile, seed, gv);
   const r = runCitygen(raw);
@@ -252,7 +252,7 @@ if (!skipEtalons) {
         };
       }
       const summary = {
-        generatorVersion: generatorVersionOverride ?? (runs[0]?.generatorVersion ?? '0.1.0'),
+        generatorVersion: generatorVersionOverride ?? (runs[0]?.generatorVersion ?? DEFAULT_GENERATOR_VERSION),
         profiles,
         seeds,
         runs: runs.length,
