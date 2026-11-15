@@ -1048,3 +1048,22 @@ test('citygen M3 B2: level-16 roundabout (v4 json) is deterministic, curved arc 
   const fin = a.report.diagnostics.find(d => d.code === 'finalize_counts' && d.stage === '6_finalize_emit');
   assert.equal(fin?.roadComponents, 1, 'road graph should remain connected with roundabout');
 });
+
+test('citygen R1: stage 1 terrain analysis (slope/reservations/crossings) is deterministic', () => {
+  const raw = JSON.parse(readFileSync(resolve(import.meta.dirname, '../src/levels/level-16.json'), 'utf8'));
+  const a = runCitygen(structuredClone(raw));
+  const b = runCitygen(structuredClone(raw));
+  assert.equal(a.reportJson, b.reportJson, 'report (including R1 analysis diagnostics) should be deterministic');
+  const ta = a.ctx?.terrain?.analysis;
+  assert.ok(ta && ta.slope, 'terrain.analysis.slope should exist');
+  assert.ok(Number.isFinite(ta.slope.maxSlope) && ta.slope.maxSlope >= 0, 'slope.maxSlope should be finite');
+  assert.equal(ta.slope.cells, ta.slope.grid * ta.slope.grid, 'slope cell count should match grid');
+  assert.ok(ta.slope.share && typeof ta.slope.share === 'object', 'slope.share should exist');
+  const shareSum = Object.values(ta.slope.share).reduce((s, v) => s + Number(v || 0), 0);
+  assert.ok(Math.abs(shareSum - 1) < 1e-6, 'slope class shares should sum to 1');
+  assert.ok(Array.isArray(ta.crossings), 'crossing candidates should be an array');
+  assert.ok(Array.isArray(ta.reservations), 'reservations should be an array');
+  assert.deepEqual(ta, b.ctx?.terrain?.analysis, 'terrain analysis should be identical across runs');
+  assert.ok(a.report.diagnostics.some(d => d.code === 'terrain_slope_analysis' && d.stage === '1_landscape_hydrology'));
+  assert.ok(a.report.diagnostics.some(d => d.code === 'terrain_reservations_marked' && d.stage === '1_landscape_hydrology'));
+});
