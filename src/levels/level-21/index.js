@@ -72,10 +72,10 @@ export const LEVEL_21 = {
         "file": "chunk-0-0.l14b",
         "id": "0_0",
         "objects": {
-          "buildings": 75,
-          "channels": 1,
+          "buildings": 77,
+          "channels": 2,
           "lights": 2,
-          "props": 65,
+          "props": 63,
           "roads": 23
         },
         "rect": {
@@ -90,8 +90,9 @@ export const LEVEL_21 = {
         "id": "0_1",
         "objects": {
           "buildings": 37,
+          "channels": 1,
           "lights": 2,
-          "props": 49,
+          "props": 60,
           "roads": 2
         },
         "rect": {
@@ -105,10 +106,10 @@ export const LEVEL_21 = {
         "file": "chunk-1-0.l14b",
         "id": "1_0",
         "objects": {
-          "buildings": 161,
-          "channels": 1,
+          "buildings": 159,
+          "channels": 2,
           "lights": 2,
-          "props": 160,
+          "props": 152,
           "roads": 39
         },
         "rect": {
@@ -123,9 +124,9 @@ export const LEVEL_21 = {
         "id": "1_1",
         "objects": {
           "buildings": 129,
-          "channels": 1,
+          "channels": 2,
           "lights": 2,
-          "props": 94,
+          "props": 93,
           "roads": 100
         },
         "rect": {
@@ -256,6 +257,33 @@ export const LEVEL_21 = {
               "az": null,
               "bx": null,
               "bz": null
+            }
+          ],
+          "surfaceY": -0.2
+        },
+        {
+          "bankY": 0,
+          "bedY": -2.364,
+          "halfW": 5.813,
+          "ramp": 30,
+          "segments": [
+            {
+              "ax": 96,
+              "az": 0,
+              "bx": -3.8,
+              "bz": -2.4
+            },
+            {
+              "ax": -3.8,
+              "az": -2.4,
+              "bx": -90.5,
+              "bz": -4.5
+            },
+            {
+              "ax": -90.5,
+              "az": -4.5,
+              "bx": -177.3,
+              "bz": -6.6
             }
           ],
           "surfaceY": -0.2

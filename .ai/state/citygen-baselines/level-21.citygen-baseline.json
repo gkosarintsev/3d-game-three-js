@@ -6,7 +6,7 @@
     "seed": 21,
     "deterministic": true
   },
-  "reportHash": "d287df04d906fb076cf015135f9ca47d7c837da1f1fb061fb4d10e23287d29b8",
+  "reportHash": "8a561b5ec9f84e390e03ff0536750c6839048c71d9ee1e9f7ab89019e8b8ac86",
   "stages": 7,
   "summary": {
     "errors": 0,
@@ -26,12 +26,12 @@
       "roadNodes": 126,
       "districts": 16,
       "parcels": 2098,
-      "reservedParcels": 378,
+      "reservedParcels": 388,
       "buildings": 402,
       "enterableBuildings": 0,
       "props": 360,
       "lights": 8,
-      "rivers": 1,
+      "rivers": 2,
       "lakes": 0
     },
     "graph": {
@@ -89,7 +89,7 @@
       "shareByType": {}
     },
     "parcels": {
-      "reservedShare": 0.180172,
+      "reservedShare": 0.184938,
       "byDistrictCount": {
         "district_0_0": 121,
         "district_1_0": 121,
@@ -130,7 +130,7 @@
           "very_steep_gt25": 0
         }
       },
-      "crossings": 3,
+      "crossings": 6,
       "reservations": {
         "road": 0,
         "water": 0,

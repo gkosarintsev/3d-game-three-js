@@ -537,20 +537,33 @@ function generateLandscape(ctx) {
       if (widthProfile.length >= 2) river.widthProfile = widthProfile;
       rivers.push(river);
     }
-    // R1.4 (profile-driven/opt-in): deterministic tributaries for main river.
+    // R1.4 (profile-driven/opt-in): deterministic tributaries for main river(s).
     // Cost-traced upstream-to-join path; preserves first-tributary RNG/behavior when count=1.
-    // Explicit riverCfg.tributaryCount/tributaries wins; otherwise use active profile terrain default.
+    // Explicit riverCfg.tributaryCount/tributaries wins; otherwise use active profile terrain/hydrology spec.
     const profileTribRaw = profile?.terrain?.tributaries ?? profile?.hydrology?.tributaries;
-    const profileTribCount = Number.isFinite(Number(profileTribRaw))
-      ? clamp(Math.floor(Number(profileTribRaw)), 0, 4)
-      : (profileTribRaw === true ? 1 : 0);
-    const profileAutoTrib = (ls.profileDriven === true || ls.generate === true) ? profileTribCount : 0;
-    const legacyRiverTradeAuto = (profileId === 'river_trade' && profileAutoTrib === 0 && (ls.profileDriven === true || ls.generate === true)) ? 1 : 0;
+    const resolveProfileTribCount = (raw, allowAuto) => {
+      if (!allowAuto) return 0;
+      if (raw === true) return 1;
+      if (raw === false || raw == null) return 0;
+      if (Number.isFinite(Number(raw))) return clamp(Math.floor(Number(raw)), 0, 4);
+      if (raw && typeof raw === 'object') {
+        const min = clamp(Math.floor(Number(raw.min ?? 0) || 0), 0, 4);
+        const maxRaw = raw.max ?? raw.min ?? 0;
+        const max = Math.max(min, clamp(Math.floor(Number(maxRaw) || 0), 0, 4));
+        if (max === min) return min;
+        // Deterministic auto selection per scenario/profile (R1.4: across scenarios).
+        return min + Math.floor(rng() * (max - min + 1));
+      }
+      return 0;
+    };
+    const allowProfileAutoTrib = (ls.profileDriven === true || ls.generate === true);
+    const profileTribCount = resolveProfileTribCount(profileTribRaw, allowProfileAutoTrib);
+    const legacyRiverTradeAuto = (profileId === 'river_trade' && profileTribCount === 0 && allowProfileAutoTrib) ? 1 : 0;
     const tribCount = Number.isFinite(Number(riverCfg.tributaryCount))
       ? clamp(Math.floor(Number(riverCfg.tributaryCount)), 0, 4)
       : (riverCfg.tributaries === false ? 0
-        : (riverCfg.tributaries === true ? Math.max(1, profileAutoTrib || 1)
-          : Math.max(profileAutoTrib, legacyRiverTradeAuto)));
+        : (riverCfg.tributaries === true ? Math.max(1, profileTribCount || 1)
+          : Math.max(profileTribCount, legacyRiverTradeAuto)));
     if (tribCount > 0 && rivers.length >= 1) {
       const main = rivers[0];
       const mpath = Array.isArray(main?.path) ? main.path : [];

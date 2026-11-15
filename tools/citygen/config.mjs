@@ -31,7 +31,7 @@ export const DEFAULT_CITY_PROFILES = Object.freeze({
   },
   hill_town: {
     id: 'hill_town',
-    terrain: { relief: 'hills', rivers: 0, lakes: 0 },
+    terrain: { relief: 'hills', rivers: 0, lakes: 0, tributaries: 0 },
     landValueWeights: [0.35, 0.2, 0.1, 0.3, 0.05],
     interchanges: [0, 1],
     parkShare: [0.1, 0.18],
@@ -39,7 +39,7 @@ export const DEFAULT_CITY_PROFILES = Object.freeze({
   },
   railway_industrial: {
     id: 'railway_industrial',
-    terrain: { relief: 'plain', rivers: 1, lakes: 0 },
+    terrain: { relief: 'plain', rivers: 1, lakes: 0, tributaries: { min: 0, max: 1 } },
     landValueWeights: [0.35, 0.3, 0.1, 0.15, 0.1],
     interchanges: [3, 4],
     parkShare: [0.05, 0.08],
