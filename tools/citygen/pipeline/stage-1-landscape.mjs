@@ -537,13 +537,20 @@ function generateLandscape(ctx) {
       if (widthProfile.length >= 2) river.widthProfile = widthProfile;
       rivers.push(river);
     }
-    // R1.4 (opt-in/profile-driven): deterministic tributaries for main river (default: river_trade profile).
+    // R1.4 (profile-driven/opt-in): deterministic tributaries for main river.
     // Cost-traced upstream-to-join path; preserves first-tributary RNG/behavior when count=1.
-    const wantTributary = (riverCfg.tributaries === true)
-      || (riverCfg.tributaries !== false && profileId === 'river_trade' && (ls.profileDriven === true || ls.generate === true));
+    // Explicit riverCfg.tributaryCount/tributaries wins; otherwise use active profile terrain default.
+    const profileTribRaw = profile?.terrain?.tributaries ?? profile?.hydrology?.tributaries;
+    const profileTribCount = Number.isFinite(Number(profileTribRaw))
+      ? clamp(Math.floor(Number(profileTribRaw)), 0, 4)
+      : (profileTribRaw === true ? 1 : 0);
+    const profileAutoTrib = (ls.profileDriven === true || ls.generate === true) ? profileTribCount : 0;
+    const legacyRiverTradeAuto = (profileId === 'river_trade' && profileAutoTrib === 0 && (ls.profileDriven === true || ls.generate === true)) ? 1 : 0;
     const tribCount = Number.isFinite(Number(riverCfg.tributaryCount))
       ? clamp(Math.floor(Number(riverCfg.tributaryCount)), 0, 4)
-      : (wantTributary ? 1 : 0);
+      : (riverCfg.tributaries === false ? 0
+        : (riverCfg.tributaries === true ? Math.max(1, profileAutoTrib || 1)
+          : Math.max(profileAutoTrib, legacyRiverTradeAuto)));
     if (tribCount > 0 && rivers.length >= 1) {
       const main = rivers[0];
       const mpath = Array.isArray(main?.path) ? main.path : [];

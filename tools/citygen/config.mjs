@@ -23,7 +23,7 @@ export const DEFAULT_CITY_POLICIES = Object.freeze({
 export const DEFAULT_CITY_PROFILES = Object.freeze({
   river_trade: {
     id: 'river_trade',
-    terrain: { relief: 'plain', rivers: 1, lakes: 0 },
+    terrain: { relief: 'plain', rivers: 1, lakes: 0, tributaries: 1 },
     landValueWeights: [0.4, 0.25, 0.15, 0.15, 0.05],
     interchanges: [2, 3],
     parkShare: [0.08, 0.15],
