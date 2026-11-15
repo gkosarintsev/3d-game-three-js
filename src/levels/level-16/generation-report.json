@@ -463,9 +463,9 @@
       "parcels": 2274,
       "reservedParcels": 319,
       "parcelAccess": {
-        "near": 1159,
-        "mid": 1014,
-        "far": 101
+        "near": 1157,
+        "mid": 1015,
+        "far": 102
       },
       "roadAccessByType": {
         "industrial": {

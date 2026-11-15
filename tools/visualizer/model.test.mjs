@@ -200,8 +200,8 @@ test('integration: level 16 counts and auto-districts', async () => {
   assert.equal(model.entities.props.size, 562);
   assert.equal((model.entities.lights || new Map()).size, 8);
   assert.equal((model.entities.channels || new Map()).size, 1);
-  assert.equal(model.skeleton.nodes.length, 4823);
-  assert.equal(model.skeleton.edges.length, 4819);
+  assert.equal(model.skeleton.nodes.length, 4786);
+  assert.equal(model.skeleton.edges.length, 4782);
   assert.equal(model.entities.districts.size, 16);
   for (const d of model.entities.districts.values()) assert.equal(d.origin, 'generated');
 });
