@@ -95,7 +95,7 @@
       "profileId": "suburb",
       "cells": 1,
       "parcels": 121,
-      "reservedParcels": 21
+      "reservedParcels": 19
     },
     {
       "id": "district_1_1",
@@ -103,7 +103,7 @@
       "profileId": "forest",
       "cells": 1,
       "parcels": 36,
-      "reservedParcels": 3
+      "reservedParcels": 4
     },
     {
       "id": "district_1_2",
@@ -191,8 +191,8 @@
       "severity": "warn",
       "code": "road_graph_disconnected",
       "stage": "2_transport",
-      "message": "road graph has 10 connected components",
-      "components": 10
+      "message": "road graph has 7 connected components",
+      "components": 7
     },
     {
       "severity": "warn",
@@ -247,8 +247,8 @@
       "severity": "warn",
       "code": "road_graph_disconnected_final",
       "stage": "6_finalize_emit",
-      "message": "road graph has 10 connected components at finalize",
-      "components": 10
+      "message": "road graph has 7 connected components at finalize",
+      "components": 7
     },
     {
       "severity": "warn",
@@ -283,9 +283,9 @@
       "code": "road_graph",
       "stage": "2_transport",
       "message": "road graph summary",
-      "nodes": 160,
-      "segments": 181,
-      "components": 10
+      "nodes": 161,
+      "segments": 185,
+      "components": 7
     },
     {
       "severity": "info",
@@ -298,8 +298,8 @@
       "code": "transport_passthrough",
       "stage": "2_transport",
       "message": "stage 2 using provided road network (procedural generation pending)",
-      "nodes": 160,
-      "segments": 181
+      "nodes": 161,
+      "segments": 185
     },
     {
       "severity": "info",
@@ -398,22 +398,22 @@
       "message": "generated district props",
       "count": 360,
       "budget": 360,
-      "attempts": 860,
+      "attempts": 929,
       "byDistrictType": {
-        "office": 18,
-        "luxury": 40,
-        "residential": 56,
+        "luxury": 39,
         "commercial": 15,
-        "suburb": 23,
-        "parking": 8,
-        "slums": 57,
-        "market": 33,
+        "slums": 60,
+        "market": 32,
+        "residential": 70,
         "old_town": 46,
-        "forest": 13,
-        "sports": 8,
-        "park": 20,
-        "industrial": 4,
-        "campus": 10
+        "suburb": 22,
+        "forest": 17,
+        "park": 11,
+        "industrial": 6,
+        "parking": 7,
+        "office": 18,
+        "campus": 6,
+        "sports": 3
       }
     },
     {
@@ -439,10 +439,10 @@
         "grid": 5,
         "total": 25
       },
-      "roadNodes": 161,
-      "roadSegments": 183,
-      "roadComponents": 9,
-      "roadGraphNodes": 161,
+      "roadNodes": 162,
+      "roadSegments": 187,
+      "roadComponents": 7,
+      "roadGraphNodes": 162,
       "districts": 16,
       "districtTypes": [
         "campus",
@@ -461,11 +461,11 @@
         "suburb"
       ],
       "parcels": 2274,
-      "reservedParcels": 320,
+      "reservedParcels": 319,
       "parcelAccess": {
-        "near": 1163,
-        "mid": 1012,
-        "far": 99
+        "near": 1159,
+        "mid": 1014,
+        "far": 101
       },
       "roadAccessByType": {
         "industrial": {
@@ -559,25 +559,25 @@
       "lights": 8,
       "props": 360,
       "propsByDistrictType": {
-        "office": 18,
-        "luxury": 40,
-        "residential": 56,
+        "luxury": 39,
         "commercial": 15,
-        "suburb": 23,
-        "parking": 8,
-        "slums": 57,
-        "market": 33,
+        "slums": 60,
+        "market": 32,
+        "residential": 70,
         "old_town": 46,
-        "forest": 13,
-        "sports": 8,
-        "park": 20,
-        "industrial": 4,
-        "campus": 10
+        "suburb": 22,
+        "forest": 17,
+        "park": 11,
+        "industrial": 6,
+        "parking": 7,
+        "office": 18,
+        "campus": 6,
+        "sports": 3
       },
       "chunkLoad": {
         "nonEmptyChunks": 25,
         "maxBuildings": 30,
-        "maxProps": 34,
+        "maxProps": 42,
         "maxLights": 1,
         "avgBuildings": 16.08,
         "avgProps": 14.4

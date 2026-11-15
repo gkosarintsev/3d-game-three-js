@@ -74,7 +74,7 @@ export const LEVEL_16 = {
         "objects": {
           "buildings": 28,
           "lights": 1,
-          "props": 16,
+          "props": 14,
           "roads": 13
         },
         "rect": {
@@ -89,7 +89,7 @@ export const LEVEL_16 = {
         "id": "0_1",
         "objects": {
           "buildings": 16,
-          "props": 6,
+          "props": 9,
           "roads": 4
         },
         "rect": {
@@ -120,7 +120,7 @@ export const LEVEL_16 = {
         "objects": {
           "buildings": 7,
           "lights": 1,
-          "props": 96,
+          "props": 93,
           "roads": 2
         },
         "rect": {
@@ -150,8 +150,8 @@ export const LEVEL_16 = {
         "id": "1_0",
         "objects": {
           "buildings": 6,
-          "props": 22,
-          "roads": 8
+          "props": 12,
+          "roads": 10
         },
         "rect": {
           "maxX": -128,
@@ -165,7 +165,7 @@ export const LEVEL_16 = {
         "id": "1_1",
         "objects": {
           "buildings": 1,
-          "props": 9,
+          "props": 6,
           "roads": 11
         },
         "rect": {
@@ -180,8 +180,8 @@ export const LEVEL_16 = {
         "id": "1_2",
         "objects": {
           "lights": 1,
-          "props": 9,
-          "roads": 4
+          "props": 8,
+          "roads": 5
         },
         "rect": {
           "maxX": -128,
@@ -195,7 +195,7 @@ export const LEVEL_16 = {
         "id": "1_3",
         "objects": {
           "buildings": 1,
-          "props": 24,
+          "props": 26,
           "roads": 8
         },
         "rect": {
@@ -210,7 +210,7 @@ export const LEVEL_16 = {
         "id": "1_4",
         "objects": {
           "buildings": 24,
-          "props": 22,
+          "props": 24,
           "roads": 5
         },
         "rect": {
@@ -226,8 +226,8 @@ export const LEVEL_16 = {
         "objects": {
           "buildings": 3,
           "channels": 1,
-          "props": 6,
-          "roads": 7
+          "props": 15,
+          "roads": 8
         },
         "rect": {
           "maxX": 128,
@@ -242,7 +242,7 @@ export const LEVEL_16 = {
         "objects": {
           "buildings": 9,
           "channels": 1,
-          "props": 15,
+          "props": 22,
           "roads": 4
         },
         "rect": {
@@ -258,7 +258,7 @@ export const LEVEL_16 = {
         "objects": {
           "buildings": 19,
           "channels": 1,
-          "props": 18
+          "props": 13
         },
         "rect": {
           "maxX": 128,
@@ -273,7 +273,7 @@ export const LEVEL_16 = {
         "objects": {
           "buildings": 14,
           "channels": 1,
-          "props": 10,
+          "props": 16,
           "roads": 2
         },
         "rect": {
@@ -290,7 +290,7 @@ export const LEVEL_16 = {
           "buildings": 17,
           "channels": 1,
           "lights": 1,
-          "props": 15,
+          "props": 18,
           "roads": 4
         },
         "rect": {
@@ -305,7 +305,7 @@ export const LEVEL_16 = {
         "id": "3_0",
         "objects": {
           "buildings": 17,
-          "props": 22,
+          "props": 8,
           "roads": 13
         },
         "rect": {
@@ -336,7 +336,7 @@ export const LEVEL_16 = {
         "id": "3_2",
         "objects": {
           "buildings": 33,
-          "props": 18,
+          "props": 15,
           "roads": 10
         },
         "rect": {
@@ -351,7 +351,7 @@ export const LEVEL_16 = {
         "id": "3_3",
         "objects": {
           "buildings": 23,
-          "props": 15,
+          "props": 16,
           "roads": 15
         },
         "rect": {
@@ -366,7 +366,7 @@ export const LEVEL_16 = {
         "id": "3_4",
         "objects": {
           "buildings": 28,
-          "props": 19,
+          "props": 11,
           "roads": 3
         },
         "rect": {
@@ -382,7 +382,7 @@ export const LEVEL_16 = {
         "objects": {
           "buildings": 30,
           "lights": 1,
-          "props": 32,
+          "props": 36,
           "roads": 3
         },
         "rect": {
@@ -397,7 +397,7 @@ export const LEVEL_16 = {
         "id": "4_1",
         "objects": {
           "buildings": 33,
-          "props": 35,
+          "props": 43,
           "roads": 1
         },
         "rect": {
@@ -413,7 +413,7 @@ export const LEVEL_16 = {
         "objects": {
           "buildings": 30,
           "lights": 1,
-          "props": 32,
+          "props": 26,
           "roads": 11
         },
         "rect": {
@@ -428,7 +428,7 @@ export const LEVEL_16 = {
         "id": "4_3",
         "objects": {
           "buildings": 30,
-          "props": 21,
+          "props": 23,
           "roads": 16
         },
         "rect": {
@@ -444,7 +444,7 @@ export const LEVEL_16 = {
         "objects": {
           "buildings": 19,
           "lights": 1,
-          "props": 21,
+          "props": 19,
           "roads": 72
         },
         "rect": {
@@ -8271,94 +8271,6 @@ export const LEVEL_16 = {
         {
           "blend": 5,
           "crossLevel": true,
-          "id": "tr_acc_1_7_2",
-          "points": [
-            {
-              "x": -179.43,
-              "y": 7.07,
-              "z": -144
-            },
-            {
-              "x": -179.43,
-              "y": 8.93,
-              "z": -132
-            },
-            {
-              "x": -179.43,
-              "y": 10.9,
-              "z": -120
-            },
-            {
-              "x": -179.43,
-              "y": 12.76,
-              "z": -108
-            },
-            {
-              "x": -179.43,
-              "y": 14.43,
-              "z": -96
-            },
-            {
-              "x": -179.43,
-              "y": 15.83,
-              "z": -84
-            },
-            {
-              "x": -179.43,
-              "y": 16.89,
-              "z": -72
-            }
-          ],
-          "shoulder": 1,
-          "width": 8
-        },
-        {
-          "blend": 5,
-          "crossLevel": true,
-          "id": "tr_acc_1_9",
-          "points": [
-            {
-              "x": -179.43,
-              "y": 16.89,
-              "z": -72
-            },
-            {
-              "x": -191.43,
-              "y": 17.61,
-              "z": -72
-            },
-            {
-              "x": -203.43,
-              "y": 18.41,
-              "z": -72
-            },
-            {
-              "x": -215.43,
-              "y": 19.01,
-              "z": -72
-            },
-            {
-              "x": -227.43,
-              "y": 19.13,
-              "z": -72
-            },
-            {
-              "x": -239.43,
-              "y": 18.76,
-              "z": -72
-            },
-            {
-              "x": -251.43,
-              "y": 17.92,
-              "z": -72
-            }
-          ],
-          "shoulder": 1,
-          "width": 8
-        },
-        {
-          "blend": 5,
-          "crossLevel": true,
           "id": "tr_acc_1_9_2",
           "points": [
             {
@@ -8760,7 +8672,7 @@ export const LEVEL_16 = {
             {
               "x": -100,
               "y": 0,
-              "z": -500
+              "z": -493.787
             },
             {
               "x": -100,
@@ -8834,14 +8746,14 @@ export const LEVEL_16 = {
           "id": "road_179_a",
           "points": [
             {
-              "x": -100,
+              "x": -174.393,
               "y": 0,
-              "z": -500
+              "z": -574.393
             },
             {
-              "x": -146.067,
+              "x": -146.068,
               "y": 0,
-              "z": -546.067
+              "z": -546.068
             }
           ],
           "shoulder": 1,
@@ -8853,14 +8765,14 @@ export const LEVEL_16 = {
           "id": "road_179_b",
           "points": [
             {
-              "x": -146.067,
+              "x": -146.068,
               "y": 0,
-              "z": -546.067
+              "z": -546.068
             },
             {
-              "x": -200,
+              "x": -104.393,
               "y": 0,
-              "z": -600
+              "z": -504.393
             }
           ],
           "shoulder": 1,
@@ -8872,12 +8784,12 @@ export const LEVEL_16 = {
           "id": "road_180",
           "points": [
             {
-              "x": -100,
+              "x": -163.787,
               "y": 0,
               "z": -600
             },
             {
-              "x": -200,
+              "x": -132.54,
               "y": 0,
               "z": -600
             }
@@ -8891,14 +8803,14 @@ export const LEVEL_16 = {
           "id": "road_181_a",
           "points": [
             {
-              "x": -100,
+              "x": -264,
               "y": 0,
-              "z": -600
+              "z": -408
             },
             {
-              "x": -146.067,
+              "x": -146.068,
               "y": 0,
-              "z": -546.067
+              "z": -546.068
             }
           ],
           "shoulder": 1,
@@ -8910,14 +8822,191 @@ export const LEVEL_16 = {
           "id": "road_181_b",
           "points": [
             {
-              "x": -146.067,
+              "x": -146.068,
               "y": 0,
-              "z": -546.067
+              "z": -546.068
             },
             {
-              "x": -264,
+              "x": -121.134,
               "y": 0,
-              "z": -408
+              "z": -575.258
+            }
+          ],
+          "shoulder": 1,
+          "width": 8
+        },
+        {
+          "blend": 5,
+          "crossLevel": true,
+          "id": "arc_182",
+          "points": [
+            {
+              "x": -121.134,
+              "y": 0,
+              "z": -575.258
+            },
+            {
+              "x": -119.375,
+              "y": 0,
+              "z": -577.811
+            },
+            {
+              "x": -118.178,
+              "y": 0,
+              "z": -580.671
+            },
+            {
+              "x": -117.595,
+              "y": 0,
+              "z": -583.716
+            },
+            {
+              "x": -117.65,
+              "y": 0,
+              "z": -586.816
+            },
+            {
+              "x": -118.342,
+              "y": 0,
+              "z": -589.838
+            },
+            {
+              "x": -119.64,
+              "y": 0,
+              "z": -592.654
+            },
+            {
+              "x": -121.489,
+              "y": 0,
+              "z": -595.143
+            },
+            {
+              "x": -123.81,
+              "y": 0,
+              "z": -597.198
+            },
+            {
+              "x": -126.504,
+              "y": 0,
+              "z": -598.732
+            },
+            {
+              "x": -129.456,
+              "y": 0,
+              "z": -599.68
+            },
+            {
+              "x": -132.54,
+              "y": 0,
+              "z": -600
+            }
+          ],
+          "shoulder": 1,
+          "width": 8
+        },
+        {
+          "blend": 5,
+          "crossLevel": true,
+          "id": "arc_183",
+          "points": [
+            {
+              "x": -174.393,
+              "y": 0,
+              "z": -574.393
+            },
+            {
+              "x": -176.258,
+              "y": 0,
+              "z": -576.666
+            },
+            {
+              "x": -177.644,
+              "y": 0,
+              "z": -579.26
+            },
+            {
+              "x": -178.498,
+              "y": 0,
+              "z": -582.073
+            },
+            {
+              "x": -178.786,
+              "y": 0,
+              "z": -585
+            },
+            {
+              "x": -178.498,
+              "y": 0,
+              "z": -587.926
+            },
+            {
+              "x": -177.644,
+              "y": 0,
+              "z": -590.74
+            },
+            {
+              "x": -176.258,
+              "y": 0,
+              "z": -593.333
+            },
+            {
+              "x": -174.393,
+              "y": 0,
+              "z": -595.606
+            },
+            {
+              "x": -172.12,
+              "y": 0,
+              "z": -597.472
+            },
+            {
+              "x": -169.527,
+              "y": 0,
+              "z": -598.858
+            },
+            {
+              "x": -166.713,
+              "y": 0,
+              "z": -599.712
+            },
+            {
+              "x": -163.787,
+              "y": 0,
+              "z": -600
+            }
+          ],
+          "shoulder": 1,
+          "width": 8
+        },
+        {
+          "blend": 5,
+          "crossLevel": true,
+          "id": "arc_184",
+          "points": [
+            {
+              "x": -104.393,
+              "y": 0,
+              "z": -504.393
+            },
+            {
+              "x": -102.528,
+              "y": 0,
+              "z": -502.12
+            },
+            {
+              "x": -101.142,
+              "y": 0,
+              "z": -499.527
+            },
+            {
+              "x": -100.288,
+              "y": 0,
+              "z": -496.713
+            },
+            {
+              "x": -100,
+              "y": 0,
+              "z": -493.787
             }
           ],
           "shoulder": 1,
