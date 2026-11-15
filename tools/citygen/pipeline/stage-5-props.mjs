@@ -254,6 +254,30 @@ function generateProps(ctx, stageId, cfg) {
   };
 
   const lakes = Array.isArray(ctx.masks?.easement?.lakes) ? ctx.masks.easement.lakes : (ctx.hydrology?.lakes ?? []);
+  const floodplainMasks = Array.isArray(ctx.masks?.terrain?.floodplains) ? ctx.masks.terrain.floodplains
+    : (Array.isArray(ctx.terrain?.analysis?.floodplains) ? ctx.terrain.analysis.floodplains : []);
+  const inExplicitFloodplainMask = (x, z) => {
+    for (const fp of floodplainMasks) {
+      if (!fp) continue;
+      if (fp.type === 'lake' && Array.isArray(fp.center) && Number.isFinite(Number(fp.radius))) {
+        const margin = Number.isFinite(Number(fp.floodplain)) ? Number(fp.floodplain) : 0;
+        if (Math.hypot(x - Number(fp.center[0]), z - Number(fp.center[1])) < (Number(fp.radius) + Math.max(margin, 8))) return true;
+        continue;
+      }
+      if (fp.type === 'river' && Array.isArray(fp.path) && fp.path.length >= 2) {
+        const margin = Number.isFinite(Number(fp.floodplain)) ? Number(fp.floodplain)
+          : Math.max((Number(fp.width) || 0) * 0.5 + 12, (Number(fp.width) || 0) * 3);
+        let best = Infinity;
+        for (let i = 0; i + 1 < fp.path.length; i++) {
+          const a = fp.path[i], b = fp.path[i + 1];
+          best = Math.min(best, pointSegDistXZ(x, z, a[0], a[2], b[0], b[2]));
+        }
+        if (best < margin) return true;
+      }
+    }
+    return false;
+  };
+
   const tooCloseToLake = (x, z) => {
     for (const lk of lakes) {
       const c = lk?.center;
@@ -316,6 +340,7 @@ function generateProps(ctx, stageId, cfg) {
     }
     if (tooCloseToRiver(x, z)) return true;
     if (tooCloseToLake(x, z)) return true;
+    if (inExplicitFloodplainMask(x, z)) return true;
     if (terrainTooSteep(x, z)) return true;
     if (nearReservedMask(x, z)) return true;
     if (anchors.some(a => distXZ(x, z, a.x, a.z) < 8)) return true;
