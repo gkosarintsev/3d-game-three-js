@@ -424,7 +424,11 @@ function generateLandscape(ctx) {
   const riverCfg = ls.river || {};
   const rivers = [];
   if (riverCfg.enabled === true) {
-    const width = clamp(Number.isFinite(riverCfg.width) ? riverCfg.width : 24, 4, 120);
+    const profileId = ctx.meta?.activeCityProfileId ?? null;
+    // R1.1/R1.4: lightweight profile-driven river character (explicit config wins).
+    let width = clamp(Number.isFinite(riverCfg.width) ? riverCfg.width : 24, 4, 120);
+    if (!Number.isFinite(Number(riverCfg.width)) && profileId === 'railway_industrial') width = clamp(width * 0.85, 4, 120);
+    if (!Number.isFinite(Number(riverCfg.width)) && profileId === 'river_trade') width = clamp(width * 1.05, 4, 120);
     const depth = clamp(Number.isFinite(riverCfg.depth) ? riverCfg.depth : 4, 0.5, 30);
     const margin = half * 0.9;
     const axis = riverCfg.axis === 'x' ? 'x' : 'z';
@@ -466,7 +470,9 @@ function generateLandscape(ctx) {
         }
         lat = best.nlat;
         points.push([Math.round(best.x * 10) / 10, Math.round(best.y * 1000) / 1000, Math.round(best.z * 10) / 10]);
-        const w = Math.round(width * lerp(0.7, 1.3, t) * 1000) / 1000;
+        const lo = profileId === 'river_trade' ? 0.8 : 0.7;
+        const hi = profileId === 'river_trade' ? 1.35 : 1.3;
+        const w = Math.round(width * lerp(lo, hi, t) * 1000) / 1000;
         widthProfile.push([+t.toFixed(4), w]);
       }
       const river = { id: 'river_1', path: points, width, depth, carveTerrain: riverCfg.carveTerrain !== false };
@@ -475,27 +481,30 @@ function generateLandscape(ctx) {
     } else {
       // Simple deterministic meandering river roughly across the map (west->east or north->south)
       // R1.4: optional meander/widthProfile params (backward-compatible defaults keep prior shape family)
-      const meander = riverCfg.meander === true;
-      const baseAmp = Math.min(half * 0.35, Number.isFinite(riverCfg.amplitude) ? riverCfg.amplitude : half * 0.2);
+      const profileId = ctx.meta?.activeCityProfileId ?? null;
+      const meander = riverCfg.meander === true || (riverCfg.meander == null && profileId === 'river_trade');
+      const baseAmp = Math.min(half * 0.35, Number.isFinite(riverCfg.amplitude) ? riverCfg.amplitude : (profileId === 'river_trade' ? half * 0.24 : half * 0.2));
       const amp = meander ? clamp(baseAmp, width * 3, width * 6) : baseAmp;
       const base = lerp(-amp, amp, rng());
       const widthProfile = [];
       for (let i = 0; i < steps; i++) {
         const t = steps === 1 ? 0.5 : i / (steps - 1);
         const along = lerp(-margin, margin, t);
-        const phase = t * Math.PI * (meander ? 2.5 : 2) + rng() * 0.5;
+        const phase = t * Math.PI * (meander ? (profileId === 'river_trade' ? 2.8 : 2.5) : 2) + rng() * 0.5;
         const wiggle = base + Math.sin(phase) * amp * 0.5 + (meander ? Math.sin(phase * 0.5) * amp * 0.15 : 0);
         const x = axis === 'z' ? wiggle : along;
         const z = axis === 'z' ? along : wiggle;
         // sample terrain height for a more grounded path when modifiers exist
         const y = Math.round(terrainHeightAt(x, z, baseY0, ctx.terrain.modifiers) * 1000) / 1000;
         points.push([Math.round(x * 10) / 10, y, Math.round(z * 10) / 10]);
-        if (meander) {
-          const w = Math.round(width * lerp(0.6, 1.4, t) * 1000) / 1000;
+        if (meander || profileId === 'river_trade') {
+          const lo = profileId === 'river_trade' ? 0.8 : 0.6;
+          const hi = profileId === 'river_trade' ? 1.35 : 1.4;
+          const w = Math.round(width * lerp(lo, hi, t) * 1000) / 1000;
           widthProfile.push([+t.toFixed(4), w]);
         }
       }
-      const river = { id: 'river_1', path: points, width, depth, carveTerrain: riverCfg.carveTerrain !== false };
+      const river = { id: 'river_1', path: points, width, depth, carveTerrain: riverCfg.carveTerrain !== false, meander: meander || undefined };
       if (widthProfile.length >= 2) river.widthProfile = widthProfile;
       rivers.push(river);
     }

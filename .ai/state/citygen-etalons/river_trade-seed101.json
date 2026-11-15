@@ -2,7 +2,7 @@
   "profile": "river_trade",
   "seed": 101,
   "generatorVersion": "0.1.0",
-  "reportHash": "3b808e478193abd85a7a43e42791cb759cdf568e7c1e452c9f431beaf43df161",
+  "reportHash": "e025da50c83ca3ec54bf69bff608d617a421ade4b8c9df92c707d1ae2fafa1c2",
   "summary": {
     "errors": 0,
     "warnings": 8,
@@ -21,7 +21,7 @@
       "roadNodes": 0,
       "districts": 16,
       "parcels": 2378,
-      "reservedParcels": 114,
+      "reservedParcels": 116,
       "buildings": 403,
       "enterableBuildings": 0,
       "props": 360,
@@ -87,7 +87,7 @@
       }
     },
     "parcels": {
-      "reservedShare": 0.047939,
+      "reservedShare": 0.04878,
       "byDistrictCount": {
         "district_0_0": 121,
         "district_1_0": 121,
