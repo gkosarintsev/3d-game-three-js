@@ -26,15 +26,31 @@ export class DraftPreview {
     this.renderer = new THREE.WebGLRenderer({ canvas, antialias: true });
     this.renderer.setClearColor(0x0d1117, 1);
     this.scene = new THREE.Scene();
-    this.group = new THREE.Group();
+    this.layers = {};
+    for (const key of ['roads', 'rails', 'nodes', 'buildings', 'props', 'lights']) {
+      this.layers[key] = new THREE.Group();
+      this.layers[key].name = key;
+      this.scene.add(this.layers[key]);
+    }
+    this.layerState = { roads: true, rails: true, nodes: true, buildings: true, props: true, lights: false };
     this.grid = new THREE.Group();
-    this.scene.add(this.group, this.grid);
+    this.scene.add(this.grid);
     this.pickables = [];
     this.selectedId = null;
     this.buildGrid();
   }
 
   setSize(w, h) { this.renderer.setSize(w, h, false); }
+
+  applyLayerState() {
+    for (const [key, visible] of Object.entries(this.layerState)) this.layers[key].visible = !!visible;
+  }
+
+  setLayerVisible(key, visible) {
+    if (!this.layers[key]) return;
+    this.layerState[key] = !!visible;
+    this.layers[key].visible = !!visible;
+  }
 
   buildGrid() {
     const size = this.modelMeta?.meta?.plate?.size || 2560;
@@ -55,9 +71,11 @@ export class DraftPreview {
   }
 
   clear() {
-    for (const obj of [...this.group.children]) {
-      this.disposeObject(obj);
-      this.group.remove(obj);
+    for (const group of Object.values(this.layers)) {
+      for (const obj of [...group.children]) {
+        this.disposeObject(obj);
+        group.remove(obj);
+      }
     }
     this.pickables = [];
   }
@@ -78,8 +96,18 @@ export class DraftPreview {
     this.clear();
     const roads = draft?.cityforge?.networks?.roads || { nodes: [], segments: [] };
     for (const n of roads.nodes || []) this.addNode(n);
-    for (const s of roads.segments || []) for (const [elementIndex, el] of (s.elements || []).entries()) this.addElement(s, elementIndex, el);
+    for (const s of roads.segments || []) {
+      const els = s.elements || [];
+      if (els.length) {
+        for (const [elementIndex, el] of els.entries()) this.addElement(s, elementIndex, el);
+      } else if (Array.isArray(s.path) && s.path.length >= 2) {
+        this.addPathRoad(s);
+      }
+    }
     for (const b of draft?.buildings || []) this.addBuilding(b);
+    for (const o of draft?.landscapeObjects || draft?.props || []) this.addProp(o);
+    for (const l of draft?.lights || []) this.addLight(l);
+    this.applyLayerState();
     this.applySelection();
   }
 
@@ -91,7 +119,7 @@ export class DraftPreview {
     const mesh = new THREE.Mesh(g, m);
     mesh.position.set(x, y + 1.1, z);
     mesh.userData.entityRef = { kind: 'element-end', segmentId: segment.id, elementIndex, end };
-    this.group.add(mesh); this.pickables.push(mesh);
+    this.layers.roads.add(mesh); this.pickables.push(mesh);
   }
 
   baseMaterial(layer, selected = false, opacity = 0.5) {
@@ -115,14 +143,50 @@ export class DraftPreview {
     const mesh = new THREE.Mesh(g, m);
     mesh.position.set(cx, gy + h / 2, cz);
     mesh.userData.noPick = true; // здания пока только фон; дороги редактируются поверх них
-    this.group.add(mesh);
+    this.layers.buildings.add(mesh);
     // контур
     const pts = fp.map(p => new THREE.Vector3(p.x, gy + h + 0.03, p.z));
     pts.push(pts[0].clone());
     const lg = new THREE.BufferGeometry().setFromPoints(pts);
     const lines = new THREE.Line(lg, new THREE.LineBasicMaterial({ color: 0x9fb2c8, transparent: true, opacity: 0.9 }));
     lines.userData.noPick = true;
-    this.group.add(lines);
+    this.layers.buildings.add(lines);
+  }
+
+  addProp(p) {
+    const pos = p?.position ?? p?.pos; if (!pos) return;
+    const scale = p?.scale ?? { x: 1, y: 1, z: 1 };
+    const model = String(p?.model ?? p?.source ?? 'prop').toLowerCase();
+    const color = model.includes('tree') ? 0x3f7f45
+      : model.includes('lamp') ? 0xffd166
+      : model.includes('barrier') ? 0x9aa3ad
+      : model.includes('container') ? 0xff9f43
+      : model.includes('tank') ? 0x6baed6
+      : model.includes('antenna') ? 0xff4d4d
+      : model.includes('vent') ? 0x8a9199
+      : model.includes('bench') ? 0xa8794b
+      : 0x7a8697;
+    const sx = Math.max(0.2, Number(scale.x) || 1), sy = Math.max(0.2, Number(scale.y) || 1), sz = Math.max(0.2, Number(scale.z) || 1);
+    const h = model.includes('tree') ? 5 * sy : 1.4 * sy;
+    const w = model.includes('tree') ? 2.4 * sx : 1.6 * sx;
+    const d = model.includes('tree') ? 2.4 * sz : 1.6 * sz;
+    const g = new THREE.BoxGeometry(w, h, d);
+    const m = new THREE.MeshBasicMaterial({ color, transparent: true, opacity: 0.85, depthWrite: false });
+    const mesh = new THREE.Mesh(g, m);
+    mesh.position.set(Number(pos.x) || 0, (Number(pos.y) || 0) + h / 2, Number(pos.z) || 0);
+    mesh.rotation.y = ((Number(p?.rotation?.y ?? p?.rotationY ?? 0) || 0) * Math.PI) / 180;
+    mesh.userData.noPick = true;
+    this.layers.props.add(mesh);
+  }
+
+  addLight(l) {
+    const pos = l?.position ?? l?.pos; if (!pos) return;
+    const g = new THREE.SphereGeometry(1.6, 10, 8);
+    const m = new THREE.MeshBasicMaterial({ color: 0xffe082 });
+    const mesh = new THREE.Mesh(g, m);
+    mesh.position.set(Number(pos.x) || 0, Number(pos.y ?? pos.height ?? 0) || 0, Number(pos.z) || 0);
+    mesh.userData.noPick = true;
+    this.layers.lights.add(mesh);
   }
 
   addNode(n) {
@@ -134,7 +198,27 @@ export class DraftPreview {
     mesh.position.set(p.x, p.y + 0.8, p.z);
     mesh.userData.entityRef = { kind: 'node', id: String(n.id), x: p.x, y: p.y, z: p.z };
     this.pickables.push(mesh);
-    this.group.add(mesh);
+    this.layers.nodes.add(mesh);
+  }
+
+  addPathRoad(segment) {
+    const path = segment.path || [];
+    const layer = segment.layer || 'ground';
+    const width = Number(segment.width ?? segment.lanes?.[0]?.width ?? 8) || 8;
+    const rails = !!segment.rails;
+    for (let i = 0; i + 1 < path.length; i++) {
+      const [ax, ay, az] = path[i], [bx, by, bz] = path[i + 1];
+      const dx = bx - ax, dz = bz - az, len = Math.hypot(dx, dz);
+      if (len < 0.2) continue;
+      const yaw = Math.atan2(dz, dx) * 180 / Math.PI;
+      const plate = { x: (ax + bx) / 2, z: (az + bz) / 2, yaw, length: len, width, y: ay, rise: by - ay };
+      const [a, b] = this.taperGeom(plate);
+      const geom = this.prismGeometry(a, b, 0.75);
+      const mesh = new THREE.Mesh(geom, this.baseMaterial(layer, false, 0.5));
+      mesh.userData.entityRef = { kind: 'segment', segmentId: segment.id };
+      this.layers.roads.add(mesh); this.pickables.push(mesh);
+      this.addRayLines([a, b], layer, false, rails, a, b);
+    }
   }
 
   addElement(segment, elementIndex, el) {
@@ -198,7 +282,7 @@ export class DraftPreview {
     const geom = this.prismGeometry(a, b, 0.75);
     const mesh = new THREE.Mesh(geom, this.baseMaterial(layer, selected, selected ? 0.85 : 0.5));
     mesh.userData.entityRef = { kind: 'element', segmentId: segment.id, elementIndex, id: `${segment.id}:${elementIndex}` };
-    this.group.add(mesh); this.pickables.push(mesh);
+    this.layers.roads.add(mesh); this.pickables.push(mesh);
     this.addEndpointHandle(segment, elementIndex, 0, a.px, a.py, a.pz);
     this.addEndpointHandle(segment, elementIndex, 1, b.px, b.py, b.pz);
     this.addRayLines([a, b], layer, selected, plate.rails, a, b);
@@ -235,7 +319,7 @@ export class DraftPreview {
     g.computeVertexNormals();
     const mesh = new THREE.Mesh(g, this.baseMaterial(layer, selected, selected ? 0.85 : 0.5));
     mesh.userData.entityRef = { kind: 'element', segmentId: segment.id, elementIndex, id: `${segment.id}:${elementIndex}` };
-    this.group.add(mesh); this.pickables.push(mesh);
+    this.layers.roads.add(mesh); this.pickables.push(mesh);
     // осевые линии бортов
     const yA = Array.isArray(arc.y) ? Number(arc.y[0]) || 0 : Number(arc.y) || 0;
     const yB = Array.isArray(arc.y) ? Number(arc.y[1]) || 0 : Number(arc.y) || 0;
@@ -244,7 +328,7 @@ export class DraftPreview {
     const mkLine = (arr, color, opacity) => {
       const gg = new THREE.BufferGeometry().setFromPoints(arr.map(([x, y, z]) => new THREE.Vector3(x, y + 0.12, z)));
       const ll = new THREE.Line(gg, new THREE.LineBasicMaterial({ color, transparent: true, opacity }));
-      ll.userData.noPick = true; this.group.add(ll);
+      ll.userData.noPick = true; this.layers.rails.add(ll);
     };
     mkLine(ptsIn, selected ? SELECTED : RAIL, 0.95); mkLine(ptsOut, selected ? SELECTED : RAIL, 0.95);
     mkLine(linePts, colorForLayer(layer), 0.45);
@@ -254,16 +338,16 @@ export class DraftPreview {
     const color = selected ? SELECTED : colorForLayer(layer);
     const yaw = Math.atan2(pb.pz - pa.pz, pb.px - pa.px);
     const sx = -Math.sin(yaw), sz = Math.cos(yaw);
-    const line = (offset, color, opacity) => {
+    const line = (offset, color, opacity, target = 'rails') => {
       const s = new THREE.Vector3(pa.px + sx * offset, pa.py + 0.12, pa.pz + sz * offset);
       const e = new THREE.Vector3(pb.px + sx * offset, pb.py + 0.12, pb.pz + sz * offset);
       const g = new THREE.BufferGeometry().setFromPoints([s, e]);
       const l = new THREE.Line(g, new THREE.LineBasicMaterial({ color, transparent: true, opacity }));
-      l.userData.noPick = true; this.group.add(l);
+      l.userData.noPick = true; this.layers[target].add(l);
     };
     line(-a.w / 2, selected ? SELECTED : RAIL, rails ? 0.95 : 0.25);
     line(a.w / 2, selected ? SELECTED : RAIL, rails ? 0.95 : 0.25);
-    line(0, color, 0.4);
+    line(0, color, 0.4, 'roads');
   }
 
   setGridVisible(v) { this.grid.visible = !!v; }

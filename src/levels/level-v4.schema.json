@@ -682,6 +682,219 @@
       },
       "description": "дома"
     },
+    "landscapeObjects": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "id"
+          },
+          "model": {
+            "type": "string",
+            "enum": [
+              "concrete_pillar",
+              "lamp_post",
+              "tree",
+              "bench",
+              "bollard",
+              "vent",
+              "ac_unit",
+              "antenna",
+              "water_tank",
+              "wire_spool",
+              "barrier",
+              "container",
+              "market_stall",
+              "av_pad"
+            ],
+            "description": "модель"
+          },
+          "position": {
+            "type": "object",
+            "properties": {
+              "x": {
+                "type": "number",
+                "description": "м: мировая координата X"
+              },
+              "y": {
+                "type": "number",
+                "description": "м: мировая отметка"
+              },
+              "z": {
+                "type": "number",
+                "description": "м: мировая координата Z"
+              }
+            },
+            "required": [
+              "x",
+              "y",
+              "z"
+            ],
+            "additionalProperties": false,
+            "description": "точка в мире (метры)"
+          },
+          "rotation": {
+            "type": "object",
+            "properties": {
+              "x": {
+                "type": "number",
+                "default": 0
+              },
+              "y": {
+                "type": "number",
+                "default": 0
+              },
+              "z": {
+                "type": "number",
+                "default": 0
+              }
+            },
+            "additionalProperties": false,
+            "description": "град"
+          },
+          "scale": {
+            "type": "object",
+            "properties": {
+              "x": {
+                "type": "number",
+                "minimum": 0.05,
+                "default": 1
+              },
+              "y": {
+                "type": "number",
+                "minimum": 0.05,
+                "default": 1
+              },
+              "z": {
+                "type": "number",
+                "minimum": 0.05,
+                "default": 1
+              }
+            },
+            "additionalProperties": false,
+            "description": "масштаб"
+          }
+        },
+        "required": [
+          "id",
+          "model"
+        ],
+        "additionalProperties": false,
+        "description": "объект ландшафта"
+      },
+      "description": "ландшафтные объекты"
+    },
+    "lights": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "id"
+          },
+          "type": {
+            "type": "string",
+            "enum": [
+              "point",
+              "spot",
+              "directional"
+            ],
+            "description": "тип"
+          },
+          "position": {
+            "type": "object",
+            "properties": {
+              "x": {
+                "type": "number",
+                "description": "м: мировая координата X"
+              },
+              "y": {
+                "type": "number",
+                "description": "м: мировая отметка"
+              },
+              "z": {
+                "type": "number",
+                "description": "м: мировая координата Z"
+              }
+            },
+            "required": [
+              "x",
+              "y",
+              "z"
+            ],
+            "additionalProperties": false,
+            "description": "точка в мире (метры)"
+          },
+          "target": {
+            "type": "object",
+            "properties": {
+              "x": {
+                "type": "number",
+                "description": "м: мировая координата X"
+              },
+              "y": {
+                "type": "number",
+                "description": "м: мировая отметка"
+              },
+              "z": {
+                "type": "number",
+                "description": "м: мировая координата Z"
+              }
+            },
+            "required": [
+              "x",
+              "y",
+              "z"
+            ],
+            "additionalProperties": false,
+            "description": "точка в мире (метры)"
+          },
+          "color": {
+            "oneOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "string",
+                "pattern": "^#[0-9a-fA-F]{6}$"
+              }
+            ],
+            "description": "цвет",
+            "default": 16764826
+          },
+          "intensity": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 400,
+            "description": "яркость",
+            "default": 60
+          },
+          "distance": {
+            "type": "number",
+            "minimum": 0,
+            "description": "м",
+            "default": 60
+          },
+          "angle": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 1.57,
+            "description": "рад (spot)",
+            "default": 0.7
+          }
+        },
+        "required": [
+          "id",
+          "type"
+        ],
+        "additionalProperties": false,
+        "description": "источник света"
+      },
+      "description": "источники света"
+    },
     "cityforge": {
       "$ref": "./level-common.schema.json#/definitions/cityforge"
     },

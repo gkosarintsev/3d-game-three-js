@@ -173,13 +173,14 @@ export function generateCatalog(raw, sourceName, opts = {}) {
   // который видят инструменты/тесты в памяти, он есть целиком.
   const indexMapLite = { ...split.indexMap, catalog: `/${dir}` };
   const indexMapFull = { ...indexMapLite, skeleton: skeletonData };
+  const sourceNameOut = String(sourceName).replace(/\\/g, '/');
   const levelLite = { name: level.name, hint: level.hint, map: indexMapLite, sky: level.sky, gameplay: level.gameplay };
   const bodyLite = stringifyStable(levelLite).replace(/\n$/, '');
   const indexCode = `/**
  * СГЕНЕРИРОВАННО — руками не править.
  *
- * Источник правки: ${sourceName}. После его изменения запуск
- * \`node tools/build-level.mjs ${sourceName}\` перезаписывает этот файл и все
+ * Источник правки: ${sourceNameOut}. После его изменения запуск
+ * \`node tools/build-level.mjs ${sourceNameOut}\` перезаписывает этот файл и все
  * бинарные файлы каталога побайтово одинаково (ГПСЧ в разрезке нет, ключи и
  * объекты отсортированы).
  *
@@ -320,7 +321,38 @@ export function expandCityforgeSource(raw, sourceName) {
       throw new ValidationError([String(e?.message ?? e)], v3w);
     }
   }
+  if (isV4) source = canonicalizeExpandedSource(source);
   return { source, warnings: v3w, report };
+}
+
+/**
+ * Внутренние служебные поля и ярусы citygen не являются частью исходного
+ * брифа; приводим развёрнутый источник к схеме, сохраняя геометрию/радиусы.
+ */
+function canonicalizeExpandedSource(src) {
+  const out = structuredClone(src ?? {});
+  const roads = out?.cityforge?.networks?.roads;
+  const mapLayer = v => {
+    const s = String(v ?? '').trim();
+    if (/^elevated(_[0-9]+)?$/.test(s)) return 'bridge_02';
+    return v;
+  };
+  for (const n of roads?.nodes ?? []) if (n && n.layer) n.layer = mapLayer(n.layer);
+  for (const s of roads?.segments ?? []) {
+    if (!s) continue;
+    if (s.layer) s.layer = mapLayer(s.layer);
+    delete s.bridge;
+    delete s.interchange;
+  }
+  // Развёрнутый источник — явное статическое содержимое: дальнейшие проходы
+  // генератора не должны ничего добавлять/повторно чинить.
+  if (out.generator) {
+    for (const section of ['landscape', 'transport', 'districtsGen', 'buildings', 'infrastructure']) {
+      const v = out.generator[section];
+      if (v && typeof v === 'object') out.generator[section] = { ...v, generate: false, enabled: false };
+    }
+  }
+  return out;
 }
 
 /**

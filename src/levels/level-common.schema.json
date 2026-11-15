@@ -1206,6 +1206,16 @@
           "type": "number",
           "minimum": 0
         },
+        "filletRadius": {
+          "type": "number",
+          "minimum": 0,
+          "description": "м: автоскругление path-дороги при нормализации"
+        },
+        "fillet": {
+          "type": "number",
+          "minimum": 0,
+          "description": "м: псевдоним filletRadius"
+        },
         "sidewalk": {
           "type": "boolean",
           "default": false

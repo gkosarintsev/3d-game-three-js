@@ -480,14 +480,15 @@ export function makeStage5() {
     },
     repair(_ctx) {},
     emit(ctx) {
-      if (ctx.infrastructure?.lights?.length) {
-        ctx.input.lights = Array.isArray(ctx.input.lights) ? ctx.input.lights.concat(ctx.infrastructure.lights) : ctx.infrastructure.lights;
+      // ctx.infrastructure несёт полный актуальный список (passthrough или новые),
+      // поэтому не конкатенируем его с ctx.input — иначе знание об уже задекларированных
+      // объектах задосит их вторым экземпляром.
+      if (Array.isArray(ctx.infrastructure?.lights) && ctx.infrastructure.lights.length) {
+        ctx.input.lights = ctx.infrastructure.lights;
       }
-      if (ctx.infrastructure?.props?.length) {
+      if (Array.isArray(ctx.infrastructure?.props) && ctx.infrastructure.props.length) {
         // v2/open schema accepts landscapeObjects; normalizeLevel converts them to props.
-        ctx.input.landscapeObjects = Array.isArray(ctx.input.landscapeObjects)
-          ? ctx.input.landscapeObjects.concat(ctx.infrastructure.props)
-          : ctx.infrastructure.props;
+        ctx.input.landscapeObjects = ctx.infrastructure.props;
       }
       ctx.engine = ctx.input;
     },

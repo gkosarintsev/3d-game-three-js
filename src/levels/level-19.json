@@ -1069,18 +1069,214 @@
               -336.963
             ],
             "layer": "ground"
+          },
+          {
+            "id": "tr_x",
+            "position": [
+              -400,
+              0,
+              -12
+            ],
+            "layer": "ground"
+          },
+          {
+            "id": "tr_x_2",
+            "position": [
+              -12,
+              10,
+              -12
+            ],
+            "layer": "ground"
+          },
+          {
+            "id": "tr_x_3",
+            "position": [
+              12,
+              8.91891891891892,
+              -12
+            ],
+            "layer": "ground"
+          },
+          {
+            "id": "tr_x_4",
+            "position": [
+              400,
+              0,
+              -12
+            ],
+            "layer": "ground"
+          },
+          {
+            "id": "tr_x_5",
+            "position": [
+              400,
+              0.9320388349514563,
+              12
+            ],
+            "layer": "ground"
+          },
+          {
+            "id": "tr_x_6",
+            "position": [
+              -12,
+              10,
+              12
+            ],
+            "layer": "ground"
+          },
+          {
+            "id": "tr_x_7",
+            "position": [
+              12,
+              8.91891891891892,
+              12
+            ],
+            "layer": "ground"
+          },
+          {
+            "id": "tr_x_8",
+            "position": [
+              -400,
+              1.1650485436893199,
+              12
+            ],
+            "layer": "ground"
+          },
+          {
+            "id": "tr_x_9",
+            "position": [
+              -12,
+              0,
+              -400
+            ],
+            "layer": "ground"
+          },
+          {
+            "id": "tr_x_10",
+            "position": [
+              -12,
+              10,
+              42.62068965517241
+            ],
+            "layer": "ground"
+          },
+          {
+            "id": "tr_x_11",
+            "position": [
+              -12,
+              0,
+              186
+            ],
+            "layer": "ground"
+          },
+          {
+            "id": "tr_x_12",
+            "position": [
+              -12,
+              0,
+              400
+            ],
+            "layer": "ground"
+          },
+          {
+            "id": "tr_x_13",
+            "position": [
+              12,
+              0,
+              400
+            ],
+            "layer": "ground"
+          },
+          {
+            "id": "tr_x_14",
+            "position": [
+              12,
+              9.69588463236376,
+              39.310344827586206
+            ],
+            "layer": "ground"
+          },
+          {
+            "id": "tr_x_15",
+            "position": [
+              12,
+              0,
+              -234
+            ],
+            "layer": "ground"
+          },
+          {
+            "id": "tr_x_16",
+            "position": [
+              12,
+              0.9320388349514563,
+              -400
+            ],
+            "layer": "ground"
+          },
+          {
+            "id": "tr_x_17",
+            "position": [
+              -310,
+              16,
+              -310
+            ],
+            "layer": "ground"
+          },
+          {
+            "id": "tr_x_18",
+            "position": [
+              310,
+              18,
+              310
+            ],
+            "layer": "ground"
           }
         ],
         "segments": [
           {
-            "id": "eb_2",
+            "id": "eb_2_a",
             "from": "eb_m450",
-            "to": "eb_m350",
+            "to": "tr_x",
             "type": "highway",
             "layer": "ground",
             "path": [
               [
                 -450,
+                0,
+                -12
+              ],
+              [
+                -400,
+                0,
+                -12
+              ]
+            ],
+            "elements": [
+              {
+                "plate": {
+                  "rails": true,
+                  "x": -400,
+                  "z": -12,
+                  "yaw": 0,
+                  "length": 100,
+                  "width": 20,
+                  "y": 0,
+                  "rise": 0
+                }
+              }
+            ],
+            "lanes": []
+          },
+          {
+            "id": "eb_2_b",
+            "from": "tr_x",
+            "to": "eb_m350",
+            "type": "highway",
+            "layer": "ground",
+            "path": [
+              [
+                -400,
                 0,
                 -12
               ],
@@ -1175,15 +1371,83 @@
             "lanes": []
           },
           {
-            "id": "eb_5",
+            "id": "eb_5_a",
             "from": "eb_m210",
-            "to": "eb_p210",
+            "to": "tr_x_2",
             "type": "highway",
             "layer": "ground",
             "path": [
               [
                 -210,
                 0,
+                -12
+              ],
+              [
+                -12,
+                10,
+                -12
+              ]
+            ],
+            "elements": [
+              {
+                "plate": {
+                  "rails": true,
+                  "x": 0,
+                  "z": -12,
+                  "yaw": 0,
+                  "length": 420,
+                  "width": 20,
+                  "y": 0,
+                  "rise": 0
+                }
+              }
+            ],
+            "lanes": []
+          },
+          {
+            "id": "eb_5_b_a",
+            "from": "tr_x_2",
+            "to": "tr_x_3",
+            "type": "highway",
+            "layer": "ground",
+            "path": [
+              [
+                -12,
+                10,
+                -12
+              ],
+              [
+                12,
+                8.91891891891892,
+                -12
+              ]
+            ],
+            "elements": [
+              {
+                "plate": {
+                  "rails": true,
+                  "x": 0,
+                  "z": -12,
+                  "yaw": 0,
+                  "length": 420,
+                  "width": 20,
+                  "y": 0,
+                  "rise": 0
+                }
+              }
+            ],
+            "lanes": []
+          },
+          {
+            "id": "eb_5_b_b",
+            "from": "tr_x_3",
+            "to": "eb_p210",
+            "type": "highway",
+            "layer": "ground",
+            "path": [
+              [
+                12,
+                8.91891891891892,
                 -12
               ],
               [
@@ -1277,14 +1541,48 @@
             "lanes": []
           },
           {
-            "id": "eb_8",
+            "id": "eb_8_a",
             "from": "eb_p350",
-            "to": "eb_p450",
+            "to": "tr_x_4",
             "type": "highway",
             "layer": "ground",
             "path": [
               [
                 350,
+                0,
+                -12
+              ],
+              [
+                400,
+                0,
+                -12
+              ]
+            ],
+            "elements": [
+              {
+                "plate": {
+                  "rails": true,
+                  "x": 400,
+                  "z": -12,
+                  "yaw": 0,
+                  "length": 100,
+                  "width": 20,
+                  "y": 0,
+                  "rise": 0
+                }
+              }
+            ],
+            "lanes": []
+          },
+          {
+            "id": "eb_8_b",
+            "from": "tr_x_4",
+            "to": "eb_p450",
+            "type": "highway",
+            "layer": "ground",
+            "path": [
+              [
+                400,
                 0,
                 -12
               ],
@@ -1379,15 +1677,49 @@
             "lanes": []
           },
           {
-            "id": "wb_2",
+            "id": "wb_2_a",
             "from": "wb_p450",
-            "to": "wb_p350",
+            "to": "tr_x_5",
             "type": "highway",
             "layer": "ground",
             "path": [
               [
                 450,
                 0,
+                12
+              ],
+              [
+                400,
+                0.9320388349514563,
+                12
+              ]
+            ],
+            "elements": [
+              {
+                "plate": {
+                  "rails": true,
+                  "x": 400,
+                  "z": 12,
+                  "yaw": 180,
+                  "length": 100,
+                  "width": 20,
+                  "y": 0,
+                  "rise": 0
+                }
+              }
+            ],
+            "lanes": []
+          },
+          {
+            "id": "wb_2_b",
+            "from": "tr_x_5",
+            "to": "wb_p350",
+            "type": "highway",
+            "layer": "ground",
+            "path": [
+              [
+                400,
+                0.9320388349514563,
                 12
               ],
               [
@@ -1481,15 +1813,83 @@
             "lanes": []
           },
           {
-            "id": "wb_5",
+            "id": "wb_5_a_a",
             "from": "wb_p210",
-            "to": "wb_m210",
+            "to": "tr_x_7",
             "type": "highway",
             "layer": "ground",
             "path": [
               [
                 210,
                 0,
+                12
+              ],
+              [
+                12,
+                8.91891891891892,
+                12
+              ]
+            ],
+            "elements": [
+              {
+                "plate": {
+                  "rails": true,
+                  "x": 0,
+                  "z": 12,
+                  "yaw": 180,
+                  "length": 420,
+                  "width": 20,
+                  "y": 0,
+                  "rise": 0
+                }
+              }
+            ],
+            "lanes": []
+          },
+          {
+            "id": "wb_5_a_b",
+            "from": "tr_x_7",
+            "to": "tr_x_6",
+            "type": "highway",
+            "layer": "ground",
+            "path": [
+              [
+                12,
+                8.91891891891892,
+                12
+              ],
+              [
+                -12,
+                10,
+                12
+              ]
+            ],
+            "elements": [
+              {
+                "plate": {
+                  "rails": true,
+                  "x": 0,
+                  "z": 12,
+                  "yaw": 180,
+                  "length": 420,
+                  "width": 20,
+                  "y": 0,
+                  "rise": 0
+                }
+              }
+            ],
+            "lanes": []
+          },
+          {
+            "id": "wb_5_b",
+            "from": "tr_x_6",
+            "to": "wb_m210",
+            "type": "highway",
+            "layer": "ground",
+            "path": [
+              [
+                -12,
+                10,
                 12
               ],
               [
@@ -1583,15 +1983,49 @@
             "lanes": []
           },
           {
-            "id": "wb_8",
+            "id": "wb_8_a",
             "from": "wb_m350",
-            "to": "wb_m450",
+            "to": "tr_x_8",
             "type": "highway",
             "layer": "ground",
             "path": [
               [
                 -350,
                 0,
+                12
+              ],
+              [
+                -400,
+                1.1650485436893199,
+                12
+              ]
+            ],
+            "elements": [
+              {
+                "plate": {
+                  "rails": true,
+                  "x": -400,
+                  "z": 12,
+                  "yaw": 180,
+                  "length": 100,
+                  "width": 20,
+                  "y": 0,
+                  "rise": 0
+                }
+              }
+            ],
+            "lanes": []
+          },
+          {
+            "id": "wb_8_b",
+            "from": "tr_x_8",
+            "to": "wb_m450",
+            "type": "highway",
+            "layer": "ground",
+            "path": [
+              [
+                -400,
+                1.1650485436893199,
                 12
               ],
               [
@@ -1651,9 +2085,9 @@
             "lanes": []
           },
           {
-            "id": "nb_2",
+            "id": "nb_2_a",
             "from": "nb_m450",
-            "to": "nb_m350",
+            "to": "tr_x_9",
             "type": "highway",
             "layer": "ground",
             "path": [
@@ -1661,6 +2095,40 @@
                 -12,
                 0,
                 -450
+              ],
+              [
+                -12,
+                0,
+                -400
+              ]
+            ],
+            "elements": [
+              {
+                "plate": {
+                  "rails": true,
+                  "x": -12,
+                  "z": -400,
+                  "yaw": 90,
+                  "length": 100,
+                  "width": 20,
+                  "y": 0,
+                  "rise": 0
+                }
+              }
+            ],
+            "lanes": []
+          },
+          {
+            "id": "nb_2_b",
+            "from": "tr_x_9",
+            "to": "nb_m350",
+            "type": "highway",
+            "layer": "ground",
+            "path": [
+              [
+                -12,
+                0,
+                -400
               ],
               [
                 -12,
@@ -1821,9 +2289,9 @@
             "lanes": []
           },
           {
-            "id": "nb_br",
+            "id": "nb_br_a",
             "from": "nb_b1",
-            "to": "nb_b2",
+            "to": "tr_x_2",
             "type": "highway",
             "layer": "bridge_01",
             "path": [
@@ -1831,6 +2299,108 @@
                 -12,
                 10,
                 -50
+              ],
+              [
+                -12,
+                10,
+                -12
+              ]
+            ],
+            "elements": [
+              {
+                "plate": {
+                  "rails": true,
+                  "x": -12,
+                  "z": 0,
+                  "yaw": 90,
+                  "length": 100,
+                  "width": 20,
+                  "y": 10,
+                  "rise": 0
+                }
+              }
+            ],
+            "lanes": []
+          },
+          {
+            "id": "nb_br_b_a",
+            "from": "tr_x_2",
+            "to": "tr_x_6",
+            "type": "highway",
+            "layer": "bridge_01",
+            "path": [
+              [
+                -12,
+                10,
+                -12
+              ],
+              [
+                -12,
+                10,
+                12
+              ]
+            ],
+            "elements": [
+              {
+                "plate": {
+                  "rails": true,
+                  "x": -12,
+                  "z": 0,
+                  "yaw": 90,
+                  "length": 100,
+                  "width": 20,
+                  "y": 10,
+                  "rise": 0
+                }
+              }
+            ],
+            "lanes": []
+          },
+          {
+            "id": "nb_br_b_b_a",
+            "from": "tr_x_6",
+            "to": "tr_x_10",
+            "type": "highway",
+            "layer": "bridge_01",
+            "path": [
+              [
+                -12,
+                10,
+                12
+              ],
+              [
+                -12,
+                10,
+                42.62068965517241
+              ]
+            ],
+            "elements": [
+              {
+                "plate": {
+                  "rails": true,
+                  "x": -12,
+                  "z": 0,
+                  "yaw": 90,
+                  "length": 100,
+                  "width": 20,
+                  "y": 10,
+                  "rise": 0
+                }
+              }
+            ],
+            "lanes": []
+          },
+          {
+            "id": "nb_br_b_b_b",
+            "from": "tr_x_10",
+            "to": "nb_b2",
+            "type": "highway",
+            "layer": "bridge_01",
+            "path": [
+              [
+                -12,
+                10,
+                42.62068965517241
               ],
               [
                 -12,
@@ -1889,9 +2459,9 @@
             "lanes": []
           },
           {
-            "id": "nb_6",
+            "id": "nb_6_a",
             "from": "nb_p120",
-            "to": "nb_p210",
+            "to": "tr_x_11",
             "type": "highway",
             "layer": "ground",
             "path": [
@@ -1899,6 +2469,40 @@
                 -12,
                 0,
                 120
+              ],
+              [
+                -12,
+                0,
+                186
+              ]
+            ],
+            "elements": [
+              {
+                "plate": {
+                  "rails": true,
+                  "x": -12,
+                  "z": 165,
+                  "yaw": 90,
+                  "length": 90,
+                  "width": 20,
+                  "y": 0,
+                  "rise": 0
+                }
+              }
+            ],
+            "lanes": []
+          },
+          {
+            "id": "nb_6_b",
+            "from": "tr_x_11",
+            "to": "nb_p210",
+            "type": "highway",
+            "layer": "ground",
+            "path": [
+              [
+                -12,
+                0,
+                186
               ],
               [
                 -12,
@@ -1991,9 +2595,9 @@
             "lanes": []
           },
           {
-            "id": "nb_9",
+            "id": "nb_9_a",
             "from": "nb_p350",
-            "to": "nb_p450",
+            "to": "tr_x_12",
             "type": "highway",
             "layer": "ground",
             "path": [
@@ -2001,6 +2605,40 @@
                 -12,
                 0,
                 350
+              ],
+              [
+                -12,
+                0,
+                400
+              ]
+            ],
+            "elements": [
+              {
+                "plate": {
+                  "rails": true,
+                  "x": -12,
+                  "z": 400,
+                  "yaw": 90,
+                  "length": 100,
+                  "width": 20,
+                  "y": 0,
+                  "rise": 0
+                }
+              }
+            ],
+            "lanes": []
+          },
+          {
+            "id": "nb_9_b",
+            "from": "tr_x_12",
+            "to": "nb_p450",
+            "type": "highway",
+            "layer": "ground",
+            "path": [
+              [
+                -12,
+                0,
+                400
               ],
               [
                 -12,
@@ -2093,9 +2731,9 @@
             "lanes": []
           },
           {
-            "id": "sb_2",
+            "id": "sb_2_a",
             "from": "sb_p450",
-            "to": "sb_p350",
+            "to": "tr_x_13",
             "type": "highway",
             "layer": "ground",
             "path": [
@@ -2103,6 +2741,40 @@
                 12,
                 0,
                 450
+              ],
+              [
+                12,
+                0,
+                400
+              ]
+            ],
+            "elements": [
+              {
+                "plate": {
+                  "rails": true,
+                  "x": 12,
+                  "z": 400,
+                  "yaw": -90,
+                  "length": 100,
+                  "width": 20,
+                  "y": 0,
+                  "rise": 0
+                }
+              }
+            ],
+            "lanes": []
+          },
+          {
+            "id": "sb_2_b",
+            "from": "tr_x_13",
+            "to": "sb_p350",
+            "type": "highway",
+            "layer": "ground",
+            "path": [
+              [
+                12,
+                0,
+                400
               ],
               [
                 12,
@@ -2263,9 +2935,9 @@
             "lanes": []
           },
           {
-            "id": "sb_br",
+            "id": "sb_br_a_a_a",
             "from": "sb_b2",
-            "to": "sb_b1",
+            "to": "tr_x_14",
             "type": "highway",
             "layer": "bridge_01",
             "path": [
@@ -2273,6 +2945,108 @@
                 12,
                 10,
                 50
+              ],
+              [
+                12,
+                9.69588463236376,
+                39.310344827586206
+              ]
+            ],
+            "elements": [
+              {
+                "plate": {
+                  "rails": true,
+                  "x": 12,
+                  "z": 0,
+                  "yaw": -90,
+                  "length": 100,
+                  "width": 20,
+                  "y": 10,
+                  "rise": 0
+                }
+              }
+            ],
+            "lanes": []
+          },
+          {
+            "id": "sb_br_a_a_b",
+            "from": "tr_x_14",
+            "to": "tr_x_7",
+            "type": "highway",
+            "layer": "bridge_01",
+            "path": [
+              [
+                12,
+                9.69588463236376,
+                39.310344827586206
+              ],
+              [
+                12,
+                8.91891891891892,
+                12
+              ]
+            ],
+            "elements": [
+              {
+                "plate": {
+                  "rails": true,
+                  "x": 12,
+                  "z": 0,
+                  "yaw": -90,
+                  "length": 100,
+                  "width": 20,
+                  "y": 10,
+                  "rise": 0
+                }
+              }
+            ],
+            "lanes": []
+          },
+          {
+            "id": "sb_br_a_b",
+            "from": "tr_x_7",
+            "to": "tr_x_3",
+            "type": "highway",
+            "layer": "bridge_01",
+            "path": [
+              [
+                12,
+                8.91891891891892,
+                12
+              ],
+              [
+                12,
+                8.91891891891892,
+                -12
+              ]
+            ],
+            "elements": [
+              {
+                "plate": {
+                  "rails": true,
+                  "x": 12,
+                  "z": 0,
+                  "yaw": -90,
+                  "length": 100,
+                  "width": 20,
+                  "y": 10,
+                  "rise": 0
+                }
+              }
+            ],
+            "lanes": []
+          },
+          {
+            "id": "sb_br_b",
+            "from": "tr_x_3",
+            "to": "sb_b1",
+            "type": "highway",
+            "layer": "bridge_01",
+            "path": [
+              [
+                12,
+                8.91891891891892,
+                -12
               ],
               [
                 12,
@@ -2365,9 +3139,9 @@
             "lanes": []
           },
           {
-            "id": "sb_7",
+            "id": "sb_7_a",
             "from": "sb_m210",
-            "to": "sb_m310",
+            "to": "tr_x_15",
             "type": "highway",
             "layer": "ground",
             "path": [
@@ -2375,6 +3149,40 @@
                 12,
                 0,
                 -210
+              ],
+              [
+                12,
+                0,
+                -234
+              ]
+            ],
+            "elements": [
+              {
+                "plate": {
+                  "rails": true,
+                  "x": 12,
+                  "z": -260,
+                  "yaw": -90,
+                  "length": 100,
+                  "width": 20,
+                  "y": 0,
+                  "rise": 0
+                }
+              }
+            ],
+            "lanes": []
+          },
+          {
+            "id": "sb_7_b",
+            "from": "tr_x_15",
+            "to": "sb_m310",
+            "type": "highway",
+            "layer": "ground",
+            "path": [
+              [
+                12,
+                0,
+                -234
               ],
               [
                 12,
@@ -2433,9 +3241,9 @@
             "lanes": []
           },
           {
-            "id": "sb_9",
+            "id": "sb_9_a",
             "from": "sb_m350",
-            "to": "sb_m450",
+            "to": "tr_x_16",
             "type": "highway",
             "layer": "ground",
             "path": [
@@ -2443,6 +3251,40 @@
                 12,
                 0,
                 -350
+              ],
+              [
+                12,
+                0.9320388349514563,
+                -400
+              ]
+            ],
+            "elements": [
+              {
+                "plate": {
+                  "rails": true,
+                  "x": 12,
+                  "z": -400,
+                  "yaw": -90,
+                  "length": 100,
+                  "width": 20,
+                  "y": 0,
+                  "rise": 0
+                }
+              }
+            ],
+            "lanes": []
+          },
+          {
+            "id": "sb_9_b",
+            "from": "tr_x_16",
+            "to": "sb_m450",
+            "type": "highway",
+            "layer": "ground",
+            "path": [
+              [
+                12,
+                0.9320388349514563,
+                -400
               ],
               [
                 12,
@@ -2573,9 +3415,9 @@
             "lanes": []
           },
           {
-            "id": "rt2",
+            "id": "rt2_a",
             "from": "sb_p210",
-            "to": "rt2_e",
+            "to": "tr_x_11",
             "type": "ramp",
             "layer": "ground",
             "path": [
@@ -2583,6 +3425,44 @@
                 12,
                 0,
                 210
+              ],
+              [
+                -12,
+                0,
+                186
+              ]
+            ],
+            "elements": [
+              {
+                "arc": {
+                  "cx": -138,
+                  "cz": 210,
+                  "radius": 150,
+                  "from": 0,
+                  "to": -90,
+                  "width": 10,
+                  "y": [
+                    0,
+                    0
+                  ],
+                  "bank": 0,
+                  "rails": true
+                }
+              }
+            ],
+            "lanes": []
+          },
+          {
+            "id": "rt2_b",
+            "from": "tr_x_11",
+            "to": "rt2_e",
+            "type": "ramp",
+            "layer": "ground",
+            "path": [
+              [
+                -12,
+                0,
+                186
               ],
               [
                 -138,
@@ -2611,9 +3491,9 @@
             "lanes": []
           },
           {
-            "id": "rt2_m",
+            "id": "rt2_m_a",
             "from": "rt2_e",
-            "to": "wb_p210",
+            "to": "tr_x_10",
             "type": "ramp",
             "layer": "ground",
             "path": [
@@ -2621,6 +3501,74 @@
                 -138,
                 0,
                 60
+              ],
+              [
+                -12,
+                10,
+                42.62068965517241
+              ]
+            ],
+            "elements": [
+              {
+                "plate": {
+                  "rails": true,
+                  "x": 36,
+                  "z": 36,
+                  "yaw": -7.853,
+                  "length": 351.295,
+                  "width": 10,
+                  "y": 0,
+                  "rise": 0
+                }
+              }
+            ],
+            "lanes": []
+          },
+          {
+            "id": "rt2_m_b_a",
+            "from": "tr_x_10",
+            "to": "tr_x_14",
+            "type": "ramp",
+            "layer": "ground",
+            "path": [
+              [
+                -12,
+                10,
+                42.62068965517241
+              ],
+              [
+                12,
+                9.69588463236376,
+                39.310344827586206
+              ]
+            ],
+            "elements": [
+              {
+                "plate": {
+                  "rails": true,
+                  "x": 36,
+                  "z": 36,
+                  "yaw": -7.853,
+                  "length": 351.295,
+                  "width": 10,
+                  "y": 0,
+                  "rise": 0
+                }
+              }
+            ],
+            "lanes": []
+          },
+          {
+            "id": "rt2_m_b_b",
+            "from": "tr_x_14",
+            "to": "wb_p210",
+            "type": "ramp",
+            "layer": "ground",
+            "path": [
+              [
+                12,
+                9.69588463236376,
+                39.310344827586206
               ],
               [
                 210,
@@ -2755,9 +3703,9 @@
             "lanes": []
           },
           {
-            "id": "rt4_m",
+            "id": "rt4_m_a",
             "from": "rt4_e",
-            "to": "eb_m210",
+            "to": "tr_x_15",
             "type": "ramp",
             "layer": "ground",
             "path": [
@@ -2765,6 +3713,40 @@
                 138,
                 0,
                 -360
+              ],
+              [
+                12,
+                0,
+                -234
+              ]
+            ],
+            "elements": [
+              {
+                "plate": {
+                  "rails": true,
+                  "x": -36,
+                  "z": -186,
+                  "yaw": 135,
+                  "length": 492.146,
+                  "width": 10,
+                  "y": 0,
+                  "rise": 0
+                }
+              }
+            ],
+            "lanes": []
+          },
+          {
+            "id": "rt4_m_b",
+            "from": "tr_x_15",
+            "to": "eb_m210",
+            "type": "ramp",
+            "layer": "ground",
+            "path": [
+              [
+                12,
+                0,
+                -234
               ],
               [
                 -210,
@@ -2857,9 +3839,9 @@
             "lanes": []
           },
           {
-            "id": "lt1_s1",
+            "id": "lt1_s1_a",
             "from": "lt1_p2",
-            "to": "lt1_p3",
+            "to": "tr_x_17",
             "type": "ramp",
             "layer": "bridge_02",
             "path": [
@@ -2867,6 +3849,40 @@
                 -310,
                 16,
                 -140
+              ],
+              [
+                -310,
+                16,
+                -310
+              ]
+            ],
+            "elements": [
+              {
+                "plate": {
+                  "rails": true,
+                  "x": -310,
+                  "z": -270,
+                  "yaw": -90,
+                  "length": 260,
+                  "width": 10,
+                  "y": 16,
+                  "rise": 0
+                }
+              }
+            ],
+            "lanes": []
+          },
+          {
+            "id": "lt1_s1_b",
+            "from": "tr_x_17",
+            "to": "lt1_p3",
+            "type": "ramp",
+            "layer": "bridge_02",
+            "path": [
+              [
+                -310,
+                16,
+                -310
               ],
               [
                 -310,
@@ -2891,15 +3907,83 @@
             "lanes": []
           },
           {
-            "id": "lt1_s2",
+            "id": "lt1_s2_a",
             "from": "lt1_p3",
-            "to": "lt1_p4",
+            "to": "tr_x_9",
             "type": "ramp",
             "layer": "bridge_02",
             "path": [
               [
                 -310,
                 16,
+                -400
+              ],
+              [
+                -12,
+                0,
+                -400
+              ]
+            ],
+            "elements": [
+              {
+                "plate": {
+                  "rails": true,
+                  "x": 45,
+                  "z": -400,
+                  "yaw": 0,
+                  "length": 710,
+                  "width": 10,
+                  "y": 16,
+                  "rise": 0
+                }
+              }
+            ],
+            "lanes": []
+          },
+          {
+            "id": "lt1_s2_b_a",
+            "from": "tr_x_9",
+            "to": "tr_x_16",
+            "type": "ramp",
+            "layer": "bridge_02",
+            "path": [
+              [
+                -12,
+                0,
+                -400
+              ],
+              [
+                12,
+                0.9320388349514563,
+                -400
+              ]
+            ],
+            "elements": [
+              {
+                "plate": {
+                  "rails": true,
+                  "x": 45,
+                  "z": -400,
+                  "yaw": 0,
+                  "length": 710,
+                  "width": 10,
+                  "y": 16,
+                  "rise": 0
+                }
+              }
+            ],
+            "lanes": []
+          },
+          {
+            "id": "lt1_s2_b_b",
+            "from": "tr_x_16",
+            "to": "lt1_p4",
+            "type": "ramp",
+            "layer": "bridge_02",
+            "path": [
+              [
+                12,
+                0.9320388349514563,
                 -400
               ],
               [
@@ -2925,9 +4009,9 @@
             "lanes": []
           },
           {
-            "id": "lt1_s3",
+            "id": "lt1_s3_a",
             "from": "lt1_p4",
-            "to": "lt1_p5",
+            "to": "tr_x_4",
             "type": "ramp",
             "layer": "bridge_02",
             "path": [
@@ -2935,6 +4019,74 @@
                 400,
                 16,
                 -400
+              ],
+              [
+                400,
+                0,
+                -12
+              ]
+            ],
+            "elements": [
+              {
+                "plate": {
+                  "rails": true,
+                  "x": 400,
+                  "z": 0,
+                  "yaw": 90,
+                  "length": 800,
+                  "width": 10,
+                  "y": 16,
+                  "rise": 0
+                }
+              }
+            ],
+            "lanes": []
+          },
+          {
+            "id": "lt1_s3_b_a",
+            "from": "tr_x_4",
+            "to": "tr_x_5",
+            "type": "ramp",
+            "layer": "bridge_02",
+            "path": [
+              [
+                400,
+                0,
+                -12
+              ],
+              [
+                400,
+                0.9320388349514563,
+                12
+              ]
+            ],
+            "elements": [
+              {
+                "plate": {
+                  "rails": true,
+                  "x": 400,
+                  "z": 0,
+                  "yaw": 90,
+                  "length": 800,
+                  "width": 10,
+                  "y": 16,
+                  "rise": 0
+                }
+              }
+            ],
+            "lanes": []
+          },
+          {
+            "id": "lt1_s3_b_b",
+            "from": "tr_x_5",
+            "to": "lt1_p5",
+            "type": "ramp",
+            "layer": "bridge_02",
+            "path": [
+              [
+                400,
+                0.9320388349514563,
+                12
               ],
               [
                 400,
@@ -2959,15 +4111,49 @@
             "lanes": []
           },
           {
-            "id": "lt1_s4",
+            "id": "lt1_s4_a",
             "from": "lt1_p5",
-            "to": "lt1_p6",
+            "to": "tr_x_13",
             "type": "ramp",
             "layer": "bridge_02",
             "path": [
               [
                 400,
                 16,
+                400
+              ],
+              [
+                12,
+                0,
+                400
+              ]
+            ],
+            "elements": [
+              {
+                "plate": {
+                  "rails": true,
+                  "x": 170,
+                  "z": 400,
+                  "yaw": 180,
+                  "length": 460,
+                  "width": 10,
+                  "y": 16,
+                  "rise": 0
+                }
+              }
+            ],
+            "lanes": []
+          },
+          {
+            "id": "lt1_s4_b",
+            "from": "tr_x_13",
+            "to": "lt1_p6",
+            "type": "ramp",
+            "layer": "bridge_02",
+            "path": [
+              [
+                12,
+                0,
                 400
               ],
               [
@@ -3129,14 +4315,48 @@
             "lanes": []
           },
           {
-            "id": "lt2_s1",
+            "id": "lt2_s1_a",
             "from": "lt2_p2",
-            "to": "lt2_p3",
+            "to": "tr_x_18",
             "type": "ramp",
             "layer": "bridge_03",
             "path": [
               [
                 140,
+                18,
+                310
+              ],
+              [
+                310,
+                18,
+                310
+              ]
+            ],
+            "elements": [
+              {
+                "plate": {
+                  "rails": true,
+                  "x": 270,
+                  "z": 310,
+                  "yaw": 0,
+                  "length": 260,
+                  "width": 10,
+                  "y": 18,
+                  "rise": 0
+                }
+              }
+            ],
+            "lanes": []
+          },
+          {
+            "id": "lt2_s1_b",
+            "from": "tr_x_18",
+            "to": "lt2_p3",
+            "type": "ramp",
+            "layer": "bridge_03",
+            "path": [
+              [
+                310,
                 18,
                 310
               ],
@@ -3401,9 +4621,9 @@
             "lanes": []
           },
           {
-            "id": "lt3_s1",
+            "id": "lt3_s1_a",
             "from": "lt3_p2",
-            "to": "lt3_p3",
+            "to": "tr_x_18",
             "type": "ramp",
             "layer": "bridge_04",
             "path": [
@@ -3411,6 +4631,40 @@
                 310,
                 20,
                 140
+              ],
+              [
+                310,
+                18,
+                310
+              ]
+            ],
+            "elements": [
+              {
+                "plate": {
+                  "rails": true,
+                  "x": 310,
+                  "z": 270,
+                  "yaw": 90,
+                  "length": 260,
+                  "width": 10,
+                  "y": 20,
+                  "rise": 0
+                }
+              }
+            ],
+            "lanes": []
+          },
+          {
+            "id": "lt3_s1_b",
+            "from": "tr_x_18",
+            "to": "lt3_p3",
+            "type": "ramp",
+            "layer": "bridge_04",
+            "path": [
+              [
+                310,
+                18,
+                310
               ],
               [
                 310,
@@ -3435,15 +4689,49 @@
             "lanes": []
           },
           {
-            "id": "lt3_s2",
+            "id": "lt3_s2_a",
             "from": "lt3_p3",
-            "to": "lt3_p4",
+            "to": "tr_x_12",
             "type": "ramp",
             "layer": "bridge_04",
             "path": [
               [
                 310,
                 20,
+                400
+              ],
+              [
+                -12,
+                0,
+                400
+              ]
+            ],
+            "elements": [
+              {
+                "plate": {
+                  "rails": true,
+                  "x": -45,
+                  "z": 400,
+                  "yaw": 180,
+                  "length": 710,
+                  "width": 10,
+                  "y": 20,
+                  "rise": 0
+                }
+              }
+            ],
+            "lanes": []
+          },
+          {
+            "id": "lt3_s2_b",
+            "from": "tr_x_12",
+            "to": "lt3_p4",
+            "type": "ramp",
+            "layer": "bridge_04",
+            "path": [
+              [
+                -12,
+                0,
                 400
               ],
               [
@@ -3469,9 +4757,9 @@
             "lanes": []
           },
           {
-            "id": "lt3_s3",
+            "id": "lt3_s3_a_a",
             "from": "lt3_p4",
-            "to": "lt3_p5",
+            "to": "tr_x_8",
             "type": "ramp",
             "layer": "bridge_04",
             "path": [
@@ -3479,6 +4767,74 @@
                 -400,
                 20,
                 400
+              ],
+              [
+                -400,
+                1.1650485436893199,
+                12
+              ]
+            ],
+            "elements": [
+              {
+                "plate": {
+                  "rails": true,
+                  "x": -400,
+                  "z": 0,
+                  "yaw": -90,
+                  "length": 800,
+                  "width": 10,
+                  "y": 20,
+                  "rise": 0
+                }
+              }
+            ],
+            "lanes": []
+          },
+          {
+            "id": "lt3_s3_a_b",
+            "from": "tr_x_8",
+            "to": "tr_x",
+            "type": "ramp",
+            "layer": "bridge_04",
+            "path": [
+              [
+                -400,
+                1.1650485436893199,
+                12
+              ],
+              [
+                -400,
+                0,
+                -12
+              ]
+            ],
+            "elements": [
+              {
+                "plate": {
+                  "rails": true,
+                  "x": -400,
+                  "z": 0,
+                  "yaw": -90,
+                  "length": 800,
+                  "width": 10,
+                  "y": 20,
+                  "rise": 0
+                }
+              }
+            ],
+            "lanes": []
+          },
+          {
+            "id": "lt3_s3_b",
+            "from": "tr_x",
+            "to": "lt3_p5",
+            "type": "ramp",
+            "layer": "bridge_04",
+            "path": [
+              [
+                -400,
+                0,
+                -12
               ],
               [
                 -400,
@@ -3673,15 +5029,49 @@
             "lanes": []
           },
           {
-            "id": "lt4_s1",
+            "id": "lt4_s1_a",
             "from": "lt4_p2",
-            "to": "lt4_p3",
+            "to": "tr_x_17",
             "type": "ramp",
             "layer": "bridge_05",
             "path": [
               [
                 -140,
                 22,
+                -310
+              ],
+              [
+                -310,
+                16,
+                -310
+              ]
+            ],
+            "elements": [
+              {
+                "plate": {
+                  "rails": true,
+                  "x": -270,
+                  "z": -310,
+                  "yaw": 180,
+                  "length": 260,
+                  "width": 10,
+                  "y": 22,
+                  "rise": 0
+                }
+              }
+            ],
+            "lanes": []
+          },
+          {
+            "id": "lt4_s1_b",
+            "from": "tr_x_17",
+            "to": "lt4_p3",
+            "type": "ramp",
+            "layer": "bridge_05",
+            "path": [
+              [
+                -310,
+                16,
                 -310
               ],
               [
@@ -4484,5 +5874,799 @@
     "buildings": {
       "generate": false
     }
-  }
+  },
+  "buildings": [
+    {
+      "id": "b_d0_1",
+      "name": "B 1",
+      "isEnterable": false,
+      "floorsCount": 1,
+      "floorHeight": 3.3,
+      "foundation": "terrain",
+      "facadeMaterial": "concrete",
+      "wallColor": "#d9dde2",
+      "houseKind": "generic",
+      "windowDensity": 1,
+      "windowScale": 0.94,
+      "footprint": [
+        {
+          "x": -635.495,
+          "z": -1001.049
+        },
+        {
+          "x": -583.553,
+          "z": -1001.049
+        },
+        {
+          "x": -583.553,
+          "z": -949.427
+        },
+        {
+          "x": -635.495,
+          "z": -949.427
+        }
+      ],
+      "rooms": [],
+      "stairs": []
+    },
+    {
+      "id": "b_d0_2",
+      "name": "B 2",
+      "isEnterable": false,
+      "floorsCount": 1,
+      "floorHeight": 3.3,
+      "foundation": "terrain",
+      "facadeMaterial": "concrete",
+      "wallColor": "#5f6770",
+      "houseKind": "generic",
+      "windowDensity": 3,
+      "windowScale": 1.17,
+      "footprint": [
+        {
+          "x": -396.855,
+          "z": -1000.242
+        },
+        {
+          "x": -334.574,
+          "z": -1000.242
+        },
+        {
+          "x": -334.574,
+          "z": -950.234
+        },
+        {
+          "x": -396.855,
+          "z": -950.234
+        }
+      ],
+      "rooms": [],
+      "stairs": []
+    },
+    {
+      "id": "b_d0_3",
+      "name": "B 3",
+      "isEnterable": false,
+      "floorsCount": 1,
+      "floorHeight": 3.3,
+      "foundation": "terrain",
+      "facadeMaterial": "concrete",
+      "wallColor": "#adb5bd",
+      "houseKind": "generic",
+      "windowDensity": 1,
+      "windowScale": 0.86,
+      "footprint": [
+        {
+          "x": 216.42,
+          "z": -1250.223
+        },
+        {
+          "x": 271.199,
+          "z": -1250.223
+        },
+        {
+          "x": 271.199,
+          "z": -1187.872
+        },
+        {
+          "x": 216.42,
+          "z": -1187.872
+        }
+      ],
+      "rooms": [],
+      "stairs": []
+    },
+    {
+      "id": "b_d0_4",
+      "name": "B 4",
+      "isEnterable": false,
+      "floorsCount": 1,
+      "floorHeight": 3.3,
+      "foundation": "terrain",
+      "facadeMaterial": "concrete",
+      "wallColor": "#d5cbb8",
+      "houseKind": "generic",
+      "windowDensity": 1,
+      "windowScale": 0.86,
+      "footprint": [
+        {
+          "x": 580.094,
+          "z": -632.21
+        },
+        {
+          "x": 638.953,
+          "z": -632.21
+        },
+        {
+          "x": 638.953,
+          "z": -586.837
+        },
+        {
+          "x": 580.094,
+          "z": -586.837
+        }
+      ],
+      "rooms": [],
+      "stairs": []
+    },
+    {
+      "id": "b_d0_5",
+      "name": "B 5",
+      "isEnterable": false,
+      "floorsCount": 1,
+      "floorHeight": 3.3,
+      "foundation": "terrain",
+      "facadeMaterial": "concrete",
+      "wallColor": "#5f6770",
+      "houseKind": "generic",
+      "windowDensity": 1,
+      "windowScale": 1.13,
+      "footprint": [
+        {
+          "x": 339.891,
+          "z": -1123.008
+        },
+        {
+          "x": 391.537,
+          "z": -1123.008
+        },
+        {
+          "x": 391.537,
+          "z": -1071.278
+        },
+        {
+          "x": 339.891,
+          "z": -1071.278
+        }
+      ],
+      "rooms": [],
+      "stairs": []
+    },
+    {
+      "id": "b_d0_6",
+      "name": "B 6",
+      "isEnterable": false,
+      "floorsCount": 1,
+      "floorHeight": 3.3,
+      "foundation": "terrain",
+      "facadeMaterial": "concrete",
+      "wallColor": "#5f6770",
+      "houseKind": "generic",
+      "windowDensity": 1,
+      "windowScale": 0.99,
+      "footprint": [
+        {
+          "x": 948.596,
+          "z": 337.183
+        },
+        {
+          "x": 1001.88,
+          "z": 337.183
+        },
+        {
+          "x": 1001.88,
+          "z": 394.245
+        },
+        {
+          "x": 948.596,
+          "z": 394.245
+        }
+      ],
+      "rooms": [],
+      "stairs": []
+    },
+    {
+      "id": "b_d0_7",
+      "name": "B 7",
+      "isEnterable": false,
+      "floorsCount": 1,
+      "floorHeight": 3.3,
+      "foundation": "terrain",
+      "facadeMaterial": "concrete",
+      "wallColor": "#d9dde2",
+      "houseKind": "generic",
+      "windowDensity": 1,
+      "windowScale": 1.17,
+      "footprint": [
+        {
+          "x": 462.575,
+          "z": 834.602
+        },
+        {
+          "x": 512.663,
+          "z": 834.602
+        },
+        {
+          "x": 512.663,
+          "z": 872.065
+        },
+        {
+          "x": 462.575,
+          "z": 872.065
+        }
+      ],
+      "rooms": [],
+      "stairs": []
+    },
+    {
+      "id": "b_d0_8",
+      "name": "B 8",
+      "isEnterable": false,
+      "floorsCount": 1,
+      "floorHeight": 3.3,
+      "foundation": "terrain",
+      "facadeMaterial": "concrete",
+      "wallColor": "#adb5bd",
+      "houseKind": "generic",
+      "windowDensity": 2,
+      "windowScale": 1.04,
+      "footprint": [
+        {
+          "x": 1066.475,
+          "z": -509.668
+        },
+        {
+          "x": 1127.811,
+          "z": -509.668
+        },
+        {
+          "x": 1127.811,
+          "z": -465.57
+        },
+        {
+          "x": 1066.475,
+          "z": -465.57
+        }
+      ],
+      "rooms": [],
+      "stairs": []
+    },
+    {
+      "id": "b_d0_9",
+      "name": "B 9",
+      "isEnterable": false,
+      "floorsCount": 1,
+      "floorHeight": 3.3,
+      "foundation": "terrain",
+      "facadeMaterial": "concrete",
+      "wallColor": "#adb5bd",
+      "houseKind": "generic",
+      "windowDensity": 2,
+      "windowScale": 0.87,
+      "footprint": [
+        {
+          "x": 699.92,
+          "z": -879.952
+        },
+        {
+          "x": 762.937,
+          "z": -879.952
+        },
+        {
+          "x": 762.937,
+          "z": -826.715
+        },
+        {
+          "x": 699.92,
+          "z": -826.715
+        }
+      ],
+      "rooms": [],
+      "stairs": []
+    },
+    {
+      "id": "b_d0_10",
+      "name": "B 10",
+      "isEnterable": false,
+      "floorsCount": 1,
+      "floorHeight": 3.3,
+      "foundation": "terrain",
+      "facadeMaterial": "concrete",
+      "wallColor": "#d9dde2",
+      "houseKind": "generic",
+      "windowDensity": 1,
+      "windowScale": 1.1,
+      "footprint": [
+        {
+          "x": 1184.137,
+          "z": -761.087
+        },
+        {
+          "x": 1253.959,
+          "z": -761.087
+        },
+        {
+          "x": 1253.959,
+          "z": -701.77
+        },
+        {
+          "x": 1184.137,
+          "z": -701.77
+        }
+      ],
+      "rooms": [],
+      "stairs": []
+    },
+    {
+      "id": "b_d0_11",
+      "name": "B 11",
+      "isEnterable": false,
+      "floorsCount": 1,
+      "floorHeight": 3.3,
+      "foundation": "terrain",
+      "facadeMaterial": "concrete",
+      "wallColor": "#5f6770",
+      "houseKind": "generic",
+      "windowDensity": 1,
+      "windowScale": 0.92,
+      "footprint": [
+        {
+          "x": 704.858,
+          "z": 1189.596
+        },
+        {
+          "x": 757.999,
+          "z": 1189.596
+        },
+        {
+          "x": 757.999,
+          "z": 1248.499
+        },
+        {
+          "x": 704.858,
+          "z": 1248.499
+        }
+      ],
+      "rooms": [],
+      "stairs": []
+    },
+    {
+      "id": "b_d0_12",
+      "name": "B 12",
+      "isEnterable": false,
+      "floorsCount": 1,
+      "floorHeight": 3.3,
+      "foundation": "terrain",
+      "facadeMaterial": "concrete",
+      "wallColor": "#d5cbb8",
+      "houseKind": "generic",
+      "windowDensity": 1,
+      "windowScale": 1.18,
+      "footprint": [
+        {
+          "x": 1065.547,
+          "z": -1010.27
+        },
+        {
+          "x": 1128.739,
+          "z": -1010.27
+        },
+        {
+          "x": 1128.739,
+          "z": -940.206
+        },
+        {
+          "x": 1065.547,
+          "z": -940.206
+        }
+      ],
+      "rooms": [],
+      "stairs": []
+    },
+    {
+      "id": "b_d0_13",
+      "name": "B 13",
+      "isEnterable": false,
+      "floorsCount": 1,
+      "floorHeight": 3.3,
+      "foundation": "terrain",
+      "facadeMaterial": "concrete",
+      "wallColor": "#d5cbb8",
+      "houseKind": "generic",
+      "windowDensity": 2,
+      "windowScale": 1.1,
+      "footprint": [
+        {
+          "x": -515.553,
+          "z": 455.687
+        },
+        {
+          "x": -459.685,
+          "z": 455.687
+        },
+        {
+          "x": -459.685,
+          "z": 519.551
+        },
+        {
+          "x": -515.553,
+          "z": 519.551
+        }
+      ],
+      "rooms": [],
+      "stairs": []
+    },
+    {
+      "id": "b_d0_14",
+      "name": "B 14",
+      "isEnterable": false,
+      "floorsCount": 1,
+      "floorHeight": 3.3,
+      "foundation": "terrain",
+      "facadeMaterial": "concrete",
+      "wallColor": "#d9dde2",
+      "houseKind": "generic",
+      "windowDensity": 3,
+      "windowScale": 1.06,
+      "footprint": [
+        {
+          "x": -639.367,
+          "z": 465.452
+        },
+        {
+          "x": -579.681,
+          "z": 465.452
+        },
+        {
+          "x": -579.681,
+          "z": 509.786
+        },
+        {
+          "x": -639.367,
+          "z": 509.786
+        }
+      ],
+      "rooms": [],
+      "stairs": []
+    },
+    {
+      "id": "b_d0_15",
+      "name": "B 15",
+      "isEnterable": false,
+      "floorsCount": 1,
+      "floorHeight": 3.3,
+      "foundation": "terrain",
+      "facadeMaterial": "concrete",
+      "wallColor": "#5f6770",
+      "houseKind": "generic",
+      "windowDensity": 1,
+      "windowScale": 1.07,
+      "footprint": [
+        {
+          "x": 219.409,
+          "z": -1124.87
+        },
+        {
+          "x": 268.21,
+          "z": -1124.87
+        },
+        {
+          "x": 268.21,
+          "z": -1069.416
+        },
+        {
+          "x": 219.409,
+          "z": -1069.416
+        }
+      ],
+      "rooms": [],
+      "stairs": []
+    },
+    {
+      "id": "b_d0_16",
+      "name": "B 16",
+      "isEnterable": false,
+      "floorsCount": 1,
+      "floorHeight": 3.3,
+      "foundation": "terrain",
+      "facadeMaterial": "concrete",
+      "wallColor": "#adb5bd",
+      "houseKind": "generic",
+      "windowDensity": 3,
+      "windowScale": 0.88,
+      "footprint": [
+        {
+          "x": 700.442,
+          "z": 212.669
+        },
+        {
+          "x": 762.415,
+          "z": 212.669
+        },
+        {
+          "x": 762.415,
+          "z": 274.95
+        },
+        {
+          "x": 700.442,
+          "z": 274.95
+        }
+      ],
+      "rooms": [],
+      "stairs": []
+    },
+    {
+      "id": "b_d0_17",
+      "name": "B 17",
+      "isEnterable": false,
+      "floorsCount": 1,
+      "floorHeight": 3.3,
+      "foundation": "terrain",
+      "facadeMaterial": "concrete",
+      "wallColor": "#d5cbb8",
+      "houseKind": "generic",
+      "windowDensity": 3,
+      "windowScale": 0.86,
+      "footprint": [
+        {
+          "x": -638.072,
+          "z": 584.022
+        },
+        {
+          "x": -580.975,
+          "z": 584.022
+        },
+        {
+          "x": -580.975,
+          "z": 635.026
+        },
+        {
+          "x": -638.072,
+          "z": 635.026
+        }
+      ],
+      "rooms": [],
+      "stairs": []
+    },
+    {
+      "id": "b_d0_18",
+      "name": "B 18",
+      "isEnterable": false,
+      "floorsCount": 1,
+      "floorHeight": 3.3,
+      "foundation": "terrain",
+      "facadeMaterial": "concrete",
+      "wallColor": "#d5cbb8",
+      "houseKind": "generic",
+      "windowDensity": 1,
+      "windowScale": 0.88,
+      "footprint": [
+        {
+          "x": 454.072,
+          "z": 943.171
+        },
+        {
+          "x": 521.166,
+          "z": 943.171
+        },
+        {
+          "x": 521.166,
+          "z": 1007.305
+        },
+        {
+          "x": 454.072,
+          "z": 1007.305
+        }
+      ],
+      "rooms": [],
+      "stairs": []
+    },
+    {
+      "id": "b_d0_19",
+      "name": "B 19",
+      "isEnterable": false,
+      "floorsCount": 1,
+      "floorHeight": 3.3,
+      "foundation": "terrain",
+      "facadeMaterial": "concrete",
+      "wallColor": "#d5cbb8",
+      "houseKind": "generic",
+      "windowDensity": 1,
+      "windowScale": 0.93,
+      "footprint": [
+        {
+          "x": 821.463,
+          "z": -1244.436
+        },
+        {
+          "x": 885.204,
+          "z": -1244.436
+        },
+        {
+          "x": 885.204,
+          "z": -1193.659
+        },
+        {
+          "x": 821.463,
+          "z": -1193.659
+        }
+      ],
+      "rooms": [],
+      "stairs": []
+    },
+    {
+      "id": "b_d0_20",
+      "name": "B 20",
+      "isEnterable": false,
+      "floorsCount": 1,
+      "floorHeight": 3.3,
+      "foundation": "terrain",
+      "facadeMaterial": "concrete",
+      "wallColor": "#d9dde2",
+      "houseKind": "generic",
+      "windowDensity": 3,
+      "windowScale": 1.19,
+      "footprint": [
+        {
+          "x": -1241.874,
+          "z": -1121.726
+        },
+        {
+          "x": -1196.221,
+          "z": -1121.726
+        },
+        {
+          "x": -1196.221,
+          "z": -1072.56
+        },
+        {
+          "x": -1241.874,
+          "z": -1072.56
+        }
+      ],
+      "rooms": [],
+      "stairs": []
+    },
+    {
+      "id": "b_d0_21",
+      "name": "B 21",
+      "isEnterable": false,
+      "floorsCount": 1,
+      "floorHeight": 3.3,
+      "foundation": "terrain",
+      "facadeMaterial": "concrete",
+      "wallColor": "#5f6770",
+      "houseKind": "generic",
+      "windowDensity": 2,
+      "windowScale": 1.07,
+      "footprint": [
+        {
+          "x": -1248.188,
+          "z": -389.958
+        },
+        {
+          "x": -1189.907,
+          "z": -389.958
+        },
+        {
+          "x": -1189.907,
+          "z": -341.47
+        },
+        {
+          "x": -1248.188,
+          "z": -341.47
+        }
+      ],
+      "rooms": [],
+      "stairs": []
+    },
+    {
+      "id": "b_d0_22",
+      "name": "B 22",
+      "isEnterable": false,
+      "floorsCount": 1,
+      "floorHeight": 3.3,
+      "foundation": "terrain",
+      "facadeMaterial": "concrete",
+      "wallColor": "#5f6770",
+      "houseKind": "generic",
+      "windowDensity": 3,
+      "windowScale": 0.93,
+      "footprint": [
+        {
+          "x": -638.409,
+          "z": -1244.066
+        },
+        {
+          "x": -580.638,
+          "z": -1244.066
+        },
+        {
+          "x": -580.638,
+          "z": -1194.029
+        },
+        {
+          "x": -638.409,
+          "z": -1194.029
+        }
+      ],
+      "rooms": [],
+      "stairs": []
+    },
+    {
+      "id": "b_d0_23",
+      "name": "B 23",
+      "isEnterable": false,
+      "floorsCount": 1,
+      "floorHeight": 3.3,
+      "foundation": "terrain",
+      "facadeMaterial": "concrete",
+      "wallColor": "#d9dde2",
+      "houseKind": "generic",
+      "windowDensity": 3,
+      "windowScale": 1.15,
+      "footprint": [
+        {
+          "x": 1067.174,
+          "z": -389.261
+        },
+        {
+          "x": 1127.112,
+          "z": -389.261
+        },
+        {
+          "x": 1127.112,
+          "z": -342.168
+        },
+        {
+          "x": 1067.174,
+          "z": -342.168
+        }
+      ],
+      "rooms": [],
+      "stairs": []
+    },
+    {
+      "id": "b_d0_24",
+      "name": "B 24",
+      "isEnterable": false,
+      "floorsCount": 1,
+      "floorHeight": 3.3,
+      "foundation": "terrain",
+      "facadeMaterial": "concrete",
+      "wallColor": "#d9dde2",
+      "houseKind": "generic",
+      "windowDensity": 1,
+      "windowScale": 1.17,
+      "footprint": [
+        {
+          "x": -1120.138,
+          "z": 949.411
+        },
+        {
+          "x": -1074.148,
+          "z": 949.411
+        },
+        {
+          "x": -1074.148,
+          "z": 1001.065
+        },
+        {
+          "x": -1120.138,
+          "z": 1001.065
+        }
+      ],
+      "rooms": [],
+      "stairs": []
+    }
+  ]
 }

@@ -6,7 +6,7 @@ import { EditorUI } from './editor-ui.js';
 import {
   deepClone, ensureRoads, readNetwork, findNode, findSegment, findElement, nodePos,
   addSegment, deleteSelected, moveSelection, moveElementEnd, validateDraft, r3, lenXZ, yawFrom,
-  duplicateSegment, createNodeId, MIN_SEGMENT_LENGTH, filletJoint, syncSegmentToElements,
+  duplicateSegment, createNodeId, MIN_SEGMENT_LENGTH, filletJoint, syncSegmentToElements, makeGroundPathSegment,
 } from './source-model.js';
 
 const appEl = document.getElementById('app');
@@ -332,6 +332,22 @@ function handleCanvasPointerDown(e) {
       setStatus('Слишком короткий отрезок — создание отменено');
       return;
     }
+    if (state.preset === 'ordinary') {
+      const dx = Math.abs(b.x - a.x), dz = Math.abs(b.z - a.z);
+      if (dx > 1e-9 && dz > 1e-9) {
+        state.pendingPoint = null;
+        ui.addBanner('Обычная дорога без ограждения допустима только по осям X/Z (как path-дорога генератора). Диагональ — через plate/arc или двумя перпендикулярными обычными дорогами.', 'warn');
+        return;
+      }
+      pushHistory();
+      const seg = makeGroundPathSegment(draft, a.x, 0, a.z, b.x, 0, b.z, { width: 8, type: 'local', layer: 'ground' });
+      state.pendingPoint = null;
+      if (!seg) { ui.addBanner('Слишком короткий отрезок — ничего не создано', 'warn'); return; }
+      state.selected = { kind: 'segment', segmentId: seg.id };
+      commitDraft();
+      setStatus(`Обычная дорога ${seg.id} создана`);
+      return;
+    }
     const preset = state.tool === 'add-arc' ? (state.preset.startsWith('arc') ? state.preset : 'arc-left') : state.preset;
     const endY = preset === 'bridge' ? 14 : preset === 'ramp' ? 10 : 0;
     pushHistory();
@@ -458,7 +474,12 @@ function handleUiChange(ev) {
   if (!ev) return;
   if (ev.type === 'level') { state.level = ev.value; state.pendingPoint = null; loadLevel(state.level); }
   else if (ev.type === 'view') { state.view = ev.value; viewManager?.setView(ev.value); ui.setViewButtons(state.view); markDirty(); }
-  else if (ev.type === 'grid') { state.grid = !!ev.value; preview.setGridVisible(state.grid); markDirty(); }
+  else if (ev.type === 'grid') { state.grid = !!ev.value; preview.setGridVisible(state.grid); if (ui.layerChecks?.grid) ui.layerChecks.grid.checked = state.grid; ui.gridCheck.checked = state.grid; markDirty(); }
+  else if (ev.type === 'layer') {
+    if (ev.key === 'grid') { state.grid = !!ev.value; preview.setGridVisible(state.grid); ui.gridCheck.checked = state.grid; }
+    else preview.setLayerVisible(ev.key, ev.value);
+    markDirty();
+  }
   else if (ev.type === 'tool') { state.tool = ev.value; ui.setTool(state.tool); ui.canvas.className = `viz-canvas editor-canvas tool-${state.tool}`; state.pendingPoint = null; state.filletFirst = null; setStatus(`Инструмент: ${state.tool}`); }
   else if (ev.type === 'preset') { state.preset = ev.value; }
   else if (ev.type === 'filletRadius') { state.filletRadius = Math.max(2, Number(ev.value) || 15); }

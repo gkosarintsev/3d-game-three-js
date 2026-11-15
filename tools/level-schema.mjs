@@ -747,6 +747,8 @@ const CF_SEGMENT = obj({
   })),
   lanes: arr(ref('lane'), { minItems: 0 }),
   shoulderWidth: num({ min: 0 }),
+  filletRadius: num({ min: 0, doc: 'м: автоскругление path-дороги при нормализации' }),
+  fillet: num({ min: 0, doc: 'м: псевдоним filletRadius' }),
   sidewalk: bool({ default: false }),
   surface: str({ enum: ['asphalt', 'gravel', 'earth'] }),
   speedLimit: num({ min: 0 }),
@@ -1017,6 +1019,8 @@ export const LEVEL_SPEC_V4 = obj({
   navEdgeProbe: num({ min: 0.1, doc: 'Шаг проб опоры вдоль навигационных рёбер (м). Меньше — точнее, больше — быстрее сборка.' }),
   bodyProbe: num({ min: 0.1, doc: 'Шаг проб габарита тела вдоль навигационных рёбер (м). Меньше — точнее, больше — быстрее сборка.' }),
   buildings: OPEN_BUILDINGS,
+  landscapeObjects: OPEN_LANDSCAPE,
+  lights: OPEN_LIGHTS,
   cityforge: ref('cityforge', { req: true }),
   generator: V4_GENERATOR,
 }, { open: false, doc: 'CityForge v4 source level with district generator manifest (ADR-001).' });

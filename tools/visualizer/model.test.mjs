@@ -151,8 +151,8 @@ test('integration: level 19 counts/dedupe/split matching', async () => {
   const pads = compiledRoads.filter(id => /^spawn_pad$|^exit_pad$/.test(id));
   const splits = compiledRoads.filter(id => !srcRoads.has(id) && !pads.includes(id) && srcRoads.has(strip(id)));
   const unknown = compiledRoads.filter(id => !srcRoads.has(id) && !pads.includes(id) && !srcRoads.has(strip(id)));
-  assert.equal(exact.length, 71);
-  assert.equal(splits.length, 62);
+  assert.equal(exact.length, 133);
+  assert.equal(splits.length, 0);
   assert.equal(pads.length, 2);
   assert.equal(unknown.length, 0);
   const represented = new Set([...exact, ...splits.map(strip)]);
@@ -162,9 +162,9 @@ test('integration: level 19 counts/dedupe/split matching', async () => {
   // provenance
   const roadOrigins = {};
   for (const r of model.entities.roads.values()) roadOrigins[r.origin] = (roadOrigins[r.origin] || 0) + 1;
-  assert.equal(roadOrigins.authored, 133); // 71 exact + 62 split
+  assert.equal(roadOrigins.authored, 133); // 133 exact сплиты теперь и в source
   assert.equal(roadOrigins.derived, 2);
-  for (const b of model.entities.buildings.values()) assert.equal(b.origin, 'generated');
+  for (const b of model.entities.buildings.values()) assert.equal(b.origin, 'authored');
   for (const p of model.entities.props.values()) assert.equal(p.origin, 'derived');
 });
 
@@ -196,12 +196,12 @@ test('integration: level 16 counts and auto-districts', async () => {
   const decodedCells = decodeCellsFromCatalog(levelDef, dir);
   const model = buildModel({ level: n, mode: 'compiled', source, compiledIndex: levelDef.map, decodedCells, report });
   assert.equal(model.entities.buildings.size, 392);
-  assert.equal(model.entities.roads.size, 174);
+  assert.equal(model.entities.roads.size, 180);
   assert.equal(model.entities.props.size, 562);
   assert.equal((model.entities.lights || new Map()).size, 8);
   assert.equal((model.entities.channels || new Map()).size, 1);
-  assert.equal(model.skeleton.nodes.length, 4388);
-  assert.equal(model.skeleton.edges.length, 4384);
+  assert.equal(model.skeleton.nodes.length, 4669);
+  assert.equal(model.skeleton.edges.length, 4664);
   assert.equal(model.entities.districts.size, 16);
   for (const d of model.entities.districts.values()) assert.equal(d.origin, 'generated');
 });

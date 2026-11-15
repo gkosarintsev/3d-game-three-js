@@ -150,6 +150,33 @@ function optsNodeId(x, z) { const a = Math.round(x), b = Math.round(z); return `
 function presetToPrefix(p) { return p === 'bridge' ? 'bridge_' : p === 'ramp' ? 'ramp_' : p.startsWith('arc') ? 'ramp_' : p === 'taper' ? 'taper_' : 'road_'; }
 function presetLayer(p) { return p === 'bridge' || p === 'ramp' || p.startsWith('arc') || p === 'taper' ? 'bridge_01' : 'ground'; }
 
+export function makeGroundPathSegment(draft, ax, ay, az, bx, by, bz, opts = {}) {
+  const roads = ensureRoads(draft);
+  if (lenXZ(ax, az, bx, bz) < MIN_SEGMENT_LENGTH) return null;
+  const baseA = `n_${String(Math.round(ax)).replace('-', 'm')}_${String(Math.round(az)).replace('-', 'm')}`;
+  const baseB = `n_${String(Math.round(bx)).replace('-', 'm')}_${String(Math.round(bz)).replace('-', 'm')}`;
+  const taken = () => roads.nodes.map(n => String(n.id));
+  const aId = uniqueId(baseA, taken()), bId = uniqueId(baseB, taken());
+  const width = Number.isFinite(opts.width) ? opts.width : 8;
+  const type = opts.type || 'local';
+  const layer = opts.layer || 'ground';
+  const id = createSegmentId(draft, 'road_');
+  roads.nodes.push({ id: aId, position: [r3(ax), r3(ay), r3(az)], layer });
+  roads.nodes.push({ id: bId, position: [r3(bx), r3(by), r3(bz)], layer });
+  const seg = {
+    id,
+    from: aId,
+    to: bId,
+    type,
+    layer,
+    path: [[r3(ax), r3(ay), r3(az)], [r3(bx), r3(by), r3(bz)]],
+    elements: [],
+    lanes: [{ id: `${id}_lane_1`, direction: 'forward', width: r3(width), type: 'vehicle' }],
+  };
+  roads.segments.push(seg);
+  return seg;
+}
+
 export function duplicateSegment(draft, segId, dx = 10, dz = 0) {
   const roads = ensureRoads(draft);
   const source = findSegment(draft, segId);
@@ -552,8 +579,11 @@ export function validateDraft(draft) {
     if (elements.length === 0) {
       const p = s.path || [];
       const a = p[0], b = p[p.length - 1];
-      const skew = p.length >= 2 && a && b && Math.abs(a[0] - b[0]) > AXIS_EPS_V && Math.abs(a[2] - b[2]) > AXIS_EPS_V;
-      issues.push({ severity: 'error', code: skew ? 'segment.skew-empty' : 'segment.empty', message: `${id}: после удаления элементов дорога осталась без geometry/elements${skew ? ' и её path косой (требуется элемент или осевой path)' : ''}`, ref: `segment:${id}` });
+      const axisOk = p.length >= 2 && p.every((pt, i, arr) => { if (!i) return true; const prev = arr[i - 1]; return Math.abs(pt[0] - prev[0]) <= AXIS_EPS_V || Math.abs(pt[2] - prev[2]) <= AXIS_EPS_V; });
+      if (!axisOk) {
+        const skew = p.length >= 2 && a && b && Math.abs(a[0] - b[0]) > AXIS_EPS_V && Math.abs(a[2] - b[2]) > AXIS_EPS_V;
+        issues.push({ severity: 'error', code: skew ? 'segment.skew-empty' : 'segment.empty', message: `${id}: после удаления элементов дорога осталась без geometry/elements${skew ? ' и её path косой (нужны elements или осевой path)' : ''}`, ref: `segment:${id}` });
+      }
     }
     (s.elements || []).forEach((el, i) => {
       const label = `${id}[${i}]`;

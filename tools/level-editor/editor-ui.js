@@ -35,7 +35,7 @@ export class EditorUI {
       const b = el('button', 'viz-btn editor-tool', label); b.dataset.tool = id; b.addEventListener('click', () => this.onChange({ type: 'tool', value: id })); this.toolButtons[id] = b; tools.append(b);
     }
     this.preset = document.createElement('select');
-    for (const [v, label] of [['ground', 'Земля · ширина 20'], ['bridge', 'Мост · y 14'], ['ramp', 'Подъём · rise +10'], ['taper', 'Расширение → 30/+5'], ['arc-left', 'Левый съезд (arc)'], ['arc-right', 'Правый съезд (arc)']]) { const o = document.createElement('option'); o.value = v; o.textContent = label; this.preset.append(o); }
+    for (const [v, label] of [['ground', 'Земля · ширина 20'], ['ordinary', 'Обычная · рельеф, без ограждения'], ['bridge', 'Мост · y 14'], ['ramp', 'Подъём · rise +10'], ['taper', 'Расширение → 30/+5'], ['arc-left', 'Левый съезд (arc)'], ['arc-right', 'Правый съезд (arc)']]) { const o = document.createElement('option'); o.value = v; o.textContent = label; this.preset.append(o); }
     this.preset.addEventListener('change', () => this.onChange({ type: 'preset', value: this.preset.value }));
     this.snapInput = document.createElement('input'); this.snapInput.type = 'number'; this.snapInput.min = '0'; this.snapInput.step = '1'; this.snapInput.value = '5'; this.snapInput.title = 'snap, м (0 — выкл.)'; this.snapInput.addEventListener('input', () => this.onChange({ type: 'snap', value: Number(this.snapInput.value) }));
     this.filletInput = document.createElement('input'); this.filletInput.type = 'number'; this.filletInput.min = '1'; this.filletInput.step = '1'; this.filletInput.value = '15'; this.filletInput.className = 'editor-fillet-input'; this.filletInput.title = 'радиус скругления стыка, м'; this.filletInput.addEventListener('input', () => this.onChange({ type: 'filletRadius', value: Number(this.filletInput.value) }));
@@ -55,6 +55,21 @@ export class EditorUI {
   }
 
   buildLeft() {
+    this.layersPanel = el('div', 'viz-panel editor-layers');
+    this.layersPanel.append(el('div', 'viz-panel-title', 'Слои'));
+    this.layerChecks = {};
+    const layerDefs = [
+      ['roads', 'roads/decks', true], ['rails', 'rails', true], ['nodes', 'nodes', true],
+      ['buildings', 'buildings', true], ['props', 'props', true], ['lights', 'lights', false], ['grid', 'grid', true],
+    ];
+    for (const [k, label, def] of layerDefs) {
+      const row = el('label', 'viz-check-row');
+      const c = document.createElement('input'); c.type = 'checkbox'; c.checked = def;
+      c.addEventListener('change', () => this.onChange({ type: 'layer', key: k, value: c.checked }));
+      row.append(c, ' ', label);
+      this.layersPanel.append(row);
+      this.layerChecks[k] = c;
+    }
     this.tree = el('div', 'viz-panel editor-tree');
     this.tree.append(el('div', 'viz-panel-title', 'Роад-граф (черновик)'));
     this.treeBody = el('div', 'editor-tree-body');
@@ -63,7 +78,7 @@ export class EditorUI {
     this.diag.append(el('div', 'viz-panel-title', 'Диагностика'));
     this.diagBody = el('div', 'viz-diag-body', 'Нажмите Validate…');
     this.diag.append(this.diagBody);
-    this.left.append(this.tree, this.diag);
+    this.left.append(this.layersPanel, this.tree, this.diag);
   }
 
   buildRight() {
