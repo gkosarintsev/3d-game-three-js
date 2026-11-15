@@ -12,7 +12,7 @@
   - [ ] R0.4 Эталоны (3 seed × профили), процедура bump `generatorVersion`
   - [~] R0.5 Структура `generator.profiles`/`generator.policies` + чтение/fallback — `tools/citygen/config.mjs`, нормализация в `ctx.meta.{policies,cityProfiles,activeCityProfile*}` (дефолты §13.2)
 - [ ] **R1** Рельеф и вода (§4, §5)
-  - [ ] R1.1 Профили рельефа и порядок модификаторов
+  - [~] R1.1 Профили рельефа и порядок модификаторов — в `stage-1-landscape` добавлена opt-in упорядоченная генерация форм (`ordered/profileDriven`: крупные формы, средние холмы, террасы `replace/step`, платформы `replace/smooth`) с детерминированным порядком §4.2; профильные пресеты/полный цикл рельефа ещё не завершены
   - [~] R1.2 Карта уклонов (8–16 м) и классификация — `stage-1-landscape`: `ctx.terrain.analysis.slope` (grid/step/maxSlope/share по классам §4.3), диагностика `terrain_slope_analysis`
   - [~] R1.3 Бронирование плоских участков и ориентиры — `buildReservations` формирует плоские резервные площадки (`ctx.terrain.analysis.reservations`), диагностика `terrain_reservations_marked` (ориентиры/видовые точки — частично)
   - [~] R1.4 Гидрология (река вниз, меандры, поймы, озёра, запреты) — процедурная река семплит рельеф по Y, опционально `river.meander`/`widthProfile`, opt-in `river.downslope` и простая генерация озера (`lake.enabled`); полная трассировка по стоимости/притоки/поймы/запретные полосы ещё не реализованы

@@ -238,6 +238,34 @@ function generateLandscape(ctx) {
     { x: gp.spawn?.x ?? 0, z: gp.spawn?.z ?? 0 },
     { x: gp.exit?.x ?? 0, z: gp.exit?.z ?? 0 },
   ];
+
+  // R1.1 (§4.2): build modifiers in ordered layers when requested; default behavior preserved.
+  const ordered = ls.ordered === true || ls.profileDriven === true;
+  const largeForms = [];
+  const mediumHills = [];
+  const terraces = [];
+  const platforms = [];
+
+  // 1) Large forms (1–3), radius 25–60% of plate
+  const largeCfg = ls.largeForms || {};
+  const largeCount = ordered ? clamp(Number.isInteger(largeCfg.count) ? largeCfg.count : 0, 0, 3) : 0;
+  for (let i = 0; i < largeCount; i++) {
+    const x = lerp(-half * 0.5, half * 0.5, rng());
+    const z = lerp(-half * 0.5, half * 0.5, rng());
+    const radius = lerp(size * 0.25, size * 0.6, rng());
+    const height = lerp(Number.isFinite(largeCfg.minHeight) ? largeCfg.minHeight : 20, Number.isFinite(largeCfg.maxHeight) ? largeCfg.maxHeight : 80, rng());
+    const ltype = largeCfg.type === 'valley' ? 'valley' : 'mountain';
+    largeForms.push({
+      id: `large_${i + 1}`,
+      type: ltype,
+      center: [Math.round(x * 10) / 10, Math.round(z * 10) / 10],
+      radius: Math.round(radius * 10) / 10,
+      height: Math.round(height * 10) / 10,
+      falloff: 'smooth',
+    });
+  }
+
+  // 2) Medium hills (existing/default hills generation)
   const hillsCfg = ls.hills || {};
   const wantHills = hillsCfg.enabled !== false;
   const count = clamp(Number.isInteger(hillsCfg.count) ? hillsCfg.count : 6, 0, 40);
@@ -246,7 +274,6 @@ function generateLandscape(ctx) {
   const minR = Number.isFinite(hillsCfg.minRadius) ? hillsCfg.minRadius : 80;
   const maxR = Number.isFinite(hillsCfg.maxRadius) ? hillsCfg.maxRadius : 300;
   const type = hillsCfg.type === 'valley' ? 'valley' : 'mountain';
-  const modifiers = [];
   let attempts = 0;
   for (let i = 0; i < count && attempts < count * 20; attempts++) {
     const x = lerp(-half * 0.8, half * 0.8, rng());
@@ -254,17 +281,69 @@ function generateLandscape(ctx) {
     if (!farFromAnchors(x, z, anchors, Math.max(40, minR * 0.25))) continue;
     const radius = lerp(minR, maxR, rng());
     const height = lerp(minH, maxH, rng());
-    modifiers.push({
+    // §4.2/§4.7: keep hills within gentle slope ratio when ordered/profile-driven
+    let h = height, r = radius;
+    if (ordered && r > EPS && Math.abs(h) / r > 0.06) h = Math.sign(h || 1) * r * 0.06;
+    mediumHills.push({
       id: `hill_${i + 1}`,
       type,
       center: [Math.round(x * 10) / 10, Math.round(z * 10) / 10],
-      radius: Math.round(radius * 10) / 10,
-      height: Math.round(height * 10) / 10,
+      radius: Math.round(r * 10) / 10,
+      height: Math.round(h * 10) / 10,
       falloff: 'smooth',
     });
     i++;
   }
-  if (wantHills && count > 0) ctx.terrain.modifiers = modifiers;
+
+  // 4) Terraces (replace/step) - optional, placed on slopes
+  const terraceCfg = ls.terraces || {};
+  const terraceCount = ordered ? clamp(Number.isInteger(terraceCfg.count) ? terraceCfg.count : 0, 0, 12) : 0;
+  for (let i = 0; i < terraceCount; i++) {
+    const x = lerp(-half * 0.7, half * 0.7, rng());
+    const z = lerp(-half * 0.7, half * 0.7, rng());
+    if (!farFromAnchors(x, z, anchors, 50)) continue;
+    const radius = lerp(Number.isFinite(terraceCfg.minRadius) ? terraceCfg.minRadius : 30, Number.isFinite(terraceCfg.maxRadius) ? terraceCfg.maxRadius : 90, rng());
+    const levelY = Math.round(terrainHeightAt(x, z, ctx.input?.ground?.y ?? 0, [...largeForms, ...mediumHills]) * 1000) / 1000;
+    terraces.push({
+      id: `terrace_${i + 1}`,
+      type: 'terrain_modifier',
+      center: [Math.round(x * 10) / 10, Math.round(z * 10) / 10],
+      radius: Math.round(radius * 10) / 10,
+      height: levelY,
+      falloff: 'step',
+      operation: 'replace',
+    });
+  }
+
+  // 5) Reserved platforms (replace/smooth) - optional, last
+  const platformCfg = ls.platforms || {};
+  const platformCount = ordered ? clamp(Number.isInteger(platformCfg.count) ? platformCfg.count : 0, 0, 8) : 0;
+  for (let i = 0; i < platformCount; i++) {
+    // bias toward anchors/center for interchange/station/plaza-like pads
+    const ax = anchors[i % anchors.length]?.x ?? 0;
+    const az = anchors[i % anchors.length]?.z ?? 0;
+    const x = clamp(ax + lerp(-120, 120, rng()), -half * 0.85, half * 0.85);
+    const z = clamp(az + lerp(-120, 120, rng()), -half * 0.85, half * 0.85);
+    const radius = lerp(Number.isFinite(platformCfg.minRadius) ? platformCfg.minRadius : 40, Number.isFinite(platformCfg.maxRadius) ? platformCfg.maxRadius : 120, rng());
+    const levelY = Math.round(terrainHeightAt(x, z, ctx.input?.ground?.y ?? 0, [...largeForms, ...mediumHills, ...terraces]) * 1000) / 1000;
+    platforms.push({
+      id: `platform_${i + 1}`,
+      type: 'terrain_modifier',
+      center: [Math.round(x * 10) / 10, Math.round(z * 10) / 10],
+      radius: Math.round(radius * 10) / 10,
+      height: levelY,
+      falloff: 'smooth',
+      operation: 'replace',
+    });
+  }
+
+  if (wantHills && count > 0) {
+    ctx.terrain.modifiers = ordered
+      ? [...largeForms, ...mediumHills, ...terraces, ...platforms]
+      : mediumHills;
+  } else if (ordered && (largeForms.length || terraces.length || platforms.length)) {
+    ctx.terrain.modifiers = [...largeForms, ...terraces, ...platforms];
+  }
 
   const riverCfg = ls.river || {};
   const rivers = [];
