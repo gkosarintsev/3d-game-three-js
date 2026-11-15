@@ -7,10 +7,10 @@
 
 - [ ] **R0** Спецификация/валидатор/метрики/baseline/конфиг профилей
   - [x] R0.1 Матрица соответствия §3–13 ↔ модули (зафиксирована ниже, 2026-11-15)
-  - [ ] R0.2 Валидатор инвариантов §12.1 (read-only) + baseline на 16–19
-  - [ ] R0.3 Каркас метрик §12.2 в report
+  - [~] R0.2 Валидатор инвариантов §12.1 (read-only) + baseline на 16–19 — добавлен `tools/citygen/rules.mjs` (подмножество инвариантов/проверок) и снимок baseline по 16–19 (2026-11-15)
+  - [~] R0.3 Каркас метрик §12.2 в report — `report.metrics`/`report.rules` (детерминированно, partial) подключены в `diagnostics.mjs`/`index.mjs`
   - [ ] R0.4 Эталоны (3 seed × профили), процедура bump `generatorVersion`
-  - [ ] R0.5 Структура `generator.profiles`/`generator.policies` + чтение/fallback
+  - [~] R0.5 Структура `generator.profiles`/`generator.policies` + чтение/fallback — `tools/citygen/config.mjs`, нормализация в `ctx.meta.{policies,cityProfiles,activeCityProfile*}` (дефолты §13.2)
 - [ ] **R1** Рельеф и вода (§4, §5)
   - [ ] R1.1 Профили рельефа и порядок модификаторов
   - [ ] R1.2 Карта уклонов (8–16 м) и классификация
@@ -78,7 +78,12 @@
 - Валидатор §12.1 и метрики §12.2 вводятся до/вместе с изменением генерации (R0).
 
 ## Baseline / метрики
-- (не снят) — выполнить R0.2–R0.4 на пилотах 16–19. Имеющиеся `generation-report.json` (16/17/18/19) содержат diagnostics/repairs/drops/stages; выделенных метрик §12.2 и проверок инвариантов §12.1 в отчёте ещё нет.
+- 2026-11-15, `runCitygen` по исходникам `src/levels/level-{16,17,18,19}.json` (с `report.metrics`/`report.rules`, partial):
+  - **L16**: errors 0, warnings 10, rules {0,1,0}; graph 162/187, components 7, deadEndRatio 0.228395, gamma 0.389583; counts roads 187, districts 16, parcels 2274, buildings 402, props 360, lights 8; spawnToRoad 0, exitToRoad 0.
+  - **L17**: errors 0, warnings 9, rules {0,0,0}; graph 141/171, components 1, deadEndRatio 0.177305, gamma 0.410072; counts roads 171, districts 16, parcels 2274, buildings 403, props 360, lights 8.
+  - **L18**: errors 0, warnings 2, rules {0,0,0}; graph 11/10, components 1, deadEndRatio 0.272727, gamma 0.37037; counts roads 10, districts 1, parcels 121, buildings 15, props 0, lights 0.
+  - **L19**: errors 0, warnings 5, rules {0,1,0}; graph 124/133, components 14, deadEndRatio 0.177419, gamma 0.363388; counts roads 133, districts 1, parcels 441, buildings 24, props 0, lights 0; spawnToRoad 179.213, exitToRoad 0.
+- Примечание: это runtime-снимок IR/контекста citygen (частичный), не замена закоммиченных `generation-report.json` каталогов; R0.4 (эталоны/хэши, ≥3 seed × профиль) не выполнен.
 
 ## Открытые вопросы / риски
 - GAP-01/06/07/08/11 из `docs/level_generation_rules_claude.md` §14 (см. план, раздел 2).

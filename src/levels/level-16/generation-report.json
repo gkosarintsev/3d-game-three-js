@@ -632,5 +632,93 @@
     "warnings": 10,
     "repairs": 1,
     "drops": 0
+  },
+  "metrics": {
+    "version": 1,
+    "partial": true,
+    "counts": {
+      "roads": 187,
+      "roadNodes": 162,
+      "districts": 16,
+      "parcels": 2274,
+      "buildings": 402,
+      "enterableBuildings": 0,
+      "props": 360,
+      "lights": 8
+    },
+    "graph": {
+      "nodes": 162,
+      "edges": 187,
+      "components": 7,
+      "largestComponent": 141,
+      "deadEnds": 37,
+      "deadEndRatio": 0.228395,
+      "avgDegree": 2.308642,
+      "gamma": 0.389583
+    },
+    "roads": {
+      "totalLength": 15105.51,
+      "lengthByType": {
+        "arterial": 2080,
+        "highway": 202.321,
+        "local": 12777.438,
+        "ramp": 45.751
+      },
+      "shareByType": {
+        "arterial": 0.137698,
+        "highway": 0.013394,
+        "local": 0.845879,
+        "ramp": 0.003029
+      }
+    },
+    "gameplay": {
+      "spawnToRoad": 0,
+      "exitToRoad": 0,
+      "enterableShare": 0
+    },
+    "districts": {
+      "plateArea": 1638400,
+      "knownArea": 0,
+      "areaByType": {},
+      "shareByType": {}
+    },
+    "stream": {
+      "chunk": 256,
+      "keep": 1,
+      "aheadMin": 200,
+      "aheadMax": 900,
+      "budgetMs": 120,
+      "dividesPlate": true
+    },
+    "determinism": {
+      "generatorVersion": "0.1.0",
+      "seed": 16,
+      "deterministic": true
+    },
+    "report": {
+      "diagnosticsErrors": 0,
+      "diagnosticsWarnings": 10,
+      "repairs": 1,
+      "drops": 0
+    }
+  },
+  "rules": {
+    "version": 1,
+    "partial": true,
+    "violations": [
+      {
+        "severity": "warn",
+        "code": "road_graph_not_single_component",
+        "stage": "rules",
+        "message": "road graph has 7 connected components",
+        "components": 7,
+        "nodes": 162
+      }
+    ],
+    "summary": {
+      "errors": 0,
+      "warnings": 1,
+      "infos": 0
+    }
   }
 }

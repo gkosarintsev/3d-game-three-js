@@ -3,11 +3,13 @@
  */
 import { createReport } from './diagnostics.mjs';
 import { makeRng } from './rng.mjs';
+import { resolveGeneratorConfig } from './config.mjs';
 
 export function createContext(input) {
   const gen = input?.generator ?? {};
   const seed = Number.isInteger(gen.seed) ? gen.seed : 0;
   const worldBounds = input?.ground ? { size: input.ground.size, y: input.ground.y ?? 0 } : null;
+  const cfg = resolveGeneratorConfig(input);
   return {
     input,
     meta: {
@@ -16,6 +18,11 @@ export function createContext(input) {
       deterministic: gen.deterministic !== false,
       worldBounds,
       stream: input?.stream ?? null,
+      // R0.5: normalized generator config (profiles/policies) with defaults.
+      policies: cfg.policies,
+      cityProfiles: cfg.cityProfiles,
+      activeCityProfileId: cfg.activeProfileId,
+      activeCityProfile: cfg.activeProfile,
     },
     // IR masks/layers (TASK-002): stages may extend; easement pre-initialized for common use.
     masks: { easement: { rivers: [], roads: [] } },
