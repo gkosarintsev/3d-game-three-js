@@ -264,6 +264,32 @@ function generateProps(ctx, stageId, cfg) {
     return s > 0.5; // avoid very steep slopes for props
   };
   const roadEaseIndex = ctx.spatial?.roadEasements ?? null;
+  const crossingsMask = ctx.terrain?.analysis?.crossings ?? ctx.masks?.terrain?.crossings ?? [];
+  const landmarksMask = ctx.terrain?.analysis?.landmarks ?? ctx.masks?.terrain?.landmarks ?? [];
+  const reservationsMask = ctx.terrain?.analysis?.reservations ?? ctx.masks?.terrain?.reservations ?? [];
+  const nearReservedMask = (x, z) => {
+    for (const cr of crossingsMask) {
+      const kx = Number(cr?.x), kz = Number(cr?.z);
+      if (!Number.isFinite(kx) || !Number.isFinite(kz)) continue;
+      const pad = 12;
+      if (Math.abs(x - kx) <= pad && Math.abs(z - kz) <= pad) return true;
+    }
+    for (const rs of reservationsMask) {
+      const rx = Number(rs?.x), rz = Number(rs?.z);
+      if (!Number.isFinite(rx) || !Number.isFinite(rz)) continue;
+      const pad = (rs.role === 'core' || rs.role === 'station' || rs.role === 'interchange') ? 14 : (rs.role === 'viewpoint' ? 12 : 8);
+      if (Math.abs(x - rx) <= pad && Math.abs(z - rz) <= pad) return true;
+    }
+    for (const lm of landmarksMask) {
+      const lx = Number(lm?.x), lz = Number(lm?.z);
+      if (!Number.isFinite(lx) || !Number.isFinite(lz)) continue;
+      const role = String(lm?.role ?? lm?.kind ?? '');
+      const pad = (role === 'basin') ? 10 : (role === 'viewpoint' ? 10 : (role === 'crossing' || role === 'historic_crossing' ? 12 : 8));
+      if (Math.abs(x - lx) <= pad && Math.abs(z - lz) <= pad) return true;
+    }
+    return false;
+  };
+
   const blocked = (x, z, roadPad = 4.0) => {
     if (roads.length) {
       // Cheap prefilter: point must be within roadPad of some road path AABB to be near a segment.
@@ -274,6 +300,7 @@ function generateProps(ctx, stageId, cfg) {
     }
     if (tooCloseToRiver(x, z)) return true;
     if (terrainTooSteep(x, z)) return true;
+    if (nearReservedMask(x, z)) return true;
     if (anchors.some(a => distXZ(x, z, a.x, a.z) < 8)) return true;
     if (buildingIndex) {
       if (buildingIndex.query({ minX: x - 2.0, maxX: x + 2.0, minZ: z - 2.0, maxZ: z + 2.0 }).length) return true;

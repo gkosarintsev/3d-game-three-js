@@ -75,7 +75,7 @@ export const LEVEL_21 = {
           "buildings": 75,
           "channels": 1,
           "lights": 2,
-          "props": 62,
+          "props": 65,
           "roads": 23
         },
         "rect": {
@@ -91,7 +91,7 @@ export const LEVEL_21 = {
         "objects": {
           "buildings": 37,
           "lights": 2,
-          "props": 52,
+          "props": 49,
           "roads": 2
         },
         "rect": {
@@ -108,7 +108,7 @@ export const LEVEL_21 = {
           "buildings": 161,
           "channels": 1,
           "lights": 2,
-          "props": 158,
+          "props": 160,
           "roads": 39
         },
         "rect": {
@@ -125,7 +125,7 @@ export const LEVEL_21 = {
           "buildings": 129,
           "channels": 1,
           "lights": 2,
-          "props": 96,
+          "props": 94,
           "roads": 100
         },
         "rect": {
