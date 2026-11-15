@@ -98,6 +98,7 @@
 - 2026-11-15, R1.3/R1.5 (инкремент): `stage-1-landscape` формирует детерминированные landmarks/orientation points (viewpoints/переправы/бассейн) в `terrain.analysis/masks.landmarks` и включает их в reservation-ограничения; stage 3 учитывает их при резервировании парселей (влияние на генерацию). Пересобраны derived каталоги/отчёты L16–L19 и обновлены baseline/etalon snapshots, scoped-гейты зелёные.
 - 2026-11-15, R1.1/R1.4 (инкремент): усилена profile-driven дифференциация гидрологии в stage 1 (river_trade: процедурный meander/widthProfile по умолчанию при генерации; профильные параметры рек), синтетические эталоны `river_trade` отличаются от `railway_industrial` на тех же seed; обновлены etalon snapshots, пилоты 16–19 без регрессии, scoped-гейты зелёные.
 - 2026-11-15, R1.2/R4.1 (инкремент): stage 3 резервирует парсели с локальным уклоном >25% (terrain slope sampling по модификаторам) как non-buildable/generic-reserved; пересобраны derived каталоги/отчёты пилотов L16–L19 и обновлены baseline snapshots (L16/L17 изменились, L18/L19 без hash-изменений), `build-level --check`/`check-levels`/`node --test`/`citygen-etalon-check` зелёные.
+- 2026-11-15, R1.1 (инкремент): усилены profile-driven пресеты рельефа в stage 1 (relief→largeForms/terraces/platforms/hills/ordered defaults при `generate/profileDriven`), синтетические эталоны 3×3 обновлены (hill_town более рельефный, профили различаются), пилоты 16–19 без изменений derived/hash; scoped-гейты зелёные.
 
 ## Процедура bump/versioning и регрессии (R0.4, формализовано частично)
 

@@ -2,7 +2,7 @@
   "profile": "river_trade",
   "seed": 202,
   "generatorVersion": "0.1.0",
-  "reportHash": "359358eb1d4f259ce989b45cf02d8db60c4eabb5dec002957850445c33f69404",
+  "reportHash": "e6e0a25239e9f2f448291d09a0c5fa7daf5cddb7194b4cb4ab404e411e21c461",
   "summary": {
     "errors": 0,
     "warnings": 8,
@@ -21,8 +21,8 @@
       "roadNodes": 0,
       "districts": 16,
       "parcels": 2202,
-      "reservedParcels": 114,
-      "buildings": 402,
+      "reservedParcels": 111,
+      "buildings": 403,
       "enterableBuildings": 0,
       "props": 360,
       "lights": 0,
@@ -63,18 +63,18 @@
         "step": 16,
         "grid": 80,
         "cells": 6400,
-        "maxSlope": 0.089455,
+        "maxSlope": 0.089748,
         "share": {
-          "flat_lt3": 0.823594,
-          "gentle_3_8": 0.141094,
-          "moderate_8_15": 0.035312,
+          "flat_lt3": 0.83375,
+          "gentle_3_8": 0.142813,
+          "moderate_8_15": 0.023438,
           "steep_15_25": 0,
           "very_steep_gt25": 0
         },
         "counts": {
-          "flat_lt3": 5271,
-          "gentle_3_8": 903,
-          "moderate_8_15": 226,
+          "flat_lt3": 5336,
+          "gentle_3_8": 914,
+          "moderate_8_15": 150,
           "steep_15_25": 0,
           "very_steep_gt25": 0
         }
@@ -87,7 +87,7 @@
       }
     },
     "parcels": {
-      "reservedShare": 0.051771,
+      "reservedShare": 0.050409,
       "byDistrictCount": {
         "district_0_0": 400,
         "district_1_0": 225,

@@ -2,7 +2,7 @@
   "profile": "railway_industrial",
   "seed": 303,
   "generatorVersion": "0.1.0",
-  "reportHash": "1d9207d359c65127bf3ecf28cfc0f162adcdd9b1658901dfc384f59b9bbe5638",
+  "reportHash": "a73078ad0ba59c412a9c521030f0a1b0d28173d43dddfed02fc781de437e86fe",
   "summary": {
     "errors": 0,
     "warnings": 8,
@@ -21,7 +21,7 @@
       "roadNodes": 0,
       "districts": 16,
       "parcels": 2349,
-      "reservedParcels": 116,
+      "reservedParcels": 115,
       "buildings": 403,
       "enterableBuildings": 0,
       "props": 360,
@@ -63,18 +63,18 @@
         "step": 16,
         "grid": 80,
         "cells": 6400,
-        "maxSlope": 0.13097,
+        "maxSlope": 0.125704,
         "share": {
-          "flat_lt3": 0.735625,
-          "gentle_3_8": 0.218281,
-          "moderate_8_15": 0.046094,
+          "flat_lt3": 0.714531,
+          "gentle_3_8": 0.23625,
+          "moderate_8_15": 0.049219,
           "steep_15_25": 0,
           "very_steep_gt25": 0
         },
         "counts": {
-          "flat_lt3": 4708,
-          "gentle_3_8": 1397,
-          "moderate_8_15": 295,
+          "flat_lt3": 4573,
+          "gentle_3_8": 1512,
+          "moderate_8_15": 315,
           "steep_15_25": 0,
           "very_steep_gt25": 0
         }
@@ -87,7 +87,7 @@
       }
     },
     "parcels": {
-      "reservedShare": 0.049383,
+      "reservedShare": 0.048957,
       "byDistrictCount": {
         "district_0_0": 121,
         "district_1_0": 121,

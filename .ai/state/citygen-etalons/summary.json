@@ -16,9 +16,9 @@
     "hill_town": {
       "runs": 3,
       "hashes": [
-        "5907767c542a46a0a913f042826bbe1ea127bd59c4d46994eecbea6f84116960",
-        "6f2c6a0f87da85a5d70586659c5fa2748c9c949eebeb6074da57cb5494698c46",
-        "e890fbbed198d9c3c4ba861486ee7a398955055dd2e819082a4967559663bfce"
+        "e144a0c5de2f0edfd14dd3e359d34ea114b64f1c01ca21f5431eb01000a4a7b4",
+        "fae25f706e8ed9c6631b0d9acb41ad362b36f81294c44c9c6ddc7ed46e36624a",
+        "59947f82079c744eea391275dfd4dfe3e8cdd37a72a018477abc335d605c249c"
       ],
       "errors": {
         "count": 3,
@@ -29,8 +29,8 @@
       "warnings": {
         "count": 3,
         "min": 8,
-        "max": 8,
-        "mean": 8
+        "max": 12,
+        "mean": 9.333333
       },
       "roads": {
         "count": 3,
@@ -54,9 +54,9 @@
     "railway_industrial": {
       "runs": 3,
       "hashes": [
-        "3b808e478193abd85a7a43e42791cb759cdf568e7c1e452c9f431beaf43df161",
-        "63abb21c0a153bb189f763a2a6153a6fbd5ef2536c8ae41b3d3b3d92ef3b2122",
-        "1d9207d359c65127bf3ecf28cfc0f162adcdd9b1658901dfc384f59b9bbe5638"
+        "8268fb87d7bb61540ff07e654e6862a3931dee9150fe043d593e3d3e43fe66b9",
+        "349175fd27f001406a7a60b71901994a6886c6c8773876c48c942c72223d591f",
+        "a73078ad0ba59c412a9c521030f0a1b0d28173d43dddfed02fc781de437e86fe"
       ],
       "errors": {
         "count": 3,
@@ -92,9 +92,9 @@
     "river_trade": {
       "runs": 3,
       "hashes": [
-        "e025da50c83ca3ec54bf69bff608d617a421ade4b8c9df92c707d1ae2fafa1c2",
-        "359358eb1d4f259ce989b45cf02d8db60c4eabb5dec002957850445c33f69404",
-        "e7a17dfb437d4083f1e921c478b087e566c0f37364dbab8310e86721e044c148"
+        "2d0fe7d980e489dc4b7906984cec3f098e8d37168d32638830b1a81ae376c737",
+        "e6e0a25239e9f2f448291d09a0c5fa7daf5cddb7194b4cb4ab404e411e21c461",
+        "de2f95ecef08dee8ae1f358fdab3789e4a19973bca99e7b12de2b49c0f80fd90"
       ],
       "errors": {
         "count": 3,
@@ -122,9 +122,9 @@
       },
       "buildings": {
         "count": 3,
-        "min": 402,
+        "min": 403,
         "max": 403,
-        "mean": 402.333333
+        "mean": 403
       }
     }
   }
