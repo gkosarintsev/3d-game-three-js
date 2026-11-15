@@ -235,6 +235,18 @@ export function evaluateRules(ctx) {
   if (graph.nodes > 0 && graph.components > 1) {
     v('warn', 'road_graph_not_single_component', `road graph has ${graph.components} connected components`, { components: graph.components, nodes: graph.nodes });
   }
+  // R2.4: soft topology targets (§7.5, §12.2)
+  if (graph.gamma != null) {
+    if (graph.gamma < 0.3 || graph.gamma > 0.6) {
+      v('info', 'road_graph_gamma_out_of_target', 'road graph gamma outside typical target range [0.3, 0.6] (informational)', { gamma: graph.gamma, target: [0.3, 0.6] });
+    }
+  }
+  if (graph.deadEndRatio != null) {
+    // rough target: collector/local grid-like networks often 5–20%; keep informational
+    if (graph.deadEndRatio > 0.35) {
+      v('info', 'road_graph_dead_end_ratio_high', 'road graph dead-end ratio is high (informational)', { deadEndRatio: graph.deadEndRatio, targetMax: 0.35 });
+    }
+  }
   const spawnDist = gp.spawn ? minRoadDist(gp.spawn.x, gp.spawn.z, roads) : null;
   const exitDist = gp.exit ? minRoadDist(gp.exit.x, gp.exit.z, roads) : null;
   if (spawnDist != null && spawnDist > 20) {

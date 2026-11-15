@@ -75,6 +75,33 @@ function roadClassSlopeLimitPct(type, policies) {
   return Number.isFinite(pct) ? pct : null;
 }
 
+function roadClassSpeedLimitKmh(type) {
+  const t = String(type || 'local');
+  // §7.1: speedLimit in km/h (doc examples: highway 90, arterial/collector 60/40, local 30; ramps/connectors moderate)
+  const map = { highway: 90, arterial: 60, collector: 40, local: 30, ramp: 40, merge: 40, split: 40, connector: 30 };
+  return Object.prototype.hasOwnProperty.call(map, t) ? map[t] : 30;
+}
+
+function applySegmentClassDefaults(seg) {
+  if (!seg || typeof seg !== 'object') return seg;
+  const s = seg;
+  const t = String(s.type || 'local');
+  // speedLimit km/h (R2.1): fill only when missing to preserve authored values
+  if (s.speedLimit == null || !Number.isFinite(Number(s.speedLimit))) {
+    s.speedLimit = roadClassSpeedLimitKmh(t);
+  } else {
+    const v = Number(s.speedLimit);
+    if (v >= 0) s.speedLimit = Math.round(v * 1000) / 1000;
+  }
+  // keep existing lane/width/surface/sidewalk defaults logic from creation; ensure lanes array is sane
+  if (!Array.isArray(s.lanes) || s.lanes.length === 0) {
+    s.lanes = [{ id: `${s.id ?? 'seg'}_lane_1`, direction: 'forward', width: 8, type: 'vehicle' }];
+  }
+  if (s.surface == null) s.surface = 'asphalt';
+  if (typeof s.sidewalk !== 'boolean') s.sidewalk = (t === 'local' || t === 'collector' || t === 'arterial') ? s.sidewalk === true : s.sidewalk === true;
+  return s;
+}
+
 function orient(ax, az, bx, bz, cx, cz) {
   return (bx - ax) * (cz - az) - (bz - az) * (cx - ax);
 }
@@ -2661,7 +2688,7 @@ export function makeStage2() {
           const w = (Array.isArray(s.lanes) && s.lanes[0]?.width) ? s.lanes[0].width : 8;
           ctx.masks.easement.roads.push({ id: s.id ?? null, minX, maxX, minZ, maxZ, width: w });
         }
-        segments.push(s);
+        segments.push(applySegmentClassDefaults(s));
       }
       ctx.networks.roads.nodes = nodes;
       ctx.networks.roads.segments = segments;
