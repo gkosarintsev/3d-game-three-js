@@ -47,10 +47,11 @@ export class EditorUI {
     this.saveBtn = addBtn('Save JSON', 'Записать draft в src/levels/level-NN.json через local dev-endpoint (tools/level-editor-server.mjs --write). Иначе — 403 и используйте Download.', { type: 'save' });
     const autoWrap = el('label', 'viz-inline editor-autobuild'); this.autoBuildCheck = document.createElement('input'); this.autoBuildCheck.type = 'checkbox'; this.autoBuildCheck.checked = !!this.state.autoBuild; this.autoBuildCheck.title = 'После Save выполнить node tools/build-level.mjs src/levels/level-NN.json и --check'; this.autoBuildCheck.addEventListener('change', () => this.onChange({ type: 'autoBuild', value: this.autoBuildCheck.checked })); autoWrap.append(this.autoBuildCheck, ' build+check');
     this.rebuildBtn = addBtn('Build + Check', 'Пересобрать каталог и проверить (build-level + --check). Только через node tools/level-editor-server.mjs --write.', { type: 'rebuild' });
+    this.expandBtn = addBtn('Expand generated', 'Развернуть процедурный v4-источник генератором (как при build-level) и сделать дороги/здания редактируемыми. Можно отменить через Undo.', { type: 'expand' });
     this.copyBtn = addBtn('Copy JSON', 'Копировать черновик JSON в буфер обмена', { type: 'copyJson' });
     this.downloadBtn = addBtn('Download JSON', 'Скачать черновик level-NN.json', { type: 'download' });
     this.revertBtn = addBtn('Revert', 'Откатить все несохранённые изменения к src/levels/level-NN.json', { type: 'revert' });
-    this.toolbar.append(el('span', 'viz-tool-label', 'Level'), this.levelSelect, tools, el('span', 'viz-tool-label', 'Preset'), this.preset, el('span', 'viz-tool-label', 'snap'), this.snapInput, el('span', 'viz-tool-label', 'R'), this.filletInput, grid, views, this.undoBtn, this.redoBtn, this.validateBtn, autoWrap, this.saveBtn, this.rebuildBtn, this.downloadBtn, this.copyBtn, this.revertBtn);
+    this.toolbar.append(el('span', 'viz-tool-label', 'Level'), this.levelSelect, tools, el('span', 'viz-tool-label', 'Preset'), this.preset, el('span', 'viz-tool-label', 'snap'), this.snapInput, el('span', 'viz-tool-label', 'R'), this.filletInput, grid, views, this.undoBtn, this.redoBtn, this.validateBtn, autoWrap, this.saveBtn, this.rebuildBtn, this.expandBtn, this.downloadBtn, this.copyBtn, this.revertBtn);
   }
 
   buildLeft() {

@@ -135,6 +135,11 @@ async function loadLevel(level) {
     ui.setLevels(registry.numbers, state.level);
     ui.setViewButtons(state.view);
     commitDraft();
+    const srcRoads = (draft?.cityforge?.networks?.roads?.segments ?? []).length;
+    const srcBuildings = (draft?.buildings ?? []).length;
+    if (draft?.kind === 'cityforge' && srcRoads === 0 && srcBuildings === 0 && (draft?.generator?.landscape?.generate || draft?.generator?.transport?.generate || draft?.generator?.buildings?.generate || draft?.generator?.districtsGen?.generate)) {
+      ui.addBanner('Источник процедурный: пустая карта в source. Нажмите «Expand generated», чтобы развернуть генератор и редактировать результат.', 'info');
+    }
     setStatus(`level ${level} · source · ${state.tool} · изменения локальны; скачайте JSON и пересоберите каталог`);
   } catch (e) {
     console.error(e);
@@ -470,6 +475,40 @@ function focusRef(ref) {
   else if (kind === 'element') state.selected = { kind: 'element', segmentId: a, elementIndex: Number(b) || 0 };
   commitDraft();
 }
+async function expandDraft() {
+  if (!draft) return;
+  if (!window.confirm('Развернуть процедурный генератор в редактируемый источник? Черновик будет заменён результатом генерации (можно вернуть Undo/Revert).')) return;
+  const snapshot = cloneDraft();
+  try {
+    setStatus(`Генерация level ${state.level}…`);
+    const res = await fetch(`/api/level/${state.level}/expand`, { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify(draft) });
+    let data = null;
+    try { data = await res.json(); } catch {}
+    if (!res.ok || !data?.ok) {
+      const msg = data?.error || data?.errors?.join('; ') || `${res.status} ${res.statusText}`;
+      ui.addBanner(`Expand не выполнен: ${msg}. Нужен запущенный tools/level-editor-server.mjs.`, 'error');
+      setStatus(`level ${state.level} · expand failed`);
+      return;
+    }
+    draft = data.source;
+    ensureRoads(draft);
+    undoStack.push(JSON.stringify(snapshot));
+    if (undoStack.length > 100) undoStack.shift();
+    redoStack = [];
+    state.selected = null;
+    fieldEditSnapshot = null;
+    ui.setDirty(true, undoStack.length);
+    commitDraft();
+    const roads = (draft?.cityforge?.networks?.roads?.segments ?? []).length;
+    const buildings = (draft?.buildings ?? []).length;
+    ui.addBanner(`Развернуто: дорог ${roads}, зданий ${buildings}. Можно редактировать/скруглять.`, 'info');
+    setStatus(`level ${state.level} · expand OK · roads ${roads} · buildings ${buildings}`);
+  } catch (e) {
+    draft = snapshot;
+    ui.addBanner(`Expand не выполнен: ${formatError(e)}`, 'error');
+    setStatus(`level ${state.level} · expand error`);
+  }
+}
 async function saveDraft() {
   if (!draft) return;
   const body = JSON.stringify(draft, null, 2);
@@ -590,6 +629,7 @@ async function handleAction(ev) {
     fieldEditSnapshot = null; draft = deepClone(rawSource); ensureRoads(draft); undoStack = []; redoStack = []; state.selected = null; commitDraft();
   }
   else if (ev.type === 'save') { await saveDraft(); }
+  else if (ev.type === 'expand') { await expandDraft(); }
   else if (ev.type === 'rebuild') { await rebuildLevel(); }
   else if (ev.type === 'duplicate-segment') { pushHistory(); const copy = duplicateSegment(draft, ev.segmentId, 10, 0); state.selected = copy ? { kind: 'segment', segmentId: copy.id } : null; commitDraft(); }
   else if (ev.type === 'add-plate-to-segment' || ev.type === 'add-arc-to-segment') {

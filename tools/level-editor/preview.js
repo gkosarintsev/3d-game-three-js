@@ -79,6 +79,7 @@ export class DraftPreview {
     const roads = draft?.cityforge?.networks?.roads || { nodes: [], segments: [] };
     for (const n of roads.nodes || []) this.addNode(n);
     for (const s of roads.segments || []) for (const [elementIndex, el] of (s.elements || []).entries()) this.addElement(s, elementIndex, el);
+    for (const b of draft?.buildings || []) this.addBuilding(b);
     this.applySelection();
   }
 
@@ -96,6 +97,32 @@ export class DraftPreview {
   baseMaterial(layer, selected = false, opacity = 0.5) {
     const color = selected ? SELECTED : colorForLayer(layer);
     return new THREE.MeshBasicMaterial({ color, transparent: true, opacity, side: THREE.DoubleSide, depthWrite: false });
+  }
+
+  addBuilding(b) {
+    const fp = Array.isArray(b?.footprint) ? b.footprint : null;
+    if (!fp || fp.length < 3) return;
+    const gy = Number.isFinite(b?.baseY) ? b.baseY : 0;
+    const floors = Number(b?.floorsCount) || 1;
+    const floorHeight = Number(b?.floorHeight) || 3;
+    const h = Math.max(0.5, floors * floorHeight);
+    // preview-only: экструзия footprint в простой ящик по высоте здания
+    const minX = Math.min(...fp.map(p => p.x)), maxX = Math.max(...fp.map(p => p.x));
+    const minZ = Math.min(...fp.map(p => p.z)), maxZ = Math.max(...fp.map(p => p.z));
+    const cx = (minX + maxX) / 2, cz = (minZ + maxZ) / 2;
+    const g = new THREE.BoxGeometry(maxX - minX, h, maxZ - minZ);
+    const m = new THREE.MeshBasicMaterial({ color: 0x5c6b7d, transparent: true, opacity: 0.55, depthWrite: false });
+    const mesh = new THREE.Mesh(g, m);
+    mesh.position.set(cx, gy + h / 2, cz);
+    mesh.userData.noPick = true; // здания пока только фон; дороги редактируются поверх них
+    this.group.add(mesh);
+    // контур
+    const pts = fp.map(p => new THREE.Vector3(p.x, gy + h + 0.03, p.z));
+    pts.push(pts[0].clone());
+    const lg = new THREE.BufferGeometry().setFromPoints(pts);
+    const lines = new THREE.Line(lg, new THREE.LineBasicMaterial({ color: 0x9fb2c8, transparent: true, opacity: 0.9 }));
+    lines.userData.noPick = true;
+    this.group.add(lines);
   }
 
   addNode(n) {

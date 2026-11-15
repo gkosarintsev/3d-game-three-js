@@ -131,17 +131,17 @@ test('integration: level 19 counts/dedupe/split matching', async () => {
   const decodedCells = decodeCellsFromCatalog(levelDef, dir);
   const model = buildModel({ level: n, mode: 'compiled', source, compiledIndex: levelDef.map, decodedCells, report });
 
-  assert.equal(model.entities.buildings.size, 27);
-  assert.equal(model.entities.roads.size, 125);
-  assert.equal(model.entities.props.size, 2742);
-  assert.equal(model.stats.duplicates, 53);
-  assert.equal(model.skeleton.nodes.length, 1946);
-  assert.equal(model.skeleton.edges.length, 1839);
+  assert.equal(model.entities.buildings.size, 24);
+  assert.equal(model.entities.roads.size, 135);
+  assert.equal(model.entities.props.size, 2902);
+  assert.equal(model.stats.duplicates, 56);
+  assert.equal(model.skeleton.nodes.length, 2027);
+  assert.equal(model.skeleton.edges.length, 1909);
 
   // instances
-  assert.equal(model.stats.instances.buildings, 34);
-  assert.equal(model.stats.instances.roads, 171);
-  assert.equal(model.stats.instances.props, 2742);
+  assert.equal(model.stats.instances.buildings, 26);
+  assert.equal(model.stats.instances.roads, 185);
+  assert.equal(model.stats.instances.props, 2906);
 
   // split matching
   const srcRoads = new Set((source.cityforge.networks.roads.segments || []).map(s => s.id));
@@ -151,7 +151,7 @@ test('integration: level 19 counts/dedupe/split matching', async () => {
   const pads = compiledRoads.filter(id => /^spawn_pad$|^exit_pad$/.test(id));
   const splits = compiledRoads.filter(id => !srcRoads.has(id) && !pads.includes(id) && srcRoads.has(strip(id)));
   const unknown = compiledRoads.filter(id => !srcRoads.has(id) && !pads.includes(id) && !srcRoads.has(strip(id)));
-  assert.equal(exact.length, 61);
+  assert.equal(exact.length, 71);
   assert.equal(splits.length, 62);
   assert.equal(pads.length, 2);
   assert.equal(unknown.length, 0);
@@ -162,7 +162,7 @@ test('integration: level 19 counts/dedupe/split matching', async () => {
   // provenance
   const roadOrigins = {};
   for (const r of model.entities.roads.values()) roadOrigins[r.origin] = (roadOrigins[r.origin] || 0) + 1;
-  assert.equal(roadOrigins.authored, 123); // 61 exact + 62 split
+  assert.equal(roadOrigins.authored, 133); // 71 exact + 62 split
   assert.equal(roadOrigins.derived, 2);
   for (const b of model.entities.buildings.values()) assert.equal(b.origin, 'generated');
   for (const p of model.entities.props.values()) assert.equal(p.origin, 'derived');

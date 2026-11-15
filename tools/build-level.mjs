@@ -235,7 +235,8 @@ ${constName}.map.skeleton = decodeSkeleton(await loadSkel());
  * (normalize → catalog/module), поэтому глава становится играбельной. Неподдержанное
  * содержимое формата — явная ошибка компилятора.
  */
-function generateCityforge(raw, sourceName, opts = {}) {
+/** Возвращает source после валидации и citygen (до компиляции). */
+export function expandCityforgeSource(raw, sourceName) {
   const isV4 = raw?.schemaVersion === 4;
   const { errors, warnings: v3w } = validateLevel(raw, isV4 ? LEVEL_SPEC_V4 : LEVEL_SPEC_V3);
   if (errors.length) throw new ValidationError(errors, v3w);
@@ -319,6 +320,17 @@ function generateCityforge(raw, sourceName, opts = {}) {
       throw new ValidationError([String(e?.message ?? e)], v3w);
     }
   }
+  return { source, warnings: v3w, report };
+}
+
+/**
+ * CityForge v3/v4 → скомпилированный движковый мир → каталог с чанками, как у level-02/14.
+ * Повторно использует `expandCityforgeSource`, чтобы редактор мог загружать
+ * развёрнутый процедурный источник без компиляции/сборки.
+ */
+function generateCityforge(raw, sourceName, opts = {}) {
+  const { source, warnings: v3w, report } = expandCityforgeSource(raw, sourceName);
+  const isV4 = source?.schemaVersion === 4;
   let compiled;
   try {
     compiled = compileCityforge(source);

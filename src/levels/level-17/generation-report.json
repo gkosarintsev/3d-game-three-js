@@ -2003,33 +2003,6 @@
       "code": "stage_ok",
       "stage": "6_finalize_emit",
       "message": "stage 6_finalize_emit completed"
-    },
-    {
-      "severity": "warning",
-      "code": "build_conflicting_buildings_dropped",
-      "stage": "build",
-      "message": "dropped buildings conflicting with compiled/normalized placement",
-      "count": 7,
-      "ids": [
-        "b_district_1_3_170",
-        "b_district_1_3_171",
-        "b_district_3_3_172",
-        "b_district_3_3_192",
-        "b_district_3_3_22",
-        "b_district_3_3_272",
-        "b_district_3_3_97"
-      ]
-    },
-    {
-      "severity": "warning",
-      "code": "build_conflicting_props_dropped",
-      "stage": "build",
-      "message": "dropped landscapeObjects with parser warnings",
-      "count": 2,
-      "ids": [
-        "prop_48",
-        "prop_49"
-      ]
     }
   ],
   "repairs": [
@@ -2086,58 +2059,13 @@
       "code": "access_roads_added",
       "id": "tr_acc_1_17,tr_acc_1_17_2",
       "target": "district_2_2_p101"
-    },
-    {
-      "stage": "build",
-      "id": "b_district_1_3_170",
-      "code": "drop_conflicting_building"
-    },
-    {
-      "stage": "build",
-      "id": "b_district_1_3_171",
-      "code": "drop_conflicting_building"
-    },
-    {
-      "stage": "build",
-      "id": "b_district_3_3_172",
-      "code": "drop_conflicting_building"
-    },
-    {
-      "stage": "build",
-      "id": "b_district_3_3_192",
-      "code": "drop_conflicting_building"
-    },
-    {
-      "stage": "build",
-      "id": "b_district_3_3_22",
-      "code": "drop_conflicting_building"
-    },
-    {
-      "stage": "build",
-      "id": "b_district_3_3_272",
-      "code": "drop_conflicting_building"
-    },
-    {
-      "stage": "build",
-      "id": "b_district_3_3_97",
-      "code": "drop_conflicting_building"
-    },
-    {
-      "stage": "build",
-      "id": "prop_48",
-      "code": "drop_conflicting_prop"
-    },
-    {
-      "stage": "build",
-      "id": "prop_49",
-      "code": "drop_conflicting_prop"
     }
   ],
   "drops": [],
   "summary": {
     "errors": 0,
-    "warnings": 11,
-    "repairs": 18,
+    "warnings": 9,
+    "repairs": 9,
     "drops": 0
   }
 }

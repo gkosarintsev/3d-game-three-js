@@ -14,6 +14,7 @@ import http from 'node:http';
 import fs from 'node:fs';
 import path from 'node:path';
 import { spawn } from 'node:child_process';
+import { expandCityforgeSource } from './build-level.mjs';
 import { fileURLToPath } from 'node:url';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
@@ -99,6 +100,30 @@ function validateLevelDraft(draft, nn) {
 const handler = async (req, res) => {
   try {
     const url = new URL(req.url || '/', `http://${req.headers.host || 'localhost'}`);
+    const expand = url.pathname.match(/^\/api\/level\/(\d{1,2})\/expand$/);
+    if (expand && req.method === 'POST') {
+      // Безопасно и без записи: разворачивает процедурный v4-источник через тот же citygen, что и сборка.
+      let raw = null;
+      const len = Number(req.headers['content-length'] ?? 0);
+      if (len > 0) {
+        const body = await readBody(req);
+        try { raw = JSON.parse(body.toString('utf8')); } catch (e) { sendJson(res, 400, { ok: false, error: `invalid JSON: ${e.message}` }); return; }
+      } else {
+        const t = levelTarget(expand[1]); if (!t) { sendJson(res, 400, { ok: false, error: 'bad level' }); return; }
+        if (!fs.existsSync(t.target)) { sendJson(res, 404, { ok: false, error: 'level file not found' }); return; }
+        try { raw = JSON.parse(fs.readFileSync(t.target, 'utf8')); } catch (e) { sendJson(res, 400, { ok: false, error: `level file is not valid JSON: ${e.message}` }); return; }
+      }
+      const t = levelTarget(expand[1]);
+      const sourceName = `level-${String(expand[1]).padStart(2, '0')}.json`;
+      try {
+        const out = expandCityforgeSource(raw, sourceName);
+        sendJson(res, 200, { ok: true, source: out.source, warnings: out.warnings ?? [], report: out.report ?? null });
+      } catch (e) {
+        if (e?.errors) sendJson(res, 422, { ok: false, errors: e.errors, warnings: e.warnings ?? [] });
+        else sendJson(res, 500, { ok: false, error: e?.message || String(e) });
+      }
+      return;
+    }
     const rebuild = url.pathname.match(/^\/api\/level\/(\d{1,2})\/rebuild$/);
     if (rebuild && req.method === 'POST') {
       const t = levelTarget(rebuild[1]); if (!t) { sendJson(res, 400, { ok: false, error: 'bad level' }); return; }
