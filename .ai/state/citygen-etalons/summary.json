@@ -16,9 +16,9 @@
     "hill_town": {
       "runs": 3,
       "hashes": [
-        "ed1a3e459e483f6d5018f79d185b0df2839bfc87fac177cbc250a2f80b39edc1",
-        "365d8182c3c549337c5e39da3e814c6e471fee302dcddff1ac8db750cf83c862",
-        "c6d43b35a29d1efff837e26191870032282ec3e60d1dc13745586f7dd80083bf"
+        "5907767c542a46a0a913f042826bbe1ea127bd59c4d46994eecbea6f84116960",
+        "6f2c6a0f87da85a5d70586659c5fa2748c9c949eebeb6074da57cb5494698c46",
+        "e890fbbed198d9c3c4ba861486ee7a398955055dd2e819082a4967559663bfce"
       ],
       "errors": {
         "count": 3,
@@ -54,9 +54,9 @@
     "railway_industrial": {
       "runs": 3,
       "hashes": [
-        "c84c2a571376578bb305b97f137185fc487919487ce498ebe3dfb73d906e73f0",
-        "365871b757f4e06fbf748b50cc600746786c45342a0d58ead550d7b55d8d8421",
-        "6cac67a68f090104d12813f4fe1e610c366137cfa964c8095957da167ded490e"
+        "3b808e478193abd85a7a43e42791cb759cdf568e7c1e452c9f431beaf43df161",
+        "63abb21c0a153bb189f763a2a6153a6fbd5ef2536c8ae41b3d3b3d92ef3b2122",
+        "1d9207d359c65127bf3ecf28cfc0f162adcdd9b1658901dfc384f59b9bbe5638"
       ],
       "errors": {
         "count": 3,
@@ -86,15 +86,15 @@
         "count": 3,
         "min": 402,
         "max": 403,
-        "mean": 402.333333
+        "mean": 402.666667
       }
     },
     "river_trade": {
       "runs": 3,
       "hashes": [
-        "c84c2a571376578bb305b97f137185fc487919487ce498ebe3dfb73d906e73f0",
-        "365871b757f4e06fbf748b50cc600746786c45342a0d58ead550d7b55d8d8421",
-        "6cac67a68f090104d12813f4fe1e610c366137cfa964c8095957da167ded490e"
+        "3b808e478193abd85a7a43e42791cb759cdf568e7c1e452c9f431beaf43df161",
+        "63abb21c0a153bb189f763a2a6153a6fbd5ef2536c8ae41b3d3b3d92ef3b2122",
+        "1d9207d359c65127bf3ecf28cfc0f162adcdd9b1658901dfc384f59b9bbe5638"
       ],
       "errors": {
         "count": 3,
@@ -124,7 +124,7 @@
         "count": 3,
         "min": 402,
         "max": 403,
-        "mean": 402.333333
+        "mean": 402.666667
       }
     }
   }

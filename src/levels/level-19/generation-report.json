@@ -16,7 +16,7 @@
     {
       "id": "1_landscape_hydrology",
       "status": "ok",
-      "diagnostics": 4,
+      "diagnostics": 5,
       "repairs": 0,
       "drops": 0
     },
@@ -137,6 +137,13 @@
       "code": "stage_ok",
       "stage": "1_landscape_hydrology",
       "message": "stage 1_landscape_hydrology completed"
+    },
+    {
+      "severity": "info",
+      "code": "terrain_landmarks_marked",
+      "stage": "1_landscape_hydrology",
+      "message": "marked 1 landmark/orientation point(s)",
+      "count": 1
     },
     {
       "severity": "info",

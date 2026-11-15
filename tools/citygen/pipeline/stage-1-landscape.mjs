@@ -196,7 +196,7 @@ function buildReservations(ctx, baseY, size, slope) {
       // keep reasonably flat and away from plate edge
       const edge = Math.min(half - Math.abs(x), half - Math.abs(z));
       if (edge < size * 0.12) continue;
-      samples.push({ x: +x.toFixed(3), z: +z.toFixed(3), slope: +s.toFixed(6) });
+      samples.push({ x: +x.toFixed(3), z: +z.toFixed(3), slope: +s.toFixed(6), y: +y.toFixed(3) });
     }
   }
   samples.sort((a, b) => a.slope - b.slope || Math.hypot(a.x, a.z) - Math.hypot(b.x, b.z) || a.x - b.x || a.z - b.z);
@@ -208,7 +208,59 @@ function buildReservations(ctx, baseY, size, slope) {
     if (picked.some(p => Math.hypot(p.x - s.x, p.z - s.z) < minSep)) continue;
     picked.push({ id: `reserve_${roles[picked.length]}`, role: roles[picked.length], x: s.x, z: s.z, slope: s.slope });
   }
-  return picked;
+  return { picked, samples };
+}
+
+function buildLandmarks(ctx, baseY, size, slope, crossings, flatSamples = []) {
+  // R1.3/R1.5 (partial): deterministic landmarks/orientations derived from terrain and crossings.
+  // These are added as reservation-like points so downstream stages can avoid/plan around them.
+  const half = size / 2;
+  const mods = ctx.terrain.modifiers || [];
+  const step = Math.max(24, Math.min(96, (slope?.step || 16) * 2));
+  const peaks = [];
+  for (let z = -half + step / 2; z <= half - step / 2 + EPS; z += step) {
+    for (let x = -half + step / 2; x <= half - step / 2 + EPS; x += step) {
+      const edge = Math.min(half - Math.abs(x), half - Math.abs(z));
+      if (edge < size * 0.1) continue;
+      const y = terrainHeightAt(x, z, baseY, mods);
+      peaks.push({ x: +x.toFixed(3), z: +z.toFixed(3), y: +y.toFixed(3) });
+    }
+  }
+  peaks.sort((a, b) => b.y - a.y || Math.hypot(a.x, a.z) - Math.hypot(b.x, b.z) || a.x - b.x || a.z - b.z);
+  const landmarks = [];
+  const minSep = Math.max(140, size * 0.14);
+  const pushUnique = (lm) => {
+    if (landmarks.some(p => Math.hypot(p.x - lm.x, p.z - lm.z) < minSep)) return false;
+    landmarks.push(lm);
+    return true;
+  };
+  // Viewpoints / hilltops
+  let vi = 0;
+  for (const p of peaks) {
+    if (landmarks.length >= 3) break;
+    if (p.y <= baseY + 1.5) continue; // only meaningful elevation
+    if (pushUnique({ id: `landmark_view_${vi + 1}`, role: 'viewpoint', kind: 'viewpoint', x: p.x, z: p.z, elevation: p.y })) vi++;
+  }
+  // Crossing landmarks (historic/strategic crossing vicinity)
+  const sortedCross = [...(crossings ?? [])].sort((a, b) => (a.score ?? 0) - (b.score ?? 0) || String(a.riverId ?? '').localeCompare(String(b.riverId ?? '')) || (a.t ?? 0) - (b.t ?? 0));
+  let ci = 0;
+  for (const c of sortedCross) {
+    if (ci >= 2) break;
+    if (!Number.isFinite(Number(c?.x)) || !Number.isFinite(Number(c?.z))) continue;
+    const lm = { id: `landmark_crossing_${ci + 1}`, role: 'crossing', kind: 'historic_crossing', x: +Number(c.x).toFixed(3), z: +Number(c.z).toFixed(3), riverId: c.riverId ?? null };
+    // allow a bit closer to other landmarks but not same spot
+    if (landmarks.some(p => Math.hypot(p.x - lm.x, p.z - lm.z) < Math.max(80, size * 0.08))) continue;
+    landmarks.push(lm); ci++;
+  }
+  // Valley/basin hint: lowest flat sample (if terrain varies) - useful for settlement/orientation
+  const flats = [...flatSamples].sort((a, b) => (a.y ?? 0) - (b.y ?? 0) || (a.slope ?? 0) - (b.slope ?? 0));
+  const low = flats.find(s => (s.y ?? 0) < baseY - 0.5) || flats[0];
+  if (low && landmarks.length < 6) {
+    const lm = { id: 'landmark_basin_1', role: 'basin', kind: 'basin', x: low.x, z: low.z, elevation: low.y ?? null };
+    if (!landmarks.some(p => Math.hypot(p.x - lm.x, p.z - lm.z) < Math.max(100, size * 0.1))) landmarks.push(lm);
+  }
+  landmarks.sort((a,b)=>String(a.id).localeCompare(String(b.id)));
+  return landmarks;
 }
 
 function shouldGenerate(ctx) {
@@ -801,21 +853,29 @@ export function makeStage1() {
       }
       ctx.terrain.modifiers = repairedMods;
 
-      // R1.2/R1.3/R1.5 (analysis, read-only): slope classification, reservations, crossing candidates.
+      // R1.2/R1.3/R1.5 (analysis, read-only): slope classification, reservations, crossing candidates, landmarks.
       const analysisSize = ctx.meta.worldBounds?.size ?? ctx.input?.ground?.size ?? g;
       const slope = buildSlopeAnalysis(ctx, baseY, analysisSize);
       const crossings = findCrossingCandidates(ctx, baseY, analysisSize);
-      const reservations = buildReservations(ctx, baseY, analysisSize, slope);
+      const reservationBuild = buildReservations(ctx, baseY, analysisSize, slope);
+      const flatReservations = Array.isArray(reservationBuild) ? reservationBuild : (reservationBuild.picked ?? []);
+      const flatSamples = Array.isArray(reservationBuild) ? [] : (reservationBuild.samples ?? []);
+      const landmarks = buildLandmarks(ctx, baseY, analysisSize, slope, crossings, flatSamples);
+      // Treat landmarks as reservation-like constraints for downstream (R1.3: affect generation).
+      const reservations = [...flatReservations, ...landmarks];
       const waterBuffers = (ctx.masks?.terrain?.waterBuffers && Array.isArray(ctx.masks.terrain.waterBuffers))
         ? ctx.masks.terrain.waterBuffers
         : (Array.isArray(ctx.terrain?.analysis?.waterBuffers) ? ctx.terrain.analysis.waterBuffers : []);
-      ctx.terrain.analysis = { slope, crossings, reservations, waterBuffers };
-      ctx.masks.terrain = { slopeShare: slope.share, maxSlope: slope.maxSlope, crossings, reservations, waterBuffers };
+      ctx.terrain.analysis = { slope, crossings, reservations, landmarks, waterBuffers };
+      ctx.masks.terrain = { slopeShare: slope.share, maxSlope: slope.maxSlope, crossings, reservations, landmarks, waterBuffers };
       if (crossings.length) {
         ctx.report.diagnostics.push(info('historical_crossings_marked', stageId, `marked ${crossings.length} historical crossing candidate(s)`, { count: crossings.length }));
       }
-      if (reservations.length) {
-        ctx.report.diagnostics.push(info('terrain_reservations_marked', stageId, `reserved ${reservations.length} flat site candidate(s)`, { count: reservations.length }));
+      if (flatReservations.length) {
+        ctx.report.diagnostics.push(info('terrain_reservations_marked', stageId, `reserved ${flatReservations.length} flat site candidate(s)`, { count: flatReservations.length }));
+      }
+      if (landmarks.length) {
+        ctx.report.diagnostics.push(info('terrain_landmarks_marked', stageId, `marked ${landmarks.length} landmark/orientation point(s)`, { count: landmarks.length }));
       }
       if (waterBuffers.length) {
         ctx.report.diagnostics.push(info('terrain_water_buffers_marked', stageId, `marked ${waterBuffers.length} water buffer zone(s)`, { count: waterBuffers.length }));

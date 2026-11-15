@@ -16,7 +16,7 @@
     {
       "id": "1_landscape_hydrology",
       "status": "ok",
-      "diagnostics": 6,
+      "diagnostics": 7,
       "repairs": 0,
       "drops": 0
     },
@@ -95,7 +95,7 @@
       "profileId": "suburb",
       "cells": 1,
       "parcels": 121,
-      "reservedParcels": 19
+      "reservedParcels": 21
     },
     {
       "id": "district_1_1",
@@ -135,7 +135,7 @@
       "profileId": "market",
       "cells": 1,
       "parcels": 196,
-      "reservedParcels": 59
+      "reservedParcels": 61
     },
     {
       "id": "district_2_2",
@@ -183,7 +183,7 @@
       "profileId": "commercial",
       "cells": 1,
       "parcels": 144,
-      "reservedParcels": 58
+      "reservedParcels": 61
     }
   ],
   "diagnostics": [
@@ -298,6 +298,13 @@
       "code": "stage_ok",
       "stage": "1_landscape_hydrology",
       "message": "stage 1_landscape_hydrology completed"
+    },
+    {
+      "severity": "info",
+      "code": "terrain_landmarks_marked",
+      "stage": "1_landscape_hydrology",
+      "message": "marked 5 landmark/orientation point(s)",
+      "count": 5
     },
     {
       "severity": "info",
@@ -512,7 +519,7 @@
         "suburb"
       ],
       "parcels": 2274,
-      "reservedParcels": 324,
+      "reservedParcels": 331,
       "parcelAccess": {
         "near": 1157,
         "mid": 1015,
@@ -692,7 +699,7 @@
       "roadNodes": 162,
       "districts": 16,
       "parcels": 2274,
-      "reservedParcels": 324,
+      "reservedParcels": 331,
       "buildings": 402,
       "enterableBuildings": 0,
       "props": 360,
@@ -771,7 +778,7 @@
       "shareByType": {}
     },
     "parcels": {
-      "reservedShare": 0.14248,
+      "reservedShare": 0.145558,
       "byDistrictCount": {
         "district_0_0": 121,
         "district_1_0": 121,
