@@ -6,7 +6,7 @@
     "seed": 20,
     "deterministic": true
   },
-  "reportHash": "ff64ffa565257109dd75bb4cf97642aa8f20726e140086b12ce7e16b858e5ce7",
+  "reportHash": "a4f2d22692d64fe8d3e0f24165abfc646de8c8caf46263833690c76ae421b895",
   "stages": 7,
   "summary": {
     "errors": 0,
@@ -131,11 +131,9 @@
         }
       },
       "crossings": 0,
-      "reservations": {
-        "road": 0,
-        "water": 0,
-        "buildable": 0
-      }
+      "reservations": 9,
+      "landmarks": 4,
+      "waterBuffers": 0
     },
     "stream": {
       "chunk": 640,

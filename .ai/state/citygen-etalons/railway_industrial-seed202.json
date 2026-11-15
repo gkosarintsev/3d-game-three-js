@@ -2,7 +2,7 @@
   "profile": "railway_industrial",
   "seed": 202,
   "generatorVersion": "0.1.0",
-  "reportHash": "cc614c6733c352cd52092ca708e9a5bc10a84b1600fbcff1fe74911b9a883add",
+  "reportHash": "909dbb75a40cd8412bbef9784615b312833022d55829d44f163276245a09f429",
   "summary": {
     "errors": 0,
     "warnings": 8,
@@ -80,11 +80,9 @@
         }
       },
       "crossings": 6,
-      "reservations": {
-        "road": 0,
-        "water": 0,
-        "buildable": 0
-      }
+      "reservations": 10,
+      "landmarks": 5,
+      "waterBuffers": 2
     },
     "parcels": {
       "reservedShare": 0.106721,

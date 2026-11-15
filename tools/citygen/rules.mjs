@@ -311,14 +311,38 @@ export function evaluateRules(ctx) {
 
   // R1/R3: terrain/hydrology analysis and parcel reservation metrics when available (read-only)
   const terrainAnalysis = ctx?.terrain?.analysis ?? null;
+  const terrainMasks = ctx?.masks?.terrain ?? ctx?.terrain?.analysis ?? null;
   const rivers = ctx?.hydrology?.rivers ?? [];
   const lakes = ctx?.hydrology?.lakes ?? [];
+  const waterBuffers = Array.isArray(ctx?.masks?.terrain?.waterBuffers) ? ctx.masks.terrain.waterBuffers
+    : (Array.isArray(ctx?.terrain?.analysis?.waterBuffers) ? ctx.terrain.analysis.waterBuffers : []);
   const reservedParcels = parcels.filter(p => p?.reserved === true).length;
   const reservedShare = parcels.length > 0 ? round(reservedParcels / parcels.length, 6) : null;
   const parcelsByDistrict = Object.create(null);
   for (const p of parcels) {
     const k = String(p?.districtId ?? p?.type ?? 'unknown');
     parcelsByDistrict[k] = (parcelsByDistrict[k] || 0) + 1;
+  }
+
+  // R1 (read-only validation, §4–§5): water/slope/crossing/landmark/reservation masks as downstream constraints.
+  if ((rivers.length + lakes.length) > 0 && waterBuffers.length === 0) {
+    v('warn', 'terrain_water_buffers_missing', 'hydrology present but water buffer/floodplain masks are missing', { rivers: rivers.length, lakes: lakes.length });
+  } else if ((rivers.length + lakes.length) > 0) {
+    const missingMeta = waterBuffers.filter(w => !(Number.isFinite(Number(w?.buffer)) || Number.isFinite(Number(w?.floodplain)))).length;
+    if (missingMeta > 0) v('info', 'terrain_water_buffer_metadata_incomplete', 'some water buffers are missing buffer/floodplain metadata (informational)', { missing: missingMeta, total: waterBuffers.length });
+  }
+  if (terrainAnalysis) {
+    if (!terrainAnalysis.slope) v('info', 'terrain_slope_analysis_missing', 'terrain analysis missing slope mask/classification (informational)');
+    if (!Array.isArray(terrainAnalysis.crossings)) v('info', 'terrain_crossings_mask_missing', 'terrain analysis missing crossings mask/list (informational)');
+    else if (rivers.length > 0 && terrainAnalysis.crossings.length === 0) v('info', 'terrain_crossings_none_marked', 'rivers present but no crossing candidates marked (informational)', { rivers: rivers.length });
+    if (!Array.isArray(terrainAnalysis.reservations) && !Array.isArray(terrainMasks?.reservations)) {
+      v('info', 'terrain_reservations_mask_missing', 'terrain analysis missing reservations mask/list (informational)');
+    }
+    if (!Array.isArray(terrainAnalysis.landmarks) && !Array.isArray(terrainMasks?.landmarks)) {
+      v('info', 'terrain_landmarks_mask_missing', 'terrain analysis missing landmarks mask/list (informational)');
+    }
+  } else if ((rivers.length + lakes.length) > 0) {
+    v('info', 'terrain_analysis_missing', 'hydrology present but terrain analysis/masks are unavailable (informational)');
   }
 
   // §12.2 subset metrics (deterministic snapshot). Many targets need richer IR; marked partial.
@@ -366,12 +390,15 @@ export function evaluateRules(ctx) {
         counts: terrainAnalysis.slope.counts ?? null,
       } : null,
       crossings: Array.isArray(terrainAnalysis.crossings) ? terrainAnalysis.crossings.length : (terrainAnalysis.crossings ?? null),
-      reservations: terrainAnalysis.reservations ? {
-        road: Array.isArray(terrainAnalysis.reservations.road) ? terrainAnalysis.reservations.road.length : 0,
-        water: Array.isArray(terrainAnalysis.reservations.water) ? terrainAnalysis.reservations.water.length : 0,
-        buildable: Array.isArray(terrainAnalysis.reservations.buildable) ? terrainAnalysis.reservations.buildable.length : 0,
-      } : null,
-    } : null,
+      reservations: Array.isArray(terrainAnalysis.reservations) ? terrainAnalysis.reservations.length
+        : (terrainAnalysis.reservations ? {
+          road: Array.isArray(terrainAnalysis.reservations.road) ? terrainAnalysis.reservations.road.length : 0,
+          water: Array.isArray(terrainAnalysis.reservations.water) ? terrainAnalysis.reservations.water.length : 0,
+          buildable: Array.isArray(terrainAnalysis.reservations.buildable) ? terrainAnalysis.reservations.buildable.length : 0,
+        } : null),
+      landmarks: Array.isArray(terrainAnalysis.landmarks) ? terrainAnalysis.landmarks.length : (terrainAnalysis.landmarks ?? null),
+      waterBuffers: waterBuffers.length,
+    } : ((rivers.length + lakes.length) > 0 ? { waterBuffers: waterBuffers.length } : null),
     stream: stream ? {
       chunk: stream.chunk ?? null,
       keep: stream.keep ?? null,

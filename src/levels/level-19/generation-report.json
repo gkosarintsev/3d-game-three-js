@@ -462,11 +462,9 @@
         }
       },
       "crossings": 0,
-      "reservations": {
-        "road": 0,
-        "water": 0,
-        "buildable": 0
-      }
+      "reservations": 6,
+      "landmarks": 1,
+      "waterBuffers": 0
     },
     "stream": {
       "chunk": 640,
