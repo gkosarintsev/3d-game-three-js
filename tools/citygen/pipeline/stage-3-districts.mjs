@@ -341,30 +341,53 @@ export function makeStage3() {
       ];
       const hydro = ctx.hydrology?.rivers ?? [];
       const cfHydro = ctx.input?.cityforge?.hydrology?.rivers;
-      const riverIndex = (ctx.spatial?.riverSegments && rivers.length === hydro.length &&
+      // Prefer explicit river easements (R1.4/R1.5: buffer/floodplain metadata) when paths match hydrology.
+      const riverEasements = Array.isArray(ctx.masks?.easement?.rivers) ? ctx.masks.easement.rivers : [];
+      const riversForReserve = riverEasements.length ? riverEasements : rivers;
+      const riverClearance = (rv) => {
+        if (Number.isFinite(Number(rv?.buffer))) return Number(rv.buffer);
+        // floodplain reserved as non-buildable in early stages (conservative; §5.3 planning hint)
+        if (Number.isFinite(Number(rv?.floodplain))) return Number(rv.floodplain);
+        return (Number(rv?.width) || 10) * 0.5 + 12;
+      };
+      const riverIndex = (!riverEasements.length && ctx.spatial?.riverSegments && rivers.length === hydro.length &&
         !(ctx.input?.waterways?.length) && (cfHydro === hydro || !cfHydro))
         ? ctx.spatial.riverSegments : null;
       const parcelNearRiver = (aabb) => {
         const corners = [[aabb.minX,aabb.minZ],[aabb.maxX,aabb.minZ],[aabb.maxX,aabb.maxZ],[aabb.minX,aabb.maxZ],[(aabb.minX+aabb.maxX)/2,(aabb.minZ+aabb.maxZ)/2]];
         if (riverIndex) {
-          const pad = 20;
+          const pad = 24;
           const candidates = riverIndex.query({ minX: aabb.minX - pad, maxX: aabb.maxX + pad, minZ: aabb.minZ - pad, maxZ: aabb.maxZ + pad });
           for (const seg of candidates) {
-            const clearance = (seg.width ?? 10) * 0.5 + 12;
+            const clearance = Number.isFinite(Number(seg.buffer)) ? Number(seg.buffer) : (seg.width ?? 10) * 0.5 + 12;
             for (const [px, pz] of corners) {
               if (pointSegDistXZ(px, pz, seg.ax, seg.az, seg.bx, seg.bz) < clearance) return true;
             }
           }
-          return false;
+        } else {
+          for (const rv of riversForReserve) {
+            const path = rv?.path ?? (Array.isArray(rv?.points) ? rv.points.map(p => [p.x, 0, p.z]) : []);
+            if (path.length < 2) continue;
+            const clearance = riverClearance(rv);
+            for (let pi = 0; pi + 1 < path.length; pi++) {
+              const a = path[pi], c = path[pi + 1];
+              for (const [px, pz] of corners) {
+                if (pointSegDistXZ(px, pz, a[0], a[2], c[0], c[2]) < clearance) return true;
+              }
+            }
+          }
         }
-        for (const rv of rivers) {
-          const path = rv?.path ?? (Array.isArray(rv?.points) ? rv.points.map(p => [p.x, 0, p.z]) : []);
-          if (path.length < 2) continue;
-          const clearance = (Number(rv.width) || 10) * 0.5 + 12;
-          for (let pi = 0; pi + 1 < path.length; pi++) {
-            const a = path[pi], c = path[pi + 1];
+        // R1.4: lake buffers (approx by easement circle metadata)
+        const lakes = Array.isArray(ctx.masks?.easement?.lakes) ? ctx.masks.easement.lakes : (ctx.hydrology?.lakes ?? []);
+        for (const lk of lakes) {
+          const c = lk?.center;
+          const r = Number(lk?.radius);
+          const buf = Number(lk?.buffer);
+          if (Array.isArray(c) && Number.isFinite(r) && Number.isFinite(Number(c[0])) && Number.isFinite(Number(c[1]))) {
+            const cx = Number(c[0]), cz = Number(c[1]);
+            const clearance = r + (Number.isFinite(buf) ? buf : 8);
             for (const [px, pz] of corners) {
-              if (pointSegDistXZ(px, pz, a[0], a[2], c[0], c[2]) < clearance) return true;
+              if (Math.hypot(px - cx, pz - cz) < clearance) return true;
             }
           }
         }

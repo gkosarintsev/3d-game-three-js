@@ -41,11 +41,16 @@ function footprintIntersectsRiver(fp, rivers = [], riverIndex = null) {
   const b = aabbOfFootprint(fp);
   const cx = (b.minX + b.maxX) / 2, cz = (b.minZ + b.maxZ) / 2;
   const corners = [[b.minX,b.minZ],[b.maxX,b.minZ],[b.maxX,b.maxZ],[b.minX,b.maxZ],[cx,cz]];
+  const riverClearance = (rvOrSeg) => {
+    // Prefer explicit easement buffer (R1.4/R1.5). Fallback keeps prior conservative margin for compiled channel checks.
+    if (Number.isFinite(Number(rvOrSeg?.buffer))) return Math.max(Number(rvOrSeg.buffer), 6);
+    return (Number(rvOrSeg?.width) || 10) * 0.5 + 20.0;
+  };
   if (riverIndex) {
     const pad = 30;
     const candidates = riverIndex.query({ minX: b.minX - pad, maxX: b.maxX + pad, minZ: b.minZ - pad, maxZ: b.maxZ + pad });
     for (const seg of candidates) {
-      const clearance = (seg.width ?? 10) * 0.5 + 20.0;
+      const clearance = riverClearance(seg);
       for (const [px,pz] of corners) {
         if (pointSegDistXZ(px, pz, seg.ax, seg.az, seg.bx, seg.bz) < clearance) return true;
       }
@@ -56,7 +61,7 @@ function footprintIntersectsRiver(fp, rivers = [], riverIndex = null) {
   for (const rv of rivers) {
     const path = rv.path ?? [];
     // Be conservative: include banks/bed margins used by compiled waterway/channel checks.
-    const clearance = (rv.width ?? 10) * 0.5 + 20.0;
+    const clearance = riverClearance(rv);
     for (let i = 0; i + 1 < path.length; i++) {
       const a = path[i], c = path[i+1];
       for (const [px,pz] of corners) {
@@ -64,6 +69,25 @@ function footprintIntersectsRiver(fp, rivers = [], riverIndex = null) {
       }
       // centerline near box center
       if (pointSegDistXZ(cx,cz,a[0],a[2],c[0],c[2]) < clearance) return true;
+    }
+  }
+  return false;
+}
+
+function footprintIntersectsLake(fp, lakes = []) {
+  if (!Array.isArray(lakes) || lakes.length === 0) return false;
+  const b = aabbOfFootprint(fp);
+  const cx = (b.minX + b.maxX) / 2, cz = (b.minZ + b.maxZ) / 2;
+  const corners = [[b.minX,b.minZ],[b.maxX,b.minZ],[b.maxX,b.maxZ],[b.minX,b.maxZ],[cx,cz]];
+  for (const lk of lakes) {
+    const c = lk?.center;
+    const r = Number(lk?.radius);
+    if (!Array.isArray(c) || !Number.isFinite(r) || r <= 0) continue;
+    const lx = Number(c[0]), lz = Number(c[1]);
+    if (!Number.isFinite(lx) || !Number.isFinite(lz)) continue;
+    const clearance = r + (Number.isFinite(Number(lk?.buffer)) ? Number(lk.buffer) : 8);
+    for (const [px, pz] of corners) {
+      if (Math.hypot(px - lx, pz - lz) < clearance) return true;
     }
   }
   return false;
@@ -356,7 +380,8 @@ export function makeStage4() {
             if (w < 18 || d < 7) continue;
             const fp = footprintRect(cx, cz, w, d);
             const riverIndex = (rivers === (ctx.hydrology?.rivers ?? null) || rivers === (ctx.masks?.easement?.rivers ?? null)) ? (ctx.spatial?.riverSegments ?? null) : null;
-            if (footprintNearAnchors(fp, anchors, 10) || footprintIntersectsRiver(fp, rivers, riverIndex) || footprintIntersectsRoad(fp, roads, roadSegments, ctx.spatial?.roadEasements, { ignoreEasements: !!force && !!relaxChunk })) continue;
+            const lakes = ctx.masks?.easement?.lakes ?? [];
+            if (footprintNearAnchors(fp, anchors, 10) || footprintIntersectsRiver(fp, rivers, riverIndex) || footprintIntersectsLake(fp, lakes) || footprintIntersectsRoad(fp, roads, roadSegments, ctx.spatial?.roadEasements, { ignoreEasements: !!force && !!relaxChunk })) continue;
             footprint = fp;
             break;
           }
@@ -371,7 +396,8 @@ export function makeStage4() {
             if (d >= maxD - 0.01) w = clamp(maxW * s * s / (d / maxD || 1), 4, maxW);
             const fp = footprintRect(cx, cz, w, d);
             const riverIndex = (rivers === (ctx.hydrology?.rivers ?? null) || rivers === (ctx.masks?.easement?.rivers ?? null)) ? (ctx.spatial?.riverSegments ?? null) : null;
-            if (footprintNearAnchors(fp, anchors, 10) || footprintIntersectsRiver(fp, rivers, riverIndex) || footprintIntersectsRoad(fp, roads, roadSegments, ctx.spatial?.roadEasements, { ignoreEasements: !!force && !!relaxChunk })) continue;
+            const lakes = ctx.masks?.easement?.lakes ?? [];
+            if (footprintNearAnchors(fp, anchors, 10) || footprintIntersectsRiver(fp, rivers, riverIndex) || footprintIntersectsLake(fp, lakes) || footprintIntersectsRoad(fp, roads, roadSegments, ctx.spatial?.roadEasements, { ignoreEasements: !!force && !!relaxChunk })) continue;
             footprint = fp;
             break;
           }
@@ -552,8 +578,10 @@ export function makeStage4() {
               const dlen = clamp((ph - 2) * scale, 4, Math.max(4, ph - 2));
               const fp = footprintRect(cx, cz, w, dlen);
               const riverIndex = (rivers === (ctx.hydrology?.rivers ?? null) || rivers === (ctx.masks?.easement?.rivers ?? null)) ? (ctx.spatial?.riverSegments ?? null) : null;
+              const lakes = ctx.masks?.easement?.lakes ?? [];
               if (footprintNearAnchors(fp, anchors, 10)) continue;
               if (footprintIntersectsRiver(fp, rivers, riverIndex)) continue;
+              if (footprintIntersectsLake(fp, lakes)) continue;
               if (footprintIntersectsRoad(fp, roads, roadSegments, ctx.spatial?.roadEasements, { ignoreEasements: true })) continue;
               footprint = fp;
               break;
