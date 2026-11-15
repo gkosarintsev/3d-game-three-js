@@ -30,7 +30,7 @@
     {
       "id": "3_districts_parcels",
       "status": "ok",
-      "diagnostics": 3,
+      "diagnostics": 4,
       "repairs": 0,
       "drops": 0
     },
@@ -185,6 +185,23 @@
       "parcels": 121,
       "byType": {
         "forest": 1
+      }
+    },
+    {
+      "severity": "info",
+      "code": "parcels_reserved_by_reason",
+      "stage": "3_districts_parcels",
+      "message": "parcel reservations by terrain/hydrology/infrastructure constraints",
+      "reserved": 14,
+      "total": 121,
+      "byReason": {
+        "water": 0,
+        "road_corridor": 9,
+        "anchor": 1,
+        "reservation": 4,
+        "crossing": 0,
+        "steep_slope": 0,
+        "remote_access": 0
       }
     },
     {

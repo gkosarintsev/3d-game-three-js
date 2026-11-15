@@ -30,7 +30,7 @@
     {
       "id": "3_districts_parcels",
       "status": "ok",
-      "diagnostics": 3,
+      "diagnostics": 4,
       "repairs": 0,
       "drops": 0
     },
@@ -1782,6 +1782,23 @@
         "residential": 2,
         "campus": 1,
         "commercial": 1
+      }
+    },
+    {
+      "severity": "info",
+      "code": "parcels_reserved_by_reason",
+      "stage": "3_districts_parcels",
+      "message": "parcel reservations by terrain/hydrology/infrastructure constraints",
+      "reserved": 605,
+      "total": 2274,
+      "byReason": {
+        "water": 349,
+        "road_corridor": 171,
+        "anchor": 3,
+        "reservation": 15,
+        "crossing": 0,
+        "steep_slope": 67,
+        "remote_access": 0
       }
     },
     {

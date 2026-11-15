@@ -431,6 +431,7 @@ export function makeStage3() {
         }
         return false;
       };
+      const reservedByReason = { water: 0, road_corridor: 0, anchor: 0, reservation: 0, crossing: 0, steep_slope: 0, remote_access: 0 };
       for (const d of ctx.districts) {
         const profile = profiles[d.profileId || d.type] || profiles.office || { parcels: { min: 20, max: 40 } };
         const pmin = clamp(Number(profile.parcels?.min) || 20, 8, 120);
@@ -466,10 +467,11 @@ export function makeStage3() {
             const rd = minRoadDist(cx, cz, roadSegments);
             const type = d.type || d.profileId;
             let reserved = false;
+            let reservedReason = null;
             // Reserve parcels conflicting with river easement/corridor.
-            if (parcelNearRiver(aabb)) reserved = true;
+            if (parcelNearRiver(aabb)) { reserved = true; reservedReason = 'water'; }
             // Reserve parcels overlapping/too close to road corridors.
-            if (!reserved && Number.isFinite(rd) && rd < 7) reserved = true;
+            if (!reserved && Number.isFinite(rd) && rd < 7) { reserved = true; reservedReason = 'road_corridor'; }
             // Reserve parcels overlapping gameplay anchors (spawn/exit) with buffer.
             if (!reserved) {
               const gp = ctx.input?.gameplay ?? {};
@@ -477,7 +479,7 @@ export function makeStage3() {
               for (const a of anchors) {
                 const ax = Number(a.x) || 0, az = Number(a.z) || 0;
                 const pad = 10;
-                if (ax >= aabb.minX - pad && ax <= aabb.maxX + pad && az >= aabb.minZ - pad && az <= aabb.maxZ + pad) { reserved = true; break; }
+                if (ax >= aabb.minX - pad && ax <= aabb.maxX + pad && az >= aabb.minZ - pad && az <= aabb.maxZ + pad) { reserved = true; reservedReason = 'anchor'; break; }
               }
             }
             // R1.3: respect terrain reservations (flat earmarked sites/landmarks) as non-generic build parcels.
@@ -487,7 +489,7 @@ export function makeStage3() {
                 const rx = Number(rs?.x), rz = Number(rs?.z);
                 if (!Number.isFinite(rx) || !Number.isFinite(rz)) continue;
                 const pad = 6;
-                if (rx >= aabb.minX - pad && rx <= aabb.maxX + pad && rz >= aabb.minZ - pad && rz <= aabb.maxZ + pad) { reserved = true; break; }
+                if (rx >= aabb.minX - pad && rx <= aabb.maxX + pad && rz >= aabb.minZ - pad && rz <= aabb.maxZ + pad) { reserved = true; reservedReason = 'reservation'; break; }
               }
             }
             // R1.5: keep historical crossing vicinities available for bridge/approach infrastructure (not generic parcels).
@@ -497,7 +499,7 @@ export function makeStage3() {
                 const kx = Number(cr?.x), kz = Number(cr?.z);
                 if (!Number.isFinite(kx) || !Number.isFinite(kz)) continue;
                 const pad = 12;
-                if (kx >= aabb.minX - pad && kx <= aabb.maxX + pad && kz >= aabb.minZ - pad && kz <= aabb.maxZ + pad) { reserved = true; break; }
+                if (kx >= aabb.minX - pad && kx <= aabb.maxX + pad && kz >= aabb.minZ - pad && kz <= aabb.maxZ + pad) { reserved = true; reservedReason = 'crossing'; break; }
               }
             }
             // R1.2/R4.1: steep terrain parcels are not buildable as generic parcels (§9.1, slopes > 25%).
@@ -505,12 +507,13 @@ export function makeStage3() {
               const baseY = Number(ctx.input?.ground?.y ?? 0) || 0;
               const mods = ctx.terrain?.modifiers ?? [];
               const slope = sampleTerrainSlope(cx, cz, baseY, mods);
-              if (Number.isFinite(slope) && slope > 0.25) reserved = true;
+              if (Number.isFinite(slope) && slope > 0.25) { reserved = true; reservedReason = 'steep_slope'; }
             }
             // Reserve only very remote parcels in some road-dependent districts to keep access buffers without wiping sparse-network areas
             const hardReserveTypes = new Set(['parking', 'sports', 'industrial']);
-            if (!reserved && hardReserveTypes.has(type) && Number.isFinite(rd) && rd > 300) reserved = true;
-            if (!reserved && type === 'slums' && Number.isFinite(rd) && rd > 360) reserved = true;
+            if (!reserved && hardReserveTypes.has(type) && Number.isFinite(rd) && rd > 300) { reserved = true; reservedReason = 'remote_access'; }
+            if (!reserved && type === 'slums' && Number.isFinite(rd) && rd > 360) { reserved = true; reservedReason = 'remote_access'; }
+            if (reserved && reservedReason) reservedByReason[reservedReason] = (reservedByReason[reservedReason] || 0) + 1;
             parcels.push({
               id: `${d.id}_p${seq}`,
               districtId: d.id,
@@ -523,9 +526,14 @@ export function makeStage3() {
         }
       }
       ctx.parcels = parcels;
+      ctx.meta.parcelReservedByReason = reservedByReason;
       const byType = {};
       for (const d of ctx.districts) byType[d.type || d.profileId] = (byType[d.type || d.profileId] || 0) + 1;
       ctx.report.diagnostics.push(info('parcels_generated', stageId, 'generated parcels', { districts: ctx.districts.length, parcels: parcels.length, byType }));
+      const reservedTotal = parcels.filter(p => p?.reserved).length;
+      if (reservedTotal > 0) {
+        ctx.report.diagnostics.push(info('parcels_reserved_by_reason', stageId, 'parcel reservations by terrain/hydrology/infrastructure constraints', { reserved: reservedTotal, total: parcels.length, byReason: reservedByReason }));
+      }
     },
     validate(ctx) {
       const stageId = '3_districts_parcels';
