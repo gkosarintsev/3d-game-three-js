@@ -23,7 +23,7 @@
     {
       "id": "2_transport",
       "status": "ok",
-      "diagnostics": 6,
+      "diagnostics": 7,
       "repairs": 0,
       "drops": 0
     },
@@ -87,6 +87,20 @@
       "stage": "2_transport",
       "message": "road graph has 14 connected components",
       "components": 14
+    },
+    {
+      "severity": "warn",
+      "code": "road_slope_over_class_policy",
+      "stage": "2_transport",
+      "message": "road segments exceed class slope policy (policies.slopeLimitPct)",
+      "segments": 12,
+      "maxSlope": 0.275,
+      "policy": {
+        "highway": 6,
+        "arterial": 8,
+        "collector": 10,
+        "local": 12
+      }
     },
     {
       "severity": "warn",
@@ -291,7 +305,7 @@
   "drops": [],
   "summary": {
     "errors": 0,
-    "warnings": 5,
+    "warnings": 6,
     "repairs": 0,
     "drops": 0
   },
@@ -385,7 +399,7 @@
     },
     "report": {
       "diagnosticsErrors": 0,
-      "diagnosticsWarnings": 5,
+      "diagnosticsWarnings": 6,
       "repairs": 0,
       "drops": 0
     }

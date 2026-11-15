@@ -23,7 +23,7 @@
     {
       "id": "2_transport",
       "status": "ok",
-      "diagnostics": 5,
+      "diagnostics": 6,
       "repairs": 0,
       "drops": 0
     },
@@ -80,6 +80,20 @@
       "stage": "2_transport",
       "message": "spawn is >30m from any road path segment",
       "anchor": "spawn"
+    },
+    {
+      "severity": "warn",
+      "code": "road_slope_over_class_policy",
+      "stage": "2_transport",
+      "message": "road segments exceed class slope policy (policies.slopeLimitPct)",
+      "segments": 1,
+      "maxSlope": 0.169765,
+      "policy": {
+        "highway": 6,
+        "arterial": 8,
+        "collector": 10,
+        "local": 12
+      }
     },
     {
       "severity": "info",
@@ -273,7 +287,7 @@
   "drops": [],
   "summary": {
     "errors": 0,
-    "warnings": 2,
+    "warnings": 3,
     "repairs": 0,
     "drops": 0
   },
@@ -367,7 +381,7 @@
     },
     "report": {
       "diagnosticsErrors": 0,
-      "diagnosticsWarnings": 2,
+      "diagnosticsWarnings": 3,
       "repairs": 0,
       "drops": 0
     }

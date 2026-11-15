@@ -37,6 +37,44 @@ function segSlopeWarn(seg, maxSlope) {
   return out;
 }
 
+function segMaxSlopeValue(seg) {
+  const pts = pathPoints(seg);
+  let maxS = 0;
+  if (pts) {
+    for (let i = 0; i + 1 < pts.length; i++) {
+      const a = pts[i], b = pts[i + 1];
+      const dx = b[0] - a[0], dy = b[1] - a[1], dz = b[2] - a[2];
+      const h = Math.hypot(dx, dz);
+      if (h < EPS) continue;
+      maxS = Math.max(maxS, Math.abs(dy) / h);
+    }
+    return maxS;
+  }
+  if (Array.isArray(seg?.elements) && seg.elements.length) {
+    for (const el of seg.elements) {
+      if (el?.arc && Array.isArray(el.arc.y) && el.arc.y.length === 2) {
+        const r = Number(el.arc.radius) || 0;
+        const span = Math.abs(((Number(el.arc.to) || 0) - (Number(el.arc.from) || 0)) * Math.PI / 180) * r;
+        if (span > 1e-9) maxS = Math.max(maxS, Math.abs((Number(el.arc.y[1]) || 0) - (Number(el.arc.y[0]) || 0)) / span);
+      } else if (el?.plate) {
+        const l = Number(el.plate.length) || 0;
+        const rise = Number(el.plate.rise) || 0;
+        if (l > 1e-9) maxS = Math.max(maxS, Math.abs(rise) / l);
+      }
+    }
+  }
+  return maxS;
+}
+
+function roadClassSlopeLimitPct(type, policies) {
+  const t = String(type || 'local');
+  const sl = policies?.slopeLimitPct && typeof policies.slopeLimitPct === 'object' ? policies.slopeLimitPct : null;
+  const map = { highway: 'highway', arterial: 'arterial', collector: 'collector', local: 'local', ramp: 'collector', merge: 'collector', split: 'collector', connector: 'local' };
+  const key = map[t] || 'local';
+  const pct = Number(sl?.[key]);
+  return Number.isFinite(pct) ? pct : null;
+}
+
 function orient(ax, az, bx, bz, cx, cz) {
   return (bx - ax) * (cz - az) - (bz - az) * (cx - ax);
 }
@@ -2528,6 +2566,9 @@ export function makeStage2() {
       const segmentsIn = uniqById(ctx.networks.roads.segments, 'segment', ctx, stageId);
       const segments = [];
       const maxSlope = 0.8; // permissive upper bound; ramps/bridges can be steep but warn
+      const policies = ctx.meta?.policies ?? {};
+      let policyOverCount = 0;
+      let policyMaxOver = 0;
       for (const s of segmentsIn) {
         const pts = pathPoints(s);
         const hasElements = Array.isArray(s.elements) && s.elements.length > 0;
@@ -2540,6 +2581,13 @@ export function makeStage2() {
         if (s.to && !nodeIds.has(s.to)) ctx.report.diagnostics.push(warn('segment_missing_node', stageId, `segment '${s.id}' references missing to node '${s.to}'`, { id: s.id, node: s.to }));
         const steep = segSlopeWarn(s, maxSlope);
         if (steep.length) ctx.report.diagnostics.push(warn('segment_steep', stageId, `segment '${s.id}' has ${steep.length} steep sub-segment(s) (max ${(Math.max(...steep.map(x=>x.slope))*100).toFixed(0)}%)`, { id: s.id }));
+        // R2.3 (read-only): class slope policy vs observed geometry (absolute limit enforced elsewhere at ~0.3)
+        const sMax = segMaxSlopeValue(s);
+        const pct = roadClassSlopeLimitPct(s.type, policies);
+        if (pct != null && sMax > (pct / 100) + 1e-9) {
+          policyOverCount++;
+          if (sMax > policyMaxOver) policyMaxOver = sMax;
+        }
         if (pts && polylineSelfIntersectsXZ(pts)) {
           ctx.report.diagnostics.push(warn('segment_self_intersection', stageId, `segment '${s.id}' has self-intersecting path`, { id: s.id }));
         }
@@ -2648,6 +2696,9 @@ export function makeStage2() {
         while (q.length) { const cur=q.shift(); for (const nb of (adj.get(cur)||[])) if(!seen.has(nb)){seen.add(nb); q.push(nb);} }
       }
       if (components > 1) ctx.report.diagnostics.push(warn('road_graph_disconnected', stageId, `road graph has ${components} connected components`, { components }));
+      if (policyOverCount > 0) {
+        ctx.report.diagnostics.push(warn('road_slope_over_class_policy', stageId, `road segments exceed class slope policy (policies.slopeLimitPct)`, { segments: policyOverCount, maxSlope: +policyMaxOver.toFixed(6), policy: policies.slopeLimitPct ?? null }));
+      }
       ctx.report.diagnostics.push(info('road_graph', stageId, 'road graph summary', { nodes: nodes.length, segments: segments.length, components }));
     },
     repair(ctx) {

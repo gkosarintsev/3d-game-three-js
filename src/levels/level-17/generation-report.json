@@ -23,7 +23,7 @@
     {
       "id": "2_transport",
       "status": "ok",
-      "diagnostics": 132,
+      "diagnostics": 133,
       "repairs": 0,
       "drops": 0
     },
@@ -187,6 +187,20 @@
     }
   ],
   "diagnostics": [
+    {
+      "severity": "warn",
+      "code": "road_slope_over_class_policy",
+      "stage": "2_transport",
+      "message": "road segments exceed class slope policy (policies.slopeLimitPct)",
+      "segments": 71,
+      "maxSlope": 0.3,
+      "policy": {
+        "highway": 6,
+        "arterial": 8,
+        "collector": 10,
+        "local": 12
+      }
+    },
     {
       "severity": "warn",
       "code": "segment_self_intersection",
@@ -2094,7 +2108,7 @@
   "drops": [],
   "summary": {
     "errors": 0,
-    "warnings": 9,
+    "warnings": 10,
     "repairs": 9,
     "drops": 0
   },
@@ -2180,7 +2194,7 @@
     },
     "report": {
       "diagnosticsErrors": 0,
-      "diagnosticsWarnings": 9,
+      "diagnosticsWarnings": 10,
       "repairs": 9,
       "drops": 0
     }
