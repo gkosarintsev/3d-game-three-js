@@ -252,6 +252,22 @@ function generateProps(ctx, stageId, cfg) {
       return false;
     });
   };
+
+  const lakes = Array.isArray(ctx.masks?.easement?.lakes) ? ctx.masks.easement.lakes : (ctx.hydrology?.lakes ?? []);
+  const tooCloseToLake = (x, z) => {
+    for (const lk of lakes) {
+      const c = lk?.center;
+      const r = Number(lk?.radius);
+      if (!Array.isArray(c) || !Number.isFinite(r) || r <= 0) continue;
+      const lx = Number(c[0]), lz = Number(c[1]);
+      if (!Number.isFinite(lx) || !Number.isFinite(lz)) continue;
+      const buf = Number.isFinite(Number(lk?.buffer)) ? Number(lk.buffer) : 8;
+      const floodplain = Number.isFinite(Number(lk?.floodplain)) ? Number(lk.floodplain) : 0;
+      const clearance = r + Math.max(buf, floodplain, 8);
+      if (Math.hypot(x - lx, z - lz) < clearance) return true;
+    }
+    return false;
+  };
   const terrainTooSteep = (x, z) => {
     const y = landHeightAt(x, z);
     const d = 2.5;
@@ -299,6 +315,7 @@ function generateProps(ctx, stageId, cfg) {
       if (maybeElevated && nearElevatedRoad(x, z, roads, baseGroundY)) return true;
     }
     if (tooCloseToRiver(x, z)) return true;
+    if (tooCloseToLake(x, z)) return true;
     if (terrainTooSteep(x, z)) return true;
     if (nearReservedMask(x, z)) return true;
     if (anchors.some(a => distXZ(x, z, a.x, a.z) < 8)) return true;

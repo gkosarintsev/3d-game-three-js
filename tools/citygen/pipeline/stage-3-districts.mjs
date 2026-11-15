@@ -415,15 +415,16 @@ export function makeStage3() {
             }
           }
         }
-        // R1.4: lake buffers (approx by easement circle metadata)
+        // R1.4/R1.5: lake buffers/floodplain margins (approx by easement circle metadata)
         const lakes = Array.isArray(ctx.masks?.easement?.lakes) ? ctx.masks.easement.lakes : (ctx.hydrology?.lakes ?? []);
         for (const lk of lakes) {
           const c = lk?.center;
           const r = Number(lk?.radius);
-          const buf = Number(lk?.buffer);
+          const buf = Number.isFinite(Number(lk?.buffer)) ? Number(lk.buffer) : 8;
+          const floodplain = Number.isFinite(Number(lk?.floodplain)) ? Number(lk.floodplain) : 0;
           if (Array.isArray(c) && Number.isFinite(r) && Number.isFinite(Number(c[0])) && Number.isFinite(Number(c[1]))) {
             const cx = Number(c[0]), cz = Number(c[1]);
-            const clearance = r + (Number.isFinite(buf) ? buf : 8);
+            const clearance = r + Math.max(buf, floodplain, 8);
             for (const [px, pz] of corners) {
               if (Math.hypot(px - cx, pz - cz) < clearance) return true;
             }

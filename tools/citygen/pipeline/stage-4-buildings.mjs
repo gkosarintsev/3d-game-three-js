@@ -96,14 +96,16 @@ function footprintIntersectsLake(fp, lakes = []) {
   if (!Array.isArray(lakes) || lakes.length === 0) return false;
   const b = aabbOfFootprint(fp);
   const cx = (b.minX + b.maxX) / 2, cz = (b.minZ + b.maxZ) / 2;
-  const corners = [[b.minX,b.minZ],[b.maxX,b.minZ],[b.maxX,b.maxZ],[b.minX,b.maxZ],[cx,cz]];
+  const corners = [[b.minX, b.minZ], [b.maxX, b.minZ], [b.maxX, b.maxZ], [b.minX, b.maxZ], [cx, cz]];
   for (const lk of lakes) {
     const c = lk?.center;
     const r = Number(lk?.radius);
     if (!Array.isArray(c) || !Number.isFinite(r) || r <= 0) continue;
     const lx = Number(c[0]), lz = Number(c[1]);
     if (!Number.isFinite(lx) || !Number.isFinite(lz)) continue;
-    const clearance = r + (Number.isFinite(Number(lk?.buffer)) ? Number(lk.buffer) : 8);
+    const buf = Number.isFinite(Number(lk?.buffer)) ? Number(lk.buffer) : 8;
+    const floodplain = Number.isFinite(Number(lk?.floodplain)) ? Number(lk.floodplain) : 0;
+    const clearance = r + Math.max(buf, floodplain, 8);
     for (const [px, pz] of corners) {
       if (Math.hypot(px - lx, pz - lz) < clearance) return true;
     }

@@ -903,7 +903,8 @@ export function makeStage1() {
         lakes.push(ll);
       }
       ctx.hydrology.lakes = uniqIds(lakes, 'lake', ctx, stageId);
-      // R1.4/R1.5: lake buffers (additive). §5.4: 5–10m non-buildable strip from water.
+      // R1.4/R1.5: lake buffers/floodplain margins (additive). §5.4: 5–10m non-buildable strip from water;
+      // treat a modest floodplain/no-build margin around lakes as downstream constraint for parcels/buildings/props.
       ctx.masks.terrain = ctx.masks.terrain || {};
       if (!Array.isArray(ctx.masks.terrain.waterBuffers)) ctx.masks.terrain.waterBuffers = [];
       if (!ctx.masks.easement.lakes) ctx.masks.easement.lakes = [];
@@ -929,13 +930,23 @@ export function makeStage1() {
             r = maxD;
           }
         }
-        const buffer = 8; // 5–10m strip (default 8m)
+        const buffer = 8; // 5–10m hard strip (default 8m)
+        const floodplain = 16; // modest no-build/floodplain margin for downstream constraints
         if (Number.isFinite(cx) && Number.isFinite(cz) && Number.isFinite(r) && r > 0) {
-          const wb = { id: ll.id ?? null, type: 'lake', center: [Math.round(cx*1000)/1000, Math.round(cz*1000)/1000], radius: Math.round(r*1000)/1000, buffer, buildableBuffer: true };
+          const wb = {
+            id: ll.id ?? null,
+            type: 'lake',
+            center: [Math.round(cx * 1000) / 1000, Math.round(cz * 1000) / 1000],
+            radius: Math.round(r * 1000) / 1000,
+            buffer,
+            floodplain,
+            buildableBuffer: true,
+          };
           ctx.masks.terrain.waterBuffers.push(wb);
           ctx.masks.easement.lakes.push(wb);
         } else {
-          ctx.masks.terrain.waterBuffers.push({ id: ll.id ?? null, type: 'lake', buffer, buildableBuffer: true });
+          // Fallback without reliable geometry: keep conservative buffer metadata for analysis/reporting.
+          ctx.masks.terrain.waterBuffers.push({ id: ll.id ?? null, type: 'lake', buffer, floodplain, buildableBuffer: true });
         }
       }
 
