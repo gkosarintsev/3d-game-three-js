@@ -483,6 +483,91 @@ export function makeStage6() {
         ctx.report.diagnostics.push(warn('finalize_no_roads', stageId, 'no road segments available at finalize stage'));
       }
 
+      // R1.4/R1.5: downstream constraint validation in finalize (water buffers/floodplains/slope masks).
+      // Read-only checks on final emitted entities to ensure profile-driven terrain/hydrology constraints
+      // are respected across stages (including finalize) with transport compatibility.
+      {
+        const waterBuffers = Array.isArray(ctx.masks?.terrain?.waterBuffers) ? ctx.masks.terrain.waterBuffers
+          : (Array.isArray(ctx.terrain?.analysis?.waterBuffers) ? ctx.terrain.analysis.waterBuffers : []);
+        const riversForBuf = [
+          ...(ctx.hydrology?.rivers ?? []),
+          ...(ctx.input?.cityforge?.hydrology?.rivers ?? []),
+        ];
+        const riverById = new Map(riversForBuf.filter(r => r?.id).map(r => [r.id, r]));
+        const wbs = waterBuffers.map(w => ({ ...w, _river: w?.id ? riverById.get(w.id) : null }));
+
+        const pointNearWater = (x, z, kind = 'hard') => {
+          for (const w of wbs) {
+            if (!w) continue;
+            if (w.type === 'lake' && Array.isArray(w.center) && Number.isFinite(Number(w.radius))) {
+              const d = Math.hypot(x - Number(w.center[0]), z - Number(w.center[1]));
+              const hard = Number(w.radius) + (Number.isFinite(Number(w.buffer)) ? Number(w.buffer) : 8);
+              if (kind === 'floodplain') { if (d <= hard) return { id: w.id ?? null, type: 'lake', zone: 'buffer' }; continue; }
+              if (d <= hard) return { id: w.id ?? null, type: 'lake', zone: 'buffer' };
+              continue;
+            }
+            const rv = w._river;
+            const path = Array.isArray(rv?.path) ? rv.path : [];
+            if (path.length < 2) continue;
+            let best = Infinity;
+            for (let i = 0; i + 1 < path.length; i++) {
+              best = Math.min(best, pointSegDistXZ(x, z, path[i][0], path[i][2], path[i + 1][0], path[i + 1][2]));
+            }
+            const width = Number(rv?.width) || 10;
+            const hard = Number.isFinite(Number(w.buffer)) ? Number(w.buffer) : (width * 0.5 + 12);
+            const flood = Number.isFinite(Number(w.floodplain)) ? Number(w.floodplain) : Math.max(hard, width * 3);
+            if (best <= hard) return { id: w.id ?? null, type: 'river', zone: 'buffer', dist: +best.toFixed(3) };
+            if (kind === 'floodplain' && best <= flood) return { id: w.id ?? null, type: 'river', zone: 'floodplain', dist: +best.toFixed(3) };
+          }
+          return null;
+        };
+
+        let bInBuffer = 0, bInFlood = 0;
+        for (const b of buildings) {
+          const c = buildingCenter(b);
+          if (!c) continue;
+          const hitHard = pointNearWater(c.x, c.z, 'hard');
+          if (hitHard) { bInBuffer++; continue; }
+          const hitFlood = pointNearWater(c.x, c.z, 'floodplain');
+          if (hitFlood) bInFlood++;
+        }
+        if (bInBuffer > 0) ctx.report.diagnostics.push(warn('finalize_building_in_water_buffer', stageId, `${bInBuffer} building(s) intersect/inside water hard buffer`, { count: bInBuffer }));
+        if (bInFlood > 0) ctx.report.diagnostics.push(warn('finalize_building_in_floodplain', stageId, `${bInFlood} building(s) inside floodplain zone`, { count: bInFlood }));
+
+        let pInBuffer = 0, pInFlood = 0;
+        for (const p of props) {
+          const c = pointPos(p);
+          if (!c) continue;
+          const hitHard = pointNearWater(c.x, c.z, 'hard');
+          if (hitHard) { pInBuffer++; continue; }
+          const hitFlood = pointNearWater(c.x, c.z, 'floodplain');
+          if (hitFlood) pInFlood++;
+        }
+        if (pInBuffer > 0) ctx.report.diagnostics.push(warn('finalize_prop_in_water_buffer', stageId, `${pInBuffer} prop(s) inside water hard buffer`, { count: pInBuffer }));
+        if (pInFlood > 0) ctx.report.diagnostics.push(warn('finalize_prop_in_floodplain', stageId, `${pInFlood} prop(s) inside floodplain zone`, { count: pInFlood }));
+
+        // Terrain/slope mask summary at finalize (uses stage-1 analysis when available).
+        const slopeShare = ctx.terrain?.analysis?.slope?.share ?? null;
+        const crossingsN = Array.isArray(ctx.terrain?.analysis?.crossings) ? ctx.terrain.analysis.crossings.length : (Array.isArray(ctx.masks?.terrain?.crossings) ? ctx.masks.terrain.crossings.length : 0);
+        const landmarksN = Array.isArray(ctx.terrain?.analysis?.landmarks) ? ctx.terrain.analysis.landmarks.length : (Array.isArray(ctx.masks?.terrain?.landmarks) ? ctx.masks.terrain.landmarks.length : 0);
+        const reservationsN = Array.isArray(ctx.terrain?.analysis?.reservations) ? ctx.terrain.analysis.reservations.length : (Array.isArray(ctx.masks?.terrain?.reservations) ? ctx.masks.terrain.reservations.length : 0);
+        if (waterBuffers.length || crossingsN || landmarksN || reservationsN || slopeShare) {
+          ctx.report.diagnostics.push(info('finalize_terrain_masks_applied', stageId, 'terrain/hydrology masks available as downstream constraints at finalize', {
+            waterBuffers: waterBuffers.length,
+            crossings: crossingsN,
+            landmarks: landmarksN,
+            reservations: reservationsN,
+            slopeShare,
+            violations: {
+              buildingsInWaterBuffer: bInBuffer,
+              buildingsInFloodplain: bInFlood,
+              propsInWaterBuffer: pInBuffer,
+              propsInFloodplain: pInFlood,
+            },
+          }));
+        }
+      }
+
       // Keep engine pointing to transformed input for downstream build/compile.
       ctx.engine = ctx.input;
     },

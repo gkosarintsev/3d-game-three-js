@@ -16,9 +16,9 @@
     "hill_town": {
       "runs": 3,
       "hashes": [
-        "ca6e5bae064e9f4a392d1445408b0fcb69d48a0d20b2965e5cdade465958a781",
-        "65ef97aa9aeef7e4649f5fa0f73d1ca800eac89a0cd71cd947ebd8d7193f128e",
-        "3557f437a5e6a08cd15c74556a24f2c87b2253c9ae4cff4d8f396bf3724228b5"
+        "850f539dadef8a655031dc075abc61c5120854f294ab26837b632b2f03cb7e58",
+        "71f7f41ea29743e1598ac5f0db717d98536c7f5dcd1c04eda65d03ac45aff0d4",
+        "ea9bef4291e8ef9858873db64dd2db6eb6513f3f2dee930affcbfdb499612512"
       ],
       "errors": {
         "count": 3,
@@ -54,9 +54,9 @@
     "railway_industrial": {
       "runs": 3,
       "hashes": [
-        "f79d55c91d891e654f368e29a25029beacb82720fd0ae6e159fee5df96bc9800",
-        "a7b971657530b44c700421cea3bbeb1937f925a10ff5955135dcdb98073e3d56",
-        "61e9a4aa99ee80d235da4a59d795106dac510643e1ac17eee8ca448c52c2b504"
+        "24e5ef30c3ac246e981c4e73d1f4c2813e4b5a570fde0b3a80fb7885cc52796f",
+        "e24be3d89381d9e35d8416f6188d7ef3a08e24d478ab6533f5e22c42f9ec261b",
+        "7d978b80579e93ff1e13fce1c833f5aa3475a14ac048b921651e4815ed333532"
       ],
       "errors": {
         "count": 3,
@@ -66,9 +66,9 @@
       },
       "warnings": {
         "count": 3,
-        "min": 8,
-        "max": 9,
-        "mean": 8.333333
+        "min": 9,
+        "max": 10,
+        "mean": 9.666667
       },
       "roads": {
         "count": 3,
@@ -92,9 +92,9 @@
     "river_trade": {
       "runs": 3,
       "hashes": [
-        "c964b67c4c602f52c9f2a3266df58d314dc139309be45067533850490a558eff",
-        "adf165307c3a7632197e86bd810d01e895e838916fdaae6ee4ab3b6b3ef3ef4c",
-        "5c6916693ef1ad749946d6ce061b50ed2cca88efc958770775176cef7de967d9"
+        "0659ddf6bef23ac8bc097f53d95c0a976f8d15434c13f46bb33b64c2299adfb1",
+        "98014d0a113de3b26a1658261d69f5170d6437355a34d6e675575715fbe6ed85",
+        "5caee1ebe054a8aa0052eb28c26779bf5d9ad530767d3f3bcc19ac6b08f23f13"
       ],
       "errors": {
         "count": 3,
@@ -104,9 +104,9 @@
       },
       "warnings": {
         "count": 3,
-        "min": 8,
-        "max": 10,
-        "mean": 8.666667
+        "min": 9,
+        "max": 11,
+        "mean": 9.666667
       },
       "roads": {
         "count": 3,

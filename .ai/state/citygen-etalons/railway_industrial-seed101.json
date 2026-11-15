@@ -2,10 +2,10 @@
   "profile": "railway_industrial",
   "seed": 101,
   "generatorVersion": "0.1.0",
-  "reportHash": "f79d55c91d891e654f368e29a25029beacb82720fd0ae6e159fee5df96bc9800",
+  "reportHash": "24e5ef30c3ac246e981c4e73d1f4c2813e4b5a570fde0b3a80fb7885cc52796f",
   "summary": {
     "errors": 0,
-    "warnings": 8,
+    "warnings": 10,
     "repairs": 0,
     "drops": 0
   },

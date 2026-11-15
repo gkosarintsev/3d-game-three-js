@@ -51,7 +51,7 @@
     {
       "id": "6_finalize_emit",
       "status": "ok",
-      "diagnostics": 6,
+      "diagnostics": 7,
       "repairs": 0,
       "drops": 0
     }
@@ -286,6 +286,29 @@
         "maxLights": 0,
         "avgBuildings": 1.5,
         "avgProps": 0
+      }
+    },
+    {
+      "severity": "info",
+      "code": "finalize_terrain_masks_applied",
+      "stage": "6_finalize_emit",
+      "message": "terrain/hydrology masks available as downstream constraints at finalize",
+      "waterBuffers": 0,
+      "crossings": 0,
+      "landmarks": 1,
+      "reservations": 6,
+      "slopeShare": {
+        "flat_lt3": 1,
+        "gentle_3_8": 0,
+        "moderate_8_15": 0,
+        "steep_15_25": 0,
+        "very_steep_gt25": 0
+      },
+      "violations": {
+        "buildingsInWaterBuffer": 0,
+        "buildingsInFloodplain": 0,
+        "propsInWaterBuffer": 0,
+        "propsInFloodplain": 0
       }
     },
     {

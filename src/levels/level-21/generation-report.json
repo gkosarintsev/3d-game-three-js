@@ -51,7 +51,7 @@
     {
       "id": "6_finalize_emit",
       "status": "ok",
-      "diagnostics": 12,
+      "diagnostics": 14,
       "repairs": 2,
       "drops": 0
     }
@@ -246,6 +246,13 @@
       "maxProps": 149,
       "chunk": 640,
       "grid": 2
+    },
+    {
+      "severity": "warn",
+      "code": "finalize_building_in_floodplain",
+      "stage": "6_finalize_emit",
+      "message": "4 building(s) inside floodplain zone",
+      "count": 4
     },
     {
       "severity": "warn",
@@ -1936,6 +1943,29 @@
     },
     {
       "severity": "info",
+      "code": "finalize_terrain_masks_applied",
+      "stage": "6_finalize_emit",
+      "message": "terrain/hydrology masks available as downstream constraints at finalize",
+      "waterBuffers": 1,
+      "crossings": 3,
+      "landmarks": 4,
+      "reservations": 9,
+      "slopeShare": {
+        "flat_lt3": 0.7675,
+        "gentle_3_8": 0.22375,
+        "moderate_8_15": 0.00875,
+        "steep_15_25": 0,
+        "very_steep_gt25": 0
+      },
+      "violations": {
+        "buildingsInWaterBuffer": 0,
+        "buildingsInFloodplain": 4,
+        "propsInWaterBuffer": 0,
+        "propsInFloodplain": 0
+      }
+    },
+    {
+      "severity": "info",
       "code": "interchange_junction_candidates",
       "stage": "6_finalize_emit",
       "message": "identified junction nodes as grade-separation candidates",
@@ -2067,7 +2097,7 @@
   "drops": [],
   "summary": {
     "errors": 0,
-    "warnings": 9,
+    "warnings": 10,
     "repairs": 12,
     "drops": 0
   },
@@ -2205,7 +2235,7 @@
     },
     "report": {
       "diagnosticsErrors": 0,
-      "diagnosticsWarnings": 9,
+      "diagnosticsWarnings": 10,
       "repairs": 12,
       "drops": 0
     }
