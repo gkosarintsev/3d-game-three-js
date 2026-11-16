@@ -16,6 +16,7 @@
 - R3.1 (инкремент 2: §6.1-faithful multiplicative scoring — брод×3/слияние×2/холм×2/ровная площадка 150 м×2/озеро×1 − пойма 2, re-baseline + обе серии seed-100 перепрогнаны под 0.6.0): ~12:58–13:09 (~11 мин).
 - R3.2 (computeAccessCostField + assignErasToDistricts в `stage-3-districts.mjs`, bump → 0.7.0, derived/etalons/baselines + обе серии seed-100 под 0.7.0, автотест): ~13:10–13:29 (~19 мин).
 - R3.3 (computeLandValue + affinity §6.5 + density/floors, bump → 0.8.0, derived/etalons/baselines + обе серии seed-100 под 0.8.0, автотест): ~13:30–13:47 (~17 мин).
+- R3.4 partial (§6.6 adjacency + floors contrast, §6.7 districtFrame, §6.8 park share; declared districts untouched; bump → 0.9.0, обе серии под 0.9.0, автотест, ci-browser L22): ~13:47–14:14 (~27 мин, включая диагностику §6.6 diversity-guard падения pilot-теста).
 - Прогон `node tools/citygen-etalon-check.mjs`: ~10–15 с.
 - `build-level --check` для L16–L21: ~1 мин на прогон.
 - `ci-browser.mjs --level 17|20|21 level-lifecycle` (через `NODE_PATH=$(npm root --global)`): ~1 мин на главу (15 сюит прогона, только одна глава).
