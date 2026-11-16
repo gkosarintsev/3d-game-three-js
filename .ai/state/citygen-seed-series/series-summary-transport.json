@@ -1,5 +1,5 @@
 {
-  "generatorVersion": "0.5.0",
+  "generatorVersion": "0.6.0",
   "profiles": [
     "river_trade",
     "hill_town",
@@ -117,7 +117,7 @@
       "deterministicOk": 100,
       "errorRuns": 0,
       "warningRuns": 100,
-      "dropsRuns": 2,
+      "dropsRuns": 1,
       "hashesUnique": 100,
       "errors": {
         "count": 100,
@@ -131,7 +131,7 @@
         "count": 100,
         "min": 4,
         "max": 21,
-        "mean": 9.64,
+        "mean": 9.63,
         "median": 10,
         "p95": 13
       },
@@ -139,7 +139,7 @@
         "count": 100,
         "min": 0,
         "max": 36,
-        "mean": 14.77,
+        "mean": 14.76,
         "median": 15,
         "p95": 31
       },
@@ -147,7 +147,7 @@
         "count": 100,
         "min": 0,
         "max": 1,
-        "mean": 0.02,
+        "mean": 0.01,
         "median": 0,
         "p95": 0
       },
@@ -187,7 +187,7 @@
         "count": 100,
         "min": 400,
         "max": 403,
-        "mean": 400.32,
+        "mean": 400.3,
         "median": 400,
         "p95": 402
       },
@@ -203,7 +203,7 @@
         "count": 100,
         "min": 359,
         "max": 360,
-        "mean": 359.98,
+        "mean": 359.99,
         "median": 360,
         "p95": 360
       },
@@ -299,7 +299,7 @@
         "count": 100,
         "min": 400,
         "max": 404,
-        "mean": 401.17,
+        "mean": 401.2,
         "median": 400,
         "p95": 404
       },
