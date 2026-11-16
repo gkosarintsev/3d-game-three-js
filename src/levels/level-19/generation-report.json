@@ -1,7 +1,7 @@
 {
   "version": 1,
   "generator": {
-    "generatorVersion": "0.6.0",
+    "generatorVersion": "0.7.0",
     "seed": 19,
     "deterministic": true
   },
@@ -30,7 +30,7 @@
     {
       "id": "3_districts_parcels",
       "status": "ok",
-      "diagnostics": 4,
+      "diagnostics": 5,
       "repairs": 0,
       "drops": 0
     },
@@ -61,6 +61,8 @@
       "id": "d0",
       "type": "forest",
       "profileId": "forest",
+      "era": "xix",
+      "style": "era_xix",
       "cells": 0,
       "parcels": 441,
       "reservedParcels": 9
@@ -209,6 +211,20 @@
       "stage": "3_districts_parcels",
       "message": "using declared districts",
       "count": 1
+    },
+    {
+      "severity": "info",
+      "code": "era_rings_assigned",
+      "stage": "3_districts_parcels",
+      "message": "assigned eras to districts by access-cost isolines from 3 core(s)",
+      "counts": {
+        "medieval": 0,
+        "xix": 1,
+        "industrial": 0,
+        "modern": 0,
+        "suburb": 0
+      },
+      "maxCost": 2720
     },
     {
       "severity": "info",
@@ -493,7 +509,7 @@
       "dividesPlate": true
     },
     "determinism": {
-      "generatorVersion": "0.6.0",
+      "generatorVersion": "0.7.0",
       "seed": 19,
       "deterministic": true
     },

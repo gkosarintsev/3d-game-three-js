@@ -64,6 +64,223 @@ function sampleTerrainSlope(x, z, baseY, modifiers = []) {
   return Math.max(sx, sz);
 }
 
+// R3.2 §6.2/§6.3: поле стоимости доступа от ядер (дороги дёшевы, вода и склон дороги),
+// изоляции которого и есть границы эпох («город растёт не по кругу, а по стоимости доступа»).
+// Мультиисточниковый Дейкстра по анализирующей сетке (шаг = slope analysis step).
+const ERA_MED_MAX = 0.15;    // Средневековое ядро 0–0.15
+const ERA_XIX_MAX = 0.35;    // XIX век 0.15–0.35
+const ERA_INDUSTRIAL_MAX = 0.5; // Индустриальная полоса 0.2–0.5 вдоль реки/жд
+const ERA_MODERN_MAX = 0.7;  // Модерн и микрорайоны 0.35–0.7
+// Пригород 0.7–1.0
+const ERA_INDUSTRIAL_BAND_MIN = 0.15; // индустриальный коридор начинается не раньше XIX-кольца
+const ERA_WATER_PENALTY = 6;   // вода дорогая, но не запретная (город может перешагнуть реку)
+const ERA_ROAD_DISCOUNT = 0.5; // вдоль дорог дешевле (множитель стоимости ребра)
+const ERA_SLOPE_WEIGHT = 4;    // склон дорогой
+const ERA_ROAD_DIST = 24;      // расстояние «вдоль магистрали», м
+const ERA_INDUSTRIAL_CORRIDOR = 90; // полоса вдоль реки/жд, м
+
+function gridHeights(baseY, size, mods) {
+  const step = 16;
+  const half = size / 2;
+  const n = Math.max(2, Math.ceil(size / step));
+  const actual = size / n;
+  const h = new Float64Array(n * n);
+  for (let j = 0; j < n; j++) {
+    for (let i = 0; i < n; i++) {
+      const x = -half + (i + 0.5) * actual;
+      const z = -half + (j + 0.5) * actual;
+      h[j * n + i] = terrainHeightAt(x, z, baseY, mods);
+    }
+  }
+  return { heights: h, n, actual };
+}
+
+function inWaterCell(cx, cz, rivers = [], lakes = []) {
+  for (const rv of rivers) {
+    const path = Array.isArray(rv?.path) ? rv.path : [];
+    const w = Number(rv?.width) || 0;
+    let best = Infinity;
+    for (let i = 0; i + 1 < path.length; i++) {
+      best = Math.min(best, pointSegDistXZ(cx, cz, path[i][0], path[i][2], path[i + 1][0], path[i + 1][2]));
+    }
+    if (best < w / 2 + 4) return true;
+  }
+  for (const lake of lakes) {
+    const area = lake?.area;
+    if (area && typeof area === 'object' && String(area.type) === 'circle' && Array.isArray(area.center)) {
+      const d = Math.hypot(cx - Number(area.center[0]), cz - Number(area.center[1]));
+      if (d < (Number(area.radius) || 0) + 4) return true;
+      continue;
+    }
+    const pts = Array.isArray(area?.points) ? area.points : (Array.isArray(area) ? area : []);
+    if (!pts.length) continue;
+    let sx = 0, sz = 0;
+    for (const p of pts) {
+      const px = Number(Array.isArray(p) ? p[0] : p?.x);
+      const pz = Number(Array.isArray(p) ? p[2] : p?.z);
+      if (!Number.isFinite(px) || !Number.isFinite(pz)) continue;
+      sx += px; sz += pz;
+    }
+    const cent = [sx / pts.length, sz / pts.length];
+    let r = 0;
+    for (const p of pts) {
+      const px = Number(Array.isArray(p) ? p[0] : p?.x);
+      const pz = Number(Array.isArray(p) ? p[2] : p?.z);
+      if (!Number.isFinite(px) || !Number.isFinite(pz)) continue;
+      r = Math.max(r, Math.hypot(px - cent[0], pz - cent[1]));
+    }
+    if (Math.hypot(cx - cent[0], cz - cent[1]) < r + 4) return true;
+  }
+  return false;
+}
+
+function binaryHeap() {
+  const keys = [];
+  const vals = [];
+  const less = (a, b) => keys[a] < keys[b] || (keys[a] === keys[b] && vals[a] < vals[b]);
+  return {
+    size: () => keys.length,
+    push(v, k) {
+      keys.push(k); vals.push(v);
+      let i = keys.length - 1;
+      while (i > 0) {
+        const p = (i - 1) >> 1;
+        if (!less(i, p)) break;
+        [keys[i], keys[p]] = [keys[p], keys[i]];
+        [vals[i], vals[p]] = [vals[p], vals[i]];
+        i = p;
+      }
+    },
+    pop() {
+      const top = vals[0];
+      const lk = keys[keys.length - 1], lv = vals[vals.length - 1];
+      keys.pop(); vals.pop();
+      if (keys.length) {
+        keys[0] = lk; vals[0] = lv;
+        let i = 0;
+        for (;;) {
+          const l = 2 * i + 1, r = l + 1;
+          let m = i;
+          if (l < keys.length && less(l, m)) m = l;
+          if (r < keys.length && less(r, m)) m = r;
+          if (m === i) break;
+          [keys[i], keys[m]] = [keys[m], keys[i]];
+          [vals[i], vals[m]] = [vals[m], vals[i]];
+          i = m;
+        }
+      }
+      return top;
+    },
+  };
+}
+
+export function computeAccessCostField(ctx, size) {
+  // R3.2 §6.3: мультиисточниковый Дейкстра от ядер; ребро = step·(1 + 4|наклон| + 6·вода)·(дорога ? 0.5 : 1).
+  // Возвращает { costs: Float64Array(n*n), n, actual, maxCost } или null (ядер нет).
+  const baseY = Number(ctx?.input?.ground?.y ?? 0) || 0;
+  const half = size / 2;
+  const cores = Array.isArray(ctx?.terrain?.analysis?.coreCandidates) ? ctx.terrain.analysis.coreCandidates
+    : (Array.isArray(ctx?.masks?.terrain?.coreCandidates) ? ctx.masks.terrain.coreCandidates : []);
+  if (!cores.length) return null;
+  const rivers = ctx?.hydrology?.rivers ?? [];
+  const lakes = ctx?.hydrology?.lakes ?? [];
+  const roadSegments = ctx?.networks?.roads?.segments ?? [];
+  const mods = ctx?.terrain?.modifiers ?? [];
+  const { heights, n, actual } = gridHeights(baseY, size, mods);
+  const cellCenter = (i) => -half + (i + 0.5) * actual;
+  const water = new Uint8Array(n * n);
+  const roadNear = new Uint8Array(n * n);
+  for (let j = 0; j < n; j++) {
+    for (let i = 0; i < n; i++) {
+      const cx = cellCenter(i), cz = cellCenter(j);
+      if (inWaterCell(cx, cz, rivers, lakes)) water[j * n + i] = 1;
+      if (roadSegments.length && minRoadDist(cx, cz, roadSegments) <= ERA_ROAD_DIST) roadNear[j * n + i] = 1;
+    }
+  }
+  const costs = new Float64Array(n * n).fill(Infinity);
+  const heap = binaryHeap();
+  for (const core of cores) {
+    const x = Number(core?.x), z = Number(core?.z);
+    if (!Number.isFinite(x) || !Number.isFinite(z)) continue;
+    const i = clamp(Math.floor((x + half) / actual), 0, n - 1);
+    const j = clamp(Math.floor((z + half) / actual), 0, n - 1);
+    const idx = j * n + i;
+    if (costs[idx] !== 0) { costs[idx] = 0; heap.push(idx, 0); }
+  }
+  const dirs = [[1, 0], [-1, 0], [0, 1], [0, -1]];
+  while (heap.size() > 0) {
+    const u = heap.pop();
+    const uj = Math.floor(u / n), ui = u - uj * n;
+    const cu = costs[u];
+    if (cu === Infinity) continue;
+    const hu = heights[u];
+    for (const [di, dj] of dirs) {
+      const vi = ui + di, vj = uj + dj;
+      if (vi < 0 || vj < 0 || vi >= n || vj >= n) continue;
+      const v = vj * n + vi;
+      const slope = Math.abs(heights[v] - hu) / actual;
+      const waterEdge = water[u] || water[v] ? ERA_WATER_PENALTY : 0;
+      const roadEdge = roadNear[u] && roadNear[v] ? ERA_ROAD_DISCOUNT : 1;
+      const w = actual * (1 + ERA_SLOPE_WEIGHT * slope + waterEdge) * roadEdge;
+      const alt = cu + w;
+      if (alt < costs[v]) { costs[v] = alt; heap.push(v, alt); }
+    }
+  }
+  let maxCost = 0;
+  for (let k = 0; k < costs.length; k++) if (Number.isFinite(costs[k]) && costs[k] > maxCost) maxCost = costs[k];
+  return { costs, n, actual, maxCost: maxCost || 1 };
+}
+
+export function assignErasToDistricts(ctx, size) {
+  // R3.2 §6.2: кольца роста от ядер по изоляциям поля стоимости (не евклид).
+  const field = computeAccessCostField(ctx, size);
+  if (!field) {
+    ctx?.report?.diagnostics?.push(info('era_rings_skipped_no_core', '3_districts_parcels', 'era assignment skipped: no core candidates', {}));
+    return null;
+  }
+  const { costs, n, actual, maxCost } = field;
+  const half = size / 2;
+  const rivers = ctx?.hydrology?.rivers ?? [];
+  const railways = ctx?.networks?.railways?.segments ?? ctx?.input?.cityforge?.networks?.railways?.segments ?? [];
+  const eraCounts = { medieval: 0, xix: 0, industrial: 0, modern: 0, suburb: 0 };
+  const cores = Array.isArray(ctx?.terrain?.analysis?.coreCandidates) ? ctx.terrain.analysis.coreCandidates : [];
+  for (const d of (ctx?.districts ?? [])) {
+    const rect = d?.geometry?.rect;
+    const cx = rect ? (Number(rect.minX) + Number(rect.maxX)) / 2 : 0;
+    const cz = rect ? (Number(rect.minZ) + Number(rect.maxZ)) / 2 : 0;
+    const i = clamp(Math.floor((cx + half) / actual), 0, n - 1);
+    const j = clamp(Math.floor((cz + half) / actual), 0, n - 1);
+    const c = costs[j * n + i];
+    const cNorm = Number.isFinite(c) ? c / maxCost : 1;
+    const nearIndustrial = (function nearRiverOrRail(x, z) {
+      for (const rv of rivers) {
+        const path = Array.isArray(rv?.path) ? rv.path : [];
+        for (let k = 0; k + 1 < path.length; k++) {
+          if (pointSegDistXZ(x, z, path[k][0], path[k][2], path[k + 1][0], path[k + 1][2]) <= ERA_INDUSTRIAL_CORRIDOR) return true;
+        }
+      }
+      for (const s of railways) {
+        const path = Array.isArray(s?.path) ? s.path : [];
+        for (let k = 0; k + 1 < path.length; k++) {
+          if (pointSegDistXZ(x, z, path[k][0], path[k][2], path[k + 1][0], path[k + 1][2]) <= ERA_INDUSTRIAL_CORRIDOR) return true;
+        }
+      }
+      return false;
+    })(cx, cz);
+    let era;
+    if (cNorm <= ERA_MED_MAX) era = 'medieval';
+    else if (cNorm <= ERA_XIX_MAX) era = 'xix';
+    else if (cNorm <= ERA_INDUSTRIAL_MAX && cNorm >= ERA_INDUSTRIAL_BAND_MIN && (d?.type === 'industrial' || nearIndustrial)) era = 'industrial';
+    else if (cNorm <= ERA_MODERN_MAX) era = 'modern';
+    else era = 'suburb';
+    d.era = era;
+    if (!d.style) d.style = `era_${era}`;
+    eraCounts[era] += 1;
+  }
+  ctx?.report?.diagnostics?.push(info('era_rings_assigned', '3_districts_parcels', `assigned eras to districts by access-cost isolines from ${cores.length} core(s)`, { counts: eraCounts, maxCost: +maxCost.toFixed(2) }));
+  return eraCounts;
+}
+
 export const DEFAULT_PROFILES = {
   office: { id: 'office', label: 'Офисный', weight: 1.1, parcels: { min: 18, max: 42, coverage: 0.55 }, buildings: { kinds: ['office_tower', 'office_mid', 'office_block', 'skyscraper', 'megablock'], maxFloors: 40, materials: ['glass_and_concrete', 'concrete'] } },
   park: { id: 'park', label: 'Парк', weight: 0.9, parcels: { min: 24, max: 64, coverage: 0.12 }, buildings: { kinds: ['pavilion', 'modern_pavilion', 'aframe'], maxFloors: 2, materials: ['painted_brick', 'concrete'] } },
@@ -367,6 +584,12 @@ export function makeStage3() {
         ctx.report.diagnostics.push(info('districts_passthrough', stageId, 'using declared districts', { count: ctx.districts.length }));
       }
 
+      // R3.2 §6.2/§6.3: кольца роста по стоимости доступа от ядер (изолинии поля, не евклид).
+      {
+        const eraSize = ctx.meta.worldBounds?.size ?? ctx.input?.ground?.size ?? 256;
+        assignErasToDistricts(ctx, eraSize);
+      }
+
       // Generate parcels per district (simple subdivision of rect geometry/cells)
       const parcels = [];
       const roadSegments = ctx.networks?.roads?.segments ?? [];
@@ -614,6 +837,8 @@ export function makeStage3() {
           id: d.id,
           type: d.type || d.profileId,
           profileId: d.profileId || d.type,
+          era: d.era ?? null,
+          style: d.style ?? null,
           cells: d.cells?.length ?? 0,
           parcels: dParcels.length,
           reservedParcels: dParcels.filter(p => p?.reserved).length,

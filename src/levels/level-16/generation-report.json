@@ -1,7 +1,7 @@
 {
   "version": 1,
   "generator": {
-    "generatorVersion": "0.6.0",
+    "generatorVersion": "0.7.0",
     "seed": 16,
     "deterministic": true
   },
@@ -30,7 +30,7 @@
     {
       "id": "3_districts_parcels",
       "status": "ok",
-      "diagnostics": 4,
+      "diagnostics": 5,
       "repairs": 0,
       "drops": 0
     },
@@ -61,6 +61,8 @@
       "id": "district_0_0",
       "type": "office",
       "profileId": "office",
+      "era": "suburb",
+      "style": "era_suburb",
       "cells": 1,
       "parcels": 121,
       "reservedParcels": 15
@@ -69,6 +71,8 @@
       "id": "district_0_1",
       "type": "industrial",
       "profileId": "industrial",
+      "era": "modern",
+      "style": "era_modern",
       "cells": 1,
       "parcels": 64,
       "reservedParcels": 2
@@ -77,6 +81,8 @@
       "id": "district_0_2",
       "type": "parking",
       "profileId": "parking",
+      "era": "modern",
+      "style": "era_modern",
       "cells": 1,
       "parcels": 64,
       "reservedParcels": 1
@@ -85,6 +91,8 @@
       "id": "district_0_3",
       "type": "campus",
       "profileId": "campus",
+      "era": "modern",
+      "style": "era_modern",
       "cells": 1,
       "parcels": 49,
       "reservedParcels": 8
@@ -93,6 +101,8 @@
       "id": "district_1_0",
       "type": "suburb",
       "profileId": "suburb",
+      "era": "suburb",
+      "style": "era_suburb",
       "cells": 1,
       "parcels": 121,
       "reservedParcels": 37
@@ -101,6 +111,8 @@
       "id": "district_1_1",
       "type": "forest",
       "profileId": "forest",
+      "era": "modern",
+      "style": "era_modern",
       "cells": 1,
       "parcels": 36,
       "reservedParcels": 9
@@ -109,6 +121,8 @@
       "id": "district_1_2",
       "type": "sports",
       "profileId": "sports",
+      "era": "medieval",
+      "style": "era_medieval",
       "cells": 1,
       "parcels": 49,
       "reservedParcels": 33
@@ -117,6 +131,8 @@
       "id": "district_1_3",
       "type": "residential",
       "profileId": "residential",
+      "era": "xix",
+      "style": "era_xix",
       "cells": 1,
       "parcels": 225,
       "reservedParcels": 90
@@ -125,6 +141,8 @@
       "id": "district_2_0",
       "type": "park",
       "profileId": "park",
+      "era": "modern",
+      "style": "era_modern",
       "cells": 1,
       "parcels": 49,
       "reservedParcels": 19
@@ -133,6 +151,8 @@
       "id": "district_2_1",
       "type": "market",
       "profileId": "market",
+      "era": "modern",
+      "style": "era_modern",
       "cells": 1,
       "parcels": 196,
       "reservedParcels": 87
@@ -141,6 +161,8 @@
       "id": "district_2_2",
       "type": "luxury",
       "profileId": "luxury",
+      "era": "medieval",
+      "style": "era_medieval",
       "cells": 1,
       "parcels": 121,
       "reservedParcels": 30
@@ -149,6 +171,8 @@
       "id": "district_2_3",
       "type": "luxury",
       "profileId": "luxury",
+      "era": "modern",
+      "style": "era_modern",
       "cells": 1,
       "parcels": 121,
       "reservedParcels": 26
@@ -157,6 +181,8 @@
       "id": "district_3_0",
       "type": "old_town",
       "profileId": "old_town",
+      "era": "suburb",
+      "style": "era_suburb",
       "cells": 1,
       "parcels": 289,
       "reservedParcels": 13
@@ -165,6 +191,8 @@
       "id": "district_3_1",
       "type": "slums",
       "profileId": "slums",
+      "era": "modern",
+      "style": "era_modern",
       "cells": 1,
       "parcels": 400,
       "reservedParcels": 11
@@ -173,6 +201,8 @@
       "id": "district_3_2",
       "type": "residential",
       "profileId": "residential",
+      "era": "modern",
+      "style": "era_modern",
       "cells": 1,
       "parcels": 225,
       "reservedParcels": 44
@@ -181,6 +211,8 @@
       "id": "district_3_3",
       "type": "commercial",
       "profileId": "commercial",
+      "era": "modern",
+      "style": "era_modern",
       "cells": 1,
       "parcels": 144,
       "reservedParcels": 87
@@ -450,6 +482,20 @@
         "campus": 1,
         "market": 1
       }
+    },
+    {
+      "severity": "info",
+      "code": "era_rings_assigned",
+      "stage": "3_districts_parcels",
+      "message": "assigned eras to districts by access-cost isolines from 3 core(s)",
+      "counts": {
+        "medieval": 2,
+        "xix": 1,
+        "industrial": 0,
+        "modern": 10,
+        "suburb": 3
+      },
+      "maxCost": 1004.21
     },
     {
       "severity": "info",
@@ -1136,7 +1182,7 @@
       "dividesPlate": true
     },
     "determinism": {
-      "generatorVersion": "0.6.0",
+      "generatorVersion": "0.7.0",
       "seed": 16,
       "deterministic": true
     },

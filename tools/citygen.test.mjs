@@ -1047,6 +1047,57 @@ test('citygen stage 1: buildCoreCandidates returns bounded deterministic core ca
   assert.deepEqual(out, again);
 });
 
+test('citygen stage 3: era assignment by access-cost isolines — medieval at core, suburb at far corner, water raises cost (R3.2 §6.2/§6.3)', async () => {
+  const { computeAccessCostField, assignErasToDistricts } = await import('./citygen/pipeline/stage-3-districts.mjs');
+  const baseCtx = (rivers = []) => ({
+    input: { ground: { size: 512, y: 0 } },
+    meta: {},
+    hydrology: { rivers, lakes: [] },
+    networks: { roads: { segments: [] }, railways: { segments: [] } },
+    terrain: { modifiers: [], analysis: { coreCandidates: [{ x: 0, z: 0 }] } },
+    districts: [
+      { id: 'd_center', type: 'downtown', geometry: { rect: { minX: -32, maxX: 32, minZ: -32, maxZ: 32 } }, cells: [{ cx: 0, cy: 0 }] },
+      { id: 'd_edge', type: 'residential', geometry: { rect: { minX: 200, maxX: 224, minZ: 200, maxZ: 224 } }, cells: [{ cx: 0, cy: 0 }] },
+    ],
+    report: { diagnostics: [], stages: [] },
+  });
+  // 1) flat, no water: cost at core = 0; monotone along +x; deterministic
+  const f1 = computeAccessCostField(baseCtx(), 512);
+  assert.ok(f1, 'field computed');
+  assert.strictEqual(f1.costs[Math.floor(f1.n / 2) * f1.n + Math.floor(f1.n / 2)], 0); // ядро = 0
+  assert.ok(Number.isFinite(f1.maxCost) && f1.maxCost > 0);
+  const a = computeAccessCostField(baseCtx(), 512);
+  assert.deepEqual([...a.costs], [...f1.costs], 'field deterministic');
+  // monotone non-decreasing along a +x ray from center on flat axis-aligned terrain
+  const j = Math.floor(f1.n / 2);
+  let prev = 0;
+  for (let i = Math.floor(f1.n / 2); i < f1.n; i++) {
+    const v = f1.costs[j * f1.n + i];
+    assert.ok(v >= prev, `cost must not decrease along +x ray (i=${i})`);
+    prev = v;
+  }
+  // 2) river across the plate raises cost on/beyond the river line vs dry world
+  const river = [{ id: 'r1', path: [[128, 0, -256], [128, 0, 256]], width: 18, depth: 3 }];
+  const fDry = computeAccessCostField(baseCtx(), 512);
+  const fWet = computeAccessCostField(baseCtx(river), 512);
+  const jc = Math.floor((0 + 256) / fWet.actual);
+  const ic = Math.floor((128 + 256) / fWet.actual) + 1; // клетка сразу за рекой
+  const cWet = fWet.costs[jc * fWet.n + ic];
+  const cDry = fDry.costs[jc * fDry.n + ic];
+  assert.ok(Number.isFinite(cWet) && Number.isFinite(cDry));
+  assert.ok(cWet > cDry, `water path must cost more than dry path at the same cell (wet=${cWet}, dry=${cDry})`);
+  // 3) era assignment: center -> medieval, far corner -> modern|suburb
+  const ctx = baseCtx([]);
+  assignErasToDistricts(ctx, 512);
+  const byId = new Map(ctx.districts.map(d => [d.id, d]));
+  assert.strictEqual(byId.get('d_center').era, 'medieval');
+  assert.notStrictEqual(byId.get('d_edge').era, 'medieval');
+  assert.ok(['modern', 'suburb', 'xix'].includes(byId.get('d_edge').era));
+  assert.strictEqual(byId.get('d_center').style, 'era_medieval');
+  const eraDiag = ctx.report.diagnostics.find(d => d.code === 'era_rings_assigned');
+  assert.ok(eraDiag, 'era_rings_assigned diagnostic emitted');
+});
+
 test('citygen stage 2: roadSegmentCost is deterministic, monotone-favorable, and river-penalized (R2.2 §7.2)', async () => {
   const { roadSegmentCost } = await import('./citygen/pipeline/stage-2-transport.mjs');
   // Flat straight path vs steep path: flat wins.
