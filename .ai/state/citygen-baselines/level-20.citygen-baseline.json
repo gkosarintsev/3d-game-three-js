@@ -2,11 +2,11 @@
   "file": "src/levels/level-20.json",
   "levelName": "level-20",
   "generator": {
-    "generatorVersion": "0.4.0",
+    "generatorVersion": "0.5.0",
     "seed": 20,
     "deterministic": true
   },
-  "reportHash": "b0b18885df984ac99006cec41278e1ffc4134e6c8a8f670bce6b3e28118544d8",
+  "reportHash": "ef3152dc66a1937c79356f655722e59cb9a1477f40d3898263ca8708366cc53a",
   "stages": 7,
   "summary": {
     "errors": 0,

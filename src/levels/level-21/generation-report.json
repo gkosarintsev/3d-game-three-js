@@ -1,7 +1,7 @@
 {
   "version": 1,
   "generator": {
-    "generatorVersion": "0.4.0",
+    "generatorVersion": "0.5.0",
     "seed": 21,
     "deterministic": true
   },
@@ -23,7 +23,7 @@
     {
       "id": "2_transport",
       "status": "ok",
-      "diagnostics": 122,
+      "diagnostics": 123,
       "repairs": 0,
       "drops": 0
     },
@@ -325,6 +325,23 @@
       "stage": "1_landscape_hydrology",
       "message": "marked 2 water buffer zone(s)",
       "count": 2
+    },
+    {
+      "severity": "info",
+      "code": "junctions_derived",
+      "stage": "2_transport",
+      "message": "derived 37 junction(s) per §8.1 rules",
+      "total": 37,
+      "byType": {
+        "uncontrolled": 35,
+        "signalized": 2
+      },
+      "movements": {
+        "right": 238,
+        "left": 238,
+        "straight": 410
+      },
+      "uturn": 0
     },
     {
       "severity": "info",
@@ -2243,7 +2260,7 @@
       "dividesPlate": true
     },
     "determinism": {
-      "generatorVersion": "0.4.0",
+      "generatorVersion": "0.5.0",
       "seed": 21,
       "deterministic": true
     },

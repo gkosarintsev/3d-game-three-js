@@ -70,11 +70,23 @@ function pickDefaultLane(seg) {
 
 function junctionTypeForNode(nodeId, incidentSegs) {
   const types = new Set(incidentSegs.map(s => s.type).filter(Boolean));
-  // heuristic R2.5-ish (simplified): roundabout segments => roundabout, highway/arterial crossings => signalized
   const hasRoundabout = incidentSegs.some(s => String(s.id || '').includes('round') || String(s.interchange || '').includes('roundabout'));
   if (hasRoundabout) return 'roundabout';
-  if (types.has('highway') || (types.has('arterial') && incidentSegs.length >= 4)) return 'signalized';
-  if (types.has('arterial') || types.has('collector')) return 'uncontrolled';
+  const hasLocal = types.has('local');
+  const hasCollector = types.has('collector');
+  const hasArterial = types.has('arterial');
+  const hasHighway = types.has('highway');
+  // §8.1: arterial/highway × arterial/highway (в т.ч. ядро) — signalized (интерчейндж соберётся отдельно).
+  if (hasHighway && (hasHighway || hasArterial)) return 'signalized';
+  if (hasArterial && (hasArterial || hasHighway)) return 'signalized';
+  if (hasArterial && hasCollector) return 'signalized';
+  // collector × collector: roundabout — если ветвей ≤4; иначе signalized (по подписке §8.1).
+  if (hasCollector && !hasArterial && !hasHighway) {
+    return incidentSegs.length <= 4 ? 'roundabout' : 'signalized';
+  }
+  // local × любого класса (ниже) — uncontrolled.
+  if (hasLocal) return 'uncontrolled';
+  if (hasArterial) return 'signalized';
   return 'uncontrolled';
 }
 
@@ -124,12 +136,16 @@ function deriveRoadJunctions(nodes, segments) {
       }
     }
     if (connections.length < 1) continue;
+    // §8.1: uturn разрешён только на кольце (roundabout); вне кольца — straight/left/right.
+    const junctType = junctionTypeForNode(nid, uniq.map(u => u.seg));
+    const filtered = junctType === 'roundabout' ? connections : connections.filter(c => c.movement !== 'uturn');
+    if (!filtered.length) continue;
     // deterministic order
-    connections.sort((a,b)=>(a.from.segment+a.from.end+a.to.segment+a.to.end+a.movement).localeCompare(b.from.segment+b.from.end+b.to.segment+b.to.end+b.movement));
+    filtered.sort((a,b)=>(a.from.segment+a.from.end+a.to.segment+a.to.end+a.movement).localeCompare(b.from.segment+b.from.end+b.to.segment+b.to.end+b.movement));
     out.push({
       id: `j_${nid}`,
-      type: junctionTypeForNode(nid, uniq.map(u => u.seg)),
-      connections,
+      type: junctType,
+      connections: filtered,
     });
   }
   out.sort((a,b)=>String(a.id).localeCompare(String(b.id)));
@@ -3337,7 +3353,13 @@ export function makeStage2() {
       if (!Array.isArray(ctx.networks.roads.junctions) || ctx.networks.roads.junctions.length === 0) {
         try {
           const derived = deriveRoadJunctions(nodes, segments);
-          if (derived.length) ctx.networks.roads.junctions = derived;
+          if (derived.length) {
+            ctx.networks.roads.junctions = derived;
+            const byType = derived.reduce((acc, j) => { const t = String(j?.type || 'unknown'); acc[t] = (acc[t] || 0) + 1; return acc; }, {});
+            const movements = {};
+            for (const j of derived) for (const c of (j.connections ?? [])) movements[c.movement] = (movements[c.movement] || 0) + 1;
+            ctx.report.diagnostics.push(info('junctions_derived', stageId, `derived ${derived.length} junction(s) per §8.1 rules`, { total: derived.length, byType, movements, uturn: movements.uturn ?? 0 }));
+          }
         } catch (e) {
           ctx.report.diagnostics.push(warn('transport_junction_derive_failed', stageId, `junction derivation failed: ${String(e?.message ?? e)}`));
         }

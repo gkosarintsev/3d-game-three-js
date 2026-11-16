@@ -1,7 +1,7 @@
 {
   "version": 1,
   "generator": {
-    "generatorVersion": "0.4.0",
+    "generatorVersion": "0.5.0",
     "seed": 22,
     "deterministic": true
   },
@@ -23,7 +23,7 @@
     {
       "id": "2_transport",
       "status": "ok",
-      "diagnostics": 81,
+      "diagnostics": 82,
       "repairs": 0,
       "drops": 0
     },
@@ -202,6 +202,23 @@
         "steep_15_25": 0.010742,
         "very_steep_gt25": 0.030273
       }
+    },
+    {
+      "severity": "info",
+      "code": "junctions_derived",
+      "stage": "2_transport",
+      "message": "derived 25 junction(s) per §8.1 rules",
+      "total": 25,
+      "byType": {
+        "uncontrolled": 23,
+        "signalized": 2
+      },
+      "movements": {
+        "straight": 406,
+        "right": 169,
+        "left": 169
+      },
+      "uturn": 0
     },
     {
       "severity": "info",
@@ -1547,7 +1564,7 @@
       "dividesPlate": true
     },
     "determinism": {
-      "generatorVersion": "0.4.0",
+      "generatorVersion": "0.5.0",
       "seed": 22,
       "deterministic": true
     },
