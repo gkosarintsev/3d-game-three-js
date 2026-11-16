@@ -1,8 +1,8 @@
 {
   "profile": "hill_town",
   "seed": 202,
-  "generatorVersion": "0.1.0",
-  "reportHash": "1c0bde3aa5b5b758dc443d7991a9046a0c75384ac5a23b074059808c504a12f2",
+  "generatorVersion": "0.2.0",
+  "reportHash": "252e7f7314e7d4054747b5684b61a468b346d1f179151e33f0a51cabc1854d16",
   "summary": {
     "errors": 0,
     "warnings": 8,
@@ -50,7 +50,11 @@
         "arterial": 8,
         "collector": 10,
         "local": 12
-      }
+      },
+      "classPolicyViolations": 0,
+      "classPolicyOk": 0,
+      "overAbsolute": 0,
+      "version": 2
     },
     "gameplay": {
       "spawnToRoad": null,

@@ -1,7 +1,7 @@
 {
   "version": 1,
   "generator": {
-    "generatorVersion": "0.1.0",
+    "generatorVersion": "0.2.0",
     "seed": 20,
     "deterministic": true
   },
@@ -2146,7 +2146,11 @@
         "arterial": 8,
         "collector": 10,
         "local": 12
-      }
+      },
+      "classPolicyViolations": 20,
+      "classPolicyOk": 131,
+      "overAbsolute": 0,
+      "version": 2
     },
     "gameplay": {
       "spawnToRoad": 0,
@@ -2217,7 +2221,7 @@
       "dividesPlate": true
     },
     "determinism": {
-      "generatorVersion": "0.1.0",
+      "generatorVersion": "0.2.0",
       "seed": 20,
       "deterministic": true
     },

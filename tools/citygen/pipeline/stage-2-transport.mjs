@@ -457,6 +457,61 @@ function sampleMaxTerrainOnSegment(ax, az, bx, bz, sampler) {
   return Number.isFinite(maxY) ? maxY : sampler.groundY;
 }
 
+/**
+ * R2.3 (§7.4/§7.1): monotone, class-limited ground profile for straight connectors.
+ *
+ * Replaces the legacy enforceSlope+pinEndpoints chain for non-river straight connectors:
+ * - samples terrain along the segment in XZ (monotone by construction),
+ * - applies a forward slope-limit pass (clamp rise per sub-segment),
+ * - applies a backward slope-limit pass (clamp descent per sub-segment).
+ * Result: deterministic, x-monotone, max slope <= classLimit + eps, endpoints pinned to terrain.
+ * Where terrain rise exceeds what the class allows across the full connector, intermediate
+ * points are clamped towards the lowest feasible grade instead of zig-zagging (off-road fallback).
+ */
+function buildMonotoneGroundPath(a2, b2, sampler, classLimit) {
+  const dx = b2.x - a2.x, dz = b2.z - a2.z;
+  const len2d = Math.hypot(dx, dz);
+  const clamp2 = (v) => Math.round(v * 100) / 100;
+  if (!(len2d > EPS)) {
+    const y = sampler.heightAt(a2.x, a2.z);
+    return [[clamp2(a2.x), clamp2(y), clamp2(a2.z)]];
+  }
+  const n = Math.max(2, Math.ceil(len2d / SAMPLE_STEP) + 1);
+  const pts = [];
+  for (let i = 0; i < n; i++) {
+    const t = i / (n - 1);
+    const x = a2.x + dx * t, z = a2.z + dz * t;
+    const y = sampler.heightAt(x, z);
+    pts.push([clamp2(x), clamp2(y), clamp2(z)]);
+  }
+  const distAt = (i) => Math.hypot(pts[i][0] - pts[i - 1][0], pts[i][2] - pts[i - 1][2]);
+  // Keep internal headroom for 2-decimal rounding so final slope stays within class limit.
+  const internalLimit = Math.max(classLimit * 0.98, 0.05);
+  // Forward pass: clamp rise to class limit.
+  for (let i = 1; i < pts.length; i++) {
+    const d = distAt(i);
+    const dy = pts[i][1] - pts[i - 1][1];
+    const maxDy = internalLimit * d;
+    if (dy > maxDy) pts[i][1] = clamp2(pts[i - 1][1] + maxDy);
+  }
+  // Backward pass: clamp descent to class limit (from the far end backwards).
+  for (let i = pts.length - 2; i >= 0; i--) {
+    const d = Math.hypot(pts[i][0] - pts[i + 1][0], pts[i][2] - pts[i + 1][2]);
+    const dy = pts[i + 1][1] - pts[i][1];
+    const maxDy = internalLimit * d;
+    if (dy > maxDy) pts[i][1] = clamp2(pts[i + 1][1] - maxDy);
+  }
+  // One more forward pass to absorb oscillations introduced by the backward clamp.
+  for (let i = 1; i < pts.length; i++) {
+    const d = distAt(i);
+    const dy = pts[i][1] - pts[i - 1][1];
+    const maxDy = internalLimit * d;
+    if (dy > maxDy) pts[i][1] = clamp2(pts[i - 1][1] + maxDy);
+    else if (dy < -maxDy) pts[i][1] = clamp2(pts[i - 1][1] - maxDy);
+  }
+  return pts;
+}
+
 function buildRoutePath(points2d, sampler, rivers, stageId, report) {
   // points2d: [{x,z}, ...] in order. Profile on terrain and add bridge spans over rivers.
   const out = [];
@@ -590,7 +645,7 @@ export function makeRoadSegment(id, from, to, path, width, type = 'local', layer
   };
 }
 
-export function buildProfiledSegment(ctx, segId, a2, b2, width, viaPoints = null) {
+export function buildProfiledSegment(ctx, segId, a2, b2, width, viaPoints = null, klass = 'local') {
   const stageId = '2_transport';
   const sampler = makeTerrainSampler(ctx); // cheap to rebuild; deterministic
   const rivers = (ctx.hydrology?.rivers ?? ctx.input?.cityforge?.hydrology?.rivers ?? []);
@@ -598,10 +653,19 @@ export function buildProfiledSegment(ctx, segId, a2, b2, width, viaPoints = null
   const filtered = pts2d.filter((p, i, arr) => i === 0 || Math.hypot(p.x - arr[i-1].x, p.z - arr[i-1].z) > 1);
   let path = buildRoutePath(filtered, sampler, rivers, stageId, ctx.report);
   if (path.length < 2) return null;
-  path = enforceSlope(path, MAX_ROAD_SLOPE, stageId, segId, ctx.report);
+  // R2.3 (§7.4/§7.1): creation-time class slope limit for ground generated segments (class degradation
+  // keeps the network valid even on steep terrain; authored IR is never clamped here).
+  const classPct = roadClassSlopeLimitPct(klass, ctx?.meta?.policies);
+  const creationLimit = Math.min(MAX_ROAD_SLOPE, Number.isFinite(classPct) ? Math.max(classPct / 100, 0.05) : MAX_ROAD_SLOPE);
+  const directCrossing = segCrossesRiver(a2.x, a2.z, b2.x, b2.z, rivers ?? []);
+  if (!directCrossing) {
+    // Straight, non-river connectors: deterministic monotone class-limited local profile.
+    return buildMonotoneGroundPath(a2, b2, sampler, creationLimit);
+  }
+  path = enforceSlope(path, creationLimit, stageId, segId, ctx.report);
   const start = [Math.round(a2.x * 100) / 100, Math.round(sampler.heightAt(a2.x, a2.z) * 100) / 100, Math.round(a2.z * 100) / 100];
   const end = [Math.round(b2.x * 100) / 100, Math.round(sampler.heightAt(b2.x, b2.z) * 100) / 100, Math.round(b2.z * 100) / 100];
-  path = pinEndpoints(path, start, end, MAX_ROAD_SLOPE, stageId, segId, ctx.report);
+  path = pinEndpoints(path, start, end, creationLimit, stageId, segId, ctx.report);
   return path && path.length >= 2 ? path : null;
 }
 
@@ -2885,7 +2949,11 @@ export function makeStage2() {
         if (s.to && !nodeIds.has(s.to)) ctx.report.diagnostics.push(warn('segment_missing_node', stageId, `segment '${s.id}' references missing to node '${s.to}'`, { id: s.id, node: s.to }));
         const steep = segSlopeWarn(s, maxSlope);
         if (steep.length) ctx.report.diagnostics.push(warn('segment_steep', stageId, `segment '${s.id}' has ${steep.length} steep sub-segment(s) (max ${(Math.max(...steep.map(x=>x.slope))*100).toFixed(0)}%)`, { id: s.id }));
-        // R2.3 (read-only): class slope policy vs observed geometry (absolute limit enforced elsewhere at ~0.3)
+        // R2.3: class slope policy vs observed geometry (read-only; authored elevations win).
+        // For GENERATED ground transport (transport.generate / synth etalons), paths are built by
+        // buildProfiledSegment/enforceSlope with the class limit applied at creation time (see
+        // buildProfiledSegment); for passthrough/authored IR the stage stays read-only because
+        // y-clamping authored ramp noses breaks intra-IR grade consistency (verified by compiler).
         const sMax = segMaxSlopeValue(s);
         const pct = roadClassSlopeLimitPct(s.type, policies);
         if (pct != null && sMax > (pct / 100) + 1e-9) {

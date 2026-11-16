@@ -2,11 +2,11 @@
   "file": "src/levels/level-20.json",
   "levelName": "level-20",
   "generator": {
-    "generatorVersion": "0.1.0",
+    "generatorVersion": "0.2.0",
     "seed": 20,
     "deterministic": true
   },
-  "reportHash": "324b7d61f01fba6ffedd1d7058747c0bb07e261e28cac279478091e4db88b655",
+  "reportHash": "168f888fb1ffdcb2487b4cf04405e50d56544167eaa14e7317ea042dbcc2724d",
   "stages": 7,
   "summary": {
     "errors": 0,
@@ -74,7 +74,11 @@
         "arterial": 8,
         "collector": 10,
         "local": 12
-      }
+      },
+      "classPolicyViolations": 20,
+      "classPolicyOk": 131,
+      "overAbsolute": 0,
+      "version": 2
     },
     "gameplay": {
       "spawnToRoad": 0,

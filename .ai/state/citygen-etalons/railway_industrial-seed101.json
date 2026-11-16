@@ -1,8 +1,8 @@
 {
   "profile": "railway_industrial",
   "seed": 101,
-  "generatorVersion": "0.1.0",
-  "reportHash": "13f57ec3556a6154fcd339b3be092e0965a2b949cba0f19c238241ebe917f745",
+  "generatorVersion": "0.2.0",
+  "reportHash": "651acb325a731048fbf579a59fa1f73c696f07a4ee9bd43b4d1dc1e608d3630d",
   "summary": {
     "errors": 0,
     "warnings": 8,
@@ -50,7 +50,11 @@
         "arterial": 8,
         "collector": 10,
         "local": 12
-      }
+      },
+      "classPolicyViolations": 0,
+      "classPolicyOk": 0,
+      "overAbsolute": 0,
+      "version": 2
     },
     "gameplay": {
       "spawnToRoad": null,

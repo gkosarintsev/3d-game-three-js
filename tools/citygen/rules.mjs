@@ -378,6 +378,10 @@ export function evaluateRules(ctx) {
       maxSlope: round(maxObservedRoadSlope, 6),
       slopeByClass,
       slopePolicy: policies?.slopeLimitPct ?? null,
+      classPolicyViolations: roadSlopeWarns,
+      classPolicyOk: Math.max(0, roads.length - roadSlopeWarns),
+      overAbsolute: roadSlopeViolations,
+      version: 2,
     },
     gameplay: {
       spawnToRoad: round(spawnDist, 3),

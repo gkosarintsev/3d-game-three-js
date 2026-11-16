@@ -2,11 +2,11 @@
   "file": "src/levels/level-17.json",
   "levelName": "level-17",
   "generator": {
-    "generatorVersion": "0.1.0",
+    "generatorVersion": "0.2.0",
     "seed": 16,
     "deterministic": true
   },
-  "reportHash": "407d6fd0d2c2000b3c4727c11f5c9aae708a5d03f334b400ddbc19fd8f6e9ee4",
+  "reportHash": "16a19cc11bdd1f724ea961c0fee89209bd0f7a758bfc60a3ebfc0c1d796811c8",
   "stages": 7,
   "summary": {
     "errors": 0,
@@ -74,7 +74,11 @@
         "arterial": 8,
         "collector": 10,
         "local": 12
-      }
+      },
+      "classPolicyViolations": 72,
+      "classPolicyOk": 100,
+      "overAbsolute": 0,
+      "version": 2
     },
     "gameplay": {
       "spawnToRoad": 0,

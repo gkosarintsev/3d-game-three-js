@@ -1,8 +1,8 @@
 {
   "profile": "river_trade",
   "seed": 101,
-  "generatorVersion": "0.1.0",
-  "reportHash": "ffaecfa9b601f6b1277ac7fcb184eb94781410cfb57bad1b8ccc9afa9f2b526c",
+  "generatorVersion": "0.2.0",
+  "reportHash": "85e2c8999b70fff792d89ffe9c5ae2d01018eb6cf745a10737811dcc61805f78",
   "summary": {
     "errors": 0,
     "warnings": 8,
@@ -50,7 +50,11 @@
         "arterial": 8,
         "collector": 10,
         "local": 12
-      }
+      },
+      "classPolicyViolations": 0,
+      "classPolicyOk": 0,
+      "overAbsolute": 0,
+      "version": 2
     },
     "gameplay": {
       "spawnToRoad": null,
