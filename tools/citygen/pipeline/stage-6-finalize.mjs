@@ -495,6 +495,32 @@ export function makeStage6() {
         ];
         const riverById = new Map(riversForBuf.filter(r => r?.id).map(r => [r.id, r]));
         const wbs = waterBuffers.map(w => ({ ...w, _river: w?.id ? riverById.get(w.id) : null }));
+        const explicitFloodplainMasks = Array.isArray(ctx.masks?.terrain?.floodplains) ? ctx.masks.terrain.floodplains
+          : (Array.isArray(ctx.terrain?.analysis?.floodplains) ? ctx.terrain.analysis.floodplains : []);
+
+        const pointNearExplicitFloodplain = (x, z) => {
+          for (const fpl of explicitFloodplainMasks) {
+            if (!fpl) continue;
+            if (fpl.type === 'lake' && Array.isArray(fpl.center) && Number.isFinite(Number(fpl.radius))) {
+              const margin = Number.isFinite(Number(fpl.floodplain)) ? Number(fpl.floodplain) : 0;
+              if (Math.hypot(x - Number(fpl.center[0]), z - Number(fpl.center[1])) < (Number(fpl.radius) + Math.max(margin, 8))) {
+                return { id: fpl.id ?? null, type: 'lake', zone: 'floodplain' };
+              }
+              continue;
+            }
+            if (fpl.type === 'river' && Array.isArray(fpl.path) && fpl.path.length >= 2) {
+              const margin = Number.isFinite(Number(fpl.floodplain)) ? Number(fpl.floodplain)
+                : Math.max((Number(fpl.width) || 0) * 0.5 + 12, (Number(fpl.width) || 0) * 3);
+              let best = Infinity;
+              for (let i = 0; i + 1 < fpl.path.length; i++) {
+                const a = fpl.path[i], b = fpl.path[i + 1];
+                best = Math.min(best, pointSegDistXZ(x, z, a[0], a[2], b[0], b[2]));
+              }
+              if (best < margin) return { id: fpl.id ?? null, type: 'river', zone: 'floodplain', dist: +best.toFixed(3) };
+            }
+          }
+          return null;
+        };
 
         const pointNearWater = (x, z, kind = 'hard') => {
           for (const w of wbs) {
@@ -522,6 +548,8 @@ export function makeStage6() {
             if (best <= hard) return { id: w.id ?? null, type: 'river', zone: 'buffer', dist: +best.toFixed(3) };
             if (kind === 'floodplain' && best <= flood) return { id: w.id ?? null, type: 'river', zone: 'floodplain', dist: +best.toFixed(3) };
           }
+          // Defense-in-depth: explicit floodplain masks (R1.5) for scenarios where water-buffer metadata is incomplete.
+          if (kind === 'floodplain') return pointNearExplicitFloodplain(x, z);
           return null;
         };
 
