@@ -1,7 +1,7 @@
 {
   "version": 1,
   "generator": {
-    "generatorVersion": "0.2.0",
+    "generatorVersion": "0.3.0",
     "seed": 21,
     "deterministic": true
   },
@@ -192,7 +192,7 @@
       "code": "road_slope_over_class_policy",
       "stage": "2_transport",
       "message": "road segments exceed class slope policy (policies.slopeLimitPct)",
-      "segments": 2,
+      "segments": 1,
       "maxSlope": 0.297561,
       "policy": {
         "highway": 6,
@@ -1980,7 +1980,7 @@
       "code": "interchange_junction_candidates",
       "stage": "6_finalize_emit",
       "message": "identified junction nodes as grade-separation candidates",
-      "count": 6
+      "count": 5
     },
     {
       "severity": "info",
@@ -2153,7 +2153,7 @@
         "arterial": {
           "count": 3,
           "maxSlope": 0.297561,
-          "overPolicy": 2,
+          "overPolicy": 1,
           "overAbsolute": 0
         },
         "local": {
@@ -2169,8 +2169,8 @@
         "collector": 10,
         "local": 12
       },
-      "classPolicyViolations": 2,
-      "classPolicyOk": 153,
+      "classPolicyViolations": 1,
+      "classPolicyOk": 154,
       "overAbsolute": 0,
       "version": 2
     },
@@ -2243,7 +2243,7 @@
       "dividesPlate": true
     },
     "determinism": {
-      "generatorVersion": "0.2.0",
+      "generatorVersion": "0.3.0",
       "seed": 21,
       "deterministic": true
     },
@@ -2263,7 +2263,7 @@
         "code": "road_slope_over_class_policy",
         "stage": "rules",
         "message": "road segments exceed class slope policy (see policies.slopeLimitPct)",
-        "segments": 2,
+        "segments": 1,
         "maxSlope": 0.297561
       },
       {

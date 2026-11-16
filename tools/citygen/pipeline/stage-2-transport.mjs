@@ -1382,12 +1382,77 @@ function generateTransport(ctx) {
 
   const mainParts = splitMainSegments(mainPath);
   tryApplyOverpassPrototype(mainParts);
+  // R2.3/R2.6 (§7.2/§8.3): arterial segments crossing a river must be bridge decks.
+  // Deterministic: locate corridor windows in ground parts and elevate those parts to a deck
+  // above riverbed/terrain (with ramps clamped below the absolute 0.3005 slope cap).
+  for (const part of mainParts) {
+    if (part.bridge) continue;
+    const path = Array.isArray(part.path) ? part.path : null;
+    if (!path || path.length < 2) continue;
+    const inCorridor = path.map(pt => {
+      const near = riverMinDistXZAt(pt[0], pt[2], rivers ?? []);
+      if (!near.river) return Infinity;
+      const w = Number(near.river.width) || 10;
+      return near.d - w * 0.5;
+    });
+    let first = -1, last = -1;
+    for (let i = 0; i < inCorridor.length; i++) {
+      if (inCorridor[i] <= 6) { if (first < 0) first = i; last = i; }
+    }
+    if (first < 0) continue;
+    // Deck height: highest terrain in corridor + clearance, at least BRIDGE_DECK_MIN over base ground.
+    let highest = -Infinity;
+    for (let i = first; i <= last; i++) highest = Math.max(highest, sampler.heightAt(path[i][0], path[i][2]));
+    const corridorEndY = Math.max(Number(path[first][1]) || 0, Number(path[last][1]) || 0, groundY);
+    const deckH = Math.round(Math.max(highest + BRIDGE_CLEARANCE, corridorEndY + 0.5, groundY + BRIDGE_DECK_MIN) * 100) / 100;
+    part.path = path.map(p => p.slice());
+    for (let i = first; i <= last; i++) part.path[i][1] = deckH;
+    // Monotone slope passes bounded by ramp cap (kept XZ-monotone; no reordering).
+    const rampCap = Math.max(MAX_ROAD_SLOPE * 0.97, 0.15);
+    const dist = (i) => Math.max(1e-6, Math.hypot(part.path[i][0] - part.path[i - 1][0], part.path[i][2] - part.path[i - 1][2]));
+    const headroom = 0.02;
+    const limit = Math.max(rampCap - headroom, 0.05);
+    // Forward clamp: rise may not exceed limit
+    for (let i = 1; i < part.path.length; i++) {
+      const d = dist(i);
+      const dy = part.path[i][1] - part.path[i - 1][1];
+      const m = limit * d;
+      if (dy > m) part.path[i][1] = Math.round((part.path[i - 1][1] + m) * 100) / 100;
+    }
+    // Backward clamp: from the far corridor edge rise toward spine
+    for (let i = part.path.length - 2; i >= 0; i--) {
+      const d = Math.max(1e-6, Math.hypot(part.path[i + 1][0] - part.path[i][0], part.path[i + 1][2] - part.path[i][2]));
+      const dy = part.path[i + 1][1] - part.path[i][1];
+      const m = limit * d;
+      if (dy > m) part.path[i][1] = Math.round((part.path[i + 1][1] - m) * 100) / 100;
+      else if (dy < -m) part.path[i][1] = Math.round((part.path[i + 1][1] + m) * 100) / 100;
+    }
+    // Forward final pass
+    for (let i = 1; i < part.path.length; i++) {
+      const d = dist(i);
+      const dy = part.path[i][1] - part.path[i - 1][1];
+      const m = limit * d;
+      if (dy > m) part.path[i][1] = Math.round((part.path[i - 1][1] + m) * 100) / 100;
+      else if (dy < -m) part.path[i][1] = Math.round((part.path[i - 1][1] - m) * 100) / 100;
+    }
+    // Restore deck height inside corridor (ramps may have clipped the plateau)
+    for (let i = first; i <= last; i++) part.path[i][1] = deckH;
+    part.path = part.path.map(p => [Math.round(p[0] * 100) / 100, Math.round(p[1] * 100) / 100, Math.round(p[2] * 100) / 100]);
+    part.bridge = true;
+    ctx.report.repairs.push({ stage: stageId, code: 'main_arterial_bridged', id: part.id ?? null, deckH });
+  }
   // Overpass/profiling may re-mark parts as bridge; ensure bridge parts keep minimum deck clearance over ground.
   for (const part of mainParts) {
     if (!part.bridge) continue;
     let minY = Infinity;
     for (const p of part.path) minY = Math.min(minY, p[1] ?? 0);
-    if (minY < groundY + BRIDGE_DECK_MIN - 0.05) part.bridge = false;
+    if (minY < groundY + BRIDGE_DECK_MIN - 0.05) {
+      // Keep bridge status: pin all points at deck height to avoid compiler clearance warnings.
+      let maxY = -Infinity;
+      for (const p of part.path) maxY = Math.max(maxY, p[1] ?? 0);
+      const pinY = Math.round(Math.max(maxY, groundY + BRIDGE_DECK_MIN) * 100) / 100;
+      for (const p of part.path) p[1] = pinY;
+    }
   }
   const nodes = [
     { id: 'tr_n_spawn', position: mainPath[0].slice(), layer: 'ground' },

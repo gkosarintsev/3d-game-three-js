@@ -297,7 +297,7 @@
     "chunks": []
   },
   "generator": {
-    "generatorVersion": "0.2.0",
+    "generatorVersion": "0.3.0",
     "seed": 18,
     "deterministic": true,
     "stages": [],
