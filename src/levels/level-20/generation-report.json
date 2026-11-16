@@ -1,7 +1,7 @@
 {
   "version": 1,
   "generator": {
-    "generatorVersion": "0.9.0",
+    "generatorVersion": "0.10.0",
     "seed": 20,
     "deterministic": true
   },
@@ -30,7 +30,7 @@
     {
       "id": "3_districts_parcels",
       "status": "ok",
-      "diagnostics": 10,
+      "diagnostics": 11,
       "repairs": 0,
       "drops": 0
     },
@@ -69,6 +69,8 @@
         3,
         12
       ],
+      "pressure": 0.375,
+      "targetB": 168.7,
       "frame": {
         "cx": -480,
         "cz": -480,
@@ -91,6 +93,8 @@
         1,
         4
       ],
+      "pressure": 0.0469,
+      "targetB": 242.7,
       "frame": null,
       "cells": 1,
       "parcels": 64,
@@ -108,6 +112,8 @@
         1,
         2
       ],
+      "pressure": 0.0075,
+      "targetB": 256,
       "frame": null,
       "cells": 1,
       "parcels": 64,
@@ -125,6 +131,8 @@
         1,
         3
       ],
+      "pressure": 0.0788,
+      "targetB": 233.8,
       "frame": null,
       "cells": 1,
       "parcels": 196,
@@ -142,6 +150,8 @@
         1,
         3
       ],
+      "pressure": 0.0437,
+      "targetB": 243.7,
       "frame": {
         "cx": -160,
         "cz": -480,
@@ -164,6 +174,8 @@
         0,
         1
       ],
+      "pressure": 0.1509,
+      "targetB": 215.9,
       "frame": {
         "cx": -160,
         "cz": -160,
@@ -186,6 +198,8 @@
         1,
         3
       ],
+      "pressure": 0.025,
+      "targetB": 249.5,
       "frame": {
         "cx": -160,
         "cz": 160,
@@ -208,6 +222,8 @@
         2,
         9
       ],
+      "pressure": 0.1547,
+      "targetB": 215.1,
       "frame": null,
       "cells": 1,
       "parcels": 225,
@@ -225,6 +241,8 @@
         0,
         1
       ],
+      "pressure": 0.0009,
+      "targetB": 259.3,
       "frame": {
         "cx": 160,
         "cz": -480,
@@ -247,6 +265,8 @@
         1,
         3
       ],
+      "pressure": 0.4287,
+      "targetB": 158.4,
       "frame": {
         "cx": 160,
         "cz": -160,
@@ -269,6 +289,8 @@
         2,
         9
       ],
+      "pressure": 0.3219,
+      "targetB": 179.2,
       "frame": {
         "cx": 160,
         "cz": 160,
@@ -291,6 +313,8 @@
         3,
         20
       ],
+      "pressure": 0.4672,
+      "targetB": 151.2,
       "frame": {
         "cx": 160,
         "cz": 480,
@@ -313,6 +337,8 @@
         2,
         5
       ],
+      "pressure": 0.175,
+      "targetB": 210.4,
       "frame": {
         "cx": 480,
         "cz": -480,
@@ -335,6 +361,8 @@
         1,
         4
       ],
+      "pressure": 0.0859,
+      "targetB": 231.9,
       "frame": {
         "cx": 480,
         "cz": -160,
@@ -357,6 +385,8 @@
         2,
         9
       ],
+      "pressure": 0.1547,
+      "targetB": 215.1,
       "frame": {
         "cx": 480,
         "cz": 160,
@@ -379,6 +409,8 @@
         2,
         6
       ],
+      "pressure": 0.07,
+      "targetB": 236.2,
       "frame": {
         "cx": 480,
         "cz": 480,
@@ -2024,6 +2056,22 @@
     },
     {
       "severity": "info",
+      "code": "pressure_field",
+      "stage": "3_districts_parcels",
+      "message": "building pressure prior D0 assigned to districts (section 7.3)",
+      "mean": 0.1617,
+      "bMin": 60,
+      "bMax": 260,
+      "gamma": 0.8,
+      "bands": {
+        "gt75": 0,
+        "b50_75": 0,
+        "b25_50": 4,
+        "le25": 12
+      }
+    },
+    {
+      "severity": "info",
       "code": "stage_ok",
       "stage": "3_districts_parcels",
       "message": "stage 3_districts_parcels completed"
@@ -2524,7 +2572,7 @@
       "dividesPlate": true
     },
     "determinism": {
-      "generatorVersion": "0.9.0",
+      "generatorVersion": "0.10.0",
       "seed": 20,
       "deterministic": true
     },

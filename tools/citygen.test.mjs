@@ -1098,6 +1098,34 @@ test('citygen stage 3: era assignment by access-cost isolines — medieval at co
   assert.ok(eraDiag, 'era_rings_assigned diagnostic emitted');
 });
 
+test('citygen stage 3: pressure prior D0 clamped and targetB follows B(D)=Bmax−(Bmax−Bmin)·D^0.8 (R3.5 §7.3)', async () => {
+  const { targetBDistance, districtPressure } = await import('./citygen/pipeline/stage-3-districts.mjs');
+  const opts = { bMin: 60, bMax: 260, gamma: 0.8 };
+  assert.strictEqual(targetBDistance(0, opts), 260);
+  assert.strictEqual(targetBDistance(1, opts), 60);
+  assert.ok(targetBDistance(0.25, opts) >= targetBDistance(0.5, opts), 'B(D) non-increasing in D');
+  assert.ok(targetBDistance(0.5, opts) >= targetBDistance(0.75, opts));
+  const ctx = {
+    input: { ground: { size: 512, y: 0 } },
+    meta: {},
+    hydrology: { rivers: [], lakes: [] },
+    networks: { roads: { segments: [{ id: 'a1', type: 'arterial', path: [[0, 0, 0], [0, 0, 256]] }] }, railways: { segments: [] } },
+    terrain: { modifiers: [], analysis: { coreCandidates: [{ x: 0, z: 0 }] } },
+    masks: { terrain: { floodplains: [] } },
+  };
+  const downtown = districtPressure({ type: 'office', buildingDensity: 0.8, heightRange: [3, 12], geometry: { rect: { minX: -32, maxX: 32, minZ: -32, maxZ: 32 } } }, ctx, 512);
+  const suburb = districtPressure({ type: 'suburb', buildingDensity: 0.35, heightRange: [1, 3], geometry: { rect: { minX: 200, maxX: 240, minZ: 200, maxZ: 240 } } }, ctx, 512);
+  assert.ok(downtown > suburb, `downtown pressure must exceed suburb (${downtown} vs ${suburb})`);
+  for (const p of [downtown, suburb]) assert.ok(p >= 0 && p <= 1);
+  const out = runCitygen(structuredClone(v4Base()));
+  const diag = out.report.diagnostics.find(d => d.code === 'pressure_field');
+  assert.ok(diag, 'pressure_field diagnostic emitted');
+  for (const d of out.report.districts ?? []) {
+    assert.ok(Number.isFinite(d.pressure) && d.pressure >= 0 && d.pressure <= 1, `district ${d.id} pressure in [0,1]`);
+    assert.ok(Number.isFinite(d.targetB) && d.targetB >= 60 && d.targetB <= 260, `district ${d.id} targetB within policies bounds`);
+  }
+});
+
 test('citygen stage 3: park share within profile bounds, diversity guard keeps campus, district frames assigned (R3.4 §6.6/§6.7/§6.8)', () => {
   const raw = v4Base();
   const out = runCitygen(structuredClone(raw));

@@ -422,6 +422,44 @@ function landValueAffinity(typeId, lv, inFloodplain) {
   }
 }
 
+// R3.5 §7.3: давление застройки D и целевое расстояние B(D)=B_max−(B_max−B_min)·D^0.8.
+// Приор D₀ — по записям районов: buildingDensity × средняя высота из heightRange + бонус около якорей (ядра).
+// Веса/пределы берём из policies.roadDensity (bMin/bMax/gamma), не хардкодим.
+const ANCHOR_BONUS_150 = 0.35; // ядро в радиусе 150 м
+const ANCHOR_BONUS_300 = 0.15; // ядро в радиусе 300 м
+const ARTERIAL_BONUS = 0.1;      // район в 10 м от артерии/highway
+const PRESSURE_FLOOR_NORM = 16;  // этажи-эталон нормализации (meanFloors / 16)
+
+export function targetBDistance(D, { bMin = 60, bMax = 260, gamma = 0.8 } = {}) {
+  const d = Math.max(0, Math.min(1, Number.isFinite(D) ? D : 0));
+  return +(bMax - (bMax - bMin) * Math.pow(d, gamma)).toFixed(1);
+}
+
+export function districtPressure(d, ctx, size) {
+  // D₀ (приор): density × meanFloors/16 + ядро (150/300 м) + артерия (10 м); clamp 0..1
+  const density = Number.isFinite(Number(d?.buildingDensity)) ? Number(d.buildingDensity) : 0.45;
+  const hr = Array.isArray(d?.heightRange) ? d.heightRange : [2, 9];
+  const meanFloors = (Number(hr[0]) + Number(hr[1])) / 2 || 0;
+  let pressure = density * (meanFloors / PRESSURE_FLOOR_NORM);
+  const rect = d?.geometry?.rect;
+  const cx = rect ? (Number(rect.minX) + Number(rect.maxX)) / 2 : 0;
+  const cz = rect ? (Number(rect.minZ) + Number(rect.maxZ)) / 2 : 0;
+  const cores = Array.isArray(ctx?.terrain?.analysis?.coreCandidates) ? ctx.terrain.analysis.coreCandidates
+    : (Array.isArray(ctx?.masks?.terrain?.coreCandidates) ? ctx.masks.terrain.coreCandidates : []);
+  let anchor = 0;
+  for (const c of cores) {
+    const ax = Number(c?.x), az = Number(c?.z);
+    if (!Number.isFinite(ax) || !Number.isFinite(az)) continue;
+    const dd = Math.hypot(ax - cx, az - cz);
+    anchor = Math.max(anchor, dd <= 150 ? ANCHOR_BONUS_150 : dd <= 300 ? ANCHOR_BONUS_300 : 0);
+  }
+  pressure += anchor;
+  const roadSegments = ctx?.networks?.roads?.segments ?? [];
+  const dArt = minSegmentDist(cx, cz, roadSegments, new Set(['arterial', 'highway']));
+  if (Number.isFinite(dArt) && dArt <= 10) pressure += ARTERIAL_BONUS;
+  return +Math.max(0, Math.min(1, pressure)).toFixed(4);
+}
+
 // R3.4 §6.6/§6.7/§6.8: соседство (industrial↔residential буфер, контраст этажности ≤ 2.5×),
 // зелёный каркас (доля park/forest 8–15%), districtFrame (ось района: склон/река/артерия).
 const ADJACENCY_BUFFER = new Set(['park', 'commercial', 'industrial', 'market', 'sports']);
@@ -961,6 +999,31 @@ export function makeStage3() {
         }));
       }
 
+      // R3.5 §7.3: приор D₀ (buildingDensity × meanFloors/16 + бонус ядра/артерии), целевое B(D).
+      {
+        const policies = ctx?.meta?.policies ?? {};
+        const rd = policies.roadDensity ?? {};
+        const bMin = Number.isFinite(Number(rd.bMin)) ? Number(rd.bMin) : 60;
+        const bMax = Number.isFinite(Number(rd.bMax)) ? Number(rd.bMax) : 260;
+        const gamma = Number.isFinite(Number(rd.gamma)) ? Number(rd.gamma) : 0.8;
+        let dSum = 0, dN = 0;
+        const bands = { gt75: 0, b50_75: 0, b25_50: 0, le25: 0 };
+        for (const d of (ctx.districts ?? [])) {
+          d.pressure = districtPressure(d, ctx, size);
+          d.targetB = targetBDistance(d.pressure, { bMin, bMax, gamma });
+          if (d.pressure > 0.75) bands.gt75 += 1;
+          else if (d.pressure > 0.5) bands.b50_75 += 1;
+          else if (d.pressure > 0.25) bands.b25_50 += 1;
+          else bands.le25 += 1;
+          dSum += d.pressure; dN += 1;
+        }
+        ctx.report.diagnostics.push(info('pressure_field', stageId, 'building pressure prior D0 assigned to districts (section 7.3)', {
+          mean: dN ? +(dSum / dN).toFixed(4) : null,
+          bMin, bMax, gamma,
+          bands,
+        }));
+      }
+
       // R3.2 §6.2/§6.3: кольца роста по стоимости доступа от ядер (изолинии поля, не евклид).
       {
         const eraSize = ctx.meta.worldBounds?.size ?? ctx.input?.ground?.size ?? 256;
@@ -1219,6 +1282,8 @@ export function makeStage3() {
           landValue: d.landValue ?? null,
           buildingDensity: d.buildingDensity ?? null,
           heightRange: d.heightRange ?? null,
+          pressure: d.pressure ?? null,
+          targetB: d.targetB ?? null,
           frame: d.districtFrame ?? null,
           cells: d.cells?.length ?? 0,
           parcels: dParcels.length,
