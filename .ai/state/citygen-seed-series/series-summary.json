@@ -1,5 +1,5 @@
 {
-  "generatorVersion": "0.2.0",
+  "generatorVersion": "0.6.0",
   "profiles": [
     "river_trade",
     "hill_town",
@@ -117,7 +117,7 @@
       "deterministicOk": 100,
       "errorRuns": 0,
       "warningRuns": 100,
-      "dropsRuns": 2,
+      "dropsRuns": 0,
       "hashesUnique": 100,
       "errors": {
         "count": 100,
@@ -130,24 +130,24 @@
       "warnings": {
         "count": 100,
         "min": 8,
-        "max": 15,
-        "mean": 9.13,
+        "max": 14,
+        "mean": 9.11,
         "median": 9,
         "p95": 12
       },
       "repairs": {
         "count": 100,
         "min": 0,
-        "max": 1,
-        "mean": 0.02,
+        "max": 0,
+        "mean": 0,
         "median": 0,
         "p95": 0
       },
       "drops": {
         "count": 100,
         "min": 0,
-        "max": 1,
-        "mean": 0.02,
+        "max": 0,
+        "mean": 0,
         "median": 0,
         "p95": 0
       },
@@ -187,7 +187,7 @@
         "count": 100,
         "min": 400,
         "max": 405,
-        "mean": 402.2,
+        "mean": 402.19,
         "median": 402,
         "p95": 404
       },
@@ -201,9 +201,9 @@
       },
       "props": {
         "count": 100,
-        "min": 359,
+        "min": 360,
         "max": 360,
-        "mean": 359.98,
+        "mean": 360,
         "median": 360,
         "p95": 360
       },
@@ -285,7 +285,7 @@
         "count": 100,
         "min": 401,
         "max": 405,
-        "mean": 403.19,
+        "mean": 403.1,
         "median": 403,
         "p95": 404
       },
@@ -313,7 +313,7 @@
       "deterministicOk": 100,
       "errorRuns": 0,
       "warningRuns": 100,
-      "dropsRuns": 1,
+      "dropsRuns": 0,
       "hashesUnique": 100,
       "errors": {
         "count": 100,
@@ -327,23 +327,23 @@
         "count": 100,
         "min": 8,
         "max": 14,
-        "mean": 8.97,
+        "mean": 8.96,
         "median": 9,
         "p95": 12
       },
       "repairs": {
         "count": 100,
         "min": 0,
-        "max": 1,
-        "mean": 0.01,
+        "max": 0,
+        "mean": 0,
         "median": 0,
         "p95": 0
       },
       "drops": {
         "count": 100,
         "min": 0,
-        "max": 1,
-        "mean": 0.01,
+        "max": 0,
+        "mean": 0,
         "median": 0,
         "p95": 0
       },
@@ -383,9 +383,9 @@
         "count": 100,
         "min": 400,
         "max": 404,
-        "mean": 402.21,
+        "mean": 402.18,
         "median": 402,
-        "p95": 404
+        "p95": 403
       },
       "enterableBuildings": {
         "count": 100,
@@ -397,9 +397,9 @@
       },
       "props": {
         "count": 100,
-        "min": 359,
+        "min": 360,
         "max": 360,
-        "mean": 359.99,
+        "mean": 360,
         "median": 360,
         "p95": 360
       },

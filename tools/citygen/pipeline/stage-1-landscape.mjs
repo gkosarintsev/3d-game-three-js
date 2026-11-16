@@ -234,9 +234,9 @@ function buildReservations(ctx, baseY, size, slope) {
 }
 
 export function buildCoreCandidates(ctx, baseY, size, slope, crossings, flatSamples = []) {
-  // R3.1: deterministic candidates for the point of origin (downtown) and up to 2 secondary cores.
-  // Scoring per docs §6.1: исторические переправы (crossings) + близость к воде (rivers/lakes)
-  // помогают ставить ядро; floodplain понижает приоритет (не мягкая запрещённая зона — штраф).
+  // R3.1: детерминированные кандидаты точки основания (downtown) и до 2 вторичных ядер.
+  // Скоринг §6.1 мультипликативен: брод/переправа ×3, слияние рек ×2, оборонительный холм ×2,
+  // ровная площадка (радиус 150 м) ×2, близость к озеру ×1; пойма — вычитаемый штраф (−2).
   // Края плиты: центр ядра обязан лежать на расстоянии >= 25% от края (§6.1).
   const half = size / 2;
   const edgeOffset = size * 0.25;
@@ -245,21 +245,18 @@ export function buildCoreCandidates(ctx, baseY, size, slope, crossings, flatSamp
   const lakes = ctx.hydrology?.lakes || [];
   const floodplains = Array.isArray(ctx.masks?.terrain?.floodplains) ? ctx.masks.terrain.floodplains : [];
   const step = Math.max(32, Math.min(96, (slope?.step || 16) * 2));
-  const distToRiver = (x, z) => {
-    let best = Infinity;
-    for (const rv of rivers) {
-      const path = Array.isArray(rv?.path) ? rv.path : [];
-      for (let i = 0; i + 1 < path.length; i++) {
-        const d = distPointSegXZ(x, z, path[i][0], path[i][2], path[i + 1][0], path[i + 1][2]);
-        if (d < best) best = d;
-      }
-    }
-    return best;
-  };
   const distToLake = (x, z) => {
     let best = Infinity;
     for (const lake of lakes) {
       const area = lake?.area;
+      if (area && typeof area === 'object' && String(area.type) === 'circle' && Array.isArray(area.center)) {
+        const cx = Number(area.center[0]), cz = Number(area.center[1]);
+        const r = Number(area.radius) || 0;
+        if (!Number.isFinite(cx) || !Number.isFinite(cz)) continue;
+        const d = Math.max(0, Math.hypot(x - cx, z - cz) - r);
+        if (d < best) best = d;
+        continue;
+      }
       const pts = Array.isArray(area?.points) ? area.points : (Array.isArray(area) ? area : []);
       if (!pts.length) continue;
       let sx = 0, sz = 0, cx = null, cz = null;
@@ -304,6 +301,49 @@ export function buildCoreCandidates(ctx, baseY, size, slope, crossings, flatSamp
     }
     return false;
   };
+  // Precompute confluence points (§6.1 «слияние рек»): пары разных рек, сближающиеся на <= 48 м;
+  // точка сближения = точка нахождения последней близкой пары (детерминированно по порядку путей).
+  const confluences = [];
+  for (let a = 0; a < rivers.length; a++) {
+    const pa = Array.isArray(rivers[a]?.path) ? rivers[a].path : [];
+    if (pa.length < 2) continue;
+    for (let b = a + 1; b < rivers.length; b++) {
+      const pb = Array.isArray(rivers[b]?.path) ? rivers[b].path : [];
+      if (pb.length < 2) continue;
+      let bestD = Infinity;
+      const probe = (px, pz) => {
+        for (let j = 0; j + 1 < pb.length; j++) {
+          const d = distPointSegXZ(px, pz, pb[j][0], pb[j][2], pb[j + 1][0], pb[j + 1][2]);
+          if (d < bestD) bestD = d;
+        }
+      };
+      for (const p of pa) probe(p[0], p[2]);
+      // reverse direction (vertices of pb vs segments of pa)
+      const probeRev = (px, pz) => {
+        for (let i = 0; i + 1 < pa.length; i++) {
+          const d = distPointSegXZ(px, pz, pa[i][0], pa[i][2], pa[i + 1][0], pa[i + 1][2]);
+          if (d < bestD) bestD = d;
+        }
+      };
+      for (const p of pb) probeRev(p[0], p[2]);
+      if (bestD <= 48) {
+        // точка слияния: середина между парами ближайших вершин — детерминированная оценка
+        let cx = 0, cz = 0, cnt = 0;
+        for (const p of pa) {
+          for (const q of pb) {
+            if (Math.hypot(p[0] - q[0], p[2] - q[2]) <= Math.max(48, bestD + 1)) { cx += (p[0] + q[0]) / 2; cz += (p[2] + q[2]) / 2; cnt++; }
+          }
+        }
+        if (cnt > 0) confluences.push({ x: +cx / cnt, z: +cz / cnt });
+        else confluences.push({ x: pa[0][0], z: pa[0][2] });
+      }
+    }
+  }
+  const distToConfluence = (x, z) => {
+    let best = Infinity;
+    for (const c of confluences) best = Math.min(best, Math.hypot(x - c.x, z - c.z));
+    return best;
+  };
   const scoreFor = (x, z) => {
     const edge = Math.min(half - Math.abs(x), half - Math.abs(z));
     if (edge < edgeOffset) return -Infinity;
@@ -315,7 +355,20 @@ export function buildCoreCandidates(ctx, baseY, size, slope, crossings, flatSamp
     const s4 = Math.abs(terrainHeightAt(x, z - d, baseY, mods) - y) / d;
     const slopeHere = Math.max(s1, s2, s3, s4);
     if (slopeHere > 0.15) return -Infinity;
-    let score = 1.0;
+    // §6.1 «ровная площадка радиусом 150 м» + «оборонительный холм с пологой вершиной»:
+    // один и тот же кольцевой сэмплинг радиуса 150 м даёт оба показателя.
+    const ring = [];
+    for (let k = 0; k < 12; k++) {
+      const ang = (k / 12) * Math.PI * 2;
+      ring.push(terrainHeightAt(x + Math.cos(ang) * 150, z + Math.sin(ang) * 150, baseY, mods));
+    }
+    const flatSet = ring.concat([y]);
+    const range = Math.max(...flatSet) - Math.min(...flatSet);
+    const ringAvg = ring.reduce((s, v) => s + v, 0) / ring.length;
+    const prominence = y - ringAvg;
+    const flatScore = range <= 6 ? Math.max(0, Math.min(1, 1 - range / 6)) : 0;
+    const hillScore = prominence > 6 && slopeHere <= 0.1 ? Math.min(1, (prominence - 6) / 24) : 0;
+    let crossingScore = 0;
     let nearestCross = Infinity;
     for (const c of (crossings || [])) {
       const cx = Number(c?.x), cz = Number(c?.z);
@@ -323,13 +376,18 @@ export function buildCoreCandidates(ctx, baseY, size, slope, crossings, flatSamp
       const dd = Math.hypot(cx - x, cz - z);
       if (dd < nearestCross) nearestCross = dd;
     }
-    if (Number.isFinite(nearestCross)) score += Math.max(0, 1.2 - nearestCross / (Math.max(64, size * 0.2)));
-    let nearestRiver = distToRiver(x, z);
-    if (Number.isFinite(nearestRiver)) score += Math.max(0, 0.8 - nearestRiver / (Math.max(64, size * 0.3)));
-    let nearestLake = distToLake(x, z);
-    if (Number.isFinite(nearestLake)) score += Math.max(0, 0.6 - nearestLake / (Math.max(64, size * 0.35)));
-    if (inFloodplain(x, z)) score *= 0.3;
-    return score;
+    if (Number.isFinite(nearestCross)) crossingScore = Math.max(0, 1 - nearestCross / Math.max(64, size * 0.25));
+    let confluenceScore = 0;
+    const dConf = distToConfluence(x, z);
+    if (Number.isFinite(dConf)) confluenceScore = Math.max(0, 1 - dConf / 64);
+    let lakeScore = 0;
+    const nearestLake = distToLake(x, z);
+    if (Number.isFinite(nearestLake)) lakeScore = Math.max(0, 1 - nearestLake / Math.max(64, size * 0.35));
+    if (inFloodplain(x, z)) {
+      // «минус штраф за пойму»: вычитаем, а не запрещаем (мягкое ограничение §6.1)
+      return Math.max(0, 3 * crossingScore + 2 * confluenceScore + 2 * hillScore + 2 * flatScore + 1 * lakeScore - 2);
+    }
+    return 3 * crossingScore + 2 * confluenceScore + 2 * hillScore + 2 * flatScore + 1 * lakeScore;
   };
   const candidates = [];
   for (let z = -half + edgeOffset; z <= half - edgeOffset + EPS; z += step) {

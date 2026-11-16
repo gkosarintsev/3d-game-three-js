@@ -143,7 +143,7 @@
       "profileId": "luxury",
       "cells": 1,
       "parcels": 121,
-      "reservedParcels": 29
+      "reservedParcels": 30
     },
     {
       "id": "district_2_3",
@@ -480,13 +480,13 @@
       "code": "parcels_reserved_by_reason",
       "stage": "3_districts_parcels",
       "message": "parcel reservations by terrain/hydrology/infrastructure constraints",
-      "reserved": 511,
+      "reserved": 512,
       "total": 2274,
       "byReason": {
         "water": 234,
         "road_corridor": 205,
         "anchor": 4,
-        "reservation": 10,
+        "reservation": 11,
         "crossing": 0,
         "steep_slope": 58,
         "remote_access": 0
@@ -588,7 +588,7 @@
         "suburb"
       ],
       "parcels": 2274,
-      "reservedParcels": 511,
+      "reservedParcels": 512,
       "parcelAccess": {
         "near": 1157,
         "mid": 1015,
@@ -607,13 +607,13 @@
         },
         "luxury": {
           "parcels": 242,
-          "unreserved": 187,
-          "good": 96,
+          "unreserved": 186,
+          "good": 95,
           "mid": 87,
           "far": 4,
-          "reserved": 55,
-          "goodOrMid": 183,
-          "accessibleRatio": 0.979
+          "reserved": 56,
+          "goodOrMid": 182,
+          "accessibleRatio": 0.978
         },
         "office": {
           "parcels": 121,
@@ -997,7 +997,7 @@
       "roadNodes": 162,
       "districts": 16,
       "parcels": 2274,
-      "reservedParcels": 511,
+      "reservedParcels": 512,
       "buildings": 361,
       "enterableBuildings": 0,
       "props": 360,
@@ -1080,7 +1080,7 @@
       "shareByType": {}
     },
     "parcels": {
-      "reservedShare": 0.224714,
+      "reservedShare": 0.225154,
       "byDistrictCount": {
         "district_0_0": 121,
         "district_1_0": 121,

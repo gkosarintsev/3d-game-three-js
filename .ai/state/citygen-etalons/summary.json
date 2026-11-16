@@ -16,9 +16,9 @@
     "hill_town": {
       "runs": 3,
       "hashes": [
-        "fd100b432b57701f103174f8eb58a344f3e079f61cbf3bdf467c15948d3fa3e0",
-        "475e476adc431286af50acafef2a4576fb91ec6ee2473b76402c5a5046ab7e1b",
-        "a88f7298fe47c6d5e4e9302189e51f2724075a06d56897ee5493eb46cc51218a"
+        "b6b4af0535df33f5ff36f30bc278ecd2bb556c3bf58f0f3a371b30c0b1962e65",
+        "3e19357a207a01b45362e595e17db3e0748f5b4784ae016d151c07777239dbe2",
+        "d3478d0501f635f08d2512d9c32b76bb6dcc46cc006c616f738b184ce0ecc08d"
       ],
       "errors": {
         "count": 3,
@@ -46,16 +46,16 @@
       },
       "buildings": {
         "count": 3,
-        "min": 402,
+        "min": 403,
         "max": 404,
-        "mean": 403
+        "mean": 403.666667
       }
     },
     "railway_industrial": {
       "runs": 3,
       "hashes": [
-        "1b8df8677388bd6badcd3782429c09db88dd3aada4f91728e7a7d2b7e40b0290",
-        "93d29d99b803edf97403f8fdd83e2c4c4110eddae32664ad982d120cbf698bb1",
+        "3e52776d0d93b6405b6d7431727c3cc044ca1807a7a6f687640fd3a23e16c5e1",
+        "c48f34dbc358c212ea3951aa1b28b2c83ee5358905115d2f64d3d9f6da1e57e9",
         "4fc7deac0a371f75c61020467f7486c710c87870d393fb13225274f1f84eed02"
       ],
       "errors": {
@@ -92,9 +92,9 @@
     "river_trade": {
       "runs": 3,
       "hashes": [
-        "4d6e4244ab927dafc6d9746f0ee52826e79e2e492896257bc1d962a8df96b562",
-        "43f9806dbbf3dc0658afe93e64310a514f63c0cf62b529e0234dbbf5a85efc1d",
-        "6635f6df7dac51319712f50fdfc126b39c975a9fc09dfb957b15c587cc837b91"
+        "470bf6bcafd48d484a75cad38a314f62ddc07dc2108e440d789a80c77ef4d073",
+        "560f6caee7161f5aed04bf0759a503c2f354f38f7498bf43fa46caa7eff984ff",
+        "3f13e01e3976b31b47cd891f789135db2f70dd59f06c5f9301bd580df8979ae9"
       ],
       "errors": {
         "count": 3,
@@ -123,8 +123,8 @@
       "buildings": {
         "count": 3,
         "min": 402,
-        "max": 402,
-        "mean": 402
+        "max": 403,
+        "mean": 402.333333
       }
     }
   }
