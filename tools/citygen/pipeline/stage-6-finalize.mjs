@@ -525,29 +525,70 @@ export function makeStage6() {
           return null;
         };
 
-        let bInBuffer = 0, bInFlood = 0;
+        // Deterministic repair/validation (R1.5): final enforcement of water/floodplain constraints on emitted entities.
+        // Buildings/props are not transport infrastructure; drop violations that slipped through upstream stages.
+        let bDroppedBuffer = 0, bDroppedFlood = 0;
+        const keptBuildings = [];
         for (const b of buildings) {
           const c = buildingCenter(b);
-          if (!c) continue;
-          const hitHard = pointNearWater(c.x, c.z, 'hard');
-          if (hitHard) { bInBuffer++; continue; }
-          const hitFlood = pointNearWater(c.x, c.z, 'floodplain');
-          if (hitFlood) bInFlood++;
+          const hitHard = c ? pointNearWater(c.x, c.z, 'hard') : null;
+          if (hitHard) {
+            bDroppedBuffer++;
+            ctx.report.drops.push({ stage: stageId, id: b?.id ?? null, reason: 'finalize_building_in_water_buffer' });
+            continue;
+          }
+          const hitFlood = c ? pointNearWater(c.x, c.z, 'floodplain') : null;
+          if (hitFlood) {
+            bDroppedFlood++;
+            ctx.report.drops.push({ stage: stageId, id: b?.id ?? null, reason: 'finalize_building_in_floodplain' });
+            continue;
+          }
+          keptBuildings.push(b);
         }
-        if (bInBuffer > 0) ctx.report.diagnostics.push(warn('finalize_building_in_water_buffer', stageId, `${bInBuffer} building(s) intersect/inside water hard buffer`, { count: bInBuffer }));
-        if (bInFlood > 0) ctx.report.diagnostics.push(warn('finalize_building_in_floodplain', stageId, `${bInFlood} building(s) inside floodplain zone`, { count: bInFlood }));
+        if (bDroppedBuffer + bDroppedFlood > 0) {
+          ctx.buildings = keptBuildings;
+          buildings.length = 0; buildings.push(...keptBuildings);
+          if (bDroppedBuffer > 0) {
+            ctx.report.diagnostics.push(warn('finalize_building_in_water_buffer', stageId, `dropped ${bDroppedBuffer} building(s) inside water hard buffer (finalize repair)`, { count: bDroppedBuffer }));
+            ctx.report.repairs.push({ stage: stageId, code: 'finalize_drop_buildings_water_buffer', count: bDroppedBuffer });
+          }
+          if (bDroppedFlood > 0) {
+            ctx.report.diagnostics.push(warn('finalize_building_in_floodplain', stageId, `dropped ${bDroppedFlood} building(s) inside floodplain zone (finalize repair)`, { count: bDroppedFlood }));
+            ctx.report.repairs.push({ stage: stageId, code: 'finalize_drop_buildings_floodplain', count: bDroppedFlood });
+          }
+        }
 
-        let pInBuffer = 0, pInFlood = 0;
-        for (const p of props) {
+        let pDroppedBuffer = 0, pDroppedFlood = 0;
+        const propsArr = Array.isArray(ctx.infrastructure?.props) ? ctx.infrastructure.props : (Array.isArray(props) ? props : []);
+        const keptProps = [];
+        for (const p of propsArr) {
           const c = pointPos(p);
-          if (!c) continue;
-          const hitHard = pointNearWater(c.x, c.z, 'hard');
-          if (hitHard) { pInBuffer++; continue; }
-          const hitFlood = pointNearWater(c.x, c.z, 'floodplain');
-          if (hitFlood) pInFlood++;
+          const hitHard = c ? pointNearWater(c.x, c.z, 'hard') : null;
+          if (hitHard) {
+            pDroppedBuffer++;
+            ctx.report.drops.push({ stage: stageId, id: p?.id ?? null, reason: 'finalize_prop_in_water_buffer' });
+            continue;
+          }
+          const hitFlood = c ? pointNearWater(c.x, c.z, 'floodplain') : null;
+          if (hitFlood) {
+            pDroppedFlood++;
+            ctx.report.drops.push({ stage: stageId, id: p?.id ?? null, reason: 'finalize_prop_in_floodplain' });
+            continue;
+          }
+          keptProps.push(p);
         }
-        if (pInBuffer > 0) ctx.report.diagnostics.push(warn('finalize_prop_in_water_buffer', stageId, `${pInBuffer} prop(s) inside water hard buffer`, { count: pInBuffer }));
-        if (pInFlood > 0) ctx.report.diagnostics.push(warn('finalize_prop_in_floodplain', stageId, `${pInFlood} prop(s) inside floodplain zone`, { count: pInFlood }));
+        if (pDroppedBuffer + pDroppedFlood > 0) {
+          if (ctx.infrastructure && Array.isArray(ctx.infrastructure.props)) ctx.infrastructure.props = keptProps;
+          if (Array.isArray(props)) { props.length = 0; props.push(...keptProps); }
+          if (pDroppedBuffer > 0) {
+            ctx.report.diagnostics.push(warn('finalize_prop_in_water_buffer', stageId, `dropped ${pDroppedBuffer} prop(s) inside water hard buffer (finalize repair)`, { count: pDroppedBuffer }));
+            ctx.report.repairs.push({ stage: stageId, code: 'finalize_drop_props_water_buffer', count: pDroppedBuffer });
+          }
+          if (pDroppedFlood > 0) {
+            ctx.report.diagnostics.push(warn('finalize_prop_in_floodplain', stageId, `dropped ${pDroppedFlood} prop(s) inside floodplain zone (finalize repair)`, { count: pDroppedFlood }));
+            ctx.report.repairs.push({ stage: stageId, code: 'finalize_drop_props_floodplain', count: pDroppedFlood });
+          }
+        }
 
         // Terrain/slope mask summary at finalize (uses stage-1 analysis when available).
         const slopeShare = ctx.terrain?.analysis?.slope?.share ?? null;
@@ -566,10 +607,10 @@ export function makeStage6() {
             reservations: reservationsN,
             slopeShare,
             violations: {
-              buildingsInWaterBuffer: bInBuffer,
-              buildingsInFloodplain: bInFlood,
-              propsInWaterBuffer: pInBuffer,
-              propsInFloodplain: pInFlood,
+              buildingsInWaterBuffer: bDroppedBuffer,
+              buildingsInFloodplain: bDroppedFlood,
+              propsInWaterBuffer: pDroppedBuffer,
+              propsInFloodplain: pDroppedFlood,
             },
           }));
         }
