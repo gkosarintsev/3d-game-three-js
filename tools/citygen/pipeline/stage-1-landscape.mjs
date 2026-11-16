@@ -982,6 +982,7 @@ export function makeStage1() {
       if (!ctx.terrain || typeof ctx.terrain !== 'object') ctx.terrain = { modifiers: Array.isArray(cf.terrain?.modifiers) ? structuredClone(cf.terrain.modifiers) : [] };
       if (!ctx.terrain.analysis || typeof ctx.terrain.analysis !== 'object') ctx.terrain.analysis = {};
       ctx.terrain.analysis.waterBuffers = ctx.masks?.terrain?.waterBuffers ?? ctx.terrain.analysis.waterBuffers ?? [];
+      ctx.terrain.analysis.floodplains = ctx.masks?.terrain?.floodplains ?? ctx.terrain.analysis.floodplains ?? [];
 
       // lakes: basic validation (compiler support limited; keep deterministic/safe)
       const lakes = [];
@@ -1174,9 +1175,9 @@ export function makeStage1() {
       const waterBuffers = (ctx.masks?.terrain?.waterBuffers && Array.isArray(ctx.masks.terrain.waterBuffers))
         ? ctx.masks.terrain.waterBuffers
         : (Array.isArray(ctx.terrain?.analysis?.waterBuffers) ? ctx.terrain.analysis.waterBuffers : []);
-      ctx.terrain.analysis = { slope, crossings, reservations, landmarks, waterBuffers };
-      const prevFloodplains = Array.isArray(ctx.masks.terrain?.floodplains) ? ctx.masks.terrain.floodplains : [];
-      ctx.masks.terrain = { slopeShare: slope.share, maxSlope: slope.maxSlope, crossings, reservations, landmarks, waterBuffers, floodplains: prevFloodplains };
+      const floodplains = Array.isArray(ctx.masks?.terrain?.floodplains) ? ctx.masks.terrain.floodplains : [];
+      ctx.terrain.analysis = { slope, crossings, reservations, landmarks, waterBuffers, floodplains };
+      ctx.masks.terrain = { slopeShare: slope.share, maxSlope: slope.maxSlope, crossings, reservations, landmarks, waterBuffers, floodplains };
       if (crossings.length) {
         ctx.report.diagnostics.push(info('historical_crossings_marked', stageId, `marked ${crossings.length} historical crossing candidate(s)`, { count: crossings.length }));
       }
