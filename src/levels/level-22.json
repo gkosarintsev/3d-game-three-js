@@ -1,0 +1,233 @@
+{
+    "$schema":  "./level-v4.schema.json",
+    "kind":  "cityforge",
+    "schemaVersion":  4,
+    "metadata":  {
+                     "levelName":  "level-22",
+                     "name":  "Глава 22. Смоук-тест генератора",
+                     "hint":  "Минимальная генерируемая глава для быстрых локальных тестов и CI.",
+                     "units":  "meters",
+                     "notes":  "Маленькая world tile (512 м, 4 чанка 256 м) для быстрого smoke CI. Городской мир помечен как `river_trade`, одна река, рельеф с холмом. Покупателей потенциально мало: главное — поймать проблемы пайплайна/компилятора на малой географии, а не грузить экран."
+                 },
+    "ground":  {
+                   "y":  0,
+                   "size":  512,
+                   "color":  7322954
+               },
+    "windows":  {
+                    "spacing":  12
+                },
+    "gameplay":  {
+                     "goal":  "exit",
+                     "spawn":  {
+                                   "x":  -200,
+                                   "z":  -200
+                               },
+                     "exit":  {
+                                  "x":  200,
+                                  "z":  200
+                              },
+                     "exitRadius":  4,
+                     "enemies":  {
+                                     "count":  2
+                                 },
+                     "alienEnemies":  {
+                                          "count":  1
+                                      },
+                     "cars":  {
+                                  "count":  0,
+                                  "spots":  [
+
+                                            ]
+                              }
+                 },
+    "stream":  {
+                   "chunk":  256,
+                   "keep":  1,
+                   "aheadMin":  80,
+                   "aheadMax":  300,
+                   "budgetMs":  120
+               },
+    "cityforge":  {
+                      "format":  "cityforge",
+                      "version":  "0.1",
+                      "world":  {
+                                    "units":  "meters",
+                                    "coordinateSystem":  {
+                                                             "type":  "local",
+                                                             "handedness":  "right",
+                                                             "up":  "Y"
+                                                         },
+                                    "origin":  [
+                                                   0,
+                                                   0,
+                                                   0
+                                               ],
+                                    "bounds":  {
+                                                   "min":  [
+                                                               -256,
+                                                               -256,
+                                                               -80
+                                                           ],
+                                                   "max":  [
+                                                               256,
+                                                               256,
+                                                               120
+                                                           ]
+                                               }
+                                },
+                      "assets":  [
+                                     {
+                                         "id":  "ground.placeholder",
+                                         "kind":  "procedural",
+                                         "generator":  "placeholder.flat",
+                                         "bounds":  [
+                                                        512,
+                                                        512,
+                                                        1
+                                                    ]
+                                     }
+                                 ],
+                      "terrain":  {
+                                      "base":  {
+                                                   "type":  "heightfield",
+                                                   "source":  "procedural",
+                                                   "resolution":  4
+                                               },
+                                      "modifiers":  [
+                                                        {
+                                                            "id":  "m1",
+                                                            "type":  "mountain",
+                                                            "center":  [
+                                                                           80,
+                                                                           -80
+                                                                       ],
+                                                            "radius":  70,
+                                                            "height":  14,
+                                                            "falloff":  "smooth",
+                                                            "operation":  "add",
+                                                            "sourceRef":  "terrain.base",
+                                                            "parameters":  {
+
+                                                                           }
+                                                        }
+                                                    ]
+                                  },
+                      "hydrology":  {
+                                        "rivers":  [
+
+                                                   ],
+                                        "lakes":  [
+
+                                                  ]
+                                    },
+                      "networks":  {
+                                       "roads":  {
+                                                     "nodes":  [
+                                                                   {
+                                                                       "id":  "n_w",
+                                                                       "position":  [
+                                                                                        -240,
+                                                                                        0,
+                                                                                        -240
+                                                                                    ],
+                                                                       "layer":  "ground"
+                                                                   }
+                                                               ],
+                                                     "segments":  [
+
+                                                                  ],
+                                                     "junctions":  [
+
+                                                                   ]
+                                                 },
+                                       "railways":  {
+                                                        "nodes":  [
+
+                                                                  ],
+                                                        "segments":  [
+
+                                                                     ],
+                                                        "junctions":  [
+
+                                                                      ]
+                                                    },
+                                       "paths":  {
+                                                     "nodes":  [
+
+                                                               ],
+                                                     "segments":  [
+
+                                                                  ],
+                                                     "junctions":  [
+
+                                                                   ]
+                                                 }
+                                   },
+                      "structures":  {
+                                         "bridges":  [
+
+                                                     ],
+                                         "tunnels":  [
+
+                                                     ]
+                                     },
+                      "instances":  [
+
+                                    ],
+                      "chunks":  [
+
+                                 ]
+                  },
+    "generator":  {
+                      "generatorVersion":  "0.4.0",
+                      "seed":  22,
+                      "deterministic":  true,
+                      "stages":  [
+
+                                 ],
+                      "layers":  [
+
+                                 ],
+                      "budgets":  {
+
+                                  },
+                      "districts":  [
+
+                                    ],
+                      "profiles":  {
+
+                                   },
+                      "catalogs":  {
+
+                                   },
+                      "refs":  {
+
+                               },
+                      "policies":  {
+
+                                   },
+                      "landscape":  {
+                                        "generate":  true,
+                                        "hills":  {
+                                                      "count":  1,
+                                                      "minHeight":  8,
+                                                      "maxHeight":  16,
+                                                      "minRadius":  45,
+                                                      "maxRadius":  90
+                                                  },
+                                        "river":  {
+                                                      "enabled":  false,
+                                                      "width":  18,
+                                                      "depth":  3,
+                                                      "points":  7,
+                                                      "axis":  "z"
+                                                  }
+                                    },
+                      "transport":  {
+                                        "generate":  true,
+                                        "width":  8,
+                                        "branches":  1
+                                    }
+                  }
+}
