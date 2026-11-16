@@ -357,7 +357,54 @@ export function evaluateRules(ctx) {
     }
   }
 
-    // R1/R3: terrain/hydrology analysis and parcel reservation metrics when available (read-only)
+  // R2.8/§8.1 §12.2 (read-only): junction type vs adjacent road classes (validator)
+  const junctions = Array.isArray(ctx?.networks?.roads?.junctions) ? ctx.networks.roads.junctions
+    : (Array.isArray(input?.cityforge?.networks?.roads?.junctions) ? input.cityforge.networks.roads.junctions : []);
+  if (junctions.length > 0 && roads.length > 0) {
+    const segById = new Map(roads.map(s => [String(s?.id ?? ''), s]));
+    for (const [i, j] of junctions.entries()) {
+      const id = String(j?.id ?? `j_${i}`);
+      const declared = String(j?.type ?? '').toLowerCase();
+      const nodeId = (String(id).match(/^j_(.+)$/) || [])[1] ?? null;
+      const incident = [];
+      for (const idSeg of [j?.node, j?.nodeId]) {
+        if (idSeg != null && !incident.length) {
+          const nid = String(idSeg);
+          for (const s of roads) {
+            if (String(s?.from) === nid || String(s?.to) === nid) incident.push(s);
+          }
+        }
+      }
+      if (!incident.length && nodeId) {
+        for (const s of roads) {
+          if (String(s?.from) === nodeId || String(s?.to) === nodeId) incident.push(s);
+        }
+      }
+      // if we cannot infer incidence, skip (irrelevant for read-only rules or missing IR nodes)
+      if (incident.length > 0) {
+        const types = new Set(incident.map(s => String(s?.type || '').toLowerCase()).filter(Boolean));
+        const hasArt = types.has('arterial');
+        const hasHwy = types.has('highway');
+        const hasCol = types.has('collector');
+        const hasLocal = types.has('local');
+        let expected = null;
+        if (hasHwy || (hasArt && (hasArt || hasHwy || hasCol))) expected = 'signalized';
+        else if (hasCol && !hasArt && !hasHwy) expected = (incident.length <= 4) ? 'roundabout' : 'signalized';
+        else if (hasLocal && !hasCol && !hasArt && !hasHwy) expected = 'uncontrolled';
+        if (expected && declared && declared !== expected) {
+          v('warn', 'junction_type_mismatch_class', `junction '${id}' type '${declared}' does not match adjacent classes (expected '${expected}')`, {
+            index: i, id, declared, expected, classes: [...types], incidentCount: incident.length,
+          });
+        } else if (expected && !declared) {
+          v('warn', 'junction_type_missing', `junction '${id}' missing type; expected '${expected}'`, {
+            index: i, id, expected, classes: [...types], incidentCount: incident.length,
+          });
+        }
+      }
+    }
+  }
+
+  // R1/R3: terrain/hydrology analysis and parcel reservation metrics when available (read-only)
   const terrainAnalysis = ctx?.terrain?.analysis ?? null;
   const terrainMasks = ctx?.masks?.terrain ?? ctx?.terrain?.analysis ?? null;
   const rivers = ctx?.hydrology?.rivers ?? [];

@@ -972,6 +972,46 @@ test('citygen rules: tunnel validator flags invalid tunnel structures (R2.6 §8.
   assert.ok((report.rules?.summary?.errors ?? 0) >= 2, 'report.rules.summary.errors must count tunnel errors');
 });
 
+test('citygen rules: junction type vs adjacent classes read-only validator (R2.8 §8.1 §12.2)', async () => {
+  const { evaluateRules } = await import('./citygen/rules.mjs');
+  const base = v4Base();
+  const raw = {
+    ...base,
+    cityforge: {
+      ...base.cityforge,
+      networks: {
+        roads: {
+          nodes: [
+            { id: 'n1', position: [0, 0, 0], layer: 'ground' },
+            { id: 'n2', position: [10, 0, 0], layer: 'ground' },
+          ],
+          segments: [
+            { id: 's1', from: 'n1', to: 'n2', type: 'arterial', layer: 'ground', path: [[0, 0, 0], [10, 0, 0]], lanes: [{ id: 'l1', direction: 'forward', width: 8, type: 'vehicle' }] },
+            { id: 's2', from: 'n1', to: 'n1b', type: 'arterial', layer: 'ground', path: [[0, 0, 0], [0, 0, 10]], lanes: [{ id: 'l1', direction: 'forward', width: 8, type: 'vehicle' }] },
+          ],
+          junctions: [
+            { id: 'j_n1', type: 'uncontrolled', connections: [{ from: { segment: 's1', lane: 'l1', end: 'from' }, to: { segment: 's2', lane: 'l1', end: 'from' }, movement: 'straight' }] },
+          ],
+        },
+        railways: { nodes: [], segments: [], junctions: [] },
+        paths: { nodes: [], segments: [], junctions: [] },
+      },
+    },
+  };
+  const ctx = {
+    input: raw,
+    meta: {},
+    parcels: [],
+    buildings: [],
+    networks: { roads: { nodes: [{ id: 'n1' }], segments: raw.cityforge.networks.roads.segments, junctions: raw.cityforge.networks.roads.junctions } },
+    hydrology: { rivers: [], lakes: [] },
+    masks: { easement: { rivers: [], roads: [] }, terrain: {} },
+  };
+  const out = evaluateRules(ctx);
+  const codes = new Set((out.rules?.violations ?? []).map(v => String(v?.code)));
+  assert.ok(codes.has('junction_type_mismatch_class'), 'arterial x arterial declared uncontrolled must be flagged');
+});
+
 test('citygen stage 2: roadSegmentCost is deterministic, monotone-favorable, and river-penalized (R2.2 §7.2)', async () => {
   const { roadSegmentCost } = await import('./citygen/pipeline/stage-2-transport.mjs');
   // Flat straight path vs steep path: flat wins.
