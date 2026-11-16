@@ -731,6 +731,31 @@ export function isValidAxisAlignedTerrainPath(path, rivers = [], waterBufferById
       : (halfW + 35);
     if (near.d < margin) return false;
   }
+  // Explicit floodplain masks (R1 downstream constraints): transport-compatible degradation when requested.
+  const floodplainMasks = includeFloodplain && Array.isArray(opts?.floodplainMasks) ? opts.floodplainMasks : null;
+  if (floodplainMasks && floodplainMasks.length) {
+    for (const pt of path) {
+      const x = pt[0], z = pt[2];
+      for (const fpl of floodplainMasks) {
+        if (!fpl) continue;
+        if (fpl.type === 'lake' && Array.isArray(fpl.center) && Number.isFinite(Number(fpl.radius))) {
+          const margin = Number.isFinite(Number(fpl.floodplain)) ? Number(fpl.floodplain) : 0;
+          if (Math.hypot(x - Number(fpl.center[0]), z - Number(fpl.center[1])) < (Number(fpl.radius) + Math.max(margin, 8))) return false;
+          continue;
+        }
+        if (fpl.type === 'river' && Array.isArray(fpl.path) && fpl.path.length >= 2) {
+          const margin = Number.isFinite(Number(fpl.floodplain)) ? Number(fpl.floodplain)
+            : Math.max((Number(fpl.width) || 0) * 0.5 + 12, (Number(fpl.width) || 0) * 3);
+          let best = Infinity;
+          for (let i = 0; i + 1 < fpl.path.length; i++) {
+            const a = fpl.path[i], b = fpl.path[i + 1];
+            best = Math.min(best, pointSegDistXZ(x, z, a[0], a[2], b[0], b[2]));
+          }
+          if (best < margin) return false;
+        }
+      }
+    }
+  }
   return true;
 }
 
@@ -2289,6 +2314,8 @@ export function addAxisAlignedAccessRoadsForParcels(ctx) {
     for (const w of src) if (w?.id) byId.set(w.id, w);
     return byId;
   })();
+  const floodplainMasks = Array.isArray(ctx.masks?.terrain?.floodplains) ? ctx.masks.terrain.floodplains
+    : (Array.isArray(ctx.terrain?.analysis?.floodplains) ? ctx.terrain.analysis.floodplains : []);
 
   const riverClear = (path) => {
     if (!Array.isArray(path)) return false;
@@ -2303,6 +2330,28 @@ export function addAxisAlignedAccessRoadsForParcels(ctx) {
       // Transport-compatible degradation: avoid floodplain zones for new ground access roads (deterministic reroute/skip).
       const margin = halfW + Math.max(hard, flood) + 2;
       if (near.d < margin) return false;
+    }
+    // Explicit floodplain masks (defense-in-depth, transport-compatible deterministic skip).
+    for (const pt of path) {
+      const x = pt[0], z = pt[2];
+      for (const fpl of floodplainMasks) {
+        if (!fpl) continue;
+        if (fpl.type === 'lake' && Array.isArray(fpl.center) && Number.isFinite(Number(fpl.radius))) {
+          const margin = Number.isFinite(Number(fpl.floodplain)) ? Number(fpl.floodplain) : 0;
+          if (Math.hypot(x - Number(fpl.center[0]), z - Number(fpl.center[1])) < (Number(fpl.radius) + Math.max(margin, 8))) return false;
+          continue;
+        }
+        if (fpl.type === 'river' && Array.isArray(fpl.path) && fpl.path.length >= 2) {
+          const margin = Number.isFinite(Number(fpl.floodplain)) ? Number(fpl.floodplain)
+            : Math.max((Number(fpl.width) || 0) * 0.5 + 12, (Number(fpl.width) || 0) * 3);
+          let best = Infinity;
+          for (let i = 0; i + 1 < fpl.path.length; i++) {
+            const a = fpl.path[i], b = fpl.path[i + 1];
+            best = Math.min(best, pointSegDistXZ(x, z, a[0], a[2], b[0], b[2]));
+          }
+          if (best < margin) return false;
+        }
+      }
     }
     return true;
   };
@@ -2363,7 +2412,7 @@ export function addAxisAlignedAccessRoadsForParcels(ctx) {
     if (Math.hypot(tx - fp.x, tz - fp.z) < 12) return null;
     const path = buildAxisAlignedTerrainPath(fp.x, fp.z, tx, tz, sampler, rivers, 12);
     // Access roads are ground infrastructure: treat water buffer/floodplain masks as real constraints (deterministic skip/degradation).
-    if (!isValidAxisAlignedTerrainPath(path, rivers, waterBufferById, { includeFloodplain: true })) return null;
+    if (!isValidAxisAlignedTerrainPath(path, rivers, waterBufferById, { includeFloodplain: true, floodplainMasks })) return null;
     if (!riverClear(path)) return null;
     const end = path[path.length - 1];
     const toNode = getOrCreateNodeAt(end[0], end[1], end[2], `${idBase}_n`);
