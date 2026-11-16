@@ -1239,6 +1239,35 @@ function generateTransport(ctx) {
         if (!nearMarkedCrossing(pt[0], pt[2], rv.id, 18)) return false;
       }
     }
+    // Explicit floodplain masks (R1 downstream constraints, transport-compatible): avoid floodplain zones except near marked crossings.
+    const floodplainMasks = Array.isArray(ctx.masks?.terrain?.floodplains) ? ctx.masks.terrain.floodplains
+      : (Array.isArray(ctx.terrain?.analysis?.floodplains) ? ctx.terrain.analysis.floodplains : []);
+    if (floodplainMasks.length) {
+      for (const pt of path) {
+        const x = pt[0], z = pt[2];
+        for (const fpl of floodplainMasks) {
+          if (!fpl) continue;
+          if (fpl.type === 'lake' && Array.isArray(fpl.center) && Number.isFinite(Number(fpl.radius))) {
+            const margin = Number.isFinite(Number(fpl.floodplain)) ? Number(fpl.floodplain) : 0;
+            if (Math.hypot(x - Number(fpl.center[0]), z - Number(fpl.center[1])) < (Number(fpl.radius) + Math.max(margin, 8))) return false;
+            continue;
+          }
+          if (fpl.type === 'river' && Array.isArray(fpl.path) && fpl.path.length >= 2) {
+            const margin = Number.isFinite(Number(fpl.floodplain)) ? Number(fpl.floodplain)
+              : Math.max((Number(fpl.width) || 0) * 0.5 + 12, (Number(fpl.width) || 0) * 3);
+            let best = Infinity;
+            for (let i = 0; i + 1 < fpl.path.length; i++) {
+              const a = fpl.path[i], b = fpl.path[i + 1];
+              best = Math.min(best, pointSegDistXZ(x, z, a[0], a[2], b[0], b[2]));
+            }
+            if (best < margin) {
+              // Allow only in vicinity of marked historical crossing (bridge-compatible intent), otherwise avoid floodplain.
+              if (!nearMarkedCrossing(x, z, fpl.id, 18)) return false;
+            }
+          }
+        }
+      }
+    }
     return true;
   };
 
