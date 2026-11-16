@@ -1,1 +1,176 @@
-{"file":"src/levels/level-21.json","levelName":"level-21","generator":{"generatorVersion":"0.10.0","seed":21,"deterministic":true},"reportHash":"517df1316687ea51f7e3181216fc9570ea24f867985054eea8647fb883e76245","stages":7,"summary":{"errors":0,"warnings":9,"repairs":12,"drops":0},"rules":{"errors":0,"warnings":1,"infos":1},"metrics":{"partial":true,"counts":{"roads":155,"roadNodes":126,"districts":16,"parcels":2274,"reservedParcels":455,"buildings":402,"enterableBuildings":0,"props":360,"lights":8,"rivers":2,"lakes":0},"graph":{"nodes":126,"edges":155,"components":1,"largestComponent":126,"deadEnds":35,"deadEndRatio":0.277778,"avgDegree":2.460317,"gamma":0.416667},"roads":{"totalLength":13220.526,"lengthByType":{"arterial":2080,"local":11140.526},"shareByType":{"arterial":0.157331,"local":0.842669},"maxSlope":0.297561,"slopeByClass":{"arterial":{"count":3,"maxSlope":0.297561,"overPolicy":1,"overAbsolute":0},"local":{"count":152,"maxSlope":0.1,"overPolicy":0,"overAbsolute":0}},"slopePolicy":{"highway":6,"arterial":8,"collector":10,"local":12},"classPolicyViolations":1,"classPolicyOk":154,"overAbsolute":0,"version":2},"gameplay":{"spawnToRoad":0,"exitToRoad":0,"enterableShare":0,"enterableTarget":0.2},"districts":{"plateArea":1638400,"knownArea":0,"areaByType":{},"shareByType":{}},"parcels":{"reservedShare":0.200088,"byDistrictCount":{"district_0_0":121,"district_1_0":121,"district_2_0":225,"district_3_0":289,"district_0_1":64,"district_1_1":36,"district_2_1":196,"district_3_1":400,"district_0_2":64,"district_1_2":49,"district_2_2":121,"district_3_2":225,"district_0_3":49,"district_1_3":121,"district_2_3":49,"district_3_3":144}},"terrain":{"slope":{"step":16,"grid":80,"cells":6400,"maxSlope":0.090011,"share":{"flat_lt3":0.7675,"gentle_3_8":0.22375,"moderate_8_15":0.00875,"steep_15_25":0,"very_steep_gt25":0},"counts":{"flat_lt3":4912,"gentle_3_8":1432,"moderate_8_15":56,"steep_15_25":0,"very_steep_gt25":0}},"crossings":6,"reservations":13,"landmarks":5,"waterBuffers":2,"floodplains":2},"stream":{"chunk":640,"keep":1,"aheadMin":200,"aheadMax":900,"budgetMs":120,"dividesPlate":true}}}
+{
+  "file": "src/levels/level-21.json",
+  "levelName": "level-21",
+  "generator": {
+    "generatorVersion": "0.33.0",
+    "seed": 21,
+    "deterministic": true
+  },
+  "reportHash": "a740805c47edba582be5352a23d5300de9cb6536d24f4d8df6c1d1196eccaf0e",
+  "stages": 7,
+  "summary": {
+    "errors": 0,
+    "warnings": 10,
+    "repairs": 12,
+    "drops": 0
+  },
+  "rules": {
+    "errors": 0,
+    "warnings": 1,
+    "infos": 1
+  },
+  "metrics": {
+    "partial": true,
+    "counts": {
+      "roads": 157,
+      "roadNodes": 128,
+      "districts": 40,
+      "parcels": 2231,
+      "reservedParcels": 424,
+      "buildings": 408,
+      "enterableBuildings": 0,
+      "props": 360,
+      "lights": 8,
+      "rivers": 2,
+      "lakes": 0
+    },
+    "graph": {
+      "nodes": 128,
+      "edges": 157,
+      "components": 1,
+      "largestComponent": 128,
+      "deadEnds": 37,
+      "deadEndRatio": 0.289063,
+      "avgDegree": 2.453125,
+      "gamma": 0.415344
+    },
+    "roads": {
+      "totalLength": 13336.146,
+      "lengthByType": {
+        "arterial": 2080,
+        "local": 11256.146
+      },
+      "shareByType": {
+        "arterial": 0.155967,
+        "local": 0.844033
+      },
+      "maxSlope": 0.297561,
+      "slopeByClass": {
+        "arterial": {
+          "count": 3,
+          "maxSlope": 0.297561,
+          "overPolicy": 1,
+          "overAbsolute": 0
+        },
+        "local": {
+          "count": 154,
+          "maxSlope": 0.1,
+          "overPolicy": 0,
+          "overAbsolute": 0
+        }
+      },
+      "slopePolicy": {
+        "highway": 6,
+        "arterial": 8,
+        "collector": 10,
+        "local": 12
+      },
+      "classPolicyViolations": 1,
+      "classPolicyOk": 156,
+      "overAbsolute": 0,
+      "version": 2
+    },
+    "gameplay": {
+      "spawnToRoad": 0,
+      "exitToRoad": 0,
+      "enterableShare": 0,
+      "enterableTarget": 0.2
+    },
+    "districts": {
+      "plateArea": 1638400,
+      "knownArea": 0,
+      "areaByType": {},
+      "shareByType": {}
+    },
+    "parcels": {
+      "reservedShare": 0.190049,
+      "byDistrictCount": {
+        "district_0_0_0": 55,
+        "district_0_0_1": 55,
+        "district_1_0_0": 66,
+        "district_1_0_1": 66,
+        "district_2_0_0": 105,
+        "district_2_0_1": 105,
+        "district_3_0_0": 136,
+        "district_3_0_1": 136,
+        "district_0_1_0": 32,
+        "district_0_1_1": 32,
+        "district_1_1_0": 18,
+        "district_1_1_1": 18,
+        "district_2_1_0": 98,
+        "district_2_1_10": 49,
+        "district_2_1_110": 21,
+        "district_2_1_111": 28,
+        "district_3_1_0": 200,
+        "district_3_1_1": 200,
+        "district_0_2_0": 32,
+        "district_0_2_1": 32,
+        "district_1_2_0": 28,
+        "district_1_2_1": 28,
+        "district_2_2_0": 55,
+        "district_2_2_1": 66,
+        "district_3_2_0": 105,
+        "district_3_2_1": 105,
+        "district_0_3_0": 21,
+        "district_0_3_1": 21,
+        "district_1_3_0": 66,
+        "district_1_3_1": 66,
+        "district_2_3_0": 21,
+        "district_2_3_1": 21,
+        "district_3_3_000": 12,
+        "district_3_3_001": 24,
+        "district_3_3_010": 12,
+        "district_3_3_011": 24,
+        "district_3_3_100": 12,
+        "district_3_3_101": 24,
+        "district_3_3_110": 12,
+        "district_3_3_111": 24
+      }
+    },
+    "terrain": {
+      "slope": {
+        "step": 16,
+        "grid": 80,
+        "cells": 6400,
+        "maxSlope": 0.090011,
+        "share": {
+          "flat_lt3": 0.7675,
+          "gentle_3_8": 0.22375,
+          "moderate_8_15": 0.00875,
+          "steep_15_25": 0,
+          "very_steep_gt25": 0
+        },
+        "counts": {
+          "flat_lt3": 4912,
+          "gentle_3_8": 1432,
+          "moderate_8_15": 56,
+          "steep_15_25": 0,
+          "very_steep_gt25": 0
+        }
+      },
+      "crossings": 6,
+      "reservations": 13,
+      "landmarks": 5,
+      "waterBuffers": 2,
+      "floodplains": 2
+    },
+    "stream": {
+      "chunk": 640,
+      "keep": 1,
+      "aheadMin": 200,
+      "aheadMax": 900,
+      "budgetMs": 120,
+      "dividesPlate": true
+    }
+  }
+}

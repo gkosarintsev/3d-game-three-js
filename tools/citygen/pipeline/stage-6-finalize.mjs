@@ -116,11 +116,37 @@ export function makeStage6() {
       const buildingsByDistrictType = {};
       const buildingsByDistrictId = {};
       const districtTypeById = new Map(districts.map(d => [d.id, d.type || d.profileId]));
+      const resolveDistrictType = (did) => {
+        if (!did) return null;
+        const direct = districtTypeById.get(did);
+        if (direct) return direct;
+        // After pressure-split, buildings may reference a parent/pre-split district id.
+        // Attribute to a matching child district type deterministically (children inherit type).
+        for (const d of districts) {
+          if (d?.id === did) return d.type || d.profileId || null;
+          if (typeof d?.id === 'string' && d.id.startsWith(did + '_')) return d.type || d.profileId || null;
+          if (d?.parentId === did) return d.type || d.profileId || null;
+        }
+        return null;
+      };
+      const resolveDistrictIdForCount = (did) => {
+        if (!did) return null;
+        if (districtTypeById.has(did)) return did;
+        // Map pre-split/parent id to first matching child for per-district building counts.
+        for (const d of districts) {
+          if (typeof d?.id === 'string' && d.id.startsWith(did + '_')) return d.id;
+          if (d?.parentId === did) return d.id;
+        }
+        return did;
+      };
       for (const b of buildings) {
-        // building ids are b_<districtId>_<n> in generated form; fallback to unknown
-        const did = typeof b?.id === 'string' && b.id.startsWith('b_') ? b.id.split('_').slice(1, -1).join('_') : null;
-        const dtype = (did && districtTypeById.get(did)) || 'unknown';
+        // Prefer explicit reassigned refs (post pressure-split); fallback to legacy id parsing.
+        const explicitDid = (typeof b?.districtId === 'string' && b.districtId) ? b.districtId : null;
+        const rawDid = explicitDid || (typeof b?.id === 'string' && b.id.startsWith('b_') ? b.id.split('_').slice(1, -1).join('_') : null);
+        const explicitType = (typeof b?.districtType === 'string' && b.districtType) ? b.districtType : null;
+        const dtype = explicitType || resolveDistrictType(rawDid) || 'unknown';
         buildingsByDistrictType[dtype] = (buildingsByDistrictType[dtype] || 0) + 1;
+        const did = (explicitDid && districtTypeById.has(explicitDid)) ? explicitDid : resolveDistrictIdForCount(rawDid);
         if (did) buildingsByDistrictId[did] = (buildingsByDistrictId[did] || 0) + 1;
       }
 

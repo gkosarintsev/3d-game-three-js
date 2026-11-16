@@ -2910,6 +2910,27 @@ export function addAxisAlignedAccessRoadsForParcels(ctx) {
           legs.push(leg); from = leg.toNode;
         }
         if (!ok) { rollbackLegs(legs); continue; }
+        // Avoid dead-end access terminals that form raised/free noses on steep terrain
+        // (compiler may classify profiled segments as bridge ramps and validator rejects
+        // a free nose not landing on a ground street). Conservative: drop routes whose
+        // terminal leg ends as an isolated dead end with significant elevation change.
+        const terminal = legs[legs.length - 1];
+        if (terminal?.end && terminal?.seg?.path?.length >= 2) {
+          const tEnd = terminal.end;
+          const startY = Number(terminal.seg.path[0][1]) || 0;
+          const endY = Number(tEnd[1]) || 0;
+          let maxY = -Infinity, minY = Infinity;
+          for (const pt of terminal.seg.path) { maxY = Math.max(maxY, Number(pt[1]) || 0); minY = Math.min(minY, Number(pt[1]) || 0); }
+          const nearOtherRoad = minRoadDist(tEnd[0], tEnd[2]); // includes just-added legs
+          const terminalIsIsolated = !Number.isFinite(nearOtherRoad) || nearOtherRoad > 1.5; // distance to nearest segment geometry
+          // but minRoadDist measures distance to segment paths; for the terminal point on its own segment path, distance is 0.
+          // detect isolation by node degree instead: terminal.toNode connected only by this segment
+          const terminalDegree = segments.filter(s => s.from === terminal.toNode.id || s.to === terminal.toNode.id).length;
+          const isolatedDeadEnd = terminalDegree <= 1;
+          const steepProfile = (maxY - minY) > 6 || Math.abs(endY - startY) > 4;
+          if (isolatedDeadEnd && steepProfile) { ok = false; }
+        }
+        if (!ok) { rollbackLegs(legs); continue; }
         const end = legs[legs.length - 1].end;
         const endD = Math.hypot(end[0] - t.x, end[2] - t.z);
         if (endD < cur - 8 || endD < 130) {

@@ -1,7 +1,7 @@
 {
   "version": 1,
   "generator": {
-    "generatorVersion": "0.10.0",
+    "generatorVersion": "0.33.0",
     "seed": 18,
     "deterministic": true
   },
@@ -30,14 +30,14 @@
     {
       "id": "3_districts_parcels",
       "status": "ok",
-      "diagnostics": 11,
+      "diagnostics": 13,
       "repairs": 0,
       "drops": 0
     },
     {
       "id": "4_buildings_structures",
       "status": "ok",
-      "diagnostics": 2,
+      "diagnostics": 3,
       "repairs": 0,
       "drops": 0
     },
@@ -71,12 +71,7 @@
       ],
       "pressure": 0.1009,
       "targetB": 228.1,
-      "frame": {
-        "cx": 0,
-        "cz": 0,
-        "yaw": 90,
-        "reason": "arterial"
-      },
+      "frame": null,
       "cells": 0,
       "parcels": 121,
       "reservedParcels": 16
@@ -199,6 +194,14 @@
     },
     {
       "severity": "info",
+      "code": "adjacency_matrix",
+      "stage": "3_districts_parcels",
+      "message": "district adjacency matrix (section 6.6)",
+      "count": 0,
+      "edges": []
+    },
+    {
+      "severity": "info",
       "code": "adjacency_repairs",
       "stage": "3_districts_parcels",
       "message": "section 6.6 adjacency repairs applied",
@@ -216,11 +219,12 @@
       "code": "district_frames_assigned",
       "stage": "3_districts_parcels",
       "message": "district frames assigned by dominant axis",
-      "count": 1,
+      "count": 0,
       "reasons": {
         "slope": 0,
         "river": 0,
-        "arterial": 1
+        "railway": 0,
+        "arterial": 0
       }
     },
     {
@@ -291,7 +295,28 @@
       "min": 0.08,
       "max": 0.15,
       "promoted": 0,
-      "demoted": 0
+      "demoted": 0,
+      "bridged": 0,
+      "components": 1
+    },
+    {
+      "severity": "info",
+      "code": "pressure_area_spearman",
+      "stage": "3_districts_parcels",
+      "message": "Spearman rank correlation (D block, 1/area block) for R3.6 acceptance",
+      "rho": null,
+      "target": 0.6,
+      "ok": null,
+      "n": 1,
+      "byDistrict": [
+        {
+          "id": "d0",
+          "type": "forest",
+          "pressure": 0.1009,
+          "area": 1638400,
+          "invArea": 6.1e-7
+        }
+      ]
     },
     {
       "severity": "info",
@@ -323,6 +348,13 @@
       "count": 15,
       "budget": 420,
       "skippedConflict": 0
+    },
+    {
+      "severity": "info",
+      "code": "buildings_reassigned_to_split_districts",
+      "stage": "4_buildings_structures",
+      "message": "reassigned buildings to current districts by footprint center",
+      "count": 15
     },
     {
       "severity": "info",
@@ -568,7 +600,7 @@
       "dividesPlate": true
     },
     "determinism": {
-      "generatorVersion": "0.10.0",
+      "generatorVersion": "0.33.0",
       "seed": 18,
       "deterministic": true
     },

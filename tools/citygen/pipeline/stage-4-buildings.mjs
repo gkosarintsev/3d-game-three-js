@@ -6,7 +6,7 @@
 import { info, warn } from '../diagnostics.mjs';
 import { makeRng, mix } from '../rng.mjs';
 import { createSpatialIndex } from '../spatial.mjs';
-import { addAxisAlignedAccessRoadsForParcels } from './stage-2-transport.mjs';
+import { addAxisAlignedAccessRoadsForParcels, makeRoadSegment, buildAxisAlignedTerrainPath, isValidAxisAlignedTerrainPath, makeTerrainSampler } from './stage-2-transport.mjs';
 
 const clamp = (v, lo, hi) => Math.max(lo, Math.min(hi, v));
 const EPS = 1e-9;
@@ -810,15 +810,288 @@ export function makeStage4() {
       }
       if (droppedWater > 0) ctx.report.diagnostics.push(warn('buildings_dropped_water_constraint', stageId, `dropped ${droppedWater} building(s) violating water buffer/floodplain constraints`, { count: droppedWater }));
       if (droppedSlope > 0) ctx.report.diagnostics.push(warn('buildings_dropped_steep_slope', stageId, `dropped ${droppedSlope} building(s) on steep slopes (>25%)`, { count: droppedSlope }));
+
+      // R3 split-regression fix: reassign buildings to current (possibly split) districts
+      // by footprint center. Keeps stable building ids, but updates districtId/type refs
+      // used by reporting and downstream logic.
+      const districtsForAssign = Array.isArray(ctx.districts) ? ctx.districts : [];
+      if (districtsForAssign.length && filtered.length) {
+        const districtCenter = (d) => {
+          const r = d?.geometry?.rect;
+          if (r && Number.isFinite(r.minX)) return { x: (Number(r.minX) + Number(r.maxX)) / 2, z: (Number(r.minZ) + Number(r.maxZ)) / 2 };
+          return null;
+        };
+        const pointInRect = (x, z, r) => r && x >= Number(r.minX) && x <= Number(r.maxX) && z >= Number(r.minZ) && z <= Number(r.maxZ);
+        let reassigned = 0;
+        for (const b of filtered) {
+          const fp = Array.isArray(b?.footprint) ? b.footprint : [];
+          if (fp.length < 3) continue;
+          let sx = 0, sz = 0, n = 0;
+          for (const p of fp) { const x = Number(p?.x ?? p?.[0]), z = Number(p?.z ?? p?.[2] ?? p?.[1]); if (Number.isFinite(x) && Number.isFinite(z)) { sx += x; sz += z; n++; } }
+          if (!n) continue;
+          const cx = sx / n, cz = sz / n;
+          let best = null;
+          for (const d of districtsForAssign) {
+            const r = d?.geometry?.rect;
+            if (pointInRect(cx, cz, r)) { best = d; break; }
+          }
+          if (!best) {
+            let bestD = Infinity;
+            for (const d of districtsForAssign) {
+              const c = districtCenter(d);
+              if (!c) continue;
+              const dd = (cx - c.x) * (cx - c.x) + (cz - c.z) * (cz - c.z);
+              if (dd < bestD) { bestD = dd; best = d; }
+            }
+          }
+          if (best) {
+            const nextId = best.id ?? null;
+            const nextType = best.type || best.profileId || null;
+            if (nextId && b.districtId !== nextId) reassigned++;
+            if (nextId) b.districtId = nextId;
+            if (nextType) b.districtType = nextType;
+          }
+        }
+        if (reassigned > 0) ctx.report.diagnostics.push(info('buildings_reassigned_to_split_districts', stageId, 'reassigned buildings to current districts by footprint center', { count: reassigned }));
+
+        // Rebalance buildings across split siblings: if a child district has parcels but no
+        // buildings (common after pressure-split of pre-split placement), move nearby buildings
+        // from siblings under the same parent to reduce empty-district artifacts.
+        const parcels = Array.isArray(ctx.parcels) ? ctx.parcels : [];
+        const parcelsByDistrict = new Map();
+        for (const p of parcels) {
+          if (!p?.districtId) continue;
+          parcelsByDistrict.set(p.districtId, (parcelsByDistrict.get(p.districtId) || 0) + 1);
+        }
+        const buildingsByDistrict = new Map();
+        const bCenter = (b) => {
+          const fp = Array.isArray(b?.footprint) ? b.footprint : [];
+          let sx = 0, sz = 0, n = 0;
+          for (const p of fp) { const x = Number(p?.x ?? p?.[0]), z = Number(p?.z ?? p?.[2] ?? p?.[1]); if (Number.isFinite(x) && Number.isFinite(z)) { sx += x; sz += z; n++; } }
+          return n ? { x: sx / n, z: sz / n } : null;
+        };
+        for (const b of filtered) {
+          const id = b?.districtId;
+          if (!id) continue;
+          if (!buildingsByDistrict.has(id)) buildingsByDistrict.set(id, []);
+          buildingsByDistrict.get(id).push(b);
+        }
+        const expectsBuildings = (t) => !['forest', 'park', 'field', 'sports_field'].includes(String(t || ''));
+        let rebalanced = 0;
+        for (const d of districtsForAssign) {
+          const did = d?.id;
+          if (!did) continue;
+          const pCount = parcelsByDistrict.get(did) || 0;
+          const bList = buildingsByDistrict.get(did) || [];
+          if (pCount <= 0 || bList.length > 0 || !expectsBuildings(d.type || d.profileId)) continue;
+          const dc = districtCenter(d);
+          if (!dc) continue;
+          // Prefer siblings (same parentId/type group), then any donor with surplus.
+          const donors = districtsForAssign
+            .filter(x => x && x.id !== did && (buildingsByDistrict.get(x.id) || []).length > 1)
+            .map(x => ({ d: x, sameParent: !!(d.parentId && x.parentId === d.parentId), sameType: (x.type || x.profileId) === (d.type || d.profileId), count: (buildingsByDistrict.get(x.id) || []).length }))
+            .sort((a, b) => (Number(b.sameParent) - Number(a.sameParent)) || (Number(b.sameType) - Number(a.sameType)) || (b.count - a.count));
+          const donor = donors[0]?.d;
+          if (!donor) continue;
+          const donorList = buildingsByDistrict.get(donor.id) || [];
+          // Move the building from donor whose center is closest to target district center.
+          let bestIdx = -1, bestDist = Infinity;
+          for (let i = 0; i < donorList.length; i++) {
+            const bc = bCenter(donorList[i]);
+            if (!bc) continue;
+            const dd = (bc.x - dc.x) * (bc.x - dc.x) + (bc.z - dc.z) * (bc.z - dc.z);
+            if (dd < bestDist) { bestDist = dd; bestIdx = i; }
+          }
+          if (bestIdx < 0) continue;
+          const [moved] = donorList.splice(bestIdx, 1);
+          moved.districtId = did;
+          moved.districtType = d.type || d.profileId || moved.districtType || null;
+          bList.push(moved);
+          buildingsByDistrict.set(donor.id, donorList);
+          buildingsByDistrict.set(did, bList);
+          rebalanced++;
+        }
+        if (rebalanced > 0) ctx.report.diagnostics.push(info('buildings_rebalanced_to_empty_split_districts', stageId, 'moved buildings to split child districts with parcels but no buildings', { count: rebalanced }));
+      }
+
       ctx.buildings = filtered;
     },
     repair(_ctx) {},
     emit(ctx) {
+      // R3.5 (post-buildings, second pass): add only local/connector roads toward dense
+      // buildings with poor access, without recalculating the transport frame.
+      try {
+        const stageId = '4_buildings_structures';
+        const networks = ctx.networks?.roads;
+        const segments = Array.isArray(networks?.segments) ? networks.segments : null;
+        const nodes = Array.isArray(networks?.nodes) ? networks.nodes : null;
+        const buildings = Array.isArray(ctx.buildings) ? ctx.buildings : [];
+        const districts = Array.isArray(ctx.districts) ? ctx.districts : [];
+        if (segments && nodes && segments.length && nodes.length && buildings.length && districts.length) {
+          const size = ctx.meta?.worldBounds?.size ?? ctx.input?.ground?.size ?? 256;
+          if (size >= 512) {
+            const half = size / 2;
+            const sampler = makeTerrainSampler(ctx);
+            const rivers = ctx.hydrology?.rivers ?? ctx.input?.cityforge?.hydrology?.rivers ?? [];
+            const waterBufferById = (() => {
+              const src = Array.isArray(ctx.masks?.terrain?.waterBuffers) ? ctx.masks.terrain.waterBuffers
+                : (Array.isArray(ctx.terrain?.analysis?.waterBuffers) ? ctx.terrain.analysis.waterBuffers : []);
+              const byId = new Map();
+              for (const w of src) if (w?.id) byId.set(w.id, w);
+              return byId;
+            })();
+            const floodplainMasks = Array.isArray(ctx.masks?.terrain?.floodplains) ? ctx.masks.terrain.floodplains
+              : (Array.isArray(ctx.terrain?.analysis?.floodplains) ? ctx.terrain.analysis.floodplains : []);
+            const distPointSegXZ = (px, pz, ax, az, bx, bz) => {
+              const abx = bx - ax, abz = bz - az, apx = px - ax, apz = pz - az;
+              const ab2 = abx * abx + abz * abz || 1e-12;
+              const t = Math.max(0, Math.min(1, (apx * abx + apz * abz) / ab2));
+              return Math.hypot(px - (ax + abx * t), pz - (az + abz * t));
+            };
+            const minRoadDist = (x, z) => {
+              let best = Infinity;
+              for (const s of segments) {
+                const pts = Array.isArray(s?.path) ? s.path : [];
+                for (let i = 0; i + 1 < pts.length; i++) {
+                  const a = pts[i], b = pts[i + 1];
+                  if (!a || !b) continue;
+                  best = Math.min(best, distPointSegXZ(x, z, a[0], a[2], b[0], b[2]));
+                }
+              }
+              return best;
+            };
+            const nodePos = (n) => { const p = Array.isArray(n?.position) ? n.position : [0, 0, 0]; return { x: Number(p[0]) || 0, y: Number(p[1]) || 0, z: Number(p[2]) || 0 }; };
+            const nearestNode = (x, z) => {
+              let best = null, bestD = Infinity;
+              for (const n of nodes) {
+                if (n?.layer === 'elevated') continue;
+                const p = nodePos(n);
+                const d = Math.hypot(p.x - x, p.z - z);
+                if (d < bestD) { bestD = d; best = n; }
+              }
+              return best ? { node: best, d: bestD } : null;
+            };
+            const usedSegIds = new Set(segments.map(s => s?.id).filter(Boolean));
+            const usedNodeIds = new Set(nodes.map(n => n?.id).filter(Boolean));
+            const uniqueSegId = (base) => { if (!usedSegIds.has(base)) { usedSegIds.add(base); return base; } let k = 2; while (usedSegIds.has(`${base}_${k}`)) k++; const id = `${base}_${k}`; usedSegIds.add(id); return id; };
+            const uniqueNodeId = (base) => { if (!usedNodeIds.has(base)) { usedNodeIds.add(base); return base; } let k = 2; while (usedNodeIds.has(`${base}_${k}`)) k++; const id = `${base}_${k}`; usedNodeIds.add(id); return id; };
+            const edgeExists = (a, b) => segments.some(s => (s.from === a && s.to === b) || (s.from === b && s.to === a));
+            const ensureRoadIndex = () => {
+              ctx.spatial = ctx.spatial || {};
+              if (ctx.spatial.roadEasements && typeof ctx.spatial.roadEasements.insert === 'function') return ctx.spatial.roadEasements;
+              const idx = createSpatialIndex(ctx.meta.worldBounds ?? { size });
+              for (const r of (ctx.masks?.easement?.roads ?? [])) idx.insert(r);
+              ctx.spatial.roadEasements = idx;
+              return idx;
+            };
+            const syncSegment = (seg) => {
+              let minX = Infinity, maxX = -Infinity, minZ = Infinity, maxZ = -Infinity;
+              for (const pt of (seg.path || [])) { minX = Math.min(minX, pt[0]); maxX = Math.max(maxX, pt[0]); minZ = Math.min(minZ, pt[2]); maxZ = Math.max(maxZ, pt[2]); }
+              const eas = { id: seg.id, minX, maxX, minZ, maxZ, width: (Array.isArray(seg?.lanes) && seg.lanes[0]?.width) ? seg.lanes[0].width : 6 };
+              if (!ctx.masks.easement) ctx.masks.easement = { rivers: [], roads: [] };
+              ctx.masks.easement.roads = ctx.masks.easement.roads || [];
+              ctx.masks.easement.roads.push(eas);
+              ensureRoadIndex().insert(eas);
+            };
+            const getOrCreateNodeAt = (x, y, z, baseId) => {
+              let n = nodes.find(nn => nn.layer !== 'elevated' && Math.hypot(nn.position[0] - x, nn.position[2] - z) < 0.5);
+              if (!n) { n = { id: uniqueNodeId(baseId), position: [Math.round(x * 100) / 100, Math.round(y * 100) / 100, Math.round(z * 100) / 100], layer: 'ground' }; nodes.push(n); }
+              return n;
+            };
+            const districtById = new Map(districts.map(d => [d.id, d]));
+            const bCenter = (b) => {
+              const fp = Array.isArray(b?.footprint) ? b.footprint : [];
+              let sx = 0, sz = 0, n = 0;
+              for (const p of fp) { const x = Number(p?.x ?? p?.[0]), z = Number(p?.z ?? p?.[2] ?? p?.[1]); if (Number.isFinite(x) && Number.isFinite(z)) { sx += x; sz += z; n++; } }
+              return n ? { x: sx / n, z: sz / n } : null;
+            };
+            const targets = [];
+            for (const b of buildings) {
+              const bc = bCenter(b);
+              if (!bc) continue;
+              const d = districtById.get(b.districtId) || null;
+              const pressure = Number(d?.pressure) || 0;
+              if (pressure < 0.4) continue;
+              const rd = minRoadDist(bc.x, bc.z);
+              if (rd < 85) continue;
+              targets.push({ id: b.id, x: bc.x, z: bc.z, rd, pressure, type: b.districtType || d?.type || null });
+            }
+            targets.sort((a, b) => (b.pressure - a.pressure) || (b.rd - a.rd) || String(a.id).localeCompare(String(b.id)));
+            const picked = [];
+            for (const t of targets) {
+              if (picked.some(p => Math.hypot(p.x - t.x, p.z - t.z) < 40)) continue;
+              picked.push(t);
+              if (picked.length >= 24) break;
+            }
+            let added = 0;
+            const budget = 12;
+            for (const t of picked) {
+              if (added >= budget) break;
+              const near = nearestNode(t.x, t.z);
+              if (!near || near.d < 20) continue;
+              const fp = nodePos(near.node);
+              const dx = t.x - fp.x, dz = t.z - fp.z;
+              const adx = Math.abs(dx), adz = Math.abs(dz);
+              if (adx < 8 && adz < 8) continue;
+              const step = Math.min(70, Math.max(35, Math.min(near.d, t.rd) - 20));
+              const sx = Math.sign(dx) || 1, sz = Math.sign(dz) || 1;
+              const routes = [];
+              if (adx >= adz) routes.push([[fp.x + sx * Math.min(step, adx), fp.z], [fp.x + sx * Math.min(step, adx), fp.z + sz * Math.min(40, adz)]]);
+              else routes.push([[fp.x, fp.z + sz * Math.min(step, adz)], [fp.x + sx * Math.min(40, adx), fp.z + sz * Math.min(step, adz)]]);
+              routes.push([[fp.x + sx * Math.min(step, adx), fp.z]]);
+              routes.push([[fp.x, fp.z + sz * Math.min(step, adz)]]);
+              let placed = false;
+              for (const route of routes) {
+                if (placed) break;
+                let from = near.node;
+                const legs = [];
+                let ok = true;
+                for (let i = 0; i < route.length; i++) {
+                  const [txRaw, tzRaw] = route[i];
+                  const tx = Math.round(clamp(txRaw, -half + 6, half - 6) * 100) / 100;
+                  const tz = Math.round(clamp(tzRaw, -half + 6, half - 6) * 100) / 100;
+                  const fromP = nodePos(from);
+                  if (Math.abs(tx - fromP.x) > 0.01 && Math.abs(tz - fromP.z) > 0.01) { ok = false; break; }
+                  if (Math.hypot(tx - fromP.x, tz - fromP.z) < 12) { ok = false; break; }
+                  let path;
+                  try { path = buildAxisAlignedTerrainPath(fromP.x, fromP.z, tx, tz, sampler, rivers, 12); } catch { ok = false; break; }
+                  if (!path || !isValidAxisAlignedTerrainPath(path, rivers, waterBufferById, { includeFloodplain: true, floodplainMasks })) { ok = false; break; }
+                  const end = path[path.length - 1];
+                  const toNode = getOrCreateNodeAt(end[0], end[1], end[2], `tr_postb_n_${added + 1}`);
+                  if (edgeExists(from.id, toNode.id)) { ok = false; break; }
+                  const segId = uniqueSegId(`tr_postb_${added + 1}`);
+                  const seg = makeRoadSegment(segId, from.id, toNode.id, path, 6, 'local');
+                  legs.push({ seg, toNode });
+                  from = toNode;
+                }
+                if (!ok) continue;
+                for (const leg of legs) { segments.push(leg.seg); syncSegment(leg.seg); }
+                added += 1;
+                placed = true;
+              }
+            }
+            if (added > 0) {
+              // keep ctx.input in sync with mutated networks (compile/build uses ctx.engine/input)
+              if (ctx.input?.cityforge?.networks) ctx.input.cityforge.networks.roads = { nodes, segments };
+              ctx.report.diagnostics.push(info('post_buildings_local_connectors', stageId, 'added local connector segments after building placement (R3.5)', { added, candidates: picked.length }));
+            }
+          }
+        }
+      } catch (e) {
+        ctx.report.diagnostics.push(warn('post_buildings_local_connectors_failed', stageId, `post-buildings connector pass failed: ${e?.message || e}`));
+      }
+
       // Emit into source so compileCityforge/build pipeline can pass buildings through.
+      // Strip internal reporting-only refs (post-split reassignment) to keep schema compatibility.
+      const emitBuildings = (ctx.buildings ?? []).map(b => {
+        if (!b || typeof b !== 'object') return b;
+        const { districtId: _districtId, districtType: _districtType, ...rest } = b;
+        return rest;
+      });
       if (!Array.isArray(ctx.input.buildings) || ctx.input.buildings.length === 0) {
-        ctx.input.buildings = ctx.buildings;
-      } else if (ctx.buildings.length) {
-        ctx.input.buildings = ctx.buildings;
+        ctx.input.buildings = emitBuildings;
+      } else if (emitBuildings.length) {
+        ctx.input.buildings = emitBuildings;
       }
       // Spatial index for building footprints (TASK-002), additive for downstream queries.
       ctx.spatial = ctx.spatial || {};

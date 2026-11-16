@@ -1,5 +1,5 @@
 {
-  "generatorVersion": "0.10.0",
+  "generatorVersion": "0.12.0",
   "profiles": [
     "river_trade",
     "hill_town",
@@ -111,13 +111,17 @@
   "runs": 300,
   "hardFailures": 0,
   "transport": true,
+  "singleRun": false,
+  "failFast": false,
+  "aborted": false,
   "byProfile": {
     "river_trade": {
       "runs": 100,
+      "determinismCheckedRuns": 100,
       "deterministicOk": 100,
       "errorRuns": 0,
       "warningRuns": 100,
-      "dropsRuns": 0,
+      "dropsRuns": 1,
       "hashesUnique": 100,
       "errors": {
         "count": 100,
@@ -129,25 +133,25 @@
       },
       "warnings": {
         "count": 100,
-        "min": 4,
-        "max": 25,
-        "mean": 9.66,
-        "median": 9.5,
-        "p95": 14
+        "min": 6,
+        "max": 27,
+        "mean": 13.12,
+        "median": 13,
+        "p95": 17
       },
       "repairs": {
         "count": 100,
         "min": 0,
         "max": 36,
-        "mean": 14.83,
-        "median": 16,
+        "mean": 14.74,
+        "median": 16.5,
         "p95": 31
       },
       "drops": {
         "count": 100,
         "min": 0,
-        "max": 0,
-        "mean": 0,
+        "max": 1,
+        "mean": 0.01,
         "median": 0,
         "p95": 0
       },
@@ -171,25 +175,25 @@
         "count": 100,
         "min": 0,
         "max": 202,
-        "mean": 124.71,
+        "mean": 124.52,
         "median": 156,
         "p95": 194
       },
       "parcels": {
         "count": 100,
-        "min": 2098,
-        "max": 2442,
-        "mean": 2266.89,
-        "median": 2274,
-        "p95": 2442
+        "min": 2074,
+        "max": 2402,
+        "mean": 2237.65,
+        "median": 2249,
+        "p95": 2389
       },
       "buildings": {
         "count": 100,
         "min": 400,
-        "max": 403,
-        "mean": 400.32,
-        "median": 400,
-        "p95": 402
+        "max": 420,
+        "mean": 402.61,
+        "median": 402,
+        "p95": 408
       },
       "enterableBuildings": {
         "count": 100,
@@ -201,9 +205,9 @@
       },
       "props": {
         "count": 100,
-        "min": 360,
+        "min": 359,
         "max": 360,
-        "mean": 360,
+        "mean": 359.99,
         "median": 360,
         "p95": 360
       },
@@ -211,21 +215,22 @@
         "count": 93,
         "min": 0.186567,
         "max": 0.666667,
-        "mean": 0.304341,
-        "median": 0.256944,
+        "mean": 0.30462,
+        "median": 0.256,
         "p95": 0.666667
       },
       "gamma": {
         "count": 93,
         "min": 0.4,
         "max": 0.666667,
-        "mean": 0.459963,
-        "median": 0.441799,
+        "mean": 0.460144,
+        "median": 0.441734,
         "p95": 0.666667
       }
     },
     "hill_town": {
       "runs": 100,
+      "determinismCheckedRuns": 100,
       "deterministicOk": 100,
       "errorRuns": 0,
       "warningRuns": 100,
@@ -243,15 +248,15 @@
         "count": 100,
         "min": 4,
         "max": 33,
-        "mean": 10.77,
+        "mean": 10.74,
         "median": 9,
         "p95": 20
       },
       "repairs": {
         "count": 100,
         "min": 0,
-        "max": 26,
-        "mean": 9.31,
+        "max": 25,
+        "mean": 9.3,
         "median": 12,
         "p95": 19
       },
@@ -282,26 +287,26 @@
       "roads": {
         "count": 100,
         "min": 0,
-        "max": 176,
-        "mean": 98.04,
+        "max": 175,
+        "mean": 98.03,
         "median": 148.5,
         "p95": 161
       },
       "parcels": {
         "count": 100,
-        "min": 2098,
-        "max": 2442,
-        "mean": 2263.82,
-        "median": 2274,
-        "p95": 2442
+        "min": 2081,
+        "max": 2420,
+        "mean": 2237.63,
+        "median": 2245.5,
+        "p95": 2396
       },
       "buildings": {
         "count": 100,
-        "min": 400,
-        "max": 405,
-        "mean": 401.19,
-        "median": 400,
-        "p95": 404
+        "min": 402,
+        "max": 420,
+        "mean": 408.71,
+        "median": 408,
+        "p95": 415
       },
       "enterableBuildings": {
         "count": 100,
@@ -321,23 +326,24 @@
       },
       "deadEndRatio": {
         "count": 64,
-        "min": 0.181102,
+        "min": 0.188976,
         "max": 0.313559,
-        "mean": 0.238574,
-        "median": 0.244833,
-        "p95": 0.270492
+        "mean": 0.240759,
+        "median": 0.243902,
+        "p95": 0.275862
       },
       "gamma": {
         "count": 64,
         "min": 0.410468,
-        "max": 0.444444,
-        "mean": 0.421606,
+        "max": 0.445293,
+        "mean": 0.421621,
         "median": 0.421488,
         "p95": 0.436693
       }
     },
     "railway_industrial": {
       "runs": 100,
+      "determinismCheckedRuns": 100,
       "deterministicOk": 100,
       "errorRuns": 0,
       "warningRuns": 100,
@@ -353,17 +359,17 @@
       },
       "warnings": {
         "count": 100,
-        "min": 4,
-        "max": 21,
-        "mean": 9.63,
-        "median": 9,
-        "p95": 14
+        "min": 6,
+        "max": 22,
+        "mean": 13.17,
+        "median": 13,
+        "p95": 18
       },
       "repairs": {
         "count": 100,
         "min": 0,
-        "max": 38,
-        "mean": 13.36,
+        "max": 36,
+        "mean": 13.01,
         "median": 14,
         "p95": 28
       },
@@ -395,25 +401,25 @@
         "count": 100,
         "min": 0,
         "max": 203,
-        "mean": 119.18,
+        "mean": 118.56,
         "median": 155,
-        "p95": 184
+        "p95": 183
       },
       "parcels": {
         "count": 100,
-        "min": 2274,
-        "max": 2618,
-        "mean": 2441.3,
-        "median": 2450,
-        "p95": 2618
+        "min": 2235,
+        "max": 2562,
+        "mean": 2391.45,
+        "median": 2403,
+        "p95": 2543
       },
       "buildings": {
         "count": 100,
         "min": 400,
-        "max": 403,
-        "mean": 400.44,
-        "median": 400,
-        "p95": 402
+        "max": 420,
+        "mean": 403.02,
+        "median": 402,
+        "p95": 408
       },
       "enterableBuildings": {
         "count": 100,
@@ -433,18 +439,18 @@
       },
       "deadEndRatio": {
         "count": 91,
-        "min": 0.190141,
+        "min": 0.193548,
         "max": 0.666667,
-        "mean": 0.309844,
-        "median": 0.258065,
+        "mean": 0.310802,
+        "median": 0.261194,
         "p95": 0.666667
       },
       "gamma": {
         "count": 91,
         "min": 0.4,
         "max": 0.666667,
-        "mean": 0.459932,
-        "median": 0.439153,
+        "mean": 0.460531,
+        "median": 0.439776,
         "p95": 0.666667
       }
     }

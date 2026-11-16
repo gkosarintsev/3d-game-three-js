@@ -510,6 +510,186 @@ function swapDistrictType(districts, adj, idx, toType) {
   return true;
 }
 
+// R3.5 §7.3: рекурсивное деление блоков по давлению (D≥0.75 → 4 под-блока, D≥0.5 → 2);
+// и по целевому размеру B(D): плотный блок делится, пока характерный размер > B(D).
+// Под-блоки наследуют тип/плотность/этажность; давление пересчитывается по центру.
+// R3.4 (partial): привязка линий деления к рубежам (река/магистраль) при близком пересечении.
+export function splitDistrictsByPressure(districts, opts = {}) {
+  const ctx = opts?.ctx ?? null;
+  const size = Number.isFinite(opts?.size) ? opts.size : (Number.isFinite(opts) ? opts : 1280);
+  const policies = opts?.policies ?? ctx?.meta?.policies ?? {};
+  const rd = policies?.roadDensity ?? {};
+  const bMin = Number.isFinite(Number(rd.bMin)) ? Number(rd.bMin) : 60;
+  const bMax = Number.isFinite(Number(rd.bMax)) ? Number(rd.bMax) : 260;
+  const gamma = Number.isFinite(Number(rd.gamma)) ? Number(rd.gamma) : 0.8;
+  const minSpan = Number.isFinite(Number(opts?.minSpan)) ? Number(opts.minSpan) : Math.max(40, bMin * 0.75);
+  const maxDepth = Number.isFinite(Number(opts?.maxDepth)) ? Number(opts.maxDepth) : 5;
+
+  const pressureFor = (d) => (ctx ? districtPressure(d, ctx, size) : (Number(d?.pressure) || 0));
+  const targetBFor = (p) => targetBDistance(p, { bMin, bMax, gamma });
+
+  // Barrier segments for optional split-line snapping (R3.4): rivers and major roads.
+  const barrierSegs = [];
+  if (ctx) {
+    const rivers = ctx?.hydrology?.rivers ?? ctx?.masks?.easement?.rivers ?? ctx?.input?.cityforge?.hydrology?.rivers ?? [];
+    for (const rv of rivers) {
+      const path = Array.isArray(rv?.path) ? rv.path : [];
+      for (let i = 0; i + 1 < path.length; i++) {
+        const a = path[i], b = path[i + 1];
+        if (a && b) barrierSegs.push({ ax: a[0], az: a[2], bx: b[0], bz: b[2], w: 2.0 });
+      }
+    }
+    const roads = ctx?.networks?.roads?.segments ?? ctx?.input?.cityforge?.networks?.roads?.segments ?? [];
+    for (const s of roads) {
+      const t = String(s?.type ?? s?.class ?? '');
+      if (t !== 'highway' && t !== 'arterial') continue;
+      const path = Array.isArray(s?.path) ? s.path : [];
+      for (let i = 0; i + 1 < path.length; i++) {
+        const a = path[i], b = path[i + 1];
+        if (a && b) barrierSegs.push({ ax: a[0], az: a[2], bx: b[0], bz: b[2], w: 1.0 });
+      }
+    }
+  }
+  const segIntersectionsX = (x, z0, z1) => {
+    // vertical split line x = const crossing barrier segments: return candidate x (clamped) with weight
+    const out = [];
+    const lo = Math.min(z0, z1), hi = Math.max(z0, z1);
+    for (const s of barrierSegs) {
+      const x1 = s.ax, z1s = s.az, x2 = s.bx, z2s = s.bz;
+      const dz = z2s - z1s;
+      if (Math.abs(dz) < 1e-9) continue;
+      const t = ( ((z0 + z1) * 0.5) - z1s ) / dz; // rough: prefer crossing near middle band
+      // exact intersection with horizontal scan across [z0,z1] not needed; check if segment spans line vertically
+      // better: intersection of segment with vertical line x = ? solve for x at z within [lo,hi]
+      // param along segment by z
+      const t2 = (Math.max(lo, Math.min(hi, (lo + hi) / 2)) - z1s) / dz;
+      if (t2 < 0 || t2 > 1) continue;
+      const ix = x1 + (x2 - x1) * t2;
+      if (Number.isFinite(ix)) out.push({ v: ix, w: s.w });
+    }
+    return out;
+  };
+  const segIntersectionsZ = (z, x0, x1) => {
+    const out = [];
+    const lo = Math.min(x0, x1), hi = Math.max(x0, x1);
+    for (const s of barrierSegs) {
+      const x1s = s.ax, z1s = s.az, x2s = s.bx, z2s = s.bz;
+      const dx = x2s - x1s;
+      if (Math.abs(dx) < 1e-9) continue;
+      const t2 = (Math.max(lo, Math.min(hi, (lo + hi) / 2)) - x1s) / dx;
+      if (t2 < 0 || t2 > 1) continue;
+      const iz = z1s + (z2s - z1s) * t2;
+      if (Number.isFinite(iz)) out.push({ v: iz, w: s.w });
+    }
+    return out;
+  };
+  const snapSplit = (mid, minV, maxV, axis /* 'x'|'z' */, rect) => {
+    const span = maxV - minV;
+    if (!(span > 1e-6)) return mid;
+    // Conservative snap: keep split close to center and balanced to avoid harming ρ(D,1/area).
+    const tol = Math.min(span * 0.12, 20);
+    const cands = axis === 'x'
+      ? segIntersectionsX(mid, rect.minZ, rect.maxZ)
+      : segIntersectionsZ(mid, rect.minX, rect.maxX);
+    let best = null;
+    for (const c of cands) {
+      const v = Math.max(minV + span * 0.4, Math.min(maxV - span * 0.4, c.v));
+      const d = Math.abs(v - mid);
+      if (d > tol) continue;
+      const score = c.w * 10 - d;
+      if (!best || score > best.score) best = { v, score };
+    }
+    return best ? best.v : mid;
+  };
+
+
+  const splitOne = (d, depth) => {
+    const rect = d?.geometry?.rect;
+    if (!rect) return [d];
+    const p = pressureFor(d);
+    const spanX = Number(rect.maxX) - Number(rect.minX);
+    const spanZ = Number(rect.maxZ) - Number(rect.minZ);
+    const charSpan = Math.min(spanX, spanZ);
+    const targetB = targetBFor(p);
+    const shouldQuad = p >= 0.75 && charSpan > Math.max(minSpan, targetB * 0.55);
+    const shouldBi = (p >= 0.5 || charSpan > Math.max(minSpan, targetB)) && charSpan > minSpan;
+    if (depth >= maxDepth || (!shouldQuad && !shouldBi)) {
+      if (d.pressure !== p) d.pressure = p;
+      return [d];
+    }
+    let cx = (Number(rect.minX) + Number(rect.maxX)) / 2;
+    let cz = (Number(rect.minZ) + Number(rect.maxZ)) / 2;
+    if (barrierSegs.length) {
+      cx = snapSplit(cx, Number(rect.minX), Number(rect.maxX), 'x', rect);
+      cz = snapSplit(cz, Number(rect.minZ), Number(rect.maxZ), 'z', rect);
+    }
+    const parts = [];
+    if (shouldQuad && spanX >= minSpan * 2 && spanZ >= minSpan * 2) {
+      parts.push(
+        { minX: rect.minX, minZ: rect.minZ, maxX: cx, maxZ: cz },
+        { minX: cx, minZ: rect.minZ, maxX: rect.maxX, maxZ: cz },
+        { minX: rect.minX, minZ: cz, maxX: cx, maxZ: rect.maxZ },
+        { minX: cx, minZ: cz, maxX: rect.maxX, maxZ: rect.maxZ },
+      );
+    } else if (spanX >= spanZ && spanX >= minSpan * 2) {
+      parts.push(
+        { minX: rect.minX, minZ: rect.minZ, maxX: cx, maxZ: rect.maxZ },
+        { minX: cx, minZ: rect.minZ, maxX: rect.maxX, maxZ: rect.maxZ },
+      );
+    } else if (spanZ >= minSpan * 2) {
+      parts.push(
+        { minX: rect.minX, minZ: rect.minZ, maxX: rect.maxX, maxZ: cz },
+        { minX: rect.minX, minZ: cz, maxX: rect.maxX, maxZ: rect.maxZ },
+      );
+    } else {
+      if (d.pressure !== p) d.pressure = p;
+      return [d];
+    }
+    const children = parts.map((rectPart, k) => ({
+      ...d,
+      id: depth === 0 ? `${d.id}_${k}` : `${d.id}${k}`,
+      parentId: d.id,
+      geometry: { rect: rectPart },
+      cells: [],
+      landValue: null,
+      pressure: null,
+    }));
+    return children.flatMap(child => splitOne(child, depth + 1));
+  };
+
+  return (districts ?? []).flatMap(d => splitOne(d, 0));
+}
+
+function spearmanRank(xs, ys) {
+  // ранговая корреляция Спирмена (с усреднением рангов при равенствах); null при n<3 или нулевой дисперсии
+  const n = xs.length;
+  if (n < 3) return null;
+  const rankOf = (arr) => {
+    const order = arr.map((v, i) => [v, i]).sort((a, b) => a[0] - b[0] || a[1] - b[1]);
+    const ranks = new Array(n);
+    let i = 0;
+    while (i < n) {
+      let j = i;
+      while (j + 1 < n && order[j + 1][0] === order[i][0]) j++;
+      const r = (i + j + 2) / 2; // средний 1-based ранг
+      for (let k = i; k <= j; k++) ranks[order[k][1]] = r;
+      i = j + 1;
+    }
+    return ranks;
+  };
+  const rx = rankOf(xs), ry = rankOf(ys);
+  let mx = 0, my = 0;
+  for (let i = 0; i < n; i++) { mx += rx[i]; my += ry[i]; }
+  mx /= n; my /= n;
+  let sxx = 0, syy = 0, sxy = 0;
+  for (let i = 0; i < n; i++) {
+    const dx = rx[i] - mx, dy = ry[i] - my;
+    sxx += dx * dx; syy += dy * dy; sxy += dx * dy;
+  }
+  if (sxx === 0 || syy === 0) return null;
+  return +(sxy / Math.sqrt(sxx * syy)).toFixed(4);
+}
+
 export const DEFAULT_PROFILES = {
   office: { id: 'office', label: 'Офисный', weight: 1.1, parcels: { min: 18, max: 42, coverage: 0.55 }, buildings: { kinds: ['office_tower', 'office_mid', 'office_block', 'skyscraper', 'megablock'], maxFloors: 40, materials: ['glass_and_concrete', 'concrete'] } },
   park: { id: 'park', label: 'Парк', weight: 0.9, parcels: { min: 24, max: 64, coverage: 0.12 }, buildings: { kinds: ['pavilion', 'modern_pavilion', 'aframe'], maxFloors: 2, materials: ['painted_brick', 'concrete'] } },
@@ -835,15 +1015,34 @@ export function makeStage3() {
         const isSurplus = (t) => (curCounts[t] || 0) > Math.max(1, TYPE_PROTECT[t] ?? 1);
         const trackSwap = (from, to) => { curCounts[from] = (curCounts[from] || 1) - 1; curCounts[to] = (curCounts[to] || 0) + 1; };
         if (autoDistricts) {
-          // --- §6.6: industrial ↔ residential только через буфер (парк/склады/commercial) ---
+          // --- §6.6: industrial ↔ residential только через буфер (парк/склады/commercial/parking) ---
           for (let i = 0; i < DS.length; i++) {
             if (DS[i].type !== 'industrial') continue;
             for (const j of [...adj[i]]) {
               if (!RES_LIKE.has(DS[j]?.type)) continue;
               const fromType = DS[j].type;
               const fromI = DS[i].type;
-              if (isSurplus(fromType) && swapDistrictType(DS, adj, j, 'commercial')) { trackSwap(fromType, 'commercial'); repairs.push({ kind: 'industrial_buffer', id: DS[j].id, to: 'commercial' }); continue; }
-              if (isSurplus(fromI) && swapDistrictType(DS, adj, i, 'market')) { trackSwap(fromI, 'market'); repairs.push({ kind: 'industrial_buffer', id: DS[i].id, to: 'market' }); continue; }
+              let buffered = false;
+              // prefer converting RES_LIKE side to a buffer type compatible with both sides
+              for (const cand of ['commercial', 'parking']) {
+                if (isSurplus(fromType) && swapDistrictType(DS, adj, j, cand)) {
+                  trackSwap(fromType, cand);
+                  repairs.push({ kind: 'industrial_buffer', id: DS[j].id, to: cand, side: 'res' });
+                  buffered = true;
+                  break;
+                }
+              }
+              if (buffered) continue;
+              // fallback: convert industrial side to a compatible buffer/transition type
+              for (const cand of ['market', 'parking']) {
+                if (isSurplus(fromI) && swapDistrictType(DS, adj, i, cand)) {
+                  trackSwap(fromI, cand);
+                  repairs.push({ kind: 'industrial_buffer', id: DS[i].id, to: cand, side: 'ind' });
+                  buffered = true;
+                  break;
+                }
+              }
+              if (buffered) continue;
               ctx.report.diagnostics.push(warn('industrial_residential_adjacency', stageId, `industrial '${DS[i].id}' прилегает к '${DS[j]?.type}' '${DS[j].id}' без вставляемого буфера`, { industrial: DS[i].id, other: DS[j].id }));
             }
           }
@@ -875,6 +1074,43 @@ export function makeStage3() {
             // остаточные контрасты в грубой сетке блоков (3,2 га) — задокументированное ограничение, не сбой
             ctx.report.diagnostics.push(info('floors_contrast_unresolved', stageId, 'floors contrast above 2.5x kept to preserve type diversity (coarse grid; seams allowed)', { count: floorsUnresolved }));
           }
+          // --- §6.6: общая совместимость соседства (матрица соседства/буферы) ---
+          const isCompatPair = (a, b) => !!(COMPAT[a]?.has(b) && COMPAT[b]?.has(a));
+          const tryRepairIncompat = (idx, otherIdx) => {
+            if (!isSurplus(DS[idx].type)) return false;
+            const neighTypes = [...(adj[idx] ?? [])].map(k => DS[k]?.type).filter(Boolean);
+            const chain = (FALLBACK_CHAINS[DS[idx].type] || ['park', 'commercial', 'parking', 'residential', 'office']);
+            for (const cand of chain) {
+              if (cand === DS[idx].type) continue;
+              if (!profiles[cand]) continue;
+              const okNeighbors = neighTypes.every(nt => COMPAT[cand]?.has(nt) && COMPAT[nt]?.has(cand));
+              if (!okNeighbors) continue;
+              const from = DS[idx].type;
+              if (swapDistrictType(DS, adj, idx, cand)) {
+                trackSwap(from, cand);
+                repairs.push({ kind: 'adjacency_compat', id: DS[idx].id, to: cand, other: DS[otherIdx]?.id ?? null, from });
+                return true;
+              }
+            }
+            return false;
+          };
+          let incompatUnresolved = 0;
+          for (let pass = 0; pass < 2; pass++) {
+            let changed = false;
+            for (let i = 0; i < DS.length; i++) {
+              for (const j of [...adj[i]]) {
+                if (j <= i) continue;
+                const ta = DS[i]?.type, tb = DS[j]?.type;
+                if (!ta || !tb || isCompatPair(ta, tb)) continue;
+                if (tryRepairIncompat(i, j) || tryRepairIncompat(j, i)) { changed = true; continue; }
+                incompatUnresolved += 1;
+              }
+            }
+            if (!changed) break;
+          }
+          if (incompatUnresolved > 0) {
+            ctx.report.diagnostics.push(warn('adjacency_incompatible_unresolved', stageId, 'incompatible district adjacency could not be resolved by buffer swap (diversity/constraints)', { count: incompatUnresolved }));
+          }
         } else {
           ctx.report.diagnostics.push(info('adjacency_repairs_skipped_declared', stageId, 'adjacency/park mutations skipped for declared districts (author intent preserved)', {}));
         }
@@ -889,6 +1125,69 @@ export function makeStage3() {
         const shareBefore = plate > 0 ? parkAreaNow() / plate : 0;
         let promoted = 0, demoted = 0;
         // мутации — только для auto; редкие типы (campus/office/industrial/...) защищаем от вымывания
+        const parkNeighborCount = (idx) => {
+          let n = 0;
+          for (const j of (adj[idx] ?? [])) if (PARK_TYPES.has(DS[j]?.type)) n += 1;
+          return n;
+        };
+        // R3.4 §6.8 helpers: belts along rivers/lakes + 2–3 green wedges from edge to center.
+        const riversForPark = ctx?.hydrology?.rivers ?? ctx?.input?.cityforge?.hydrology?.rivers ?? [];
+        const lakesForPark = ctx?.hydrology?.lakes ?? ctx?.input?.cityforge?.hydrology?.lakes ?? [];
+        const distToWaterCenter = (x, z) => {
+          let best = Infinity;
+          for (const rv of riversForPark) {
+            const path = Array.isArray(rv?.path) ? rv.path : [];
+            for (let i = 0; i + 1 < path.length; i++) {
+              const a = path[i], b = path[i + 1];
+              if (!a || !b) continue;
+              best = Math.min(best, pointSegDistXZ(x, z, a[0], a[2], b[0], b[2]));
+            }
+          }
+          for (const lake of lakesForPark) {
+            const area = lake?.area;
+            if (area && typeof area === 'object' && String(area.type) === 'circle' && Array.isArray(area.center)) {
+              const d = Math.abs(Math.hypot(x - Number(area.center[0]), z - Number(area.center[1])) - (Number(area.radius) || 0));
+              if (Number.isFinite(d)) best = Math.min(best, d);
+              continue;
+            }
+            const pts = Array.isArray(area?.points) ? area.points : (Array.isArray(area) ? area : []);
+            for (let i = 0; i < pts.length; i++) {
+              const a = pts[i], b = pts[(i + 1) % pts.length];
+              const ax = Number(Array.isArray(a) ? a[0] : a?.x), az = Number(Array.isArray(a) ? a[2] : a?.z);
+              const bx = Number(Array.isArray(b) ? b[0] : b?.x), bz = Number(Array.isArray(b) ? b[2] : b?.z);
+              if (Number.isFinite(ax) && Number.isFinite(az) && Number.isFinite(bx) && Number.isFinite(bz)) {
+                best = Math.min(best, pointSegDistXZ(x, z, ax, az, bx, bz));
+              }
+            }
+          }
+          return best;
+        };
+        const wedgeSeed = mix(ctx.meta.seed ?? 0, 'park_wedges', stageId);
+        const wedgeRng = makeRng(wedgeSeed);
+        const wedgeCount = 3;
+        const wedgeAngles = [];
+        const baseA = wedgeRng() * Math.PI * 2;
+        for (let i = 0; i < wedgeCount; i++) wedgeAngles.push(baseA + (i * Math.PI * 2) / wedgeCount + (wedgeRng() - 0.5) * 0.25);
+        const wedgeAlignScore = (x, z) => {
+          const r = Math.hypot(x, z);
+          if (!(r > 1e-6)) return 0;
+          const a = Math.atan2(z, x);
+          let best = 0;
+          for (const wa of wedgeAngles) {
+            let d = Math.abs(a - wa);
+            d = Math.min(d, Math.PI * 2 - d);
+            if (d < Math.PI / 7) best = Math.max(best, 1 - d / (Math.PI / 7));
+          }
+          const radial = clamp(r / Math.max(1, half), 0, 1); // prefer reaching from edge inward
+          return best * (0.4 + 0.6 * radial);
+        };
+        const beltWedgeBonus = (x, z) => {
+          const dw = distToWaterCenter(x, z);
+          const belt = Number.isFinite(dw) ? clamp(1 - dw / Math.max(80, size * 0.12), 0, 1) : 0; // belts along rivers/lakes
+          const wedge = wedgeAlignScore(x, z); // 2–3 wedges edge→center
+          return belt * 220 + wedge * 140;
+        };
+
         if (autoDistricts && plate > 0 && shareBefore < parkRange[0]) {
           const cands = DS.map((d, idx) => ({ d, idx, t: d.type }))
             .filter(x => !PARK_TYPES.has(x.t) && rectAreaOf(x.d) > 0 && isSurplus(x.t))
@@ -897,7 +1196,11 @@ export function makeStage3() {
               const cx = (Number(r.minX) + Number(r.maxX)) / 2, cz = (Number(r.minZ) + Number(r.maxZ)) / 2;
               const slope = sampleTerrainSlope(cx, cz, baseY_, mods_);
               const fpl = inFloodplainAt(cx, cz, ctx?.masks?.terrain?.floodplains) ? 1 : 0;
-              return { ...x, s: fpl * 1000 + slope * 100 + (1 - (x.d.landValue ?? 0.5)) };
+              const adjPark = parkNeighborCount(x.idx);
+              const bw = beltWedgeBonus(cx, cz);
+              // R3.4 §6.8: prefer connected green framework (adjacent to existing parks/corridors),
+              // belts along rivers/lakes and 2–3 wedges from edge to center, plus barrier-aligned sites.
+              return { ...x, s: fpl * 1000 + bw + slope * 100 + adjPark * 80 + (1 - (x.d.landValue ?? 0.5)) };
             })
             .sort((a, b) => b.s - a.s);
           for (const { idx } of cands) {
@@ -908,9 +1211,10 @@ export function makeStage3() {
         }
         if (autoDistricts && plate > 0 && parkAreaNow() / plate > parkRange[1]) {
           const parkCount = () => DS.reduce((s, d) => s + (PARK_TYPES.has(d.type) ? 1 : 0), 0);
-          const demote = DS.map((d, idx) => ({ d, idx }))
+          const demote = DS.map((d, idx) => ({ d, idx, adjPark: parkNeighborCount(idx) }))
             .filter(x => PARK_TYPES.has(x.d.type))
-            .sort((a, b) => (b.d.landValue ?? 0) - (a.d.landValue ?? 0));
+            // Prefer demoting isolated/high-land-value parks to preserve connected green core.
+            .sort((a, b) => (a.adjPark - b.adjPark) || ((b.d.landValue ?? 0) - (a.d.landValue ?? 0)));
           for (const { idx } of demote) {
             if (parkAreaNow() <= parkRange[1] * plate) break;
             if (parkCount() <= 1) break; // не вымываем последний парк (§6.8 целостность каркаса)
@@ -921,13 +1225,346 @@ export function makeStage3() {
             ctx.report.diagnostics.push(warn('park_share_over_max_kept_diversity', stageId, 'park share above profile max kept to preserve type diversity', { after: +(parkAreaNow() / plate).toFixed(4), max: parkRange[1] }));
           }
         }
+        // Optional connectivity nudge: if multiple park districts exist, prefer connecting
+        // isolated parks to a larger green cluster by promoting a compatible bridge neighbor
+        // (without exceeding park share max). This strengthens §6.8 "связная система парков".
+        let parkBridged = 0;
+        if (autoDistricts && plate > 0) {
+          const parkIdxs = () => DS.map((d, i) => ({ d, i })).filter(x => PARK_TYPES.has(x.d.type));
+          const buildParkComps = () => {
+            const pset = new Set(parkIdxs().map(x => x.i));
+            const compId = new Map();
+            let cid = 0;
+            for (const i of pset) {
+              if (compId.has(i)) continue;
+              const q = [i]; compId.set(i, cid);
+              while (q.length) {
+                const cur = q.shift();
+                for (const j of (adj[cur] ?? [])) if (pset.has(j) && !compId.has(j)) { compId.set(j, cid); q.push(j); }
+              }
+              cid += 1;
+            }
+            return { pset, compId, count: cid };
+          };
+          const maxShare = parkRange[1];
+          for (let iter = 0; iter < 12; iter++) {
+            const { pset, compId, count: compCount } = buildParkComps();
+            if (pset.size < 2 || compCount <= 1) break;
+            const shareNow = plate > 0 ? parkAreaNow() / plate : 0;
+            // R3.4 §6.8: prefer direct bridges (a non-park cell adjacent to parks from >=2 components)
+            let bridged = false;
+            const candidates = [];
+            for (let j = 0; j < DS.length; j++) {
+              if (PARK_TYPES.has(DS[j]?.type)) continue;
+              if (rectAreaOf(DS[j]) <= 0) continue;
+              const touched = new Set();
+              for (const n of (adj[j] ?? [])) if (pset.has(n)) touched.add(compId.get(n));
+              if (touched.size < 2) continue; // must connect different green components
+              const r = DS[j]?.geometry?.rect;
+              const cx = r ? (Number(r.minX) + Number(r.maxX)) / 2 : 0;
+              const cz = r ? (Number(r.minZ) + Number(r.maxZ)) / 2 : 0;
+              candidates.push({ j, touched: touched.size, bw: beltWedgeBonus(cx, cz) });
+            }
+            candidates.sort((a, b) => (b.touched - a.touched) || (b.bw - a.bw));
+            for (const bc of candidates) {
+              const fromT = DS[bc.j].type;
+              // if not surplus, try to relocate its type to a compatible surplus cell
+              let relocated = null;
+              if (!isSurplus(fromT)) {
+                for (let rj = 0; rj < DS.length; rj++) {
+                  if (rj === bc.j || PARK_TYPES.has(DS[rj]?.type)) continue;
+                  if (!isSurplus(DS[rj].type)) continue;
+                  if (!canSwapToType(DS, adj, rj, fromT)) continue;
+                  const rFrom = DS[rj].type;
+                  if (swapDistrictType(DS, adj, rj, fromT)) {
+                    trackSwap(rFrom, fromT);
+                    relocated = { rj, from: rFrom, to: fromT };
+                    break;
+                  }
+                }
+                if (!relocated) continue;
+              }
+              let promotedType = null;
+              if (canSwapToType(DS, adj, bc.j, 'forest') && swapDistrictType(DS, adj, bc.j, 'forest')) promotedType = 'forest';
+              else if (canSwapToType(DS, adj, bc.j, 'park') && swapDistrictType(DS, adj, bc.j, 'park')) promotedType = 'park';
+              if (!promotedType) {
+                if (relocated && DS[relocated.rj]?.type === relocated.to) {
+                  if (swapDistrictType(DS, adj, relocated.rj, relocated.from)) trackSwap(relocated.to, relocated.from);
+                }
+                continue;
+              }
+              trackSwap(fromT, promotedType);
+              parkBridged += 1;
+              // if at/over max share, compensate by demoting a peripheral park in a larger component
+              if (plate > 0 && parkAreaNow() / plate > maxShare) {
+                const { pset: pset2, compId: compId2 } = buildParkComps();
+                const compSizes2 = new Map();
+                for (const [, cid] of compId2.entries()) compSizes2.set(cid, (compSizes2.get(cid) || 0) + 1);
+                const demoteCands = [...pset2].map(i => ({ i, adjPark: parkNeighborCount(i), lv: DS[i]?.landValue ?? 0, compSize: compSizes2.get(compId2.get(i)) || 0 }))
+                  .filter(x => x.compSize > 1 && x.i !== bc.j)
+                  .sort((a, b) => (b.compSize - a.compSize) || (a.adjPark - b.adjPark) || (b.lv - a.lv));
+                let demotedOne = false;
+                for (const dc of demoteCands) {
+                  if (!PARK_TYPES.has(DS[dc.i]?.type)) continue;
+                  const fromD = DS[dc.i].type;
+                  if (swapDistrictType(DS, adj, dc.i, 'residential')) { trackSwap(fromD, 'residential'); demoted += 1; demotedOne = true; break; }
+                }
+                if (!demotedOne) {
+                  if (swapDistrictType(DS, adj, bc.j, fromT)) { trackSwap(promotedType, fromT); parkBridged = Math.max(0, parkBridged - 1); }
+                  if (relocated && DS[relocated.rj]?.type === relocated.to) {
+                    if (swapDistrictType(DS, adj, relocated.rj, relocated.from)) trackSwap(relocated.to, relocated.from);
+                  }
+                  continue;
+                }
+              }
+              bridged = true;
+              break;
+            }
+            if (bridged) continue;
+            // Fallback growth step (allow net-neutral growth when share at/over max)
+            const compSizes = new Map();
+            for (const [idx, cid] of compId.entries()) compSizes.set(cid, (compSizes.get(cid) || 0) + 1);
+            let smallestCid = null, smallestSz = Infinity;
+            for (const [cid, sz] of compSizes.entries()) if (sz < smallestSz) { smallestSz = sz; smallestCid = cid; }
+            if (smallestCid == null) break;
+            const growCands = [];
+            for (let j = 0; j < DS.length; j++) {
+              if (PARK_TYPES.has(DS[j]?.type)) continue;
+              if (rectAreaOf(DS[j]) <= 0 || !isSurplus(DS[j].type)) continue;
+              let touchesSmall = false, touchesOther = false;
+              for (const n of (adj[j] ?? [])) if (pset.has(n)) {
+                if (compId.get(n) === smallestCid) touchesSmall = true; else touchesOther = true;
+              }
+              if (!touchesSmall) continue; // must extend a green component
+              const r = DS[j]?.geometry?.rect;
+              const cx = r ? (Number(r.minX) + Number(r.maxX)) / 2 : 0;
+              const cz = r ? (Number(r.minZ) + Number(r.maxZ)) / 2 : 0;
+              const bw = beltWedgeBonus(cx, cz);
+              growCands.push({ j, touchesOther, bw, adjPark: parkNeighborCount(j) });
+            }
+            growCands.sort((a, b) => (Number(b.touchesOther) - Number(a.touchesOther)) || (b.bw - a.bw) || (b.adjPark - a.adjPark));
+            let grew = false;
+            for (const gc of growCands) {
+              const fromT = DS[gc.j].type;
+              let promotedType = null;
+              if (canSwapToType(DS, adj, gc.j, 'forest') && swapDistrictType(DS, adj, gc.j, 'forest')) promotedType = 'forest';
+              else if (canSwapToType(DS, adj, gc.j, 'park') && swapDistrictType(DS, adj, gc.j, 'park')) promotedType = 'park';
+              if (!promotedType) continue;
+              trackSwap(fromT, promotedType);
+              parkBridged += 1;
+              if (plate > 0 && parkAreaNow() / plate > maxShare) {
+                const { pset: pset2, compId: compId2 } = buildParkComps();
+                const compSizes2 = new Map();
+                for (const [, cid] of compId2.entries()) compSizes2.set(cid, (compSizes2.get(cid) || 0) + 1);
+                const demoteCands = [...pset2].map(i => ({ i, adjPark: parkNeighborCount(i), lv: DS[i]?.landValue ?? 0, compSize: compSizes2.get(compId2.get(i)) || 0 }))
+                  .filter(x => x.compSize > 1 && x.i !== gc.j)
+                  .sort((a, b) => (b.compSize - a.compSize) || (a.adjPark - b.adjPark) || (b.lv - a.lv));
+                let demotedOne = false;
+                for (const dc of demoteCands) {
+                  if (!PARK_TYPES.has(DS[dc.i]?.type)) continue;
+                  const fromD = DS[dc.i].type;
+                  if (swapDistrictType(DS, adj, dc.i, 'residential')) { trackSwap(fromD, 'residential'); demoted += 1; demotedOne = true; break; }
+                }
+                if (!demotedOne) {
+                  if (swapDistrictType(DS, adj, gc.j, fromT)) { trackSwap(promotedType, fromT); parkBridged = Math.max(0, parkBridged - 1); }
+                  continue;
+                }
+              }
+              grew = true;
+              break;
+            }
+            if (!grew && shareNow >= maxShare) break; // cannot progress without exceeding max when net-neutral impossible
+            if (!grew) {
+              // Path-bridge fallback (§6.8): try to connect two park components via a short
+              // chain of convertible non-park cells (net-neutral when at/over max share).
+              const tryPathBridge = () => {
+                const { pset: psetP, compId: compIdP, count: compCountP } = buildParkComps();
+                if (psetP.size < 2 || compCountP <= 1) return false;
+                // multi-source BFS from all park cells through convertible non-park cells
+                const prev = new Map(); // idx -> prev idx or -1 for park source
+                const srcComp = new Map(); // idx -> component id of source
+                const q = [];
+                for (const i of psetP) { prev.set(i, -1); srcComp.set(i, compIdP.get(i)); q.push(i); }
+                const maxPath = 6;
+                while (q.length) {
+                  const cur = q.shift();
+                  const sc = srcComp.get(cur);
+                  for (const j of (adj[cur] ?? [])) {
+                    if (PARK_TYPES.has(DS[j]?.type)) {
+                      const jc = compIdP.get(j);
+                      if (jc !== sc) {
+                        // reconstruct path of non-park cells between components
+                        const path = [];
+                        let x = cur;
+                        while (x != null && prev.get(x) !== -1) { if (!PARK_TYPES.has(DS[x]?.type)) path.push(x); x = prev.get(x); }
+                        path.reverse();
+                        // path currently ends at cur (adj to target component j) and may include cur if non-park (unlikely)
+                        // ensure path connects sc-side to jc-side: include cur if convertible and adjacent chain; better rebuild from meeting edge
+                        // rebuild by tracing from cur back to park source excluding parks
+                        const chain = [];
+                        let t = cur;
+                        while (t != null && prev.get(t) !== -1) { if (!PARK_TYPES.has(DS[t]?.type)) chain.push(t); t = prev.get(t); }
+                        chain.reverse();
+                        // j is park in other component adjacent to cur; chain are cells to convert
+                        const chainUniq = [...new Set(chain)].filter(ix => !PARK_TYPES.has(DS[ix]?.type) && rectAreaOf(DS[ix]) > 0);
+                        if (!chainUniq.length || chainUniq.length > maxPath) continue;
+                        // attempt conversion of whole path, then compensate at end if over max share.
+                        // allow non-surplus cells via type relocation (preserve type counts/diversity).
+                        const converted = [];
+                        const relocations = [];
+                        const inPath = new Set(chainUniq);
+                        let ok = true;
+                        for (const ix of chainUniq) {
+                          if (PARK_TYPES.has(DS[ix]?.type)) continue;
+                          const fromT = DS[ix].type;
+                          let relocated = false;
+                          if (!isSurplus(fromT)) {
+                            // try to relocate type fromT to another surplus-compatible cell
+                            for (let rj = 0; rj < DS.length; rj++) {
+                              if (rj === ix || inPath.has(rj)) continue;
+                              if (PARK_TYPES.has(DS[rj]?.type)) continue;
+                              if (!isSurplus(DS[rj].type)) continue;
+                              if (!canSwapToType(DS, adj, rj, fromT)) continue;
+                              const rFrom = DS[rj].type;
+                              if (swapDistrictType(DS, adj, rj, fromT)) {
+                                trackSwap(rFrom, fromT);
+                                relocations.push({ rj, from: rFrom, to: fromT });
+                                relocated = true;
+                                break;
+                              }
+                            }
+                            if (!relocated) { ok = false; break; }
+                          }
+                          let promotedType = null;
+                          if (canSwapToType(DS, adj, ix, 'forest') && swapDistrictType(DS, adj, ix, 'forest')) promotedType = 'forest';
+                          else if (canSwapToType(DS, adj, ix, 'park') && swapDistrictType(DS, adj, ix, 'park')) promotedType = 'park';
+                          if (!promotedType) { ok = false; break; }
+                          trackSwap(fromT, promotedType);
+                          parkBridged += 1;
+                          converted.push({ ix, fromT, promotedType });
+                        }
+                        if (ok && plate > 0) {
+                          while (ok && parkAreaNow() / plate > maxShare) {
+                            const { pset: p2, compId: c2 } = buildParkComps();
+                            const cs2 = new Map(); for (const [, cid] of c2.entries()) cs2.set(cid, (cs2.get(cid) || 0) + 1);
+                            const demoteCands = [...p2].map(i => ({ i, adjPark: parkNeighborCount(i), lv: DS[i]?.landValue ?? 0, compSize: cs2.get(c2.get(i)) || 0 }))
+                              .filter(x => x.compSize > 1 && !converted.some(c => c.ix === x.i))
+                              .sort((a, b) => (b.compSize - a.compSize) || (a.adjPark - b.adjPark) || (b.lv - a.lv));
+                            let demotedOne = false;
+                            for (const dc of demoteCands) {
+                              if (!PARK_TYPES.has(DS[dc.i]?.type)) continue;
+                              const fromD = DS[dc.i].type;
+                              if (swapDistrictType(DS, adj, dc.i, 'residential')) { trackSwap(fromD, 'residential'); demoted += 1; demotedOne = true; break; }
+                            }
+                            if (!demotedOne) { ok = false; break; }
+                          }
+                        }
+                        if (ok) return true;
+                        // rollback converted path and relocations
+                        for (let k = converted.length - 1; k >= 0; k--) {
+                          const c = converted[k];
+                          if (PARK_TYPES.has(DS[c.ix]?.type)) {
+                            if (swapDistrictType(DS, adj, c.ix, c.fromT)) { trackSwap(c.promotedType, c.fromT); parkBridged = Math.max(0, parkBridged - 1); }
+                          }
+                        }
+                        for (let k = relocations.length - 1; k >= 0; k--) {
+                          const r = relocations[k];
+                          if (DS[r.rj]?.type === r.to) {
+                            if (swapDistrictType(DS, adj, r.rj, r.from)) trackSwap(r.to, r.from);
+                          }
+                        }
+                        continue;
+                      }
+                      continue;
+                    }
+                    if (prev.has(j)) continue;
+                    if (rectAreaOf(DS[j]) <= 0) continue;
+                    // limit search depth
+                    let depth = 0, t = cur;
+                    while (t != null && prev.get(t) !== -1) { depth++; t = prev.get(t); }
+                    if (depth + 1 > maxPath) continue;
+                    prev.set(j, cur); srcComp.set(j, sc); q.push(j);
+                  }
+                }
+                return false;
+              };
+              // try a few path bridges before giving up
+              for (let pb = 0; pb < 5; pb++) { if (buildParkComps().count <= 1) break; if (!tryPathBridge()) break; }
+              break;
+            }
+          }
+          // Repositioning fallback (§6.8): if still disconnected and share allows,
+          // promote a direct bridge and demote a peripheral park in a larger component
+          // (net-neutral where possible) to improve green connectivity within [min,max].
+          for (let iter = 0; iter < 6; iter++) {
+            const { pset, compId, count: compCount } = buildParkComps();
+            if (pset.size < 2 || compCount <= 1) break;
+            const shareNow = plate > 0 ? parkAreaNow() / plate : 0;
+            if (shareNow < parkRange[0]) break; // don't risk dropping below min
+            const bridgeCands = [];
+            for (let j = 0; j < DS.length; j++) {
+              if (PARK_TYPES.has(DS[j]?.type)) continue;
+              if (rectAreaOf(DS[j]) <= 0 || !isSurplus(DS[j].type)) continue;
+              const touched = new Set();
+              for (const n of (adj[j] ?? [])) if (pset.has(n)) touched.add(compId.get(n));
+              if (touched.size < 2) continue;
+              const r = DS[j]?.geometry?.rect;
+              const cx = r ? (Number(r.minX) + Number(r.maxX)) / 2 : 0;
+              const cz = r ? (Number(r.minZ) + Number(r.maxZ)) / 2 : 0;
+              bridgeCands.push({ j, touched: touched.size, bw: beltWedgeBonus(cx, cz) });
+            }
+            bridgeCands.sort((a, b) => (b.touched - a.touched) || (b.bw - a.bw));
+            if (!bridgeCands.length) break;
+            const compSizes = new Map();
+            for (const [, cid] of compId.entries()) compSizes.set(cid, (compSizes.get(cid) || 0) + 1);
+            const demoteCands = [...pset].map(i => ({ i, adjPark: parkNeighborCount(i), lv: DS[i]?.landValue ?? 0, compSize: compSizes.get(compId.get(i)) || 0 }))
+              .filter(x => x.compSize > 1)
+              .sort((a, b) => (b.compSize - a.compSize) || (a.adjPark - b.adjPark) || (b.lv - a.lv));
+            let repositioned = false;
+            for (const bc of bridgeCands) {
+              const fromB = DS[bc.j].type;
+              let promotedType = null;
+              if (canSwapToType(DS, adj, bc.j, 'forest') && swapDistrictType(DS, adj, bc.j, 'forest')) promotedType = 'forest';
+              else if (canSwapToType(DS, adj, bc.j, 'park') && swapDistrictType(DS, adj, bc.j, 'park')) promotedType = 'park';
+              if (!promotedType) continue;
+              trackSwap(fromB, promotedType);
+              parkBridged += 1;
+              // keep share in bounds (prefer net-neutral when over/near max)
+              if (plate > 0 && parkAreaNow() / plate > parkRange[1]) {
+                let demotedOne = false;
+                for (const dc of demoteCands) {
+                  if (dc.i === bc.j || !PARK_TYPES.has(DS[dc.i]?.type)) continue;
+                  const fromD = DS[dc.i].type;
+                  if (swapDistrictType(DS, adj, dc.i, 'residential')) { trackSwap(fromD, 'residential'); demoted += 1; demotedOne = true; break; }
+                }
+                if (!demotedOne) {
+                  if (swapDistrictType(DS, adj, bc.j, fromB)) { trackSwap(promotedType, fromB); parkBridged = Math.max(0, parkBridged - 1); }
+                  continue;
+                }
+              }
+              repositioned = true;
+              break;
+            }
+            if (!repositioned) break;
+          }
+        }
         const shareAfter = plate > 0 ? parkAreaNow() / plate : 0;
+        const parkCompCountFinal = (() => {
+          const pset = new Set(DS.map((d, i) => ({ d, i })).filter(x => PARK_TYPES.has(x.d.type)).map(x => x.i));
+          const seen = new Set(); let comps = 0;
+          for (const i of pset) {
+            if (seen.has(i)) continue; comps += 1;
+            const q = [i]; seen.add(i);
+            while (q.length) { const cur = q.shift(); for (const j of (adj[cur] ?? [])) if (pset.has(j) && !seen.has(j)) { seen.add(j); q.push(j); } }
+          }
+          return comps;
+        })();
         ctx.report.diagnostics.push(info('park_share', stageId, 'park/forest share enforced by section 6.8', {
-          before: +shareBefore.toFixed(4), after: +shareAfter.toFixed(4), min: parkRange[0], max: parkRange[1], promoted, demoted,
+          before: +shareBefore.toFixed(4), after: +shareAfter.toFixed(4), min: parkRange[0], max: parkRange[1], promoted, demoted, bridged: parkBridged, components: parkCompCountFinal,
         }));
         // --- §6.7: districtFrame — ось района (склон/река/артерия), локальная сетка под углом ---
         let frames = 0;
-        const frameReasons = { slope: 0, river: 0, arterial: 0 };
+        const frameReasons = { slope: 0, river: 0, railway: 0, arterial: 0 };
         for (const d of DS) {
           const rect = d?.geometry?.rect;
           if (!rect) continue;
@@ -944,11 +1581,16 @@ export function makeStage3() {
           }
           if (bestMag >= 0.06 && bestYaw != null) { yaw = bestYaw; reason = 'slope'; }
           else {
-            const riverSeg = minSegmentDist(cx, cz, ctx?.hydrology?.rivers ?? [], null);
-            const artSeg = minSegmentDist(cx, cz, ctx?.networks?.roads?.segments ?? [], new Set(['arterial', 'highway']));
-            const pickSeg = (list) => {
+            const riversList = ctx?.hydrology?.rivers ?? [];
+            const roadsList = ctx?.networks?.roads?.segments ?? [];
+            const railwaysList = ctx?.networks?.railways?.segments ?? ctx?.input?.cityforge?.networks?.railways?.segments ?? [];
+            const riverSeg = minSegmentDist(cx, cz, riversList, null);
+            const railSeg = minSegmentDist(cx, cz, railwaysList, null);
+            const artSeg = minSegmentDist(cx, cz, roadsList, new Set(['arterial', 'highway']));
+            const pickSeg = (list, filterClasses = null) => {
               let bestD = Infinity, bestYaw2 = null;
               for (const s of list) {
+                if (filterClasses && !filterClasses.has(s?.class)) continue;
                 const path = Array.isArray(s?.path) ? s.path : [];
                 for (let k = 0; k + 1 < path.length; k++) {
                   const dd = pointSegDistXZ(cx, cz, path[k][0], path[k][2], path[k + 1][0], path[k + 1][2]);
@@ -960,8 +1602,14 @@ export function makeStage3() {
               }
               return bestYaw2;
             };
-            if (Number.isFinite(riverSeg) && riverSeg <= 40) { yaw = pickSeg(ctx?.hydrology?.rivers ?? []); reason = 'river'; }
-            else if (Number.isFinite(artSeg) && artSeg <= 40) { yaw = pickSeg(ctx?.networks?.roads?.segments ?? []); reason = 'arterial'; }
+            // R3.4 §6.7: привязка границ/оси к естественным рубежам (река, ж/д, магистраль)
+            // выбираем ближайший рубеж в радиусе 40 м, чтобы ось/границы шли вдоль него.
+            const candidates = [];
+            if (Number.isFinite(riverSeg) && riverSeg <= 40) candidates.push({ dist: riverSeg, reason: 'river', yaw: pickSeg(riversList) });
+            if (Number.isFinite(railSeg) && railSeg <= 40) candidates.push({ dist: railSeg, reason: 'railway', yaw: pickSeg(railwaysList) });
+            if (Number.isFinite(artSeg) && artSeg <= 40) candidates.push({ dist: artSeg, reason: 'arterial', yaw: pickSeg(roadsList, new Set(['arterial', 'highway'])) });
+            candidates.sort((a, b) => a.dist - b.dist);
+            if (candidates.length && candidates[0].yaw != null) { yaw = candidates[0].yaw; reason = candidates[0].reason; }
           }
           if (yaw != null) {
             let wrapped = ((yaw + 180) % 360 + 360) % 360 - 180;
@@ -972,6 +1620,14 @@ export function makeStage3() {
           }
         }
         ctx.report.diagnostics.push(info('district_frames_assigned', stageId, 'district frames assigned by dominant axis', { count: frames, reasons: frameReasons }));
+        // R3.4 §6.6: explicit adjacency matrix artifact (neighbor pairs/types) for validation/reporting.
+        const adjEdges = [];
+        for (let i = 0; i < adj.length; i++) {
+          for (const j of adj[i]) if (j > i) {
+            adjEdges.push({ a: DS[i]?.id ?? String(i), b: DS[j]?.id ?? String(j), ta: DS[i]?.type ?? null, tb: DS[j]?.type ?? null });
+          }
+        }
+        ctx.report.diagnostics.push(info('adjacency_matrix', stageId, 'district adjacency matrix (section 6.6)', { count: adjEdges.length, edges: adjEdges }));
         ctx.report.diagnostics.push(info('adjacency_repairs', stageId, 'section 6.6 adjacency repairs applied', { count: repairs.length, kinds: repairs.reduce((m, r) => { m[r.kind] = (m[r.kind] || 0) + 1; return m; }, {}) }));
         // довести этажность/плотность по финальным типам — делается следующим (R3.3) блок.
       }
@@ -999,6 +1655,29 @@ export function makeStage3() {
         }));
       }
 
+      // R3.5 §7.3: рекурсивное деление блоков по давлению (D≥0.5 → 2, D≥0.75 → 4) и по B(D);
+      // под-блоки пересчитывают давление/L(x) по центру. Только auto-generated: declared сохраняют структуру/ids.
+      {
+        const before = (ctx.districts ?? []).length;
+        for (const d of (ctx.districts ?? [])) d.pressure = districtPressure(d, ctx, size);
+        if (autoDistricts) {
+          const policies = ctx?.meta?.policies ?? {};
+          ctx.districts = splitDistrictsByPressure(ctx.districts ?? [], { ctx, size, policies });
+          for (const d of (ctx.districts ?? [])) {
+            d.pressure = districtPressure(d, ctx, size);
+            if (d.landValue == null) {
+              const rect = d?.geometry?.rect;
+              const dcx = rect ? (Number(rect.minX) + Number(rect.maxX)) / 2 : 0;
+              const dcz = rect ? (Number(rect.minZ) + Number(rect.maxZ)) / 2 : 0;
+              d.landValue = +computeLandValue(ctx, dcx, dcz, size).landValue.toFixed(4);
+            }
+          }
+        }
+        if (ctx.districts.length !== before) {
+          ctx.report.diagnostics.push(info('blocks_split', stageId, 'districts split by building pressure (section 7.3)', { before, after: ctx.districts.length }));
+        }
+      }
+
       // R3.5 §7.3: приор D₀ (buildingDensity × meanFloors/16 + бонус ядра/артерии), целевое B(D).
       {
         const policies = ctx?.meta?.policies ?? {};
@@ -1021,6 +1700,36 @@ export function makeStage3() {
           mean: dN ? +(dSum / dN).toFixed(4) : null,
           bMin, bMax, gamma,
           bands,
+        }));
+
+        // R3.6 §7.3: метрика приёмки — ранговая корреляция Спирмена (D блока, 1/площадь блока) ≥ 0.6 на сериях seed.
+        // Блок = район после деления по давлению; меньшая площадь при большем D даёт положительную ρ.
+        const areas = [];
+        const pressures = [];
+        const byDistrict = [];
+        for (const d of (ctx.districts ?? [])) {
+          const area = rectAreaOf(d);
+          const p = Number(d?.pressure);
+          if (!(area > 0) || !Number.isFinite(p)) continue;
+          areas.push(area);
+          pressures.push(p);
+          byDistrict.push({
+            id: String(d?.id ?? ''),
+            type: String(d?.type ?? d?.profileId ?? ''),
+            pressure: +p.toFixed(4),
+            area: +area.toFixed(2),
+            invArea: +(1 / area).toFixed(8),
+          });
+        }
+        const invAreas = areas.map(a => 1 / a);
+        const rho = spearmanRank(pressures, invAreas);
+        const ok = rho == null ? null : rho >= 0.6;
+        ctx.report.diagnostics.push(info('pressure_area_spearman', stageId, 'Spearman rank correlation (D block, 1/area block) for R3.6 acceptance', {
+          rho,
+          target: 0.6,
+          ok,
+          n: byDistrict.length,
+          byDistrict,
         }));
       }
 

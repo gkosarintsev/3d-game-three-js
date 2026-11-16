@@ -1,7 +1,7 @@
 {
   "version": 1,
   "generator": {
-    "generatorVersion": "0.10.0",
+    "generatorVersion": "0.33.0",
     "seed": 21,
     "deterministic": true
   },
@@ -30,14 +30,14 @@
     {
       "id": "3_districts_parcels",
       "status": "ok",
-      "diagnostics": 11,
+      "diagnostics": 14,
       "repairs": 0,
       "drops": 0
     },
     {
       "id": "4_buildings_structures",
       "status": "ok",
-      "diagnostics": 2,
+      "diagnostics": 5,
       "repairs": 10,
       "drops": 0
     },
@@ -51,14 +51,14 @@
     {
       "id": "6_finalize_emit",
       "status": "ok",
-      "diagnostics": 13,
+      "diagnostics": 14,
       "repairs": 2,
       "drops": 0
     }
   ],
   "districts": [
     {
-      "id": "district_0_0",
+      "id": "district_0_0_0",
       "type": "office",
       "profileId": "office",
       "era": "suburb",
@@ -71,23 +71,37 @@
       ],
       "pressure": 0.375,
       "targetB": 168.7,
-      "frame": {
-        "cx": -480,
-        "cz": -480,
-        "yaw": 0,
-        "reason": "arterial"
-      },
-      "cells": 1,
-      "parcels": 121,
-      "reservedParcels": 6
+      "frame": null,
+      "cells": 0,
+      "parcels": 55,
+      "reservedParcels": 4
     },
     {
-      "id": "district_0_1",
+      "id": "district_0_0_1",
+      "type": "office",
+      "profileId": "office",
+      "era": "suburb",
+      "style": "era_suburb",
+      "landValue": 0.4375,
+      "buildingDensity": 0.8,
+      "heightRange": [
+        3,
+        12
+      ],
+      "pressure": 0.375,
+      "targetB": 168.7,
+      "frame": null,
+      "cells": 0,
+      "parcels": 55,
+      "reservedParcels": 0
+    },
+    {
+      "id": "district_0_1_0",
       "type": "industrial",
       "profileId": "industrial",
       "era": "suburb",
       "style": "era_suburb",
-      "landValue": 0.5356,
+      "landValue": 0.5125,
       "buildingDensity": 0.3,
       "heightRange": [
         1,
@@ -95,23 +109,37 @@
       ],
       "pressure": 0.0469,
       "targetB": 242.7,
-      "frame": {
-        "cx": -480,
-        "cz": -160,
-        "yaw": 0,
-        "reason": "arterial"
-      },
-      "cells": 1,
-      "parcels": 64,
+      "frame": null,
+      "cells": 0,
+      "parcels": 32,
       "reservedParcels": 0
     },
     {
-      "id": "district_0_2",
+      "id": "district_0_1_1",
+      "type": "industrial",
+      "profileId": "industrial",
+      "era": "suburb",
+      "style": "era_suburb",
+      "landValue": 0.5143,
+      "buildingDensity": 0.3,
+      "heightRange": [
+        1,
+        4
+      ],
+      "pressure": 0.0469,
+      "targetB": 242.7,
+      "frame": null,
+      "cells": 0,
+      "parcels": 32,
+      "reservedParcels": 0
+    },
+    {
+      "id": "district_0_2_0",
       "type": "parking",
       "profileId": "parking",
       "era": "suburb",
       "style": "era_suburb",
-      "landValue": 0.5356,
+      "landValue": 0.5125,
       "buildingDensity": 0.08,
       "heightRange": [
         1,
@@ -119,18 +147,32 @@
       ],
       "pressure": 0.0075,
       "targetB": 256,
-      "frame": {
-        "cx": -480,
-        "cz": 160,
-        "yaw": 0,
-        "reason": "arterial"
-      },
-      "cells": 1,
-      "parcels": 64,
+      "frame": null,
+      "cells": 0,
+      "parcels": 32,
       "reservedParcels": 0
     },
     {
-      "id": "district_0_3",
+      "id": "district_0_2_1",
+      "type": "parking",
+      "profileId": "parking",
+      "era": "modern",
+      "style": "era_modern",
+      "landValue": 0.5156,
+      "buildingDensity": 0.08,
+      "heightRange": [
+        1,
+        2
+      ],
+      "pressure": 0.0075,
+      "targetB": 256,
+      "frame": null,
+      "cells": 0,
+      "parcels": 32,
+      "reservedParcels": 0
+    },
+    {
+      "id": "district_0_3_0",
       "type": "campus",
       "profileId": "campus",
       "era": "suburb",
@@ -143,23 +185,37 @@
       ],
       "pressure": 0.07,
       "targetB": 236.2,
-      "frame": {
-        "cx": -480,
-        "cz": 480,
-        "yaw": 0,
-        "reason": "arterial"
-      },
-      "cells": 1,
-      "parcels": 49,
-      "reservedParcels": 8
+      "frame": null,
+      "cells": 0,
+      "parcels": 21,
+      "reservedParcels": 1
     },
     {
-      "id": "district_1_0",
+      "id": "district_0_3_1",
+      "type": "campus",
+      "profileId": "campus",
+      "era": "suburb",
+      "style": "era_suburb",
+      "landValue": 0.5125,
+      "buildingDensity": 0.28,
+      "heightRange": [
+        2,
+        6
+      ],
+      "pressure": 0.07,
+      "targetB": 236.2,
+      "frame": null,
+      "cells": 0,
+      "parcels": 21,
+      "reservedParcels": 3
+    },
+    {
+      "id": "district_1_0_0",
       "type": "suburb",
       "profileId": "suburb",
-      "era": "modern",
-      "style": "era_modern",
-      "landValue": 0.3185,
+      "era": "suburb",
+      "style": "era_suburb",
+      "landValue": 0.3164,
       "buildingDensity": 0.35,
       "heightRange": [
         1,
@@ -168,17 +224,36 @@
       "pressure": 0.0437,
       "targetB": 243.7,
       "frame": null,
-      "cells": 1,
-      "parcels": 121,
-      "reservedParcels": 20
+      "cells": 0,
+      "parcels": 66,
+      "reservedParcels": 0
     },
     {
-      "id": "district_1_1",
+      "id": "district_1_0_1",
+      "type": "suburb",
+      "profileId": "suburb",
+      "era": "modern",
+      "style": "era_modern",
+      "landValue": 0.3614,
+      "buildingDensity": 0.35,
+      "heightRange": [
+        1,
+        3
+      ],
+      "pressure": 0.0437,
+      "targetB": 243.7,
+      "frame": null,
+      "cells": 0,
+      "parcels": 66,
+      "reservedParcels": 21
+    },
+    {
+      "id": "district_1_1_0",
       "type": "forest",
       "profileId": "forest",
       "era": "modern",
       "style": "era_modern",
-      "landValue": 0.4575,
+      "landValue": 0.4592,
       "buildingDensity": 0.03,
       "heightRange": [
         0,
@@ -187,17 +262,36 @@
       "pressure": 0.0009,
       "targetB": 259.3,
       "frame": null,
-      "cells": 1,
-      "parcels": 36,
-      "reservedParcels": 5
+      "cells": 0,
+      "parcels": 18,
+      "reservedParcels": 1
     },
     {
-      "id": "district_1_2",
+      "id": "district_1_1_1",
+      "type": "forest",
+      "profileId": "forest",
+      "era": "modern",
+      "style": "era_modern",
+      "landValue": 0.4931,
+      "buildingDensity": 0.03,
+      "heightRange": [
+        0,
+        1
+      ],
+      "pressure": 0.1509,
+      "targetB": 215.9,
+      "frame": null,
+      "cells": 0,
+      "parcels": 18,
+      "reservedParcels": 4
+    },
+    {
+      "id": "district_1_2_0",
       "type": "sports",
       "profileId": "sports",
       "era": "modern",
       "style": "era_modern",
-      "landValue": 0.4694,
+      "landValue": 0.4714,
       "buildingDensity": 0.2,
       "heightRange": [
         1,
@@ -206,17 +300,36 @@
       "pressure": 0.025,
       "targetB": 249.5,
       "frame": null,
-      "cells": 1,
-      "parcels": 49,
-      "reservedParcels": 18
+      "cells": 0,
+      "parcels": 28,
+      "reservedParcels": 6
     },
     {
-      "id": "district_1_3",
-      "type": "suburb",
-      "profileId": "suburb",
+      "id": "district_1_2_1",
+      "type": "sports",
+      "profileId": "sports",
       "era": "modern",
       "style": "era_modern",
-      "landValue": 0.5511,
+      "landValue": 0.4993,
+      "buildingDensity": 0.2,
+      "heightRange": [
+        1,
+        3
+      ],
+      "pressure": 0.175,
+      "targetB": 210.4,
+      "frame": null,
+      "cells": 0,
+      "parcels": 28,
+      "reservedParcels": 11
+    },
+    {
+      "id": "district_1_3_0",
+      "type": "suburb",
+      "profileId": "suburb",
+      "era": "suburb",
+      "style": "era_suburb",
+      "landValue": 0.5332,
       "buildingDensity": 0.35,
       "heightRange": [
         1,
@@ -224,23 +337,37 @@
       ],
       "pressure": 0.0437,
       "targetB": 243.7,
-      "frame": {
-        "cx": -160,
-        "cz": 480,
-        "yaw": 90,
-        "reason": "arterial"
-      },
-      "cells": 1,
-      "parcels": 121,
+      "frame": null,
+      "cells": 0,
+      "parcels": 66,
       "reservedParcels": 0
     },
     {
-      "id": "district_2_0",
+      "id": "district_1_3_1",
+      "type": "suburb",
+      "profileId": "suburb",
+      "era": "modern",
+      "style": "era_modern",
+      "landValue": 0.5563,
+      "buildingDensity": 0.35,
+      "heightRange": [
+        1,
+        3
+      ],
+      "pressure": 0.0437,
+      "targetB": 243.7,
+      "frame": null,
+      "cells": 0,
+      "parcels": 66,
+      "reservedParcels": 0
+    },
+    {
+      "id": "district_2_0_0",
       "type": "residential",
       "profileId": "residential",
       "era": "xix",
       "style": "era_xix",
-      "landValue": 0.4164,
+      "landValue": 0.4308,
       "buildingDensity": 0.45,
       "heightRange": [
         2,
@@ -249,17 +376,74 @@
       "pressure": 0.1547,
       "targetB": 215.1,
       "frame": null,
-      "cells": 1,
-      "parcels": 225,
-      "reservedParcels": 89
+      "cells": 0,
+      "parcels": 105,
+      "reservedParcels": 76
     },
     {
-      "id": "district_2_1",
+      "id": "district_2_0_1",
+      "type": "residential",
+      "profileId": "residential",
+      "era": "xix",
+      "style": "era_xix",
+      "landValue": 0.3919,
+      "buildingDensity": 0.45,
+      "heightRange": [
+        2,
+        9
+      ],
+      "pressure": 0.1547,
+      "targetB": 215.1,
+      "frame": null,
+      "cells": 0,
+      "parcels": 105,
+      "reservedParcels": 6
+    },
+    {
+      "id": "district_2_1_0",
+      "type": "market",
+      "profileId": "market",
+      "era": "xix",
+      "style": "era_xix",
+      "landValue": 0.5897,
+      "buildingDensity": 0.63,
+      "heightRange": [
+        1,
+        3
+      ],
+      "pressure": 0.2288,
+      "targetB": 198.5,
+      "frame": null,
+      "cells": 0,
+      "parcels": 98,
+      "reservedParcels": 90
+    },
+    {
+      "id": "district_2_1_10",
       "type": "market",
       "profileId": "market",
       "era": "medieval",
       "style": "era_medieval",
-      "landValue": 0.6078,
+      "landValue": 0.5364,
+      "buildingDensity": 0.63,
+      "heightRange": [
+        1,
+        3
+      ],
+      "pressure": 0.2288,
+      "targetB": 198.5,
+      "frame": null,
+      "cells": 0,
+      "parcels": 49,
+      "reservedParcels": 4
+    },
+    {
+      "id": "district_2_1_110",
+      "type": "market",
+      "profileId": "market",
+      "era": "medieval",
+      "style": "era_medieval",
+      "landValue": 0.6438,
       "buildingDensity": 0.63,
       "heightRange": [
         1,
@@ -268,17 +452,36 @@
       "pressure": 0.4287,
       "targetB": 158.4,
       "frame": null,
-      "cells": 1,
-      "parcels": 196,
-      "reservedParcels": 112
+      "cells": 0,
+      "parcels": 21,
+      "reservedParcels": 13
     },
     {
-      "id": "district_2_2",
-      "type": "luxury",
-      "profileId": "luxury",
+      "id": "district_2_1_111",
+      "type": "market",
+      "profileId": "market",
       "era": "medieval",
       "style": "era_medieval",
-      "landValue": 0.5979,
+      "landValue": 0.594,
+      "buildingDensity": 0.63,
+      "heightRange": [
+        1,
+        3
+      ],
+      "pressure": 0.4287,
+      "targetB": 158.4,
+      "frame": null,
+      "cells": 0,
+      "parcels": 28,
+      "reservedParcels": 2
+    },
+    {
+      "id": "district_2_2_0",
+      "type": "luxury",
+      "profileId": "luxury",
+      "era": "xix",
+      "style": "era_xix",
+      "landValue": 0.5729,
       "buildingDensity": 0.5,
       "heightRange": [
         2,
@@ -292,17 +495,41 @@
         "yaw": 18.4,
         "reason": "river"
       },
-      "cells": 1,
-      "parcels": 121,
-      "reservedParcels": 78
+      "cells": 0,
+      "parcels": 55,
+      "reservedParcels": 34
     },
     {
-      "id": "district_2_3",
+      "id": "district_2_2_1",
+      "type": "luxury",
+      "profileId": "luxury",
+      "era": "medieval",
+      "style": "era_medieval",
+      "landValue": 0.5835,
+      "buildingDensity": 0.5,
+      "heightRange": [
+        2,
+        9
+      ],
+      "pressure": 0.3219,
+      "targetB": 179.2,
+      "frame": {
+        "cx": 160,
+        "cz": 160,
+        "yaw": 18.4,
+        "reason": "river"
+      },
+      "cells": 0,
+      "parcels": 66,
+      "reservedParcels": 42
+    },
+    {
+      "id": "district_2_3_0",
       "type": "campus",
       "profileId": "campus",
       "era": "modern",
       "style": "era_modern",
-      "landValue": 0.6396,
+      "landValue": 0.6198,
       "buildingDensity": 0.28,
       "heightRange": [
         2,
@@ -316,17 +543,41 @@
         "yaw": 45,
         "reason": "slope"
       },
-      "cells": 1,
-      "parcels": 49,
-      "reservedParcels": 33
+      "cells": 0,
+      "parcels": 21,
+      "reservedParcels": 9
     },
     {
-      "id": "district_3_0",
+      "id": "district_2_3_1",
+      "type": "campus",
+      "profileId": "campus",
+      "era": "industrial",
+      "style": "era_industrial",
+      "landValue": 0.6491,
+      "buildingDensity": 0.28,
+      "heightRange": [
+        2,
+        6
+      ],
+      "pressure": 0.07,
+      "targetB": 236.2,
+      "frame": {
+        "cx": 160,
+        "cz": 480,
+        "yaw": 45,
+        "reason": "slope"
+      },
+      "cells": 0,
+      "parcels": 21,
+      "reservedParcels": 21
+    },
+    {
+      "id": "district_3_0_0",
       "type": "old_town",
       "profileId": "old_town",
       "era": "xix",
       "style": "era_xix",
-      "landValue": 0.3087,
+      "landValue": 0.3299,
       "buildingDensity": 0.8,
       "heightRange": [
         2,
@@ -335,17 +586,55 @@
       "pressure": 0.175,
       "targetB": 210.4,
       "frame": null,
-      "cells": 1,
-      "parcels": 289,
-      "reservedParcels": 17
+      "cells": 0,
+      "parcels": 136,
+      "reservedParcels": 11
     },
     {
-      "id": "district_3_1",
+      "id": "district_3_0_1",
+      "type": "old_town",
+      "profileId": "old_town",
+      "era": "modern",
+      "style": "era_modern",
+      "landValue": 0.2829,
+      "buildingDensity": 0.8,
+      "heightRange": [
+        2,
+        5
+      ],
+      "pressure": 0.175,
+      "targetB": 210.4,
+      "frame": null,
+      "cells": 0,
+      "parcels": 136,
+      "reservedParcels": 2
+    },
+    {
+      "id": "district_3_1_0",
       "type": "slums",
       "profileId": "slums",
       "era": "xix",
       "style": "era_xix",
-      "landValue": 0.4276,
+      "landValue": 0.4714,
+      "buildingDensity": 0.55,
+      "heightRange": [
+        1,
+        4
+      ],
+      "pressure": 0.2359,
+      "targetB": 197,
+      "frame": null,
+      "cells": 0,
+      "parcels": 200,
+      "reservedParcels": 14
+    },
+    {
+      "id": "district_3_1_1",
+      "type": "slums",
+      "profileId": "slums",
+      "era": "xix",
+      "style": "era_xix",
+      "landValue": 0.3869,
       "buildingDensity": 0.55,
       "heightRange": [
         1,
@@ -354,17 +643,36 @@
       "pressure": 0.0859,
       "targetB": 231.9,
       "frame": null,
-      "cells": 1,
-      "parcels": 400,
-      "reservedParcels": 18
+      "cells": 0,
+      "parcels": 200,
+      "reservedParcels": 4
     },
     {
-      "id": "district_3_2",
+      "id": "district_3_2_0",
       "type": "residential",
       "profileId": "residential",
       "era": "xix",
       "style": "era_xix",
-      "landValue": 0.4218,
+      "landValue": 0.4822,
+      "buildingDensity": 0.45,
+      "heightRange": [
+        2,
+        9
+      ],
+      "pressure": 0.3047,
+      "targetB": 182.7,
+      "frame": null,
+      "cells": 0,
+      "parcels": 105,
+      "reservedParcels": 4
+    },
+    {
+      "id": "district_3_2_1",
+      "type": "residential",
+      "profileId": "residential",
+      "era": "xix",
+      "style": "era_xix",
+      "landValue": 0.3806,
       "buildingDensity": 0.45,
       "heightRange": [
         2,
@@ -373,17 +681,17 @@
       "pressure": 0.1547,
       "targetB": 215.1,
       "frame": null,
-      "cells": 1,
-      "parcels": 225,
-      "reservedParcels": 4
+      "cells": 0,
+      "parcels": 105,
+      "reservedParcels": 0
     },
     {
-      "id": "district_3_3",
+      "id": "district_3_3_000",
       "type": "commercial",
       "profileId": "commercial",
       "era": "xix",
       "style": "era_xix",
-      "landValue": 0.5764,
+      "landValue": 0.5892,
       "buildingDensity": 0.65,
       "heightRange": [
         3,
@@ -391,15 +699,143 @@
       ],
       "pressure": 0.4672,
       "targetB": 151.2,
-      "frame": {
-        "cx": 480,
-        "cz": 480,
-        "yaw": 180,
-        "reason": "arterial"
-      },
-      "cells": 1,
-      "parcels": 144,
-      "reservedParcels": 47
+      "frame": null,
+      "cells": 0,
+      "parcels": 12,
+      "reservedParcels": 0
+    },
+    {
+      "id": "district_3_3_001",
+      "type": "commercial",
+      "profileId": "commercial",
+      "era": "xix",
+      "style": "era_xix",
+      "landValue": 0.5674,
+      "buildingDensity": 0.65,
+      "heightRange": [
+        3,
+        20
+      ],
+      "pressure": 0.4672,
+      "targetB": 151.2,
+      "frame": null,
+      "cells": 0,
+      "parcels": 24,
+      "reservedParcels": 4
+    },
+    {
+      "id": "district_3_3_010",
+      "type": "commercial",
+      "profileId": "commercial",
+      "era": "modern",
+      "style": "era_modern",
+      "landValue": 0.604,
+      "buildingDensity": 0.65,
+      "heightRange": [
+        3,
+        20
+      ],
+      "pressure": 0.4672,
+      "targetB": 151.2,
+      "frame": null,
+      "cells": 0,
+      "parcels": 12,
+      "reservedParcels": 2
+    },
+    {
+      "id": "district_3_3_011",
+      "type": "commercial",
+      "profileId": "commercial",
+      "era": "xix",
+      "style": "era_xix",
+      "landValue": 0.5643,
+      "buildingDensity": 0.65,
+      "heightRange": [
+        3,
+        20
+      ],
+      "pressure": 0.4672,
+      "targetB": 151.2,
+      "frame": null,
+      "cells": 0,
+      "parcels": 24,
+      "reservedParcels": 12
+    },
+    {
+      "id": "district_3_3_100",
+      "type": "commercial",
+      "profileId": "commercial",
+      "era": "xix",
+      "style": "era_xix",
+      "landValue": 0.5174,
+      "buildingDensity": 0.65,
+      "heightRange": [
+        3,
+        20
+      ],
+      "pressure": 0.4672,
+      "targetB": 151.2,
+      "frame": null,
+      "cells": 0,
+      "parcels": 12,
+      "reservedParcels": 0
+    },
+    {
+      "id": "district_3_3_101",
+      "type": "commercial",
+      "profileId": "commercial",
+      "era": "modern",
+      "style": "era_modern",
+      "landValue": 0.4594,
+      "buildingDensity": 0.65,
+      "heightRange": [
+        3,
+        20
+      ],
+      "pressure": 0.4672,
+      "targetB": 151.2,
+      "frame": null,
+      "cells": 0,
+      "parcels": 24,
+      "reservedParcels": 5
+    },
+    {
+      "id": "district_3_3_110",
+      "type": "commercial",
+      "profileId": "commercial",
+      "era": "modern",
+      "style": "era_modern",
+      "landValue": 0.5225,
+      "buildingDensity": 0.65,
+      "heightRange": [
+        3,
+        20
+      ],
+      "pressure": 0.4672,
+      "targetB": 151.2,
+      "frame": null,
+      "cells": 0,
+      "parcels": 12,
+      "reservedParcels": 2
+    },
+    {
+      "id": "district_3_3_111",
+      "type": "commercial",
+      "profileId": "commercial",
+      "era": "modern",
+      "style": "era_modern",
+      "landValue": 0.4728,
+      "buildingDensity": 0.65,
+      "heightRange": [
+        3,
+        20
+      ],
+      "pressure": 0.4672,
+      "targetB": 151.2,
+      "frame": null,
+      "cells": 0,
+      "parcels": 24,
+      "reservedParcels": 16
     }
   ],
   "diagnostics": [
@@ -449,8 +885,8 @@
       "severity": "warn",
       "code": "chunk_buildings_heavy",
       "stage": "6_finalize_emit",
-      "message": "high building count in a single chunk (175)",
-      "maxBuildings": 175,
+      "message": "high building count in a single chunk (185)",
+      "maxBuildings": 185,
       "chunk": 640,
       "grid": 2
     },
@@ -458,10 +894,19 @@
       "severity": "warn",
       "code": "chunk_props_heavy",
       "stage": "6_finalize_emit",
-      "message": "high prop count in a single chunk (167)",
-      "maxProps": 167,
+      "message": "high prop count in a single chunk (156)",
+      "maxProps": 156,
       "chunk": 640,
       "grid": 2
+    },
+    {
+      "severity": "warn",
+      "code": "district_type_poor_road_access",
+      "stage": "6_finalize_emit",
+      "message": "road-needy type 'sports' has no parcels with road access < 140m",
+      "type": "sports",
+      "parcels": 56,
+      "unreserved": 39
     },
     {
       "severity": "warn",
@@ -1881,6 +2326,159 @@
     },
     {
       "severity": "info",
+      "code": "adjacency_matrix",
+      "stage": "3_districts_parcels",
+      "message": "district adjacency matrix (section 6.6)",
+      "count": 24,
+      "edges": [
+        {
+          "a": "district_0_0",
+          "b": "district_1_0",
+          "ta": "office",
+          "tb": "suburb"
+        },
+        {
+          "a": "district_0_0",
+          "b": "district_0_1",
+          "ta": "office",
+          "tb": "industrial"
+        },
+        {
+          "a": "district_1_0",
+          "b": "district_2_0",
+          "ta": "suburb",
+          "tb": "residential"
+        },
+        {
+          "a": "district_1_0",
+          "b": "district_1_1",
+          "ta": "suburb",
+          "tb": "forest"
+        },
+        {
+          "a": "district_2_0",
+          "b": "district_3_0",
+          "ta": "residential",
+          "tb": "old_town"
+        },
+        {
+          "a": "district_2_0",
+          "b": "district_2_1",
+          "ta": "residential",
+          "tb": "market"
+        },
+        {
+          "a": "district_3_0",
+          "b": "district_3_1",
+          "ta": "old_town",
+          "tb": "slums"
+        },
+        {
+          "a": "district_0_1",
+          "b": "district_1_1",
+          "ta": "industrial",
+          "tb": "forest"
+        },
+        {
+          "a": "district_0_1",
+          "b": "district_0_2",
+          "ta": "industrial",
+          "tb": "parking"
+        },
+        {
+          "a": "district_1_1",
+          "b": "district_2_1",
+          "ta": "forest",
+          "tb": "market"
+        },
+        {
+          "a": "district_1_1",
+          "b": "district_1_2",
+          "ta": "forest",
+          "tb": "sports"
+        },
+        {
+          "a": "district_2_1",
+          "b": "district_3_1",
+          "ta": "market",
+          "tb": "slums"
+        },
+        {
+          "a": "district_2_1",
+          "b": "district_2_2",
+          "ta": "market",
+          "tb": "luxury"
+        },
+        {
+          "a": "district_3_1",
+          "b": "district_3_2",
+          "ta": "slums",
+          "tb": "residential"
+        },
+        {
+          "a": "district_0_2",
+          "b": "district_1_2",
+          "ta": "parking",
+          "tb": "sports"
+        },
+        {
+          "a": "district_0_2",
+          "b": "district_0_3",
+          "ta": "parking",
+          "tb": "campus"
+        },
+        {
+          "a": "district_1_2",
+          "b": "district_2_2",
+          "ta": "sports",
+          "tb": "luxury"
+        },
+        {
+          "a": "district_1_2",
+          "b": "district_1_3",
+          "ta": "sports",
+          "tb": "suburb"
+        },
+        {
+          "a": "district_2_2",
+          "b": "district_3_2",
+          "ta": "luxury",
+          "tb": "residential"
+        },
+        {
+          "a": "district_2_2",
+          "b": "district_2_3",
+          "ta": "luxury",
+          "tb": "campus"
+        },
+        {
+          "a": "district_3_2",
+          "b": "district_3_3",
+          "ta": "residential",
+          "tb": "commercial"
+        },
+        {
+          "a": "district_0_3",
+          "b": "district_1_3",
+          "ta": "campus",
+          "tb": "suburb"
+        },
+        {
+          "a": "district_1_3",
+          "b": "district_2_3",
+          "ta": "suburb",
+          "tb": "campus"
+        },
+        {
+          "a": "district_2_3",
+          "b": "district_3_3",
+          "ta": "campus",
+          "tb": "commercial"
+        }
+      ]
+    },
+    {
+      "severity": "info",
       "code": "adjacency_repairs",
       "stage": "3_districts_parcels",
       "message": "section 6.6 adjacency repairs applied",
@@ -1889,14 +2487,23 @@
     },
     {
       "severity": "info",
+      "code": "blocks_split",
+      "stage": "3_districts_parcels",
+      "message": "districts split by building pressure (section 7.3)",
+      "before": 16,
+      "after": 40
+    },
+    {
+      "severity": "info",
       "code": "district_frames_assigned",
       "stage": "3_districts_parcels",
       "message": "district frames assigned by dominant axis",
-      "count": 8,
+      "count": 2,
       "reasons": {
         "slope": 1,
         "river": 1,
-        "arterial": 6
+        "railway": 0,
+        "arterial": 0
       }
     },
     {
@@ -1945,11 +2552,11 @@
       "stage": "3_districts_parcels",
       "message": "assigned eras to districts by access-cost isolines from 3 core(s)",
       "counts": {
-        "medieval": 2,
-        "xix": 5,
-        "industrial": 0,
-        "modern": 5,
-        "suburb": 4
+        "medieval": 4,
+        "xix": 13,
+        "industrial": 1,
+        "modern": 13,
+        "suburb": 9
       },
       "maxCost": 1213.01
     },
@@ -1980,22 +2587,22 @@
       "code": "parcels_generated",
       "stage": "3_districts_parcels",
       "message": "generated parcels",
-      "districts": 16,
-      "parcels": 2274,
+      "districts": 40,
+      "parcels": 2231,
       "byType": {
-        "office": 1,
-        "suburb": 2,
-        "residential": 2,
-        "old_town": 1,
-        "industrial": 1,
-        "forest": 1,
-        "market": 1,
-        "slums": 1,
-        "parking": 1,
-        "sports": 1,
-        "luxury": 1,
-        "campus": 2,
-        "commercial": 1
+        "office": 2,
+        "suburb": 4,
+        "residential": 4,
+        "old_town": 2,
+        "industrial": 2,
+        "forest": 2,
+        "market": 4,
+        "slums": 2,
+        "parking": 2,
+        "sports": 2,
+        "luxury": 2,
+        "campus": 4,
+        "commercial": 8
       }
     },
     {
@@ -2003,16 +2610,16 @@
       "code": "parcels_reserved_by_reason",
       "stage": "3_districts_parcels",
       "message": "parcel reservations by terrain/hydrology/infrastructure constraints",
-      "reserved": 455,
-      "total": 2274,
+      "reserved": 424,
+      "total": 2231,
       "byReason": {
-        "water": 303,
-        "road_corridor": 130,
-        "anchor": 2,
-        "reservation": 7,
+        "water": 297,
+        "road_corridor": 107,
+        "anchor": 3,
+        "reservation": 6,
         "crossing": 0,
         "steep_slope": 0,
-        "remote_access": 13
+        "remote_access": 11
       }
     },
     {
@@ -2025,22 +2632,316 @@
       "min": 0.05,
       "max": 0.08,
       "promoted": 0,
-      "demoted": 1
+      "demoted": 1,
+      "bridged": 0,
+      "components": 1
+    },
+    {
+      "severity": "info",
+      "code": "pressure_area_spearman",
+      "stage": "3_districts_parcels",
+      "message": "Spearman rank correlation (D block, 1/area block) for R3.6 acceptance",
+      "rho": 0.7092,
+      "target": 0.6,
+      "ok": true,
+      "n": 40,
+      "byDistrict": [
+        {
+          "id": "district_0_0_0",
+          "type": "office",
+          "pressure": 0.375,
+          "area": 51200,
+          "invArea": 0.00001953
+        },
+        {
+          "id": "district_0_0_1",
+          "type": "office",
+          "pressure": 0.375,
+          "area": 51200,
+          "invArea": 0.00001953
+        },
+        {
+          "id": "district_1_0_0",
+          "type": "suburb",
+          "pressure": 0.0437,
+          "area": 51200,
+          "invArea": 0.00001953
+        },
+        {
+          "id": "district_1_0_1",
+          "type": "suburb",
+          "pressure": 0.0437,
+          "area": 51200,
+          "invArea": 0.00001953
+        },
+        {
+          "id": "district_2_0_0",
+          "type": "residential",
+          "pressure": 0.1547,
+          "area": 51200,
+          "invArea": 0.00001953
+        },
+        {
+          "id": "district_2_0_1",
+          "type": "residential",
+          "pressure": 0.1547,
+          "area": 51200,
+          "invArea": 0.00001953
+        },
+        {
+          "id": "district_3_0_0",
+          "type": "old_town",
+          "pressure": 0.175,
+          "area": 51200,
+          "invArea": 0.00001953
+        },
+        {
+          "id": "district_3_0_1",
+          "type": "old_town",
+          "pressure": 0.175,
+          "area": 51200,
+          "invArea": 0.00001953
+        },
+        {
+          "id": "district_0_1_0",
+          "type": "industrial",
+          "pressure": 0.0469,
+          "area": 51200,
+          "invArea": 0.00001953
+        },
+        {
+          "id": "district_0_1_1",
+          "type": "industrial",
+          "pressure": 0.0469,
+          "area": 51200,
+          "invArea": 0.00001953
+        },
+        {
+          "id": "district_1_1_0",
+          "type": "forest",
+          "pressure": 0.0009,
+          "area": 51200,
+          "invArea": 0.00001953
+        },
+        {
+          "id": "district_1_1_1",
+          "type": "forest",
+          "pressure": 0.1509,
+          "area": 51200,
+          "invArea": 0.00001953
+        },
+        {
+          "id": "district_2_1_0",
+          "type": "market",
+          "pressure": 0.2288,
+          "area": 51200,
+          "invArea": 0.00001953
+        },
+        {
+          "id": "district_2_1_10",
+          "type": "market",
+          "pressure": 0.2288,
+          "area": 25600,
+          "invArea": 0.00003906
+        },
+        {
+          "id": "district_2_1_110",
+          "type": "market",
+          "pressure": 0.4287,
+          "area": 10240,
+          "invArea": 0.00009766
+        },
+        {
+          "id": "district_2_1_111",
+          "type": "market",
+          "pressure": 0.4287,
+          "area": 15360,
+          "invArea": 0.0000651
+        },
+        {
+          "id": "district_3_1_0",
+          "type": "slums",
+          "pressure": 0.2359,
+          "area": 51200,
+          "invArea": 0.00001953
+        },
+        {
+          "id": "district_3_1_1",
+          "type": "slums",
+          "pressure": 0.0859,
+          "area": 51200,
+          "invArea": 0.00001953
+        },
+        {
+          "id": "district_0_2_0",
+          "type": "parking",
+          "pressure": 0.0075,
+          "area": 51200,
+          "invArea": 0.00001953
+        },
+        {
+          "id": "district_0_2_1",
+          "type": "parking",
+          "pressure": 0.0075,
+          "area": 51200,
+          "invArea": 0.00001953
+        },
+        {
+          "id": "district_1_2_0",
+          "type": "sports",
+          "pressure": 0.025,
+          "area": 51200,
+          "invArea": 0.00001953
+        },
+        {
+          "id": "district_1_2_1",
+          "type": "sports",
+          "pressure": 0.175,
+          "area": 51200,
+          "invArea": 0.00001953
+        },
+        {
+          "id": "district_2_2_0",
+          "type": "luxury",
+          "pressure": 0.3219,
+          "area": 47786.67,
+          "invArea": 0.00002093
+        },
+        {
+          "id": "district_2_2_1",
+          "type": "luxury",
+          "pressure": 0.3219,
+          "area": 54613.33,
+          "invArea": 0.00001831
+        },
+        {
+          "id": "district_3_2_0",
+          "type": "residential",
+          "pressure": 0.3047,
+          "area": 51200,
+          "invArea": 0.00001953
+        },
+        {
+          "id": "district_3_2_1",
+          "type": "residential",
+          "pressure": 0.1547,
+          "area": 51200,
+          "invArea": 0.00001953
+        },
+        {
+          "id": "district_0_3_0",
+          "type": "campus",
+          "pressure": 0.07,
+          "area": 51200,
+          "invArea": 0.00001953
+        },
+        {
+          "id": "district_0_3_1",
+          "type": "campus",
+          "pressure": 0.07,
+          "area": 51200,
+          "invArea": 0.00001953
+        },
+        {
+          "id": "district_1_3_0",
+          "type": "suburb",
+          "pressure": 0.0437,
+          "area": 51200,
+          "invArea": 0.00001953
+        },
+        {
+          "id": "district_1_3_1",
+          "type": "suburb",
+          "pressure": 0.0437,
+          "area": 51200,
+          "invArea": 0.00001953
+        },
+        {
+          "id": "district_2_3_0",
+          "type": "campus",
+          "pressure": 0.07,
+          "area": 51200,
+          "invArea": 0.00001953
+        },
+        {
+          "id": "district_2_3_1",
+          "type": "campus",
+          "pressure": 0.07,
+          "area": 51200,
+          "invArea": 0.00001953
+        },
+        {
+          "id": "district_3_3_000",
+          "type": "commercial",
+          "pressure": 0.4672,
+          "area": 10240,
+          "invArea": 0.00009766
+        },
+        {
+          "id": "district_3_3_001",
+          "type": "commercial",
+          "pressure": 0.4672,
+          "area": 15360,
+          "invArea": 0.0000651
+        },
+        {
+          "id": "district_3_3_010",
+          "type": "commercial",
+          "pressure": 0.4672,
+          "area": 10240,
+          "invArea": 0.00009766
+        },
+        {
+          "id": "district_3_3_011",
+          "type": "commercial",
+          "pressure": 0.4672,
+          "area": 15360,
+          "invArea": 0.0000651
+        },
+        {
+          "id": "district_3_3_100",
+          "type": "commercial",
+          "pressure": 0.4672,
+          "area": 10240,
+          "invArea": 0.00009766
+        },
+        {
+          "id": "district_3_3_101",
+          "type": "commercial",
+          "pressure": 0.4672,
+          "area": 15360,
+          "invArea": 0.0000651
+        },
+        {
+          "id": "district_3_3_110",
+          "type": "commercial",
+          "pressure": 0.4672,
+          "area": 10240,
+          "invArea": 0.00009766
+        },
+        {
+          "id": "district_3_3_111",
+          "type": "commercial",
+          "pressure": 0.4672,
+          "area": 15360,
+          "invArea": 0.0000651
+        }
+      ]
     },
     {
       "severity": "info",
       "code": "pressure_field",
       "stage": "3_districts_parcels",
       "message": "building pressure prior D0 assigned to districts (section 7.3)",
-      "mean": 0.1544,
+      "mean": 0.2201,
       "bMin": 60,
       "bMax": 260,
       "gamma": 0.8,
       "bands": {
         "gt75": 0,
         "b50_75": 0,
-        "b25_50": 4,
-        "le25": 12
+        "b25_50": 15,
+        "le25": 25
       }
     },
     {
@@ -2054,9 +2955,31 @@
       "code": "buildings_generated",
       "stage": "4_buildings_structures",
       "message": "generated buildings from parcels",
-      "count": 402,
+      "count": 408,
       "budget": 420,
-      "skippedConflict": 502
+      "skippedConflict": 525
+    },
+    {
+      "severity": "info",
+      "code": "buildings_reassigned_to_split_districts",
+      "stage": "4_buildings_structures",
+      "message": "reassigned buildings to current districts by footprint center",
+      "count": 408
+    },
+    {
+      "severity": "info",
+      "code": "buildings_rebalanced_to_empty_split_districts",
+      "stage": "4_buildings_structures",
+      "message": "moved buildings to split child districts with parcels but no buildings",
+      "count": 1
+    },
+    {
+      "severity": "info",
+      "code": "post_buildings_local_connectors",
+      "stage": "4_buildings_structures",
+      "message": "added local connector segments after building placement (R3.5)",
+      "added": 1,
+      "candidates": 1
     },
     {
       "severity": "info",
@@ -2071,21 +2994,21 @@
       "message": "generated district props",
       "count": 360,
       "budget": 360,
-      "attempts": 1167,
+      "attempts": 1116,
       "byDistrictType": {
-        "residential": 63,
-        "market": 34,
-        "campus": 21,
-        "slums": 61,
-        "forest": 8,
-        "suburb": 38,
-        "commercial": 24,
-        "old_town": 46,
-        "luxury": 19,
-        "parking": 10,
+        "slums": 58,
+        "market": 28,
+        "old_town": 47,
+        "commercial": 28,
         "office": 18,
-        "industrial": 8,
-        "sports": 8
+        "parking": 9,
+        "residential": 60,
+        "suburb": 45,
+        "luxury": 21,
+        "campus": 15,
+        "industrial": 10,
+        "sports": 7,
+        "forest": 12
       }
     },
     {
@@ -2129,16 +3052,16 @@
         "grid": 2,
         "total": 4
       },
-      "roadNodes": 126,
-      "roadSegments": 155,
+      "roadNodes": 128,
+      "roadSegments": 157,
       "roadComponents": 1,
-      "roadGraphNodes": 126,
+      "roadGraphNodes": 128,
       "interchanges": {
         "segments": 8,
         "junctions": 4,
         "overpasses": 1
       },
-      "districts": 16,
+      "districts": 40,
       "districtTypes": [
         "campus",
         "commercial",
@@ -2154,19 +3077,19 @@
         "sports",
         "suburb"
       ],
-      "parcels": 2274,
-      "reservedParcels": 455,
+      "parcels": 2231,
+      "reservedParcels": 424,
       "parcelAccess": {
-        "near": 1142,
-        "mid": 836,
-        "far": 296
+        "near": 1105,
+        "mid": 826,
+        "far": 300
       },
       "roadAccessByType": {
         "industrial": {
           "parcels": 64,
           "unreserved": 64,
-          "good": 35,
-          "mid": 29,
+          "good": 31,
+          "mid": 33,
           "far": 0,
           "reserved": 0,
           "goodOrMid": 64,
@@ -2174,104 +3097,104 @@
         },
         "luxury": {
           "parcels": 121,
-          "unreserved": 43,
-          "good": 15,
+          "unreserved": 45,
+          "good": 17,
           "mid": 7,
           "far": 21,
-          "reserved": 78,
-          "goodOrMid": 22,
-          "accessibleRatio": 0.512
+          "reserved": 76,
+          "goodOrMid": 24,
+          "accessibleRatio": 0.533
         },
         "office": {
-          "parcels": 121,
-          "unreserved": 115,
-          "good": 94,
-          "mid": 21,
+          "parcels": 110,
+          "unreserved": 106,
+          "good": 86,
+          "mid": 20,
           "far": 0,
-          "reserved": 6,
-          "goodOrMid": 115,
+          "reserved": 4,
+          "goodOrMid": 106,
           "accessibleRatio": 1
         },
         "parking": {
           "parcels": 64,
           "unreserved": 64,
           "good": 16,
-          "mid": 36,
-          "far": 12,
+          "mid": 32,
+          "far": 16,
           "reserved": 0,
-          "goodOrMid": 52,
-          "accessibleRatio": 0.813
+          "goodOrMid": 48,
+          "accessibleRatio": 0.75
         },
         "residential": {
-          "parcels": 450,
-          "unreserved": 357,
-          "good": 255,
-          "mid": 100,
+          "parcels": 420,
+          "unreserved": 334,
+          "good": 233,
+          "mid": 99,
           "far": 2,
-          "reserved": 93,
-          "goodOrMid": 355,
+          "reserved": 86,
+          "goodOrMid": 332,
           "accessibleRatio": 0.994
         },
         "slums": {
           "parcels": 400,
           "unreserved": 382,
-          "good": 165,
-          "mid": 204,
-          "far": 13,
+          "good": 183,
+          "mid": 199,
+          "far": 0,
           "reserved": 18,
-          "goodOrMid": 369,
-          "accessibleRatio": 0.966
+          "goodOrMid": 382,
+          "accessibleRatio": 1
         },
         "sports": {
-          "parcels": 49,
-          "unreserved": 31,
+          "parcels": 56,
+          "unreserved": 39,
           "good": 0,
-          "mid": 3,
-          "far": 28,
-          "reserved": 18,
-          "goodOrMid": 3,
-          "accessibleRatio": 0.097
+          "mid": 0,
+          "far": 39,
+          "reserved": 17,
+          "goodOrMid": 0,
+          "accessibleRatio": 0
         }
       },
-      "buildings": 402,
+      "buildings": 408,
       "buildingsByDistrictType": {
-        "residential": 104,
-        "market": 21,
-        "old_town": 39,
-        "commercial": 39,
-        "office": 45,
-        "slums": 77,
-        "suburb": 29,
-        "industrial": 14,
+        "residential": 102,
+        "slums": 67,
+        "old_town": 44,
+        "market": 28,
+        "commercial": 41,
+        "office": 37,
+        "luxury": 19,
+        "suburb": 36,
+        "industrial": 15,
         "parking": 7,
-        "luxury": 14,
-        "campus": 11,
-        "forest": 1,
-        "sports": 1
+        "campus": 8,
+        "forest": 2,
+        "sports": 2
       },
       "lights": 8,
       "props": 360,
       "propsByDistrictType": {
-        "residential": 63,
-        "market": 34,
-        "campus": 21,
-        "slums": 61,
-        "forest": 8,
-        "suburb": 38,
-        "commercial": 24,
-        "old_town": 46,
-        "luxury": 19,
-        "parking": 10,
+        "slums": 58,
+        "market": 28,
+        "old_town": 47,
+        "commercial": 28,
         "office": 18,
-        "industrial": 8,
-        "sports": 8
+        "parking": 9,
+        "residential": 60,
+        "suburb": 45,
+        "luxury": 21,
+        "campus": 15,
+        "industrial": 10,
+        "sports": 7,
+        "forest": 12
       },
       "chunkLoad": {
         "nonEmptyChunks": 4,
-        "maxBuildings": 175,
-        "maxProps": 167,
-        "maxLights": 2,
-        "avgBuildings": 100.5,
+        "maxBuildings": 185,
+        "maxProps": 156,
+        "maxLights": 3,
+        "avgBuildings": 102,
         "avgProps": 90
       }
     },
@@ -2354,61 +3277,61 @@
       "stage": "2_transport_access",
       "code": "access_roads_added",
       "id": "tr_acc_1_1,tr_acc_1_1_2",
-      "target": "district_3_2_p164"
+      "target": "district_3_2_1_p76"
     },
     {
       "stage": "2_transport_access",
       "code": "access_roads_added",
       "id": "tr_acc_1_3,tr_acc_1_3_2",
-      "target": "district_3_2_p88"
+      "target": "district_3_2_1_p35"
     },
     {
       "stage": "2_transport_access",
       "code": "access_roads_added",
       "id": "tr_acc_1_5,tr_acc_1_5_2",
-      "target": "district_2_0_p4"
+      "target": "district_2_0_0_p4"
     },
     {
       "stage": "2_transport_access",
       "code": "access_roads_added",
       "id": "tr_acc_1_7,tr_acc_1_7_2",
-      "target": "district_3_2_p132"
+      "target": "district_2_0_1_p7"
     },
     {
       "stage": "2_transport_access",
       "code": "access_roads_added",
       "id": "tr_acc_1_9,tr_acc_1_9_2",
-      "target": "district_2_0_p15"
+      "target": "district_3_2_1_p60"
     },
     {
       "stage": "2_transport_access",
       "code": "access_roads_added",
       "id": "tr_acc_1_11,tr_acc_1_11_2",
-      "target": "district_0_1_p16"
+      "target": "district_0_1_1_p12"
     },
     {
       "stage": "2_transport_access",
       "code": "access_roads_added",
       "id": "tr_acc_1_13,tr_acc_1_13_2",
-      "target": "district_0_1_p32"
+      "target": "district_0_1_1_p20"
     },
     {
       "stage": "2_transport_access",
       "code": "access_roads_added",
       "id": "tr_acc_1_15,tr_acc_1_15_2",
-      "target": "district_0_1_p48"
+      "target": "district_0_1_1_p28"
     },
     {
       "stage": "2_transport_access",
       "code": "access_roads_added",
       "id": "tr_acc_1_17",
-      "target": "district_0_1_p64"
+      "target": "district_0_2_1_p4"
     },
     {
       "stage": "2_transport_access",
       "code": "access_roads_added",
-      "id": "tr_acc_1_18",
-      "target": "district_0_2_p24"
+      "id": "tr_acc_1_18,tr_acc_1_18_2",
+      "target": "district_3_1_1_p80"
     },
     {
       "stage": "6_finalize_emit",
@@ -2432,7 +3355,7 @@
   "drops": [],
   "summary": {
     "errors": 0,
-    "warnings": 9,
+    "warnings": 10,
     "repairs": 12,
     "drops": 0
   },
@@ -2440,12 +3363,12 @@
     "version": 1,
     "partial": true,
     "counts": {
-      "roads": 155,
-      "roadNodes": 126,
-      "districts": 16,
-      "parcels": 2274,
-      "reservedParcels": 455,
-      "buildings": 402,
+      "roads": 157,
+      "roadNodes": 128,
+      "districts": 40,
+      "parcels": 2231,
+      "reservedParcels": 424,
+      "buildings": 408,
       "enterableBuildings": 0,
       "props": 360,
       "lights": 8,
@@ -2453,24 +3376,24 @@
       "lakes": 0
     },
     "graph": {
-      "nodes": 126,
-      "edges": 155,
+      "nodes": 128,
+      "edges": 157,
       "components": 1,
-      "largestComponent": 126,
-      "deadEnds": 35,
-      "deadEndRatio": 0.277778,
-      "avgDegree": 2.460317,
-      "gamma": 0.416667
+      "largestComponent": 128,
+      "deadEnds": 37,
+      "deadEndRatio": 0.289063,
+      "avgDegree": 2.453125,
+      "gamma": 0.415344
     },
     "roads": {
-      "totalLength": 13220.526,
+      "totalLength": 13336.146,
       "lengthByType": {
         "arterial": 2080,
-        "local": 11140.526
+        "local": 11256.146
       },
       "shareByType": {
-        "arterial": 0.157331,
-        "local": 0.842669
+        "arterial": 0.155967,
+        "local": 0.844033
       },
       "maxSlope": 0.297561,
       "slopeByClass": {
@@ -2481,7 +3404,7 @@
           "overAbsolute": 0
         },
         "local": {
-          "count": 152,
+          "count": 154,
           "maxSlope": 0.1,
           "overPolicy": 0,
           "overAbsolute": 0
@@ -2494,7 +3417,7 @@
         "local": 12
       },
       "classPolicyViolations": 1,
-      "classPolicyOk": 154,
+      "classPolicyOk": 156,
       "overAbsolute": 0,
       "version": 2
     },
@@ -2511,24 +3434,48 @@
       "shareByType": {}
     },
     "parcels": {
-      "reservedShare": 0.200088,
+      "reservedShare": 0.190049,
       "byDistrictCount": {
-        "district_0_0": 121,
-        "district_1_0": 121,
-        "district_2_0": 225,
-        "district_3_0": 289,
-        "district_0_1": 64,
-        "district_1_1": 36,
-        "district_2_1": 196,
-        "district_3_1": 400,
-        "district_0_2": 64,
-        "district_1_2": 49,
-        "district_2_2": 121,
-        "district_3_2": 225,
-        "district_0_3": 49,
-        "district_1_3": 121,
-        "district_2_3": 49,
-        "district_3_3": 144
+        "district_0_0_0": 55,
+        "district_0_0_1": 55,
+        "district_1_0_0": 66,
+        "district_1_0_1": 66,
+        "district_2_0_0": 105,
+        "district_2_0_1": 105,
+        "district_3_0_0": 136,
+        "district_3_0_1": 136,
+        "district_0_1_0": 32,
+        "district_0_1_1": 32,
+        "district_1_1_0": 18,
+        "district_1_1_1": 18,
+        "district_2_1_0": 98,
+        "district_2_1_10": 49,
+        "district_2_1_110": 21,
+        "district_2_1_111": 28,
+        "district_3_1_0": 200,
+        "district_3_1_1": 200,
+        "district_0_2_0": 32,
+        "district_0_2_1": 32,
+        "district_1_2_0": 28,
+        "district_1_2_1": 28,
+        "district_2_2_0": 55,
+        "district_2_2_1": 66,
+        "district_3_2_0": 105,
+        "district_3_2_1": 105,
+        "district_0_3_0": 21,
+        "district_0_3_1": 21,
+        "district_1_3_0": 66,
+        "district_1_3_1": 66,
+        "district_2_3_0": 21,
+        "district_2_3_1": 21,
+        "district_3_3_000": 12,
+        "district_3_3_001": 24,
+        "district_3_3_010": 12,
+        "district_3_3_011": 24,
+        "district_3_3_100": 12,
+        "district_3_3_101": 24,
+        "district_3_3_110": 12,
+        "district_3_3_111": 24
       }
     },
     "terrain": {
@@ -2567,13 +3514,13 @@
       "dividesPlate": true
     },
     "determinism": {
-      "generatorVersion": "0.10.0",
+      "generatorVersion": "0.33.0",
       "seed": 21,
       "deterministic": true
     },
     "report": {
       "diagnosticsErrors": 0,
-      "diagnosticsWarnings": 9,
+      "diagnosticsWarnings": 10,
       "repairs": 12,
       "drops": 0
     }
