@@ -913,6 +913,28 @@ test('citygen stage 2: mergeStraightCollinearPoints preserves slope-bounded XZ-c
   assert.equal(out3.length, 3);
 });
 
+test('citygen cost-path: A* pathfinds around rivers deterministically (R2.2 §7.2)', async () => {
+  const { findAxisCostPath } = await import('./citygen/cost-path.mjs');
+  // Synthetic sampler: flat ground everywhere.
+  const sampler = { heightAt: () => 0, groundY: 0 };
+  const river = [{ id: 'r', path: [[0, 0, -40], [0, 0, 40]], width: 12, depth: 2 }];
+  const from = { x: -80, z: 0 }, to = { x: 80, z: 0 };
+  const r1 = findAxisCostPath({ from, to, sampler, rivers: river, gridStep: 12, searchMargin: 192, slopeK: 6 });
+  assert.ok(Array.isArray(r1.points) && r1.points.length >= 2);
+  assert.ok(!r1.failure, `A* must find a feasible path (failure=${r1.failure})`);
+  // Determinism
+  const r2 = findAxisCostPath({ from, to, sampler, rivers: river, gridStep: 12, searchMargin: 192, slopeK: 6 });
+  assert.deepEqual(r2.points, r1.points);
+  assert.equal(r2.cost, r1.cost);
+  // Path must not enter the river corridor: for points within river's z range, |x| must be outside half-width margin.
+  const half = (river[0].width || 12) * 0.5 + 8;
+  for (const [x, , z] of r1.points) {
+    if (Math.abs(z) <= 40 + 0.01) {
+      assert.ok(Math.abs(x) >= half - 0.001, `in-corridor point x=${x} z=${z} must avoid river corridor half-width ${half}`);
+    }
+  }
+});
+
 test('citygen stage 2: roadSegmentCost is deterministic, monotone-favorable, and river-penalized (R2.2 §7.2)', async () => {
   const { roadSegmentCost } = await import('./citygen/pipeline/stage-2-transport.mjs');
   // Flat straight path vs steep path: flat wins.

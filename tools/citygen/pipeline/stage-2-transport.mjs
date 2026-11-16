@@ -7,6 +7,7 @@ import { warn, info } from '../diagnostics.mjs';
 import { makeRng, mix } from '../rng.mjs';
 import { createSpatialIndex } from '../spatial.mjs';
 import { reliefOf } from '../../../src/relief.js';
+import { findAxisCostPath } from '../cost-path.mjs';
 
 const clamp = (v, lo, hi) => Math.max(lo, Math.min(hi, v));
 const lerp = (a, b, t) => a + (b - a) * t;
@@ -3467,6 +3468,25 @@ export function makeStage2() {
             if (badRiver) continue;
             scored.push({ path: p, index: ci, cost: roadSegmentCost(p, rivers).cost });
           }
+          // R2.2/§7.2: add a true cost-path Dijkstra candidate (A* over 12m grid) for fallback tiers.
+          try {
+            const sp = findAxisCostPath({ from: { x: a.x, z: a.z }, to: { x: b.x, z: b.z }, sampler, rivers, gridStep: 12, searchMargin: 192, slopeK: 6 });
+            if (sp && Array.isArray(sp.points) && sp.points.length >= 2) {
+              let p = sp.points.map(pt => [Math.round(pt[0] * 100) / 100, Math.round(pt[1] * 100) / 100, Math.round(pt[2] * 100) / 100]);
+              p = enforceSlope(p, 0.25, stageId, idBase, null) || p;
+              p[0] = [a.x, a.y, a.z];
+              p[p.length - 1] = [b.x, b.y, b.z];
+              if (isAxisAlignedPath(p) && pathMaxSlope(p) <= 0.3005) {
+                let okRiver = true;
+                for (let j = 0; j + 1 < p.length; j++) {
+                  if (segCrossesRiver(p[j][0], p[j][2], p[j+1][0], p[j+1][2], rivers)) { okRiver = false; break; }
+                }
+                if (okRiver) {
+                  scored.push({ path: p, index: candidates.length, cost: sp.cost ?? roadSegmentCost(p, rivers).cost });
+                }
+              }
+            }
+          } catch { /* fall back to existing L-candidates only */ }
           scored.sort((u, v) => (u.cost - v.cost) || (u.index - v.index));
           path = scored.length ? scored[0].path : null;
           if (path) {
