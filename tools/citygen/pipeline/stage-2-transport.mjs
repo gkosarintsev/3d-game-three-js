@@ -404,6 +404,39 @@ function segCrossesRiver(ax, az, bx, bz, rivers) {
 }
 
 /**
+ * R2.2/§7.2: merge consecutive axis-aligned (horizontal-run) collinear points
+ * when every kept sub-segment is at least `mergeMin` long. Deterministic, stable for
+ * axis-aligned IR paths. Removes redundant interior points while preserving endpoints,
+ * slope magnitudes (bounded by class/absolute limits), and XZ-shape.
+ * Exported for testing.
+ */
+export function mergeCollinearAxisAlignedPoints(pts, mergeMin = 12) {
+  if (!Array.isArray(pts) || pts.length < 3) return pts;
+  const eps = 1e-6;
+  const result = [pts[0]];
+  for (let i = 1; i < pts.length - 1; ) {
+    const prev = result[result.length - 1];
+    const cur = pts[i];
+    const next = pts[i + 1];
+    const pAxis = prev[0] === cur[0] ? 'x' : (prev[2] === cur[2] ? 'z' : null);
+    const nAxis = cur[0] === next[0] ? 'x' : (cur[2] === next[2] ? 'z' : null);
+    const dPrevCur = Math.hypot(cur[0] - prev[0], cur[2] - prev[2]);
+    const dCurNext = Math.hypot(next[0] - cur[0], next[2] - cur[2]);
+    // Merge rule: same axis for both sub-segments (axis-aligned through `cur`) and at least one
+    // sub-segment shorter than mergeMin. Skip `cur` (absorbed into `prev -> next`).
+    if (pAxis && nAxis && pAxis === nAxis && (dPrevCur < mergeMin || dCurNext < mergeMin)) {
+      // keep `next` for the next iteration; do not push `cur`
+      i++;
+      continue;
+    }
+    result.push(cur);
+    i++;
+  }
+  result.push(pts[pts.length - 1]);
+  return result;
+}
+
+/**
  * R2.2/§7.2: Road segment cost evaluation for cost-path selection of connectors.
  * Deterministic cost = length × (1 + k·mean(slope²)) + water/buffer penalties.
  * Lower cost => preferred connector. Used to rank L-shaped candidate connectors in the repair pass.

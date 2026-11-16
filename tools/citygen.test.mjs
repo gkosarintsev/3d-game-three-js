@@ -877,6 +877,23 @@ test('citygen stage 2 helpers: axis-aligned terrain path rejects diagonal and ri
   assert.equal(isValidAxisAlignedTerrainPath(nearRiver, river), false, 'path crossing/near river corridor must be rejected');
 });
 
+test('citygen stage 2: postprocess mergeCollinearAxisAlignedPoints deterministically collapses collinear runs (R2.2 §7.2)', async () => {
+  const { mergeCollinearAxisAlignedPoints } = await import('./citygen/pipeline/stage-2-transport.mjs');
+  // Straight horizontal run: collapses to endpoints, slopes remain zero (flat) — safe for IR.
+  const straight = [];
+  for (let x = 0; x <= 80; x += 4) straight.push([x, 0, 0]);
+  const out = mergeCollinearAxisAlignedPoints(straight, 12);
+  assert.equal(out.length, 2);
+  assert.equal(out[0][0], 0);
+  assert.equal(out[out.length - 1][0], 80);
+  // Non-collinear points are preserved (z varies).
+  const zigzag = [[0,0,0],[4,0,4],[8,0,0],[12,0,4],[16,0,0]];
+  const out2 = mergeCollinearAxisAlignedPoints(zigzag, 12);
+  assert.equal(out2.length, zigzag.length);
+  // Deterministic
+  assert.deepEqual(mergeCollinearAxisAlignedPoints(straight, 12), out);
+});
+
 test('citygen stage 2: roadSegmentCost is deterministic, monotone-favorable, and river-penalized (R2.2 §7.2)', async () => {
   const { roadSegmentCost } = await import('./citygen/pipeline/stage-2-transport.mjs');
   // Flat straight path vs steep path: flat wins.
