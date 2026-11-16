@@ -309,7 +309,55 @@ export function evaluateRules(ctx) {
   const diagErrors = (report.diagnostics ?? []).filter(d => d?.severity === 'error').length;
   const diagWarns = (report.diagnostics ?? []).filter(d => d?.severity === 'warn').length;
 
-  // R1/R3: terrain/hydrology analysis and parcel reservation metrics when available (read-only)
+  // R2.6/§8.4 §12.1 (read-only): tunnel structures diagnostics (portals/lining/lighting per tunnel)
+  const tunnels = Array.isArray(ctx?.structures?.tunnels) ? ctx.structures.tunnels
+    : (Array.isArray(input?.cityforge?.structures?.tunnels) ? input.cityforge.structures.tunnels : []);
+  for (const [i, t] of tunnels.entries()) {
+    const id = String(t?.id ?? `tunnel_${i}`);
+    if (t && t.type != null && String(t.type) !== 'tunnel') {
+      v('error', 'tunnel_invalid_type', `tunnel '${id}' has type '${String(t.type)}' (expected 'tunnel')`, { index: i, id, type: t.type });
+    }
+    const portals = t?.portals ?? [];
+    if (!Array.isArray(portals) || portals.length < 2) {
+      v('error', 'tunnel_portals_too_few', `tunnel '${id}' must declare at least two portals`, { index: i, id, portals: Array.isArray(portals) ? portals.length : 0 });
+    } else {
+      const p0 = portals[0];
+      const p1 = portals[portals.length - 1];
+      const p0v = p0?.position ?? p0;
+      const p1v = p1?.position ?? p1;
+      const p0ok = Array.isArray(p0v) && p0v.length >= 3 && p0v.every(n => Number.isFinite(Number(n)));
+      const p1ok = Array.isArray(p1v) && p1v.length >= 3 && p1v.every(n => Number.isFinite(Number(n)));
+      if (!p0ok || !p1ok) {
+        v('error', 'tunnel_portal_position_invalid', `tunnel '${id}' portal position must be a finite [x,y,z]`, { index: i, id });
+      }
+      if (p0ok && p1ok) {
+        const t0x = Number(p0v[0]), t0z = Number(p0v[2]), t1x = Number(p1v[0]), t1z = Number(p1v[2]);
+        const sameAxisX = Math.abs(t0x - t1x) < 1e-3;
+        const sameAxisZ = Math.abs(t0z - t1z) < 1e-3;
+        if (!sameAxisX && !sameAxisZ) {
+          v('info', 'tunnel_portals_not_axis_aligned', `tunnel '${id}' portals are not axis-aligned (informational)`, { index: i, id });
+        }
+        const run = Math.hypot(t1x - t0x, t1z - t0z);
+        if (run < 1) {
+          v('warn', 'tunnel_degenerate_run', `tunnel '${id}' portals coincide or are too close`, { index: i, id, run: round(run, 3) });
+        }
+      }
+    }
+    const lining = t?.parameters?.lining ?? null;
+    if (lining != null && !['concrete', 'rock', 'plastic'].includes(String(lining))) {
+      v('warn', 'tunnel_lining_unknown', `tunnel '${id}' lining '${String(lining)}' not in {concrete,rock,plastic}`, { index: i, id, lining });
+    }
+    const lighting = t?.parameters?.lighting;
+    if (lighting != null && typeof lighting !== 'boolean') {
+      v('info', 'tunnel_lighting_not_boolean', `tunnel '${id}' lighting should be boolean`, { index: i, id, lighting });
+    }
+    const roadRefs = t?.roadRefs ?? [];
+    if (Array.isArray(roadRefs) && roadRefs.length === 0) {
+      v('warn', 'tunnel_references_empty', `tunnel '${id}' has empty roadRefs`, { index: i, id });
+    }
+  }
+
+    // R1/R3: terrain/hydrology analysis and parcel reservation metrics when available (read-only)
   const terrainAnalysis = ctx?.terrain?.analysis ?? null;
   const terrainMasks = ctx?.masks?.terrain ?? ctx?.terrain?.analysis ?? null;
   const rivers = ctx?.hydrology?.rivers ?? [];

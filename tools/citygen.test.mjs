@@ -935,6 +935,43 @@ test('citygen cost-path: A* pathfinds around rivers deterministically (R2.2 §7.
   }
 });
 
+test('citygen rules: tunnel validator flags invalid tunnel structures (R2.6 §8.4 §12.1)', async () => {
+  const { evaluateRules } = await import('./citygen/rules.mjs');
+  const base = v4Base();
+  const tunnels = [
+    { id: 't1', type: 'other-type', template: 'x', roadRefs: ['r1'], portals: [{ id: 'p1', position: [0, 0, 0], roadRef: 'r1' }, { id: 'p2', position: [10, 0, 0], roadRef: 'r1' }], parameters: { lining: 'concrete', lighting: true } },
+    { id: 't2', type: 'tunnel', template: 'x', roadRefs: ['r2'], portals: [{ id: 'p1', position: [0, 0, 0], roadRef: 'r2' }], parameters: { lining: 'marble', lighting: 'yes' } },
+    { id: 't3', type: 'tunnel', template: 'x', roadRefs: [], portals: [{ id: 'p1', position: [0, 0, 0], roadRef: 'r3' }, { id: 'p2', position: [0, 0, 100], roadRef: 'r3' }], parameters: { lining: 'rock', lighting: false } },
+    { id: 't4', type: 'tunnel', template: 'x', roadRefs: ['r4'], portals: [{ id: 'p1', position: [0, 0, 0], roadRef: 'r4' }, { id: 'p2', position: [50, 50, 50], roadRef: 'r4' }], parameters: { lining: 'concrete', lighting: false } },
+  ];
+  const raw = {
+    ...base,
+    cityforge: { ...base.cityforge, structures: { bridges: [], tunnels } },
+  };
+  const ctx = {
+    input: raw,
+    meta: {},
+    parcels: [],
+    buildings: [],
+    networks: { roads: { nodes: [], segments: [] } },
+    hydrology: { rivers: [], lakes: [] },
+    masks: { easement: { rivers: [], roads: [] }, terrain: {} },
+  };
+  const out = evaluateRules(ctx);
+  const violations = out.rules.violations ?? [];
+  const codes = new Set(violations.map(v => String(v?.code)));
+  assert.ok(codes.has('tunnel_invalid_type'), 'tunnel_invalid_type must be reported');
+  assert.ok(codes.has('tunnel_portals_too_few'), 'tunnel_portals_too_few must be reported');
+  assert.ok(codes.has('tunnel_references_empty'), 'tunnel_references_empty must be reported');
+  assert.ok(codes.has('tunnel_portals_not_axis_aligned'), 'tunnel_portals_not_axis_aligned must be reported');
+  assert.ok(codes.has('tunnel_lining_unknown'), 'tunnel_lining_unknown must be reported');
+  const { attachRulesToReport } = await import('./citygen/rules.mjs');
+  const report = { diagnostics: [], stages: [], repairs: [], drops: [] };
+  attachRulesToReport(report, { ...ctx, report });
+  assert.ok((report.rules?.violations ?? []).length >= 5, 'report.rules.violations must be populated');
+  assert.ok((report.rules?.summary?.errors ?? 0) >= 2, 'report.rules.summary.errors must count tunnel errors');
+});
+
 test('citygen stage 2: roadSegmentCost is deterministic, monotone-favorable, and river-penalized (R2.2 §7.2)', async () => {
   const { roadSegmentCost } = await import('./citygen/pipeline/stage-2-transport.mjs');
   // Flat straight path vs steep path: flat wins.
