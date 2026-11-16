@@ -10,6 +10,10 @@
 - `bump 0.4.0` (cost-path A*) + derived/etalons re-baseline: ~7–9 мин.
 - Bump 0.4.0 ассоциированные `etalon-check --update`: ~1 мин.
 - Прогон `node --test tools/citygen.test.mjs`: ~20–25 с.
+- R2.6 partial (tunnel validator в `rules.mjs` + автотест, без bump): ~25 мин (чтение схемы компилятора, тест, фикстуры).
+- R2.8 partial (junction class/type validator в `rules.mjs` + автотест, без bump): ~20 мин.
+- R3.1 (инкремент 1: `buildCoreCandidates` + тест + bump `generatorVersion` → 0.6.0, derived L16–L22, baselines/etalons, transport-серия под 0.6.0): ~12:42–12:56 (~14 мин).
+- R3.1 (инкремент 2: §6.1-faithful multiplicative scoring — брод×3/слияние×2/холм×2/ровная площадка 150 м×2/озеро×1 − пойма 2, re-baseline + обе серии seed-100 перепрогнаны под 0.6.0): ~12:58–13:09 (~11 мин).
 - Прогон `node tools/citygen-etalon-check.mjs`: ~10–15 с.
 - `build-level --check` для L16–L21: ~1 мин на прогон.
 - `ci-browser.mjs --level 17|20|21 level-lifecycle` (через `NODE_PATH=$(npm root --global)`): ~1 мин на главу (15 сюит прогона, только одна глава).
