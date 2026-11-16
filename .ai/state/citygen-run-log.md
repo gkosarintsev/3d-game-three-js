@@ -14,6 +14,7 @@
 - R2.8 partial (junction class/type validator в `rules.mjs` + автотест, без bump): ~20 мин.
 - R3.1 (инкремент 1: `buildCoreCandidates` + тест + bump `generatorVersion` → 0.6.0, derived L16–L22, baselines/etalons, transport-серия под 0.6.0): ~12:42–12:56 (~14 мин).
 - R3.1 (инкремент 2: §6.1-faithful multiplicative scoring — брод×3/слияние×2/холм×2/ровная площадка 150 м×2/озеро×1 − пойма 2, re-baseline + обе серии seed-100 перепрогнаны под 0.6.0): ~12:58–13:09 (~11 мин).
+- R3.2 (computeAccessCostField + assignErasToDistricts в `stage-3-districts.mjs`, bump → 0.7.0, derived/etalons/baselines + обе серии seed-100 под 0.7.0, автотест): ~13:10–13:29 (~19 мин).
 - Прогон `node tools/citygen-etalon-check.mjs`: ~10–15 с.
 - `build-level --check` для L16–L21: ~1 мин на прогон.
 - `ci-browser.mjs --level 17|20|21 level-lifecycle` (через `NODE_PATH=$(npm root --global)`): ~1 мин на главу (15 сюит прогона, только одна глава).
