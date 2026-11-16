@@ -1,7 +1,7 @@
 {
   "version": 1,
   "generator": {
-    "generatorVersion": "0.8.0",
+    "generatorVersion": "0.9.0",
     "seed": 16,
     "deterministic": true
   },
@@ -30,7 +30,7 @@
     {
       "id": "3_districts_parcels",
       "status": "ok",
-      "diagnostics": 6,
+      "diagnostics": 10,
       "repairs": 0,
       "drops": 0
     },
@@ -69,6 +69,12 @@
         3,
         12
       ],
+      "frame": {
+        "cx": -480,
+        "cz": -480,
+        "yaw": 0,
+        "reason": "arterial"
+      },
       "cells": 1,
       "parcels": 121,
       "reservedParcels": 12
@@ -85,6 +91,12 @@
         1,
         4
       ],
+      "frame": {
+        "cx": -480,
+        "cz": -160,
+        "yaw": 0,
+        "reason": "arterial"
+      },
       "cells": 1,
       "parcels": 64,
       "reservedParcels": 1
@@ -101,6 +113,12 @@
         1,
         2
       ],
+      "frame": {
+        "cx": -480,
+        "cz": 160,
+        "yaw": 0,
+        "reason": "arterial"
+      },
       "cells": 1,
       "parcels": 64,
       "reservedParcels": 1
@@ -117,6 +135,12 @@
         2,
         6
       ],
+      "frame": {
+        "cx": -480,
+        "cz": 480,
+        "yaw": -90,
+        "reason": "slope"
+      },
       "cells": 1,
       "parcels": 49,
       "reservedParcels": 8
@@ -133,6 +157,12 @@
         1,
         3
       ],
+      "frame": {
+        "cx": -160,
+        "cz": -480,
+        "yaw": 180,
+        "reason": "slope"
+      },
       "cells": 1,
       "parcels": 121,
       "reservedParcels": 28
@@ -149,6 +179,12 @@
         0,
         1
       ],
+      "frame": {
+        "cx": -160,
+        "cz": -160,
+        "yaw": 0,
+        "reason": "slope"
+      },
       "cells": 1,
       "parcels": 36,
       "reservedParcels": 4
@@ -165,6 +201,12 @@
         1,
         3
       ],
+      "frame": {
+        "cx": -160,
+        "cz": 160,
+        "yaw": -45,
+        "reason": "slope"
+      },
       "cells": 1,
       "parcels": 49,
       "reservedParcels": 15
@@ -181,6 +223,12 @@
         2,
         9
       ],
+      "frame": {
+        "cx": -160,
+        "cz": 480,
+        "yaw": 90,
+        "reason": "arterial"
+      },
       "cells": 1,
       "parcels": 225,
       "reservedParcels": 23
@@ -197,6 +245,12 @@
         0,
         1
       ],
+      "frame": {
+        "cx": 160,
+        "cz": -480,
+        "yaw": 45,
+        "reason": "slope"
+      },
       "cells": 1,
       "parcels": 49,
       "reservedParcels": 21
@@ -213,6 +267,12 @@
         1,
         3
       ],
+      "frame": {
+        "cx": 160,
+        "cz": -160,
+        "yaw": 90,
+        "reason": "slope"
+      },
       "cells": 1,
       "parcels": 196,
       "reservedParcels": 119
@@ -229,6 +289,12 @@
         2,
         9
       ],
+      "frame": {
+        "cx": 160,
+        "cz": 160,
+        "yaw": 135,
+        "reason": "slope"
+      },
       "cells": 1,
       "parcels": 121,
       "reservedParcels": 68
@@ -245,6 +311,12 @@
         2,
         9
       ],
+      "frame": {
+        "cx": 160,
+        "cz": 480,
+        "yaw": 45,
+        "reason": "slope"
+      },
       "cells": 1,
       "parcels": 121,
       "reservedParcels": 55
@@ -261,6 +333,12 @@
         2,
         5
       ],
+      "frame": {
+        "cx": 480,
+        "cz": -480,
+        "yaw": -45,
+        "reason": "slope"
+      },
       "cells": 1,
       "parcels": 289,
       "reservedParcels": 10
@@ -277,6 +355,7 @@
         1,
         4
       ],
+      "frame": null,
       "cells": 1,
       "parcels": 400,
       "reservedParcels": 100
@@ -293,6 +372,7 @@
         2,
         9
       ],
+      "frame": null,
       "cells": 1,
       "parcels": 225,
       "reservedParcels": 49
@@ -309,6 +389,12 @@
         3,
         20
       ],
+      "frame": {
+        "cx": 480,
+        "cz": 480,
+        "yaw": -135,
+        "reason": "slope"
+      },
       "cells": 1,
       "parcels": 144,
       "reservedParcels": 93
@@ -1879,6 +1965,26 @@
     },
     {
       "severity": "info",
+      "code": "adjacency_repairs",
+      "stage": "3_districts_parcels",
+      "message": "section 6.6 adjacency repairs applied",
+      "count": 0,
+      "kinds": {}
+    },
+    {
+      "severity": "info",
+      "code": "district_frames_assigned",
+      "stage": "3_districts_parcels",
+      "message": "district frames assigned by dominant axis",
+      "count": 14,
+      "reasons": {
+        "slope": 10,
+        "river": 0,
+        "arterial": 4
+      }
+    },
+    {
+      "severity": "info",
       "code": "districts_generated",
       "stage": "3_districts_parcels",
       "message": "auto-generated district grid",
@@ -1930,6 +2036,13 @@
         "suburb": 5
       },
       "maxCost": 1608.61
+    },
+    {
+      "severity": "info",
+      "code": "floors_contrast_unresolved",
+      "stage": "3_districts_parcels",
+      "message": "floors contrast above 2.5x kept to preserve type diversity (coarse grid; seams allowed)",
+      "count": 8
     },
     {
       "severity": "info",
@@ -1986,6 +2099,18 @@
         "steep_slope": 67,
         "remote_access": 0
       }
+    },
+    {
+      "severity": "info",
+      "code": "park_share",
+      "stage": "3_districts_parcels",
+      "message": "park/forest share enforced by section 6.8",
+      "before": 0.125,
+      "after": 0.125,
+      "min": 0.08,
+      "max": 0.15,
+      "promoted": 0,
+      "demoted": 0
     },
     {
       "severity": "info",
@@ -2469,7 +2594,7 @@
       "dividesPlate": true
     },
     "determinism": {
-      "generatorVersion": "0.8.0",
+      "generatorVersion": "0.9.0",
       "seed": 16,
       "deterministic": true
     },

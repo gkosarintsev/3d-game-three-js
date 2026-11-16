@@ -1098,6 +1098,26 @@ test('citygen stage 3: era assignment by access-cost isolines — medieval at co
   assert.ok(eraDiag, 'era_rings_assigned diagnostic emitted');
 });
 
+test('citygen stage 3: park share within profile bounds, diversity guard keeps campus, district frames assigned (R3.4 §6.6/§6.7/§6.8)', () => {
+  const raw = v4Base();
+  const out = runCitygen(structuredClone(raw));
+  const parkShare = out.report.diagnostics.find(d => d.code === 'park_share');
+  assert.ok(parkShare, 'park_share diagnostic emitted');
+  assert.ok(parkShare.after >= parkShare.min && parkShare.after <= parkShare.max, `park share in bounds (got ${parkShare.after})`);
+  assert.ok(out.report.diagnostics.some(d => d.code === 'adjacency_repairs'), 'adjacency_repairs diagnostic emitted');
+  assert.ok(out.report.diagnostics.some(d => d.code === 'district_frames_assigned'), 'district_frames_assigned diagnostic emitted');
+  for (const d of out.report.districts ?? []) {
+    assert.ok('frame' in d, 'district carries frame field (or null)');
+  }
+  // pilot fixture: diversity guard keeps rare types during adjacency/park mutations (R3.4)
+  const fixture = JSON.parse(readFileSync(resolve(import.meta.dirname, 'fixtures/level-16-pilot.json'), 'utf8'));
+  const pilot = runCitygen(structuredClone(fixture));
+  const types = new Set((pilot.report.districts ?? []).map(d => d.type));
+  assert.ok(types.has('campus'), 'pilot keeps campus type (diversity guard)');
+  const fin = pilot.report.diagnostics.find(d => d.code === 'finalize_counts');
+  assert.ok(fin?.districtTypes?.includes('campus'), 'pilot finalize districtTypes include campus');
+});
+
 test('citygen stage 3: computeLandValue is deterministic and bounded; districts carry density/floors/landValue (R3.3 §6.4/§6.5)', async () => {
   const { computeLandValue } = await import('./citygen/pipeline/stage-3-districts.mjs');
   const ctx = {

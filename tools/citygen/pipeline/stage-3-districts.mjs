@@ -422,6 +422,56 @@ function landValueAffinity(typeId, lv, inFloodplain) {
   }
 }
 
+// R3.4 §6.6/§6.7/§6.8: соседство (industrial↔residential буфер, контраст этажности ≤ 2.5×),
+// зелёный каркас (доля park/forest 8–15%), districtFrame (ось района: склон/река/артерия).
+const ADJACENCY_BUFFER = new Set(['park', 'commercial', 'industrial', 'market', 'sports']);
+const PARK_TYPES = new Set(['park', 'forest']);
+const RES_LIKE = new Set(['residential', 'luxury', 'suburb']);
+const FLOORS_EXEMPT = new Set(['park', 'forest']); // §6.6: парки/лес — явные швы, контраст не считаем
+const FLOOR_DOWNCHAIN = ['old_town', 'market', 'residential', 'industrial', 'commercial', 'suburb', 'campus', 'slums'];
+const PARK_SHARE_DEFAULT = [0.08, 0.15]; // §6.8; профиль может переопределить parkShare
+
+function floorUp(type) {
+  const f = TYPE_FLOORS[type];
+  return f ? f[1] : 9;
+}
+
+function districtAdjacency(districts) {
+  const byCell = new Map();
+  districts.forEach((d, idx) => { for (const c of (d.cells ?? [])) if (c) byCell.set(`${c.cx},${c.cy}`, idx); });
+  const adj = districts.map(() => new Set());
+  for (const [key, idx] of byCell) {
+    const [cx, cy] = key.split(',').map(Number);
+    for (const [dx, dy] of [[1, 0], [-1, 0], [0, 1], [0, -1]]) {
+      const n = byCell.get(`${cx + dx},${cy + dy}`);
+      if (n !== undefined && n !== idx) { adj[idx].add(n); adj[n].add(idx); }
+    }
+  }
+  return adj;
+}
+
+function rectAreaOf(d) {
+  const r = d?.geometry?.rect;
+  if (!r) return 0;
+  return Math.max(0, (Number(r.maxX) - Number(r.minX)) * (Number(r.maxZ) - Number(r.minZ)));
+}
+
+function canSwapToType(districts, adj, idx, toType) {
+  const neighbors = [...(adj[idx] ?? [])].map(k => districts[k]?.type).filter(Boolean);
+  const compat = COMPAT[toType];
+  return neighbors.every(nt => (compat?.has(nt) ?? true) && (COMPAT[nt]?.has(toType) ?? true));
+}
+
+function swapDistrictType(districts, adj, idx, toType) {
+  if (!toType) return false;
+  if (!canSwapToType(districts, adj, idx, toType)) return false;
+  const d = districts[idx];
+  if (!d || d.type === toType) return false;
+  d.type = toType;
+  d.profileId = toType;
+  return true;
+}
+
 export const DEFAULT_PROFILES = {
   office: { id: 'office', label: 'Офисный', weight: 1.1, parcels: { min: 18, max: 42, coverage: 0.55 }, buildings: { kinds: ['office_tower', 'office_mid', 'office_block', 'skyscraper', 'megablock'], maxFloors: 40, materials: ['glass_and_concrete', 'concrete'] } },
   park: { id: 'park', label: 'Парк', weight: 0.9, parcels: { min: 24, max: 64, coverage: 0.12 }, buildings: { kinds: ['pavilion', 'modern_pavilion', 'aframe'], maxFloors: 2, materials: ['painted_brick', 'concrete'] } },
@@ -526,7 +576,9 @@ export function makeStage3() {
       const rng = makeRng(seed);
 
       // If no districts declared, auto-generate a deterministic grid assignment (MVP).
+      let autoDistricts = false;
       if (!ctx.districts.length) {
+        autoDistricts = true;
         const grid = size >= 1024 ? 4 : 3; // coarse planning grid
         const cell = size / grid;
         const allTypeIds = Object.keys(profiles);
@@ -727,6 +779,163 @@ export function makeStage3() {
         // Normalize declared districts minimally
         ctx.districts = ctx.districts.map((d, idx) => ({ id: d.id ?? `district_${idx}`, type: d.type ?? d.profileId ?? 'office', profileId: d.profileId ?? d.type ?? 'office', priority: d.priority ?? 0, ...d }));
         ctx.report.diagnostics.push(info('districts_passthrough', stageId, 'using declared districts', { count: ctx.districts.length }));
+      }
+
+      // R3.4 §6.6/§6.7/§6.8: соседство, districtFrame, зелёный каркас (до R3.3 density attach).
+      // Мутации типов — только для auto-generated районов (авторские declared районы не перестраиваем).
+      {
+        const DS = ctx.districts ?? [];
+        const stageId = '3_districts_parcels';
+        const baseY_ = Number(ctx?.input?.ground?.y ?? 0) || 0;
+        const mods_ = ctx?.terrain?.modifiers ?? [];
+        const repairs = [];
+        const adj = districtAdjacency(DS);
+        // текущие счётчики типов — чтобы мутации не выбивали редких типов из раскладки (все целевые ≥ 1)
+        const curCounts = {};
+        for (const d of DS) curCounts[d.type] = (curCounts[d.type] || 0) + 1;
+        const TYPE_PROTECT = { office: 1, residential: 2, park: 1, industrial: 1, slums: 1, forest: 1, parking: 1, sports: 1, luxury: 1, commercial: 1, suburb: 2, old_town: 1, campus: 1, market: 1 };
+        const isSurplus = (t) => (curCounts[t] || 0) > Math.max(1, TYPE_PROTECT[t] ?? 1);
+        const trackSwap = (from, to) => { curCounts[from] = (curCounts[from] || 1) - 1; curCounts[to] = (curCounts[to] || 0) + 1; };
+        if (autoDistricts) {
+          // --- §6.6: industrial ↔ residential только через буфер (парк/склады/commercial) ---
+          for (let i = 0; i < DS.length; i++) {
+            if (DS[i].type !== 'industrial') continue;
+            for (const j of [...adj[i]]) {
+              if (!RES_LIKE.has(DS[j]?.type)) continue;
+              const fromType = DS[j].type;
+              const fromI = DS[i].type;
+              if (isSurplus(fromType) && swapDistrictType(DS, adj, j, 'commercial')) { trackSwap(fromType, 'commercial'); repairs.push({ kind: 'industrial_buffer', id: DS[j].id, to: 'commercial' }); continue; }
+              if (isSurplus(fromI) && swapDistrictType(DS, adj, i, 'market')) { trackSwap(fromI, 'market'); repairs.push({ kind: 'industrial_buffer', id: DS[i].id, to: 'market' }); continue; }
+              ctx.report.diagnostics.push(warn('industrial_residential_adjacency', stageId, `industrial '${DS[i].id}' прилегает к '${DS[j]?.type}' '${DS[j].id}' без вставляемого буфера`, { industrial: DS[i].id, other: DS[j].id }));
+            }
+          }
+          // --- §6.6: контраст этажности соседей ≤ 2.5× (кроме швов: парки/лес) ---
+          let floorsUnresolved = 0;
+          for (let pass = 0; pass < 2; pass++) {
+            let changed = false;
+            for (let i = 0; i < DS.length; i++) {
+              if (FLOORS_EXEMPT.has(DS[i].type)) continue;
+              for (const j of [...adj[i]]) {
+                if (FLOORS_EXEMPT.has(DS[j]?.type)) continue;
+                const a = Math.max(1, floorUp(DS[i].type));
+                const b = Math.max(1, floorUp(DS[j]?.type));
+                if (Math.max(a, b) / Math.min(a, b) <= 2.5) continue;
+                const taller = a >= b ? i : j;
+                const shorter = taller === i ? j : i;
+                const minUp = Math.max(1, floorUp(DS[shorter]?.type));
+                if (!isSurplus(DS[taller].type)) { floorsUnresolved += 1; continue; }
+                for (const cand of FLOOR_DOWNCHAIN) {
+                  if (floorUp(cand) > 2.5 * minUp) continue;
+                  const from = DS[taller].type;
+                  if (swapDistrictType(DS, adj, taller, cand)) { trackSwap(from, cand); repairs.push({ kind: 'floors_contrast', id: DS[taller].id, to: cand }); changed = true; break; }
+                }
+              }
+            }
+            if (!changed) break;
+          }
+          if (floorsUnresolved > 0) {
+            // остаточные контрасты в грубой сетке блоков (3,2 га) — задокументированное ограничение, не сбой
+            ctx.report.diagnostics.push(info('floors_contrast_unresolved', stageId, 'floors contrast above 2.5x kept to preserve type diversity (coarse grid; seams allowed)', { count: floorsUnresolved }));
+          }
+        } else {
+          ctx.report.diagnostics.push(info('adjacency_repairs_skipped_declared', stageId, 'adjacency/park mutations skipped for declared districts (author intent preserved)', {}));
+        }
+        // --- §6.8: зелёный каркас — доля park/forest в пределах профиля (дефолт 8–15%) ---
+        const parkShareRaw = Array.isArray(ctx?.meta?.activeCityProfile?.parkShare) ? ctx.meta.activeCityProfile.parkShare
+          : (Array.isArray(ctx?.input?.generator?.parkShare) ? ctx.input.generator.parkShare : null);
+        const parkRange = parkShareRaw && parkShareRaw.length >= 2
+          ? [Number(parkShareRaw[0]) || PARK_SHARE_DEFAULT[0], Number(parkShareRaw[1]) || PARK_SHARE_DEFAULT[1]]
+          : PARK_SHARE_DEFAULT;
+        const plate = size * size;
+        const parkAreaNow = () => DS.reduce((s, d) => s + (PARK_TYPES.has(d.type) ? rectAreaOf(d) : 0), 0);
+        const shareBefore = plate > 0 ? parkAreaNow() / plate : 0;
+        let promoted = 0, demoted = 0;
+        // мутации — только для auto; редкие типы (campus/office/industrial/...) защищаем от вымывания
+        if (autoDistricts && plate > 0 && shareBefore < parkRange[0]) {
+          const cands = DS.map((d, idx) => ({ d, idx, t: d.type }))
+            .filter(x => !PARK_TYPES.has(x.t) && rectAreaOf(x.d) > 0 && isSurplus(x.t))
+            .map(x => {
+              const r = x.d.geometry.rect;
+              const cx = (Number(r.minX) + Number(r.maxX)) / 2, cz = (Number(r.minZ) + Number(r.maxZ)) / 2;
+              const slope = sampleTerrainSlope(cx, cz, baseY_, mods_);
+              const fpl = inFloodplainAt(cx, cz, ctx?.masks?.terrain?.floodplains) ? 1 : 0;
+              return { ...x, s: fpl * 1000 + slope * 100 + (1 - (x.d.landValue ?? 0.5)) };
+            })
+            .sort((a, b) => b.s - a.s);
+          for (const { idx } of cands) {
+            if (plate > 0 && parkAreaNow() / plate >= parkRange[0]) break;
+            const fromT = DS[idx].type;
+            if (swapDistrictType(DS, adj, idx, 'park') || swapDistrictType(DS, adj, idx, 'forest')) { trackSwap(fromT, DS[idx].type); promoted += 1; }
+          }
+        }
+        if (autoDistricts && plate > 0 && parkAreaNow() / plate > parkRange[1]) {
+          const parkCount = () => DS.reduce((s, d) => s + (PARK_TYPES.has(d.type) ? 1 : 0), 0);
+          const demote = DS.map((d, idx) => ({ d, idx }))
+            .filter(x => PARK_TYPES.has(x.d.type))
+            .sort((a, b) => (b.d.landValue ?? 0) - (a.d.landValue ?? 0));
+          for (const { idx } of demote) {
+            if (parkAreaNow() <= parkRange[1] * plate) break;
+            if (parkCount() <= 1) break; // не вымываем последний парк (§6.8 целостность каркаса)
+            const fromT = DS[idx].type;
+            if (swapDistrictType(DS, adj, idx, 'residential')) { trackSwap(fromT, 'residential'); demoted += 1; }
+          }
+          if (parkAreaNow() / plate > parkRange[1]) {
+            ctx.report.diagnostics.push(warn('park_share_over_max_kept_diversity', stageId, 'park share above profile max kept to preserve type diversity', { after: +(parkAreaNow() / plate).toFixed(4), max: parkRange[1] }));
+          }
+        }
+        const shareAfter = plate > 0 ? parkAreaNow() / plate : 0;
+        ctx.report.diagnostics.push(info('park_share', stageId, 'park/forest share enforced by section 6.8', {
+          before: +shareBefore.toFixed(4), after: +shareAfter.toFixed(4), min: parkRange[0], max: parkRange[1], promoted, demoted,
+        }));
+        // --- §6.7: districtFrame — ось района (склон/река/артерия), локальная сетка под углом ---
+        let frames = 0;
+        const frameReasons = { slope: 0, river: 0, arterial: 0 };
+        for (const d of DS) {
+          const rect = d?.geometry?.rect;
+          if (!rect) continue;
+          const cx = (Number(rect.minX) + Number(rect.maxX)) / 2, cz = (Number(rect.minZ) + Number(rect.maxZ)) / 2;
+          let yaw = null, reason = null;
+          const rOff = 60;
+          let bestMag = 0, bestYaw = null;
+          for (const [dx, dz] of [[1, 0], [-1, 0], [0, 1], [0, -1], [1, 1], [1, -1], [-1, 1], [-1, -1]]) {
+            const len = Math.hypot(dx, dz);
+            const hx = terrainHeightAt(cx + (dx / len) * rOff, cz + (dz / len) * rOff, baseY_, mods_);
+            const hx0 = terrainHeightAt(cx, cz, baseY_, mods_);
+            const mag = Math.abs(hx - hx0) / rOff;
+            if (mag > bestMag) { bestMag = mag; bestYaw = Math.atan2(dx / len, dz / len) * 180 / Math.PI; }
+          }
+          if (bestMag >= 0.06 && bestYaw != null) { yaw = bestYaw; reason = 'slope'; }
+          else {
+            const riverSeg = minSegmentDist(cx, cz, ctx?.hydrology?.rivers ?? [], null);
+            const artSeg = minSegmentDist(cx, cz, ctx?.networks?.roads?.segments ?? [], new Set(['arterial', 'highway']));
+            const pickSeg = (list) => {
+              let bestD = Infinity, bestYaw2 = null;
+              for (const s of list) {
+                const path = Array.isArray(s?.path) ? s.path : [];
+                for (let k = 0; k + 1 < path.length; k++) {
+                  const dd = pointSegDistXZ(cx, cz, path[k][0], path[k][2], path[k + 1][0], path[k + 1][2]);
+                  if (dd < bestD) {
+                    bestD = dd;
+                    bestYaw2 = Math.atan2(path[k + 1][0] - path[k][0], path[k + 1][2] - path[k][2]) * 180 / Math.PI;
+                  }
+                }
+              }
+              return bestYaw2;
+            };
+            if (Number.isFinite(riverSeg) && riverSeg <= 40) { yaw = pickSeg(ctx?.hydrology?.rivers ?? []); reason = 'river'; }
+            else if (Number.isFinite(artSeg) && artSeg <= 40) { yaw = pickSeg(ctx?.networks?.roads?.segments ?? []); reason = 'arterial'; }
+          }
+          if (yaw != null) {
+            let wrapped = ((yaw + 180) % 360 + 360) % 360 - 180;
+            if (wrapped <= -180) wrapped += 360;
+            d.districtFrame = { cx: +cx.toFixed(1), cz: +cz.toFixed(1), yaw: +wrapped.toFixed(1), reason };
+            frames += 1;
+            frameReasons[reason] = (frameReasons[reason] || 0) + 1;
+          }
+        }
+        ctx.report.diagnostics.push(info('district_frames_assigned', stageId, 'district frames assigned by dominant axis', { count: frames, reasons: frameReasons }));
+        ctx.report.diagnostics.push(info('adjacency_repairs', stageId, 'section 6.6 adjacency repairs applied', { count: repairs.length, kinds: repairs.reduce((m, r) => { m[r.kind] = (m[r.kind] || 0) + 1; return m; }, {}) }));
+        // довести этажность/плотность по финальным типам — делается следующим (R3.3) блок.
       }
 
       // R3.3 §6.5: этажность в этажах и плотность застройки по финальным типам (после balance-проходов).
@@ -1010,6 +1219,7 @@ export function makeStage3() {
           landValue: d.landValue ?? null,
           buildingDensity: d.buildingDensity ?? null,
           heightRange: d.heightRange ?? null,
+          frame: d.districtFrame ?? null,
           cells: d.cells?.length ?? 0,
           parcels: dParcels.length,
           reservedParcels: dParcels.filter(p => p?.reserved).length,

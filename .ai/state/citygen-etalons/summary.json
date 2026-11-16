@@ -1,5 +1,5 @@
 {
-  "generatorVersion": "0.8.0",
+  "generatorVersion": "0.9.0",
   "profiles": [
     "hill_town",
     "railway_industrial",
@@ -16,9 +16,9 @@
     "hill_town": {
       "runs": 3,
       "hashes": [
-        "da0d742451c9fae98643ad9ac619a7ece776af99a9b571fb1b0483e4a120fe09",
-        "c91e91b3a5adcaa648836025d95ff8d8be187f4c5ce17f5ffd995ca908c57ec3",
-        "b6d279e2b8a08483c6822c601c5a0631d5c0f2cd5f8ef609a86b7fc764140476"
+        "9877acc3d059c9b55824562dc5ef2af052c35b234901d54add596552db177fd2",
+        "be548b365dc8d04ac8ec1702eebb6ad1d6f103a69be711d720203850629d2f39",
+        "22e2962df9bd3ab37061efeba48451456cda7cdbaff89535b1a5066e2f642b74"
       ],
       "errors": {
         "count": 3,
@@ -54,9 +54,9 @@
     "railway_industrial": {
       "runs": 3,
       "hashes": [
-        "b81e129e5bbe1832340e17918a1fcc0d1c519d7a839717b53d9423e3b35c6b87",
-        "89b7b959ff362ce87a56952d780374ef19a089b384d1d9e033b3c1f92ac41704",
-        "4d99f22433c76fbfcb4577e946bb792744ee46a439a406941df49a824bbea94f"
+        "3fcd42342b39380dc5976b976c0949f8977e87b008e0c8e1fa289a87ada5698c",
+        "c272836e06aae6e9753e5f1962979d1494bb6eab362177f40345de8cc1a21e63",
+        "69ee96f8318ea3e2db8624698875d088f88618eb809b96d232435a15f8349239"
       ],
       "errors": {
         "count": 3,
@@ -78,23 +78,23 @@
       },
       "parcels": {
         "count": 3,
-        "min": 2217,
-        "max": 2274,
-        "mean": 2236
+        "min": 2393,
+        "max": 2450,
+        "mean": 2412
       },
       "buildings": {
         "count": 3,
         "min": 401,
-        "max": 402,
-        "mean": 401.333333
+        "max": 403,
+        "mean": 402
       }
     },
     "river_trade": {
       "runs": 3,
       "hashes": [
-        "e3ce4537df6c42a675da6ea5d8ed9f4e78d5d69e6182003119ab80f2ccde1685",
-        "b012f502f2a72b304302dd4561212fe858f2e8f0645473880af8e8d57f356a11",
-        "d830b0e65a1dffdd41b359b34689aa689d09383f498d98429119f4f5cbd39721"
+        "4715a3919bf053e961b4193122d968233527deb852cd9a3dc298f4a06662ebdf",
+        "dbd8a83edce904de94db77cc453b5fbc0bef9a692dc9129f4e6feca7661957db",
+        "b2e9d179dc98c6583f78ae6c2e03dde26c6c16f1a0707df020eeabb8319e596c"
       ],
       "errors": {
         "count": 3,

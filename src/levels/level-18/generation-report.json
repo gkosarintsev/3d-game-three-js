@@ -1,7 +1,7 @@
 {
   "version": 1,
   "generator": {
-    "generatorVersion": "0.8.0",
+    "generatorVersion": "0.9.0",
     "seed": 18,
     "deterministic": true
   },
@@ -30,7 +30,7 @@
     {
       "id": "3_districts_parcels",
       "status": "ok",
-      "diagnostics": 6,
+      "diagnostics": 10,
       "repairs": 0,
       "drops": 0
     },
@@ -69,6 +69,12 @@
         0,
         1
       ],
+      "frame": {
+        "cx": 0,
+        "cz": 0,
+        "yaw": 90,
+        "reason": "arterial"
+      },
       "cells": 0,
       "parcels": 121,
       "reservedParcels": 16
@@ -191,6 +197,32 @@
     },
     {
       "severity": "info",
+      "code": "adjacency_repairs",
+      "stage": "3_districts_parcels",
+      "message": "section 6.6 adjacency repairs applied",
+      "count": 0,
+      "kinds": {}
+    },
+    {
+      "severity": "info",
+      "code": "adjacency_repairs_skipped_declared",
+      "stage": "3_districts_parcels",
+      "message": "adjacency/park mutations skipped for declared districts (author intent preserved)"
+    },
+    {
+      "severity": "info",
+      "code": "district_frames_assigned",
+      "stage": "3_districts_parcels",
+      "message": "district frames assigned by dominant axis",
+      "count": 1,
+      "reasons": {
+        "slope": 0,
+        "river": 0,
+        "arterial": 1
+      }
+    },
+    {
+      "severity": "info",
       "code": "districts_passthrough",
       "stage": "3_districts_parcels",
       "message": "using declared districts",
@@ -246,6 +278,18 @@
         "steep_slope": 0,
         "remote_access": 0
       }
+    },
+    {
+      "severity": "info",
+      "code": "park_share",
+      "stage": "3_districts_parcels",
+      "message": "park/forest share enforced by section 6.8",
+      "before": 1,
+      "after": 1,
+      "min": 0.08,
+      "max": 0.15,
+      "promoted": 0,
+      "demoted": 0
     },
     {
       "severity": "info",
@@ -506,7 +550,7 @@
       "dividesPlate": true
     },
     "determinism": {
-      "generatorVersion": "0.8.0",
+      "generatorVersion": "0.9.0",
       "seed": 18,
       "deterministic": true
     },
