@@ -1162,6 +1162,77 @@ export function makeStage1() {
       }
       ctx.terrain.modifiers = repairedMods;
 
+      // R1.4/R1.5: deterministic repair - ensure every hydrology feature has water buffer/floodplain masks (downstream constraints).
+      ctx.masks.terrain = ctx.masks.terrain || {};
+      if (!Array.isArray(ctx.masks.terrain.waterBuffers)) ctx.masks.terrain.waterBuffers = [];
+      if (!Array.isArray(ctx.masks.terrain.floodplains)) ctx.masks.terrain.floodplains = [];
+      if (!ctx.masks.easement) ctx.masks.easement = {};
+      if (!Array.isArray(ctx.masks.easement.rivers)) ctx.masks.easement.rivers = [];
+      if (!Array.isArray(ctx.masks.easement.lakes)) ctx.masks.easement.lakes = [];
+      const _wbById = new Map(ctx.masks.terrain.waterBuffers.filter(w => w?.id).map(w => [w.id, w]));
+      const _fpById = new Map(ctx.masks.terrain.floodplains.filter(f => f?.id).map(f => [f.id, f]));
+      const _cfProfileRepair = (ctx.meta?.activeCityProfile && typeof ctx.meta.activeCityProfile === 'object') ? ctx.meta.activeCityProfile : null;
+      const _hydroPresetRepair = (_cfProfileRepair?.terrain?.hydrology && typeof _cfProfileRepair.terrain.hydrology === 'object') ? _cfProfileRepair.terrain.hydrology : null;
+      const _riverBufAddR = Number.isFinite(Number(_hydroPresetRepair?.riverBufferMargin ?? _cfProfileRepair?.terrain?.riverBufferMargin))
+        ? Number(_hydroPresetRepair.riverBufferMargin ?? _cfProfileRepair.terrain.riverBufferMargin) : 12;
+      const _riverFloodMulR = Number.isFinite(Number(_hydroPresetRepair?.floodplainMultiplier ?? _hydroPresetRepair?.riverFloodplainMultiplier ?? _cfProfileRepair?.terrain?.floodplainMultiplier))
+        ? Number(_hydroPresetRepair.floodplainMultiplier ?? _hydroPresetRepair.riverFloodplainMultiplier ?? _cfProfileRepair.terrain.floodplainMultiplier) : 3;
+      const _lakeBufR = Number.isFinite(Number(_hydroPresetRepair?.lakeBufferMargin ?? _cfProfileRepair?.terrain?.lakeBufferMargin))
+        ? Number(_hydroPresetRepair.lakeBufferMargin ?? _cfProfileRepair.terrain.lakeBufferMargin) : 8;
+      const _lakeFloodR = Number.isFinite(Number(_hydroPresetRepair?.lakeFloodplainMargin ?? _hydroPresetRepair?.lakeFloodplain ?? _cfProfileRepair?.terrain?.lakeFloodplainMargin))
+        ? Number(_hydroPresetRepair.lakeFloodplainMargin ?? _hydroPresetRepair.lakeFloodplain ?? _cfProfileRepair.terrain.lakeFloodplainMargin) : 16;
+      for (const rv of (ctx.hydrology?.rivers ?? [])) {
+        if (!rv?.id) continue;
+        const w = Number(rv.width ?? 0) || 0;
+        const path = Array.isArray(rv.path) ? rv.path : [];
+        const buffer = +(w * 0.5 + _riverBufAddR).toFixed(3);
+        const floodplain = +(w * clamp(_riverFloodMulR, 2, 4)).toFixed(3);
+        if (!_wbById.has(rv.id)) {
+          const wb = { id: rv.id, type: 'river', buffer, floodplain, buildableBuffer: true };
+          ctx.masks.terrain.waterBuffers.push(wb);
+          _wbById.set(rv.id, wb);
+          ctx.report.repairs.push({ stage: stageId, id: rv.id, code: 'add_missing_river_water_buffer_mask' });
+        }
+        if (!_fpById.has(rv.id)) {
+          const fp = { id: rv.id, type: 'river', floodplain, path, width: w };
+          ctx.masks.terrain.floodplains.push(fp);
+          _fpById.set(rv.id, fp);
+          ctx.report.repairs.push({ stage: stageId, id: rv.id, code: 'add_missing_river_floodplain_mask' });
+        }
+        if (!ctx.masks.easement.rivers.some(e => e?.id === rv.id) && path.length >= 2) {
+          ctx.masks.easement.rivers.push({ id: rv.id, path, width: w, buffer, floodplain });
+          ctx.report.repairs.push({ stage: stageId, id: rv.id, code: 'add_missing_river_easement' });
+        }
+      }
+      for (const ll of (ctx.hydrology?.lakes ?? [])) {
+        if (!ll?.id) continue;
+        const area = ll?.area;
+        let cx = null, cz = null, r = null;
+        if (area?.type === 'circle' && Array.isArray(area.center)) { cx = Number(area.center[0]); cz = Number(area.center[1]); r = Number(area.radius); }
+        else if (Array.isArray(area) && area.length) {
+          let sx = 0, sz = 0, n = 0;
+          for (const p of area) { if (Array.isArray(p) && p.length >= 3) { sx += Number(p[0])||0; sz += Number(p[2])||0; n++; } }
+          if (n) { cx = sx / n; cz = sz / n; let mr = 0; for (const p of area) { if (Array.isArray(p) && p.length >= 3) mr = Math.max(mr, Math.hypot((Number(p[0])||0)-cx, (Number(p[2])||0)-cz)); } r = mr; }
+        }
+        const buffer = +clamp(_lakeBufR, 3, 20).toFixed(3);
+        const floodplain = +Math.max(buffer, clamp(_lakeFloodR, 8, 40)).toFixed(3);
+        const hasGeom = Number.isFinite(cx) && Number.isFinite(cz) && Number.isFinite(r) && r > 0;
+        if (!_wbById.has(ll.id)) {
+          const wb = hasGeom ? { id: ll.id, type: 'lake', center: [cx, cz], radius: r, buffer, floodplain, buildableBuffer: true }
+            : { id: ll.id, type: 'lake', buffer, floodplain, buildableBuffer: true };
+          ctx.masks.terrain.waterBuffers.push(wb);
+          _wbById.set(ll.id, wb);
+          if (hasGeom && !ctx.masks.easement.lakes.some(e => e?.id === ll.id)) ctx.masks.easement.lakes.push(wb);
+          ctx.report.repairs.push({ stage: stageId, id: ll.id, code: 'add_missing_lake_water_buffer_mask' });
+        }
+        if (!_fpById.has(ll.id)) {
+          const fp = hasGeom ? { id: ll.id, type: 'lake', floodplain, center: [cx, cz], radius: r } : { id: ll.id, type: 'lake', floodplain };
+          ctx.masks.terrain.floodplains.push(fp);
+          _fpById.set(ll.id, fp);
+          ctx.report.repairs.push({ stage: stageId, id: ll.id, code: 'add_missing_lake_floodplain_mask' });
+        }
+      }
+
       // R1.2/R1.3/R1.5 (analysis, read-only): slope classification, reservations, crossing candidates, landmarks.
       const analysisSize = ctx.meta.worldBounds?.size ?? ctx.input?.ground?.size ?? g;
       const slope = buildSlopeAnalysis(ctx, baseY, analysisSize);
@@ -1172,10 +1243,8 @@ export function makeStage1() {
       const landmarks = buildLandmarks(ctx, baseY, analysisSize, slope, crossings, flatSamples);
       // Treat landmarks as reservation-like constraints for downstream (R1.3: affect generation).
       const reservations = [...flatReservations, ...landmarks];
-      const waterBuffers = (ctx.masks?.terrain?.waterBuffers && Array.isArray(ctx.masks.terrain.waterBuffers))
-        ? ctx.masks.terrain.waterBuffers
-        : (Array.isArray(ctx.terrain?.analysis?.waterBuffers) ? ctx.terrain.analysis.waterBuffers : []);
-      const floodplains = Array.isArray(ctx.masks?.terrain?.floodplains) ? ctx.masks.terrain.floodplains : [];
+      const waterBuffers = Array.isArray(ctx.masks.terrain.waterBuffers) ? ctx.masks.terrain.waterBuffers : [];
+      const floodplains = Array.isArray(ctx.masks.terrain.floodplains) ? ctx.masks.terrain.floodplains : [];
       ctx.terrain.analysis = { slope, crossings, reservations, landmarks, waterBuffers, floodplains };
       ctx.masks.terrain = { slopeShare: slope.share, maxSlope: slope.maxSlope, crossings, reservations, landmarks, waterBuffers, floodplains };
       if (crossings.length) {
