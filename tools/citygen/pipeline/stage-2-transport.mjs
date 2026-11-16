@@ -404,6 +404,54 @@ function segCrossesRiver(ax, az, bx, bz, rivers) {
 }
 
 /**
+ * R2.2/§7.2: Road segment cost evaluation for cost-path selection of connectors.
+ * Deterministic cost = length × (1 + k·mean(slope²)) + water/buffer penalties.
+ * Lower cost => preferred connector. Used to rank L-shaped candidate connectors in the repair pass.
+ * Exported for testing (unit-level), not for external consumers.
+ */
+export function roadSegmentCost(path, rivers = [], opts = {}) {
+  const slopeK = Number(opts?.slopeK);
+  const slopeMul = Number.isFinite(slopeK) ? slopeK : 8;
+  const waterPenalty = Number(opts?.waterPenalty);
+  const waterPenaltyVal = Number.isFinite(waterPenalty) ? waterPenalty : 1500;
+  const bufferMargin = Number(opts?.bufferMargin);
+  const buffer = Number.isFinite(bufferMargin) ? bufferMargin : 12;
+  if (!Array.isArray(path) || path.length < 2) {
+    return { length: 0, maxSlope: 0, avgSlopeSq: 0, waterHits: 0, cost: Infinity };
+  }
+  let length = 0;
+  let slopeSqSum = 0;
+  let maxSlope = 0;
+  let waterHits = 0;
+  for (let i = 0; i + 1 < path.length; i++) {
+    const a = path[i], b = path[i + 1];
+    const dXZ = Math.hypot(b[0] - a[0], b[2] - a[2]);
+    if (!(dXZ > EPS)) continue;
+    const dy = Math.abs((Number(b[1]) || 0) - (Number(a[1]) || 0));
+    const s = dy / dXZ;
+    length += dXZ;
+    slopeSqSum += s * s * dXZ;
+    if (s > maxSlope) maxSlope = s;
+    if (Array.isArray(rivers) && rivers.length) {
+      if (segCrossesRiver(a[0], a[2], b[0], b[2], rivers)) waterHits++;
+      else {
+        const near = riverMinDistXZAt(a[0], a[2], rivers);
+        if (near.river && near.d < (Number(near.river.width) || 10) * 0.5 + buffer) waterHits++;
+      }
+    }
+  }
+  const avgSlopeSq = length > EPS ? slopeSqSum / length : 0;
+  const cost = length * (1 + slopeMul * avgSlopeSq) + waterPenaltyVal * waterHits + Math.max(0, maxSlope - 0.12) * 1000;
+  return {
+    length: +length.toFixed(2),
+    maxSlope: +maxSlope.toFixed(6),
+    avgSlopeSq: +avgSlopeSq.toFixed(8),
+    waterHits,
+    cost: +cost.toFixed(3),
+  };
+}
+
+/**
  * Slope-limit smoothing for path polylines (§7.4/§8 ramps).
  *
  * Design (monotone invariant preserved): points keep their XZ layout order; only the
@@ -3241,14 +3289,15 @@ export function makeStage2() {
           path[path.length - 1] = [b.x, b.y, b.z];
         }
         if (!path || !isAxisAlignedPath(path) || pathMaxSlope(path) > 0.3005) {
-          // fallback: simple L paths
+          // fallback: simple L paths; rank candidates by §7.2 road segment cost (deterministic tie-break by index)
           const candidates = [
             [[a.x, a.y, a.z], [b.x, sampler.heightAt(b.x, a.z), a.z], [b.x, b.y, b.z]],
             [[a.x, a.y, a.z], [a.x, sampler.heightAt(a.x, b.z), b.z], [b.x, b.y, b.z]],
             [[a.x, a.y, a.z], [b.x, b.y, b.z]], // straight (if axis-aligned)
           ];
-          path = null;
-          for (const cand of candidates) {
+          const scored = [];
+          for (let ci = 0; ci < candidates.length; ci++) {
+            const cand = candidates[ci];
             let p = cand.map(pt => [Math.round(pt[0] * 100) / 100, Math.round(pt[1] * 100) / 100, Math.round(pt[2] * 100) / 100]);
             if (!isAxisAlignedPath(p)) continue;
             p = enforceSlope(p, 0.25, stageId, idBase, null) || p;
@@ -3260,7 +3309,12 @@ export function makeStage2() {
               if (segCrossesRiver(p[j][0], p[j][2], p[j+1][0], p[j+1][2], rivers)) { badRiver = true; break; }
             }
             if (badRiver) continue;
-            path = p; break;
+            scored.push({ path: p, index: ci, cost: roadSegmentCost(p, rivers).cost });
+          }
+          scored.sort((u, v) => (u.cost - v.cost) || (u.index - v.index));
+          path = scored.length ? scored[0].path : null;
+          if (path) {
+            ctx.report.repairs.push({ stage: stageId, code: 'cost_path_connector', id: idBase, cost: scored[0].cost, candidate: scored[0].index });
           }
         }
         if (!path || !isAxisAlignedPath(path)) {

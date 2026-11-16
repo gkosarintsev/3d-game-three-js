@@ -877,6 +877,25 @@ test('citygen stage 2 helpers: axis-aligned terrain path rejects diagonal and ri
   assert.equal(isValidAxisAlignedTerrainPath(nearRiver, river), false, 'path crossing/near river corridor must be rejected');
 });
 
+test('citygen stage 2: roadSegmentCost is deterministic, monotone-favorable, and river-penalized (R2.2 §7.2)', async () => {
+  const { roadSegmentCost } = await import('./citygen/pipeline/stage-2-transport.mjs');
+  // Flat straight path vs steep path: flat wins.
+  const flat = roadSegmentCost([[0, 0, 0], [10, 0, 0], [20, 0, 0]], []);
+  const steep = roadSegmentCost([[0, 0, 0], [10, 2.5, 0], [20, 5, 0]], []);
+  assert.ok(flat.cost < steep.cost, `flat cost ${flat.cost} must be lower than steep ${steep.cost}`);
+  assert.ok(flat.maxSlope < steep.maxSlope);
+  // River penalty dominates for a crossing path vs clear one.
+  const river = [{ id: 'r', path: [[9, 0, -20], [9, 0, 20]], width: 12, depth: 2 }];
+  const crossing = roadSegmentCost([[0, 0, 0], [20, 0, 0]], river);
+  const clear = roadSegmentCost([[0, 0, 0], [20, 0, 0]], []);
+  assert.ok(crossing.waterHits >= 1, 'crossing path must register water hits');
+  assert.ok(crossing.cost > clear.cost, `water-crossed cost ${crossing.cost} must exceed clear ${clear.cost}`);
+  // Determinism
+  const again = roadSegmentCost([[0, 0, 0], [20, 0, 0]], river);
+  assert.equal(again.cost, crossing.cost);
+  assert.equal(again.waterHits, crossing.waterHits);
+});
+
 test('citygen stage 2: profiled connector is x-monotone and class-limited on steep synthetic terrain (R2.3)', async () => {
   // Regression for the previously non-monotone creation-time path.
   const { buildProfiledSegment } = await import('./citygen/pipeline/stage-2-transport.mjs');
