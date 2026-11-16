@@ -1098,6 +1098,40 @@ test('citygen stage 3: era assignment by access-cost isolines — medieval at co
   assert.ok(eraDiag, 'era_rings_assigned diagnostic emitted');
 });
 
+test('citygen stage 3: computeLandValue is deterministic and bounded; districts carry density/floors/landValue (R3.3 §6.4/§6.5)', async () => {
+  const { computeLandValue } = await import('./citygen/pipeline/stage-3-districts.mjs');
+  const ctx = {
+    input: { ground: { size: 512, y: 0 } },
+    meta: {},
+    hydrology: { rivers: [], lakes: [] },
+    networks: { roads: { segments: [{ id: 'a1', type: 'arterial', path: [[100, 0, -256], [100, 0, 256]] }] }, railways: { segments: [] } },
+    terrain: { modifiers: [], analysis: { coreCandidates: [{ x: 0, z: 0 }] } },
+    masks: { terrain: { floodplains: [] } },
+  };
+  const lvCore = computeLandValue(ctx, 10, 0, 512);
+  const lvFar = computeLandValue(ctx, 250, 250, 512);
+  assert.ok(lvCore.landValue >= lvFar.landValue, 'LV near core must be >= LV at far corner');
+  for (const lv of [lvCore, lvFar]) {
+    assert.ok(lv.landValue >= 0 && lv.landValue <= 1);
+    assert.ok(Number.isFinite(lv.components.coreProx));
+  }
+  const lvOnArt = computeLandValue(ctx, 100, 0, 512);
+  assert.strictEqual(lvOnArt.components.arterialProx, 1, 'point on arterial must have arterialProx = 1');
+  const lvAgain = computeLandValue(ctx, 100, 0, 512);
+  assert.deepEqual(lvAgain, lvOnArt, 'land value is deterministic');
+  // end-to-end: every district carries density/floors and landValue stays in [0,1]
+  const out = runCitygen(structuredClone(v4Base()));
+  assert.ok(Array.isArray(out.report.districts) && out.report.districts.length > 0);
+  for (const d of out.report.districts) {
+    assert.ok(Array.isArray(d.heightRange) && d.heightRange.length === 2, `district ${d.id} has floors range`);
+    assert.ok(d.heightRange[0] <= d.heightRange[1], `district ${d.id} floors range is ascending`);
+    assert.ok(Number.isFinite(d.buildingDensity) && d.buildingDensity >= 0 && d.buildingDensity <= 1, `district ${d.id} density in [0,1]`);
+    assert.ok(d.landValue == null || (d.landValue >= 0 && d.landValue <= 1), `district ${d.id} landValue in [0,1]`);
+  }
+  const diag = out.report.diagnostics.find(d => d.code === 'land_value_field');
+  assert.ok(diag, 'land_value_field diagnostic emitted');
+});
+
 test('citygen stage 2: roadSegmentCost is deterministic, monotone-favorable, and river-penalized (R2.2 §7.2)', async () => {
   const { roadSegmentCost } = await import('./citygen/pipeline/stage-2-transport.mjs');
   // Flat straight path vs steep path: flat wins.

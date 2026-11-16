@@ -143,7 +143,7 @@
     "chunks": []
   },
   "generator": {
-    "generatorVersion": "0.7.0",
+    "generatorVersion": "0.8.0",
     "seed": 21,
     "deterministic": true,
     "profile": "railway_industrial",

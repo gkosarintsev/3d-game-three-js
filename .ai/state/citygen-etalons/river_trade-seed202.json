@@ -1,11 +1,11 @@
 {
   "profile": "river_trade",
   "seed": 202,
-  "generatorVersion": "0.7.0",
-  "reportHash": "d0595262d1d4edfdef1fc5cb0f760c7eb95358ed287097d31b1bb4cbd92e0273",
+  "generatorVersion": "0.8.0",
+  "reportHash": "b012f502f2a72b304302dd4561212fe858f2e8f0645473880af8e8d57f356a11",
   "summary": {
     "errors": 0,
-    "warnings": 8,
+    "warnings": 11,
     "repairs": 0,
     "drops": 0
   },
@@ -20,9 +20,9 @@
       "roads": 0,
       "roadNodes": 0,
       "districts": 16,
-      "parcels": 2202,
-      "reservedParcels": 243,
-      "buildings": 403,
+      "parcels": 2217,
+      "reservedParcels": 266,
+      "buildings": 402,
       "enterableBuildings": 0,
       "props": 360,
       "lights": 0,
@@ -90,10 +90,10 @@
       "floodplains": 2
     },
     "parcels": {
-      "reservedShare": 0.110354,
+      "reservedShare": 0.119982,
       "byDistrictCount": {
         "district_0_0": 400,
-        "district_1_0": 225,
+        "district_1_0": 121,
         "district_2_0": 49,
         "district_3_0": 289,
         "district_0_1": 64,
@@ -105,8 +105,8 @@
         "district_2_2": 121,
         "district_3_2": 225,
         "district_0_3": 49,
-        "district_1_3": 121,
-        "district_2_3": 49,
+        "district_1_3": 225,
+        "district_2_3": 64,
         "district_3_3": 121
       }
     }

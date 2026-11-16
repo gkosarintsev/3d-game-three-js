@@ -1,8 +1,8 @@
 {
   "profile": "railway_industrial",
   "seed": 303,
-  "generatorVersion": "0.7.0",
-  "reportHash": "faba0fd24c2b66303554db8388d13e1c18c56eff8b1d99d107b518ef0b910cc2",
+  "generatorVersion": "0.8.0",
+  "reportHash": "4d99f22433c76fbfcb4577e946bb792744ee46a439a406941df49a824bbea94f",
   "summary": {
     "errors": 0,
     "warnings": 9,
@@ -20,9 +20,9 @@
       "roads": 0,
       "roadNodes": 0,
       "districts": 16,
-      "parcels": 2349,
-      "reservedParcels": 251,
-      "buildings": 402,
+      "parcels": 2217,
+      "reservedParcels": 247,
+      "buildings": 401,
       "enterableBuildings": 0,
       "props": 360,
       "lights": 0,
@@ -90,12 +90,12 @@
       "floodplains": 1
     },
     "parcels": {
-      "reservedShare": 0.106854,
+      "reservedShare": 0.111412,
       "byDistrictCount": {
         "district_0_0": 121,
         "district_1_0": 121,
         "district_2_0": 49,
-        "district_3_0": 289,
+        "district_3_0": 64,
         "district_0_1": 64,
         "district_1_1": 36,
         "district_2_1": 196,
@@ -106,8 +106,8 @@
         "district_3_2": 225,
         "district_0_3": 49,
         "district_1_3": 225,
-        "district_2_3": 196,
-        "district_3_3": 144
+        "district_2_3": 144,
+        "district_3_3": 289
       }
     }
   }

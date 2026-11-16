@@ -1,5 +1,5 @@
 {
-  "generatorVersion": "0.7.0",
+  "generatorVersion": "0.8.0",
   "profiles": [
     "hill_town",
     "railway_industrial",
@@ -16,9 +16,9 @@
     "hill_town": {
       "runs": 3,
       "hashes": [
-        "e2286adb6202b8273110ce0a7abd800d97fcf16ee16a34af7419d1970adc476e",
-        "d6befb6a030e062fe8b666a0db8c555f1afcd0dc9172588683fd1589e121fd1c",
-        "0926d772f81a763c44659c9634ba529b90a4b90153c0fef68c1066fafd952678"
+        "da0d742451c9fae98643ad9ac619a7ece776af99a9b571fb1b0483e4a120fe09",
+        "c91e91b3a5adcaa648836025d95ff8d8be187f4c5ce17f5ffd995ca908c57ec3",
+        "b6d279e2b8a08483c6822c601c5a0631d5c0f2cd5f8ef609a86b7fc764140476"
       ],
       "errors": {
         "count": 3,
@@ -30,6 +30,44 @@
         "count": 3,
         "min": 8,
         "max": 12,
+        "mean": 10.333333
+      },
+      "roads": {
+        "count": 3,
+        "min": 0,
+        "max": 0,
+        "mean": 0
+      },
+      "parcels": {
+        "count": 3,
+        "min": 2217,
+        "max": 2349,
+        "mean": 2280
+      },
+      "buildings": {
+        "count": 3,
+        "min": 403,
+        "max": 404,
+        "mean": 403.333333
+      }
+    },
+    "railway_industrial": {
+      "runs": 3,
+      "hashes": [
+        "b81e129e5bbe1832340e17918a1fcc0d1c519d7a839717b53d9423e3b35c6b87",
+        "89b7b959ff362ce87a56952d780374ef19a089b384d1d9e033b3c1f92ac41704",
+        "4d99f22433c76fbfcb4577e946bb792744ee46a439a406941df49a824bbea94f"
+      ],
+      "errors": {
+        "count": 3,
+        "min": 0,
+        "max": 0,
+        "mean": 0
+      },
+      "warnings": {
+        "count": 3,
+        "min": 8,
+        "max": 11,
         "mean": 9.333333
       },
       "roads": {
@@ -40,23 +78,23 @@
       },
       "parcels": {
         "count": 3,
-        "min": 2202,
-        "max": 2378,
-        "mean": 2309.666667
+        "min": 2217,
+        "max": 2274,
+        "mean": 2236
       },
       "buildings": {
         "count": 3,
-        "min": 403,
-        "max": 404,
-        "mean": 403.666667
+        "min": 401,
+        "max": 402,
+        "mean": 401.333333
       }
     },
-    "railway_industrial": {
+    "river_trade": {
       "runs": 3,
       "hashes": [
-        "f8c8373f59e5f0863febf6b572cbda6794ca8d0a936ed7c54b37a8a140adf9e1",
-        "77e4de9d6dffba55809eed1c12e50e4afca204bf89f4e46bd7838782e8654d69",
-        "faba0fd24c2b66303554db8388d13e1c18c56eff8b1d99d107b518ef0b910cc2"
+        "e3ce4537df6c42a675da6ea5d8ed9f4e78d5d69e6182003119ab80f2ccde1685",
+        "b012f502f2a72b304302dd4561212fe858f2e8f0645473880af8e8d57f356a11",
+        "d830b0e65a1dffdd41b359b34689aa689d09383f498d98429119f4f5cbd39721"
       ],
       "errors": {
         "count": 3,
@@ -67,8 +105,8 @@
       "warnings": {
         "count": 3,
         "min": 8,
-        "max": 9,
-        "mean": 8.333333
+        "max": 11,
+        "mean": 9.666667
       },
       "roads": {
         "count": 3,
@@ -78,53 +116,15 @@
       },
       "parcels": {
         "count": 3,
-        "min": 2202,
-        "max": 2378,
-        "mean": 2309.666667
+        "min": 2217,
+        "max": 2349,
+        "mean": 2280
       },
       "buildings": {
         "count": 3,
         "min": 402,
         "max": 402,
         "mean": 402
-      }
-    },
-    "river_trade": {
-      "runs": 3,
-      "hashes": [
-        "e8675564ad99ba284404e776b20262c958ae5077c7a01879591f0fd9a13bc40d",
-        "d0595262d1d4edfdef1fc5cb0f760c7eb95358ed287097d31b1bb4cbd92e0273",
-        "147b01cdef09d7cb8e88b6cf2d0ce26422d80da274d8f7c57e68b0123f11575a"
-      ],
-      "errors": {
-        "count": 3,
-        "min": 0,
-        "max": 0,
-        "mean": 0
-      },
-      "warnings": {
-        "count": 3,
-        "min": 8,
-        "max": 10,
-        "mean": 8.666667
-      },
-      "roads": {
-        "count": 3,
-        "min": 0,
-        "max": 0,
-        "mean": 0
-      },
-      "parcels": {
-        "count": 3,
-        "min": 2202,
-        "max": 2378,
-        "mean": 2309.666667
-      },
-      "buildings": {
-        "count": 3,
-        "min": 402,
-        "max": 403,
-        "mean": 402.333333
       }
     }
   }

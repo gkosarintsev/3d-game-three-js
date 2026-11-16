@@ -1,5 +1,5 @@
 {
-  "generatorVersion": "0.7.0",
+  "generatorVersion": "0.8.0",
   "profiles": [
     "river_trade",
     "hill_town",
@@ -130,10 +130,10 @@
       "warnings": {
         "count": 100,
         "min": 8,
-        "max": 14,
-        "mean": 9.11,
+        "max": 13,
+        "mean": 9.13,
         "median": 9,
-        "p95": 12
+        "p95": 11
       },
       "repairs": {
         "count": 100,
@@ -177,17 +177,17 @@
       },
       "parcels": {
         "count": 100,
-        "min": 2013,
+        "min": 2098,
         "max": 2378,
-        "mean": 2273.2,
+        "mean": 2279.95,
         "median": 2274,
         "p95": 2378
       },
       "buildings": {
         "count": 100,
         "min": 400,
-        "max": 405,
-        "mean": 402.19,
+        "max": 404,
+        "mean": 402.22,
         "median": 402,
         "p95": 404
       },
@@ -228,8 +228,8 @@
       "warnings": {
         "count": 100,
         "min": 8,
-        "max": 16,
-        "mean": 9.49,
+        "max": 15,
+        "mean": 9.56,
         "median": 9,
         "p95": 13
       },
@@ -277,7 +277,7 @@
         "count": 100,
         "min": 2013,
         "max": 2378,
-        "mean": 2273.2,
+        "mean": 2274.12,
         "median": 2274,
         "p95": 2378
       },
@@ -285,7 +285,7 @@
         "count": 100,
         "min": 401,
         "max": 405,
-        "mean": 403.1,
+        "mean": 403.19,
         "median": 403,
         "p95": 404
       },
@@ -326,10 +326,10 @@
       "warnings": {
         "count": 100,
         "min": 8,
-        "max": 14,
+        "max": 13,
         "mean": 8.96,
         "median": 9,
-        "p95": 12
+        "p95": 11
       },
       "repairs": {
         "count": 100,
@@ -373,9 +373,9 @@
       },
       "parcels": {
         "count": 100,
-        "min": 2013,
+        "min": 2098,
         "max": 2378,
-        "mean": 2273.2,
+        "mean": 2279.36,
         "median": 2274,
         "p95": 2378
       },
@@ -383,9 +383,9 @@
         "count": 100,
         "min": 400,
         "max": 404,
-        "mean": 402.18,
+        "mean": 402.23,
         "median": 402,
-        "p95": 403
+        "p95": 404
       },
       "enterableBuildings": {
         "count": 100,

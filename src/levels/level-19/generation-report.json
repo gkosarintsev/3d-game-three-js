@@ -1,7 +1,7 @@
 {
   "version": 1,
   "generator": {
-    "generatorVersion": "0.7.0",
+    "generatorVersion": "0.8.0",
     "seed": 19,
     "deterministic": true
   },
@@ -30,7 +30,7 @@
     {
       "id": "3_districts_parcels",
       "status": "ok",
-      "diagnostics": 5,
+      "diagnostics": 6,
       "repairs": 0,
       "drops": 0
     },
@@ -63,6 +63,12 @@
       "profileId": "forest",
       "era": "xix",
       "style": "era_xix",
+      "landValue": 0.6089,
+      "buildingDensity": 0.03,
+      "heightRange": [
+        0,
+        1
+      ],
       "cells": 0,
       "parcels": 441,
       "reservedParcels": 9
@@ -225,6 +231,15 @@
         "suburb": 0
       },
       "maxCost": 2720
+    },
+    {
+      "severity": "info",
+      "code": "land_value_field",
+      "stage": "3_districts_parcels",
+      "message": "land value field assigned to districts (profile weights)",
+      "profile": null,
+      "mean": 0.6089,
+      "weights": null
     },
     {
       "severity": "info",
@@ -509,7 +524,7 @@
       "dividesPlate": true
     },
     "determinism": {
-      "generatorVersion": "0.7.0",
+      "generatorVersion": "0.8.0",
       "seed": 19,
       "deterministic": true
     },

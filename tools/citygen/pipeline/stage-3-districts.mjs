@@ -281,6 +281,147 @@ export function assignErasToDistricts(ctx, size) {
   return eraCounts;
 }
 
+// R3.3 §6.4/§6.5: поле стоимости земли L(x) и производная полоса типов.
+// L = w1·(1 − d(ядро)/R) + w2·близость к артерии + w3·вид на воду + w4·плоскость − w5·(ж/д шум/дым).
+// Веса задаёт профиль (`generator.profile.landValueWeights: [w1..w5]`; в config.mjs — river_trade/hill_town/railway_industrial).
+const LAND_VALUE_DEFAULT_WEIGHTS = [0.35, 0.25, 0.15, 0.2, 0.05];
+const TYPE_DENSITY = { // §6.5: buildingDensity (нижняя граница 0,7–0,9 и т.д.)
+  office: [0.7, 0.9], old_town: [0.7, 0.9], commercial: [0.5, 0.8], market: [0.5, 0.75],
+  residential: [0.3, 0.6], luxury: [0.4, 0.6], suburb: [0.25, 0.45], slums: [0.5, 0.6],
+  industrial: [0.2, 0.4], park: [0.0, 0.05], forest: [0.0, 0.05], parking: [0.05, 0.1],
+  sports: [0.15, 0.25], campus: [0.2, 0.35],
+};
+const TYPE_FLOORS = { // §6.5: этажность (этажи; «акценты до 40/60» — к этапу зданий R4)
+  office: [3, 12], old_town: [2, 5], commercial: [3, 20], market: [1, 3],
+  residential: [2, 9], luxury: [2, 9], suburb: [1, 3], slums: [1, 4],
+  industrial: [1, 4], park: [0, 1], forest: [0, 1], parking: [1, 2],
+  sports: [1, 3], campus: [2, 6],
+};
+
+function landValueWeights(ctx) {
+  const w = ctx?.meta?.activeCityProfile?.landValueWeights ?? ctx?.input?.generator?.landValueWeights;
+  if (Array.isArray(w) && w.length === 5 && w.every(n => Number.isFinite(Number(n)))) return w.map(Number);
+  return LAND_VALUE_DEFAULT_WEIGHTS.slice();
+}
+
+function minSegmentDist(x, z, segments = [], classes = null) {
+  let best = Infinity;
+  for (const s of segments) {
+    if (classes && !classes.has(String(s?.type || ''))) continue;
+    const pts = Array.isArray(s?.path) ? s.path : [];
+    for (let i = 0; i + 1 < pts.length; i++) {
+      const d = pointSegDistXZ(x, z, pts[i][0], pts[i][2], pts[i + 1][0], pts[i + 1][2]);
+      if (d < best) best = d;
+    }
+  }
+  return best;
+}
+
+function inFloodplainAt(x, z, floodplains = []) {
+  for (const fpl of floodplains) {
+    if (!fpl) continue;
+    if (fpl.type === 'lake' && Array.isArray(fpl.center) && Number.isFinite(Number(fpl.radius))) {
+      const margin = Number.isFinite(Number(fpl.floodplain)) ? Number(fpl.floodplain) : 0;
+      if (Math.hypot(x - Number(fpl.center[0]), z - Number(fpl.center[1])) < Number(fpl.radius) + Math.max(margin, 8)) return true;
+      continue;
+    }
+    if (fpl.type === 'river' && Array.isArray(fpl.path) && fpl.path.length >= 2) {
+      const margin = Number.isFinite(Number(fpl.floodplain)) ? Number(fpl.floodplain)
+        : Math.max((Number(fpl.width) || 0) * 0.5 + 12, (Number(fpl.width) || 0) * 3);
+      let best = Infinity;
+      for (let i = 0; i + 1 < fpl.path.length; i++) best = Math.min(best, pointSegDistXZ(x, z, fpl.path[i][0], fpl.path[i][2], fpl.path[i + 1][0], fpl.path[i + 1][2]));
+      if (best < margin) return true;
+    }
+  }
+  return false;
+}
+
+export function computeLandValue(ctx, x, z, size) {
+  // Возвращает { landValue (0..1), components } — детерминированно, без ГПСЧ.
+  const baseY = Number(ctx?.input?.ground?.y ?? 0) || 0;
+  const mods = ctx?.terrain?.modifiers ?? [];
+  const w = landValueWeights(ctx);
+  const cores = Array.isArray(ctx?.terrain?.analysis?.coreCandidates) ? ctx.terrain.analysis.coreCandidates
+    : (Array.isArray(ctx?.masks?.terrain?.coreCandidates) ? ctx.masks.terrain.coreCandidates : []);
+  let dCore = Infinity;
+  for (const c of cores) {
+    const cx = Number(c?.x), cz = Number(c?.z);
+    if (!Number.isFinite(cx) || !Number.isFinite(cz)) continue;
+    dCore = Math.min(dCore, Math.hypot(cx - x, cz - z));
+  }
+  if (!Number.isFinite(dCore)) dCore = 0; // ядер нет — считаем точку ядром (наследие пилотов без cores)
+  const roadSegments = ctx?.networks?.roads?.segments ?? [];
+  const arterials = minSegmentDist(x, z, roadSegments, new Set(['arterial', 'highway']));
+  const rivers = ctx?.hydrology?.rivers ?? [];
+  const lakes = ctx?.hydrology?.lakes ?? [];
+  const dRiver = minSegmentDist(x, z, rivers, null);
+  let dLake = Infinity;
+  for (const lake of lakes) {
+    const area = lake?.area;
+    if (area && typeof area === 'object' && String(area.type) === 'circle' && Array.isArray(area.center)) {
+      dLake = Math.min(dLake, Math.max(0, Math.hypot(x - Number(area.center[0]), z - Number(area.center[1])) - (Number(area.radius) || 0)));
+      continue;
+    }
+    const pts = Array.isArray(area?.points) ? area.points : (Array.isArray(area) ? area : []);
+    if (!pts.length) continue;
+    let sx = 0, sz = 0;
+    for (const p of pts) {
+      const px = Number(Array.isArray(p) ? p[0] : p?.x), pz = Number(Array.isArray(p) ? p[2] : p?.z);
+      if (!Number.isFinite(px) || !Number.isFinite(pz)) continue;
+      sx += px; sz += pz;
+    }
+    const cxd = sx / pts.length, czd = sz / pts.length;
+    let r = 0;
+    for (const p of pts) {
+      const px = Number(Array.isArray(p) ? p[0] : p?.x), pz = Number(Array.isArray(p) ? p[2] : p?.z);
+      if (!Number.isFinite(px) || !Number.isFinite(pz)) continue;
+      r = Math.max(r, Math.hypot(px - cxd, pz - czd));
+    }
+    dLake = Math.min(dLake, Math.max(0, Math.hypot(x - cxd, z - czd) - r));
+  }
+  const dWater = Math.min(dRiver, dLake);
+  const railSegments = ctx?.networks?.railways?.segments ?? ctx?.input?.cityforge?.networks?.railways?.segments ?? [];
+  const dRail = minSegmentDist(x, z, railSegments, null);
+  const slopeHere = sampleTerrainSlope(x, z, baseY, mods);
+  const R = size / 2;
+  const coreProx = Math.max(0, 1 - dCore / R);
+  const arterialProx = Number.isFinite(arterials) ? Math.max(0, 1 - arterials / (size * 0.25)) : 0;
+  const waterProx = Number.isFinite(dWater) ? Math.max(0, 1 - dWater / (size * 0.25)) : 0;
+  const flatness = Math.max(0, 1 - Math.min(0.25, Math.max(0, slopeHere)) / 0.25);
+  const railProx = Number.isFinite(dRail) ? Math.max(0, 1 - dRail / 150) : 0;
+  const raw = w[0] * coreProx + w[1] * arterialProx + w[2] * waterProx + w[3] * flatness - w[4] * railProx;
+  const landValue = clamp((raw + w[4]) / (w[0] + w[1] + w[2] + w[3] + w[4]), 0, 1);
+  return { landValue, components: { coreProx, arterialProx, waterProx, flatness, railProx, slopeHere } };
+}
+
+function landValueAffinity(typeId, lv, inFloodplain) {
+  // §6.5: где тип; мультипликаторы — размещение по полю L/артериям/реке/рельсу/пойме/склонам.
+  switch (typeId) {
+    case 'office':
+    case 'old_town':
+      return 1 + 2.0 * (lv?.landValue ?? 0);
+    case 'commercial':
+    case 'market':
+      return 1 + 1.5 * (lv?.components?.arterialProx ?? 0);
+    case 'residential':
+    case 'luxury':
+      return 1 + 0.5 * (lv?.landValue ?? 0);
+    case 'slums':
+      return 1 + 1.0 * (1 - (lv?.landValue ?? 0));
+    case 'industrial': {
+      const flat = lv?.components?.flatness ?? 1;
+      if (flat < 0.88) return 0.4; // уклон < 3% (§6.5)
+      const corridor = Math.max(lv?.components?.railProx ?? 0, (lv?.components?.waterProx ?? 0) > 0.55 ? (lv?.components?.waterProx ?? 0) : 0);
+      return corridor > 0 ? 1 + 1.5 * corridor : 0.6;
+    }
+    case 'park':
+    case 'forest':
+      return 1 + 2.0 * Math.max(inFloodplain ? 1 : 0, 1 - (lv?.components?.flatness ?? 1));
+    default:
+      return 1;
+  }
+}
+
 export const DEFAULT_PROFILES = {
   office: { id: 'office', label: 'Офисный', weight: 1.1, parcels: { min: 18, max: 42, coverage: 0.55 }, buildings: { kinds: ['office_tower', 'office_mid', 'office_block', 'skyscraper', 'megablock'], maxFloors: 40, materials: ['glass_and_concrete', 'concrete'] } },
   park: { id: 'park', label: 'Парк', weight: 0.9, parcels: { min: 24, max: 64, coverage: 0.12 }, buildings: { kinds: ['pavilion', 'modern_pavilion', 'aframe'], maxFloors: 2, materials: ['painted_brick', 'concrete'] } },
@@ -436,6 +577,9 @@ export function makeStage3() {
             const cx = -half + (i + 0.5) * cell;
             const cz = -half + (j + 0.5) * cell;
             const rd = minRoadDist(cx, cz, roadSegments);
+            const lv = computeLandValue(ctx, cx, cz, size);
+            const inFpl = inFloodplainAt(cx, cz, ctx?.masks?.terrain?.floodplains);
+            const landMult = (id) => landValueAffinity(id, lv, inFpl);
 
             let type = preassigned.get(key);
             if (type && (!profiles[type] || !candidates.includes(type))) {
@@ -463,7 +607,7 @@ export function makeStage3() {
                     else if (rd > cell * 1.2) access = 1.12;
                   }
                 }
-                const w = base * balance * targetBoost * access;
+                const w = base * balance * targetBoost * access * landMult(id);
                 total += w;
                 return { id, w };
               });
@@ -484,6 +628,7 @@ export function makeStage3() {
               geometry: { rect: { minX, maxX, minZ, maxZ } },
               cells: [{ cx: i, cy: j }],
               priority: 0,
+              landValue: lv ? +lv.landValue.toFixed(4) : null,
             });
           }
         }
@@ -582,6 +727,29 @@ export function makeStage3() {
         // Normalize declared districts minimally
         ctx.districts = ctx.districts.map((d, idx) => ({ id: d.id ?? `district_${idx}`, type: d.type ?? d.profileId ?? 'office', profileId: d.profileId ?? d.type ?? 'office', priority: d.priority ?? 0, ...d }));
         ctx.report.diagnostics.push(info('districts_passthrough', stageId, 'using declared districts', { count: ctx.districts.length }));
+      }
+
+      // R3.3 §6.5: этажность в этажах и плотность застройки по финальным типам (после balance-проходов).
+      {
+        let lvSum = 0, lvN = 0;
+        for (const d of (ctx.districts ?? [])) {
+          const drange = TYPE_DENSITY[d.type] ?? [0.3, 0.6];
+          const frange = TYPE_FLOORS[d.type] ?? [2, 9];
+          d.buildingDensity = +((drange[0] + drange[1]) / 2).toFixed(2);
+          d.heightRange = [frange[0], frange[1]];
+          if (d.landValue == null) {
+            const rect = d?.geometry?.rect;
+            const dcx = rect ? (Number(rect.minX) + Number(rect.maxX)) / 2 : 0;
+            const dcz = rect ? (Number(rect.minZ) + Number(rect.maxZ)) / 2 : 0;
+            d.landValue = +computeLandValue(ctx, dcx, dcz, size).landValue.toFixed(4);
+          }
+          if (Number.isFinite(d.landValue)) { lvSum += d.landValue; lvN += 1; }
+        }
+        ctx.report.diagnostics.push(info('land_value_field', stageId, 'land value field assigned to districts (profile weights)', {
+          profile: ctx?.meta?.activeCityProfileId ?? null,
+          mean: lvN ? +(lvSum / lvN).toFixed(4) : null,
+          weights: (ctx?.meta?.activeCityProfile?.landValueWeights ?? null),
+        }));
       }
 
       // R3.2 §6.2/§6.3: кольца роста по стоимости доступа от ядер (изолинии поля, не евклид).
@@ -839,6 +1007,9 @@ export function makeStage3() {
           profileId: d.profileId || d.type,
           era: d.era ?? null,
           style: d.style ?? null,
+          landValue: d.landValue ?? null,
+          buildingDensity: d.buildingDensity ?? null,
+          heightRange: d.heightRange ?? null,
           cells: d.cells?.length ?? 0,
           parcels: dParcels.length,
           reservedParcels: dParcels.filter(p => p?.reserved).length,
