@@ -877,9 +877,8 @@ test('citygen stage 2 helpers: axis-aligned terrain path rejects diagonal and ri
   assert.equal(isValidAxisAlignedTerrainPath(nearRiver, river), false, 'path crossing/near river corridor must be rejected');
 });
 
-test('citygen stage 2: profiled connector clamps steep slope to local class policy at creation (R2.3)', async () => {
-  // R2.3 (§7.4): creation-time class slope enforcement. A connector crossing a steep synthetic
-  // hill must be clamped to the local class policy (0.12), not the global absolute limit (0.3).
+test('citygen stage 2: profiled connector is x-monotone and class-limited on steep synthetic terrain (R2.3)', async () => {
+  // Regression for the previously non-monotone creation-time path.
   const { buildProfiledSegment } = await import('./citygen/pipeline/stage-2-transport.mjs');
   const ctx = {
     input: { ground: { y: 0 } },
@@ -898,16 +897,57 @@ test('citygen stage 2: profiled connector clamps steep slope to local class poli
     masks: {},
     spatial: {},
   };
-  const path = buildProfiledSegment(ctx, 'test_steep_connector', { x: -85, z: 0 }, { x: 85, z: 0 }, 8, null, 'local');
-  assert.ok(Array.isArray(path) && path.length >= 2, 'path must be created');
+  for (const [klass, limit] of [['local', 0.12], ['arterial', 0.08]]) {
+    const path = buildProfiledSegment(ctx, `test_${klass}_steep_connector`, { x: -85, z: 0 }, { x: 85, z: 0 }, 8, null, klass);
+    assert.ok(Array.isArray(path) && path.length >= 2, 'path must be created');
+    for (let i = 1; i < path.length; i++) {
+      assert.ok(path[i][0] > path[i - 1][0], `x must be strictly increasing (index ${i}, klass=${klass})`);
+    }
+    let maxSegSlope = 0;
+    for (let i = 0; i + 1 < path.length; i++) {
+      const a = path[i], b = path[i + 1];
+      const run = Math.hypot(b[0] - a[0], b[2] - a[2]);
+      if (run > 1e-6) maxSegSlope = Math.max(maxSegSlope, Math.abs(b[1] - a[1]) / run);
+    }
+    assert.ok(maxSegSlope <= limit + 1e-6, `connector slope ${maxSegSlope.toFixed(4)} exceeds class limit ${limit} (klass=${klass})`);
+  }
+});
+
+test('citygen stage 2: profiled connector across river is x-monotone and within absolute slope limit (R2.3/R2.6)', async () => {
+  const { buildProfiledSegment } = await import('./citygen/pipeline/stage-2-transport.mjs');
+  const ctx = {
+    input: { ground: { y: 0 } },
+    meta: {
+      worldBounds: { size: 1280 },
+      seed: 1,
+      policies: { slopeLimitPct: { highway: 6, arterial: 8, collector: 10, local: 12 } },
+    },
+    terrain: {
+      modifiers: [
+        { id: 'test_hill', type: 'mountain', center: [0, 0], radius: 90, height: 60, falloff: 'smooth' },
+      ],
+    },
+    hydrology: {
+      rivers: [
+        { id: 'river_1', path: [[0, 0, -40], [0, 0, 40]], width: 14, depth: 3, waterLevel: 0 },
+      ],
+    },
+    report: { diagnostics: [], repairs: [] },
+    masks: {},
+    spatial: {},
+  };
+  const path = buildProfiledSegment(ctx, 'test_river_bridge_connector', { x: -85, z: 0 }, { x: 85, z: 0 }, 8, null, 'local');
+  assert.ok(Array.isArray(path) && path.length >= 2, 'bridged connector path must be created');
+  for (let i = 1; i < path.length; i++) {
+    assert.ok(path[i][0] > path[i - 1][0], `x must be strictly increasing across river (index ${i})`);
+  }
   let maxSegSlope = 0;
   for (let i = 0; i + 1 < path.length; i++) {
     const a = path[i], b = path[i + 1];
-    const dy = Math.abs(b[1] - a[1]);
     const run = Math.hypot(b[0] - a[0], b[2] - a[2]);
-    if (run > 1e-6) maxSegSlope = Math.max(maxSegSlope, dy / run);
+    if (run > 1e-6) maxSegSlope = Math.max(maxSegSlope, Math.abs(b[1] - a[1]) / run);
   }
-  assert.ok(maxSegSlope <= 0.12 + 1e-6, `connector slope ${maxSegSlope.toFixed(4)} exceeds local class policy 0.12`);
+  assert.ok(maxSegSlope <= 0.3005, `bridged connector slope ${maxSegSlope.toFixed(4)} exceeds absolute limit 0.3005`);
 });
 
 test('citygen stage 6: detects and safely repairs flat same-layer road crossing', () => {

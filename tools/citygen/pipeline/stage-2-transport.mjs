@@ -403,6 +403,16 @@ function segCrossesRiver(ax, az, bx, bz, rivers) {
   return null;
 }
 
+/**
+ * Slope-limit smoothing for path polylines (§7.4/§8 ramps).
+ *
+ * Design (monotone invariant preserved): points keep their XZ layout order; only the
+ * elevations are adjusted so adjacent sub-segments satisfy |y[i+1]-y[i]| <= maxSlope * dXZ + EPS.
+ * Achieved with a forward clamp (rise limiter), a backward clamp (descent limiter), and a final
+ * forward clamp to eliminate oscillations introduced by the backward pass. Where the endpoints
+ * cannot satisfy the class limit across the segment, the middle settles at the lowest feasible
+ * grade (the connector remains walkable, deterministic, and never zig-zags in XZ).
+ */
 function enforceSlope(path, maxSlope, stageId, segId, report) {
   if (!Array.isArray(path) || path.length < 2) return path;
   const out = [path[0].slice()];
@@ -512,6 +522,77 @@ function buildMonotoneGroundPath(a2, b2, sampler, classLimit) {
   return pts;
 }
 
+/**
+ * R2.3/R2.6 (§8.3, §7.1/§7.4): `buildRiverBridgePath` — deterministic, monotone-in-XZ
+ * bridge profile for straight connectors crossing rivers.
+ *
+ * Strategy: start from the class-limited monotone ground profile; locate the sub-segment
+ * inside the river corridor (distance to any river below half-width + margin); raise the
+ * deck to clear terrain + `BRIDGE_CLEARANCE` (>= `BRIDGE_DECK_MIN` above base); ramps
+ * before/after the deck respect an absolute elevated ramp cap rather than any class limit
+ * (bridge ramps are allowed to connect to terrain/arterials). XZ positions never change —
+ * only elevations are adjusted; output remains monotone.
+ */
+function buildRiverBridgePath(a2, b2, sampler, rivers, classLimit) {
+  const base = buildMonotoneGroundPath(a2, b2, sampler, classLimit);
+  if (!Array.isArray(rivers) || rivers.length === 0) return base;
+  const deckMargin = 12;
+  const deckCap = Math.max(0.29, classLimit * 1.5); // elevated ramps allowed, but below the absolute 0.3005 order
+  const clamp2 = (v) => Math.round(v * 100) / 100;
+  const distAt = (i, j) => Math.hypot(base[i][0] - base[j][0], base[i][2] - base[j][2]);
+  // Mark points inside river corridor
+  const inCorridor = base.map(pt => {
+    const near = riverMinDistXZAt(pt[0], pt[2], rivers);
+    return near.river ? near.d : Infinity;
+  });
+  const corridorMarginFor = (rv) => {
+    const w = Number(rv?.width) || 10;
+    return w * 0.5 + deckMargin;
+  };
+  let inIdx = [];
+  for (let i = 0; i < base.length; i++) {
+    const near = riverMinDistXZAt(base[i][0], base[i][2], rivers);
+    if (near.river && near.d <= corridorMarginFor(near.river)) inIdx.push(i);
+  }
+  if (!inIdx.length) return base;
+  // Extend deck zone by ~ramp run at both sides (clamped)
+  const rampRun = Math.max(12, Math.min(36, Math.hypot(a2.x - b2.x, a2.z - b2.z) * 0.18));
+  let iStart = inIdx[0], iEnd = inIdx[inIdx.length - 1];
+  const idxExt = (idx, sign) => Math.max(0, Math.min(base.length - 1, idx + sign));
+  // Find nearest index before iStart within rampRun distance
+  while (iStart > 0 && distAt(idxExt(iStart, -1), iStart) < rampRun) iStart--;
+  while (iEnd < base.length - 1 && distAt(iEnd, idxExt(iEnd, 1)) < rampRun) iEnd++;
+  // Deck height: clear the highest terrain point in corridor + clearance, keep pins at ends.
+  let highest = -Infinity;
+  for (let i = inIdx[0]; i <= inIdx[inIdx.length - 1]; i++) highest = Math.max(highest, sampler.heightAt(base[i][0], base[i][2]));
+  const deckH = clamp2(Math.max(highest + BRIDGE_CLEARANCE, sampler.groundY + BRIDGE_DECK_MIN, base[0][1], base[base.length - 1][1]) + 0.001);
+  // Ramp profile: linear rise from nearest corridor-edge elevations to deck height, limited to deckCap.
+  const out = base.map(p => p.slice());
+  for (let i = inIdx[0]; i <= inIdx[inIdx.length - 1]; i++) out[i][1] = deckH;
+  // Ramp up from base start to corridor start
+  for (let i = 0; i < inIdx[0]; i++) {
+    const d = distAt(i, inIdx[0]);
+    const target = clamp2(deckH - deckCap * d);
+    if (out[i][1] > target) out[i][1] = target;
+  }
+  // Ramp down from corridor end to base end
+  for (let i = inIdx[inIdx.length - 1] + 1; i < out.length; i++) {
+    const d = distAt(i, inIdx[inIdx.length - 1]);
+    const target = clamp2(deckH - deckCap * d);
+    if (out[i][1] > target) out[i][1] = target;
+  }
+  // Final global slope fix inside ramp/deck zones with deckCap (keeps x-monotone).
+  const distDelta = (i) => Math.max(1e-6, distAt(i - 1, i));
+  for (let i = 1; i < out.length; i++) {
+    const d = distDelta(i);
+    const m = deckCap * d;
+    const dy = out[i][1] - out[i - 1][1];
+    if (dy > m) out[i][1] = clamp2(out[i - 1][1] + m);
+    else if (dy < -m) out[i][1] = clamp2(out[i - 1][1] - m);
+  }
+  return out;
+}
+
 function buildRoutePath(points2d, sampler, rivers, stageId, report) {
   // points2d: [{x,z}, ...] in order. Profile on terrain and add bridge spans over rivers.
   const out = [];
@@ -573,6 +654,11 @@ function buildRoutePath(points2d, sampler, rivers, stageId, report) {
   return out;
 }
 
+/**
+ * Pin connector endpoints to intended heights while keeping slopes feasible.
+ * Monotone in XZ (positions unchanged): pins endpoints and re-clamps slopes with the
+ * same monotone forward/backward passes as `enforceSlope`, preserving XZ order.
+ */
 function pinEndpoints(path, start, end, maxSlope, stageId, segId, report) {
   if (!Array.isArray(path) || path.length < 2) return path;
   const fixEnd = (arr, fromIdx, toIdx) => {
@@ -649,19 +735,23 @@ export function buildProfiledSegment(ctx, segId, a2, b2, width, viaPoints = null
   const stageId = '2_transport';
   const sampler = makeTerrainSampler(ctx); // cheap to rebuild; deterministic
   const rivers = (ctx.hydrology?.rivers ?? ctx.input?.cityforge?.hydrology?.rivers ?? []);
-  const pts2d = viaPoints && viaPoints.length ? [a2, ...viaPoints, b2] : [a2, b2];
-  const filtered = pts2d.filter((p, i, arr) => i === 0 || Math.hypot(p.x - arr[i-1].x, p.z - arr[i-1].z) > 1);
-  let path = buildRoutePath(filtered, sampler, rivers, stageId, ctx.report);
-  if (path.length < 2) return null;
   // R2.3 (§7.4/§7.1): creation-time class slope limit for ground generated segments (class degradation
   // keeps the network valid even on steep terrain; authored IR is never clamped here).
   const classPct = roadClassSlopeLimitPct(klass, ctx?.meta?.policies);
   const creationLimit = Math.min(MAX_ROAD_SLOPE, Number.isFinite(classPct) ? Math.max(classPct / 100, 0.05) : MAX_ROAD_SLOPE);
-  const directCrossing = segCrossesRiver(a2.x, a2.z, b2.x, b2.z, rivers ?? []);
-  if (!directCrossing) {
-    // Straight, non-river connectors: deterministic monotone class-limited local profile.
-    return buildMonotoneGroundPath(a2, b2, sampler, creationLimit);
+  const useViaPoints = Array.isArray(viaPoints) && viaPoints.length > 0;
+  // Straight connectors without via-points: deterministic monotone profile (R2.3) with
+  // deterministic monotone bridge over rivers (R2.6). XZ order preserved by construction.
+  if (!useViaPoints) {
+    const directCrossing = segCrossesRiver(a2.x, a2.z, b2.x, b2.z, rivers ?? []);
+    return directCrossing
+      ? buildRiverBridgePath(a2, b2, sampler, rivers ?? [], creationLimit)
+      : buildMonotoneGroundPath(a2, b2, sampler, creationLimit);
   }
+  const pts2d = [a2, ...viaPoints, b2];
+  const filtered = pts2d.filter((p, i, arr) => i === 0 || Math.hypot(p.x - arr[i-1].x, p.z - arr[i-1].z) > 1);
+  let path = buildRoutePath(filtered, sampler, rivers, stageId, ctx.report);
+  if (path.length < 2) return null;
   path = enforceSlope(path, creationLimit, stageId, segId, ctx.report);
   const start = [Math.round(a2.x * 100) / 100, Math.round(sampler.heightAt(a2.x, a2.z) * 100) / 100, Math.round(a2.z * 100) / 100];
   const end = [Math.round(b2.x * 100) / 100, Math.round(sampler.heightAt(b2.x, b2.z) * 100) / 100, Math.round(b2.z * 100) / 100];
