@@ -894,6 +894,25 @@ test('citygen stage 2: postprocess mergeCollinearAxisAlignedPoints deterministic
   assert.deepEqual(mergeCollinearAxisAlignedPoints(straight, 12), out);
 });
 
+test('citygen stage 2: mergeStraightCollinearPoints preserves slope-bounded XZ-collinear runs (R2.2 §7.2)', async () => {
+  const { mergeStraightCollinearPoints } = await import('./citygen/pipeline/stage-2-transport.mjs');
+  // Collinear red line with interleaved points; own slope is fine (stays under 0.3)
+  const input = [];
+  for (let x = 0; x <= 100; x += 4) input.push([x, 0, 0]);
+  const out = mergeStraightCollinearPoints(input, { rivers: [], maxSlope: 0.3 });
+  assert.equal(out.length, 2);
+  assert.equal(out[0][0], 0);
+  assert.equal(out[out.length - 1][0], 100);
+  // Zig-zag must not be merged
+  const z = [[0,0,0],[5,0,5],[10,0,0],[15,0,5],[20,0,0]];
+  const out2 = mergeStraightCollinearPoints(z, { rivers: [], maxSlope: 0.3 });
+  assert.equal(out2.length, 5);
+  // Collinear but too steep to merge -> keep points
+  const steep = [[0,0,0],[5,2.5,0],[10,0,0]];
+  const out3 = mergeStraightCollinearPoints(steep, { rivers: [], maxSlope: 0.3 });
+  assert.equal(out3.length, 3);
+});
+
 test('citygen stage 2: roadSegmentCost is deterministic, monotone-favorable, and river-penalized (R2.2 §7.2)', async () => {
   const { roadSegmentCost } = await import('./citygen/pipeline/stage-2-transport.mjs');
   // Flat straight path vs steep path: flat wins.

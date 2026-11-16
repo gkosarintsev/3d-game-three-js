@@ -410,6 +410,64 @@ function segCrossesRiver(ax, az, bx, bz, rivers) {
  * slope magnitudes (bounded by class/absolute limits), and XZ-shape.
  * Exported for testing.
  */
+/**
+ * R2.2/§7.2: merge interior straight (collinear in XZ) points of a path polyline.
+ * Deterministic; keeps XZ order; only removes redundant collinear points when the
+ * combined sub-segment slope stays below the given cap. Bridge-aware: any sub-segment
+ * whose XZ line crosses or runs inside a river corridor is left untouched.
+ * Exported for testing; IR-facing postprocess wiring is intentionally not in use yet
+ * (see notes on compiler ramp-nose contract).
+ */
+export function mergeStraightCollinearPoints(pts, opts = {}) {
+  const maxSlope = Number.isFinite(Number(opts?.maxSlope)) ? Number(opts.maxSlope) : MAX_ROAD_SLOPE;
+  const rivers = Array.isArray(opts?.rivers) ? opts.rivers : [];
+  if (!Array.isArray(pts) || pts.length < 3) return pts;
+  const rounded = pts.map(p => [Math.round(Number(p[0] ?? 0) * 100) / 100, Number.isFinite(Number(p[1])) ? Math.round(Number(p[1]) * 100) / 100 : 0, Math.round(Number(p[2] ?? 0) * 100) / 100]);
+  const crossesRiver = (a, b) => {
+    if (!rivers.length) return false;
+    if (segCrossesRiver(a[0], a[2], b[0], b[2], rivers)) return true;
+    for (const pt of [a, b]) {
+      const near = riverMinDistXZAt(pt[0], pt[2], rivers);
+      if (near.river) {
+        const w = Number(near.river.width) || 10;
+        if (near.d < w * 0.5 + 8) return true;
+      }
+    }
+    return false;
+  };
+  const out = [rounded[0]];
+  for (let i = 1; i < rounded.length - 1; i++) {
+    const prev = out[out.length - 1];
+    const cur = rounded[i];
+    const next = rounded[i + 1];
+    const ax = cur[0] - prev[0], az = cur[2] - prev[2];
+    const bx = next[0] - cur[0], bz = next[2] - cur[2];
+    const lenA = Math.hypot(ax, az);
+    const lenB = Math.hypot(bx, bz);
+    if (rivers.length) {
+      if (crossesRiver(prev, cur) || crossesRiver(cur, next) || crossesRiver(prev, next)) { out.push(cur); continue; }
+    }
+    if (lenA < 0.05) { continue; }
+    if (lenB < 0.05) { continue; }
+    const cross = Math.abs(ax * bz - az * bx);
+    const denom = lenA * lenB;
+    const collinear = denom > EPS && cross / denom < 0.01;
+    if (collinear) {
+      // Only merge if consecutive sub-segments have equal grade (linear Y profile); otherwise
+      // we'd erase intentional elevation changes (e.g. crest/dip introduced for terrain/bridge).
+      const gradeAB = lenA > EPS ? (cur[1] - prev[1]) / lenA : 0;
+      const gradeBC = lenB > EPS ? (next[1] - cur[1]) / lenB : 0;
+      if (Math.abs(gradeAB - gradeBC) < 1e-6) {
+        const dXZ = Math.hypot(next[0] - prev[0], next[2] - prev[2]);
+        if (dXZ > 0.5) continue;
+      }
+    }
+    out.push(cur);
+  }
+  out.push(rounded[rounded.length - 1]);
+  return out;
+}
+
 export function mergeCollinearAxisAlignedPoints(pts, mergeMin = 12) {
   if (!Array.isArray(pts) || pts.length < 3) return pts;
   const eps = 1e-6;
