@@ -1,7 +1,7 @@
 {
   "version": 1,
   "generator": {
-    "generatorVersion": "0.5.0",
+    "generatorVersion": "0.6.0",
     "seed": 16,
     "deterministic": true
   },
@@ -16,7 +16,7 @@
     {
       "id": "1_landscape_hydrology",
       "status": "ok",
-      "diagnostics": 7,
+      "diagnostics": 8,
       "repairs": 0,
       "drops": 0
     },
@@ -299,6 +299,18 @@
       "code": "stage_ok",
       "stage": "0_input_space",
       "message": "stage 0_input_space completed"
+    },
+    {
+      "severity": "info",
+      "code": "core_candidates_marked",
+      "stage": "1_landscape_hydrology",
+      "message": "marked 3 candidate core point(s) (downtown/secondary)",
+      "count": 3,
+      "roles": [
+        "downtown",
+        "secondary",
+        "secondary"
+      ]
     },
     {
       "severity": "info",
@@ -706,7 +718,7 @@
       "floodplains": 1,
       "crossings": 3,
       "landmarks": 5,
-      "reservations": 10,
+      "reservations": 13,
       "slopeShare": {
         "flat_lt3": 0.325625,
         "gentle_3_8": 0.1775,
@@ -1110,7 +1122,7 @@
         }
       },
       "crossings": 3,
-      "reservations": 10,
+      "reservations": 13,
       "landmarks": 5,
       "waterBuffers": 1,
       "floodplains": 1
@@ -1124,7 +1136,7 @@
       "dividesPlate": true
     },
     "determinism": {
-      "generatorVersion": "0.5.0",
+      "generatorVersion": "0.6.0",
       "seed": 16,
       "deterministic": true
     },

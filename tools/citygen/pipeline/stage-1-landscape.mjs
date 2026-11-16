@@ -233,6 +233,123 @@ function buildReservations(ctx, baseY, size, slope) {
   return { picked, samples };
 }
 
+export function buildCoreCandidates(ctx, baseY, size, slope, crossings, flatSamples = []) {
+  // R3.1: deterministic candidates for the point of origin (downtown) and up to 2 secondary cores.
+  // Scoring per docs §6.1: исторические переправы (crossings) + близость к воде (rivers/lakes)
+  // помогают ставить ядро; floodplain понижает приоритет (не мягкая запрещённая зона — штраф).
+  // Края плиты: центр ядра обязан лежать на расстоянии >= 25% от края (§6.1).
+  const half = size / 2;
+  const edgeOffset = size * 0.25;
+  const mods = ctx.terrain.modifiers || [];
+  const rivers = ctx.hydrology?.rivers || [];
+  const lakes = ctx.hydrology?.lakes || [];
+  const floodplains = Array.isArray(ctx.masks?.terrain?.floodplains) ? ctx.masks.terrain.floodplains : [];
+  const step = Math.max(32, Math.min(96, (slope?.step || 16) * 2));
+  const distToRiver = (x, z) => {
+    let best = Infinity;
+    for (const rv of rivers) {
+      const path = Array.isArray(rv?.path) ? rv.path : [];
+      for (let i = 0; i + 1 < path.length; i++) {
+        const d = distPointSegXZ(x, z, path[i][0], path[i][2], path[i + 1][0], path[i + 1][2]);
+        if (d < best) best = d;
+      }
+    }
+    return best;
+  };
+  const distToLake = (x, z) => {
+    let best = Infinity;
+    for (const lake of lakes) {
+      const area = lake?.area;
+      const pts = Array.isArray(area?.points) ? area.points : (Array.isArray(area) ? area : []);
+      if (!pts.length) continue;
+      let sx = 0, sz = 0, cx = null, cz = null;
+      for (const p of pts) {
+        const px = Number(Array.isArray(p) ? p[0] : p?.x);
+        const pz = Number(Array.isArray(p) ? p[2] : p?.z);
+        if (!Number.isFinite(px) || !Number.isFinite(pz)) continue;
+        sx += px; sz += pz;
+      }
+      const n = Math.max(1, pts.length);
+      cx = sx / n; cz = sz / n;
+      let r = 0;
+      for (const p of pts) {
+        const px = Number(Array.isArray(p) ? p[0] : p?.x);
+        const pz = Number(Array.isArray(p) ? p[2] : p?.z);
+        if (!Number.isFinite(px) || !Number.isFinite(pz)) continue;
+        r = Math.max(r, Math.hypot(px - cx, pz - cz));
+      }
+      const d = Math.max(0, Math.hypot(x - cx, z - cz) - r);
+      if (d < best) best = d;
+    }
+    return best;
+  };
+  const inFloodplain = (x, z) => {
+    for (const fpl of floodplains) {
+      if (!fpl) continue;
+      if (fpl.type === 'lake' && Array.isArray(fpl.center) && Number.isFinite(Number(fpl.radius))) {
+        const margin = Number.isFinite(Number(fpl.floodplain)) ? Number(fpl.floodplain) : 0;
+        if (Math.hypot(x - Number(fpl.center[0]), z - Number(fpl.center[1])) < (Number(fpl.radius) + Math.max(margin, 8))) return true;
+        continue;
+      }
+      if (fpl.type === 'river' && Array.isArray(fpl.path) && fpl.path.length >= 2) {
+        const margin = Number.isFinite(Number(fpl.floodplain)) ? Number(fpl.floodplain)
+          : Math.max((Number(fpl.width) || 0) * 0.5 + 12, (Number(fpl.width) || 0) * 3);
+        let best = Infinity;
+        for (let i = 0; i + 1 < fpl.path.length; i++) {
+          const a = fpl.path[i], b = fpl.path[i + 1];
+          best = Math.min(best, distPointSegXZ(x, z, a[0], a[2], b[0], b[2]));
+        }
+        if (best < margin) return true;
+      }
+    }
+    return false;
+  };
+  const scoreFor = (x, z) => {
+    const edge = Math.min(half - Math.abs(x), half - Math.abs(z));
+    if (edge < edgeOffset) return -Infinity;
+    const y = terrainHeightAt(x, z, baseY, mods);
+    const d = 8;
+    const s1 = Math.abs(terrainHeightAt(x + d, z, baseY, mods) - y) / d;
+    const s2 = Math.abs(terrainHeightAt(x - d, z, baseY, mods) - y) / d;
+    const s3 = Math.abs(terrainHeightAt(x, z + d, baseY, mods) - y) / d;
+    const s4 = Math.abs(terrainHeightAt(x, z - d, baseY, mods) - y) / d;
+    const slopeHere = Math.max(s1, s2, s3, s4);
+    if (slopeHere > 0.15) return -Infinity;
+    let score = 1.0;
+    let nearestCross = Infinity;
+    for (const c of (crossings || [])) {
+      const cx = Number(c?.x), cz = Number(c?.z);
+      if (!Number.isFinite(cx) || !Number.isFinite(cz)) continue;
+      const dd = Math.hypot(cx - x, cz - z);
+      if (dd < nearestCross) nearestCross = dd;
+    }
+    if (Number.isFinite(nearestCross)) score += Math.max(0, 1.2 - nearestCross / (Math.max(64, size * 0.2)));
+    let nearestRiver = distToRiver(x, z);
+    if (Number.isFinite(nearestRiver)) score += Math.max(0, 0.8 - nearestRiver / (Math.max(64, size * 0.3)));
+    let nearestLake = distToLake(x, z);
+    if (Number.isFinite(nearestLake)) score += Math.max(0, 0.6 - nearestLake / (Math.max(64, size * 0.35)));
+    if (inFloodplain(x, z)) score *= 0.3;
+    return score;
+  };
+  const candidates = [];
+  for (let z = -half + edgeOffset; z <= half - edgeOffset + EPS; z += step) {
+    for (let x = -half + edgeOffset; x <= half - edgeOffset + EPS; x += step) {
+      const s = scoreFor(x, z);
+      if (s === -Infinity) continue;
+      candidates.push({ x: +x.toFixed(3), z: +z.toFixed(3), score: +s.toFixed(4) });
+    }
+  }
+  candidates.sort((a, b) => b.score - a.score || a.x - b.x || a.z - b.z);
+  const maxCores = size >= 1024 ? 3 : 2;
+  const picked = candidates.slice(0, maxCores);
+  const out = [];
+  if (picked[0]) out.push({ id: 'core_downtown', role: 'downtown', kind: 'historic_core', x: picked[0].x, z: picked[0].z, score: picked[0].score, priority: 0 });
+  for (let i = 1; i < picked.length; i++) {
+    out.push({ id: `core_secondary_${i}`, role: 'secondary', kind: 'secondary_core', x: picked[i].x, z: picked[i].z, score: picked[i].score, priority: i });
+  }
+  return out;
+}
+
 function buildLandmarks(ctx, baseY, size, slope, crossings, flatSamples = []) {
   // R1.3/R1.5 (partial): deterministic landmarks/orientations derived from terrain and crossings.
   // These are added as reservation-like points so downstream stages can avoid/plan around them.
@@ -1263,12 +1380,13 @@ export function makeStage1() {
       const flatReservations = Array.isArray(reservationBuild) ? reservationBuild : (reservationBuild.picked ?? []);
       const flatSamples = Array.isArray(reservationBuild) ? [] : (reservationBuild.samples ?? []);
       const landmarks = buildLandmarks(ctx, baseY, analysisSize, slope, crossings, flatSamples);
-      // Treat landmarks as reservation-like constraints for downstream (R1.3: affect generation).
-      const reservations = [...flatReservations, ...landmarks];
+      const coreCandidates = buildCoreCandidates(ctx, baseY, analysisSize, slope, crossings, flatSamples);
+      // Treat landmarks and core candidates as reservation-like constraints for downstream stages.
+      const reservations = [...flatReservations, ...landmarks, ...coreCandidates];
       const waterBuffers = Array.isArray(ctx.masks.terrain.waterBuffers) ? ctx.masks.terrain.waterBuffers : [];
       const floodplains = Array.isArray(ctx.masks.terrain.floodplains) ? ctx.masks.terrain.floodplains : [];
-      ctx.terrain.analysis = { slope, crossings, reservations, landmarks, waterBuffers, floodplains };
-      ctx.masks.terrain = { slopeShare: slope.share, maxSlope: slope.maxSlope, crossings, reservations, landmarks, waterBuffers, floodplains };
+      ctx.terrain.analysis = { slope, crossings, reservations, landmarks, coreCandidates, waterBuffers, floodplains };
+      ctx.masks.terrain = { slopeShare: slope.share, maxSlope: slope.maxSlope, crossings, reservations, landmarks, coreCandidates, waterBuffers, floodplains };
       if (crossings.length) {
         ctx.report.diagnostics.push(info('historical_crossings_marked', stageId, `marked ${crossings.length} historical crossing candidate(s)`, { count: crossings.length }));
       }
@@ -1277,6 +1395,9 @@ export function makeStage1() {
       }
       if (landmarks.length) {
         ctx.report.diagnostics.push(info('terrain_landmarks_marked', stageId, `marked ${landmarks.length} landmark/orientation point(s)`, { count: landmarks.length }));
+      }
+      if (coreCandidates.length) {
+        ctx.report.diagnostics.push(info('core_candidates_marked', stageId, `marked ${coreCandidates.length} candidate core point(s) (downtown/secondary)`, { count: coreCandidates.length, roles: coreCandidates.map(c => c.role) }));
       }
       if (waterBuffers.length) {
         ctx.report.diagnostics.push(info('terrain_water_buffers_marked', stageId, `marked ${waterBuffers.length} water buffer zone(s)`, { count: waterBuffers.length }));

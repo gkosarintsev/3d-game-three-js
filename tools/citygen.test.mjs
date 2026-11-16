@@ -1012,6 +1012,41 @@ test('citygen rules: junction type vs adjacent classes read-only validator (R2.8
   assert.ok(codes.has('junction_type_mismatch_class'), 'arterial x arterial declared uncontrolled must be flagged');
 });
 
+test('citygen stage 1: buildCoreCandidates returns bounded deterministic core candidates away from plate edges (R3.1)', async () => {
+  const { buildCoreCandidates } = await import('./citygen/pipeline/stage-1-landscape.mjs');
+  const base = v4Base();
+  base.ground = { ...base.ground, size: 512 };
+  base.cityforge.terrain = {
+    base: { type: 'heightfield', source: 'procedural', resolution: 4 },
+    modifiers: [],
+  };
+  base.cityforge.hydrology = {
+    rivers: [
+      { id: 'r1', path: [[0, 0, -256], [0, 0, 256]], width: 18, depth: 3 },
+    ],
+    lakes: [
+      { id: 'l1', area: { type: 'circle', center: [-200, 0], radius: 30 }, waterLevel: 0 },
+    ],
+  };
+  const ctx = {
+    input: base,
+    meta: { worldBounds: { size: 512 }, seed: 99 },
+    hydrology: { rivers: base.cityforge.hydrology.rivers, lakes: base.cityforge.hydrology.lakes },
+    masks: { easement: { rivers: [], roads: [] }, terrain: { floodplains: [{ id: 'r1', type: 'river', floodplain: 80, path: [[0, 0, -256], [0, 0, 256]], width: 18 }, { id: 'l1', type: 'lake', floodplain: 32, center: [-200, 0], radius: 30 }] } },
+    terrain: { modifiers: [] },
+  };
+  const crossings = [{ riverId: 'r1', x: 0, z: 64, t: 0.6, width: 18, bankSlope: 0.02, score: 0.02 }];
+  const out = buildCoreCandidates(ctx, 0, 512, { step: 16, share: {}, maxSlope: 0.1 }, crossings, []);
+  assert.ok(Array.isArray(out) && out.length >= 1 && out.length <= 2);
+  for (const c of out) {
+    assert.ok(Math.abs(c.x) <= 256 - 128 + 1);
+    assert.ok(Math.abs(c.z) <= 256 - 128 + 1);
+    assert.ok(Number.isFinite(c.score) && c.score > 0);
+  }
+  const again = buildCoreCandidates(ctx, 0, 512, { step: 16, share: {}, maxSlope: 0.1 }, crossings, []);
+  assert.deepEqual(out, again);
+});
+
 test('citygen stage 2: roadSegmentCost is deterministic, monotone-favorable, and river-penalized (R2.2 §7.2)', async () => {
   const { roadSegmentCost } = await import('./citygen/pipeline/stage-2-transport.mjs');
   // Flat straight path vs steep path: flat wins.

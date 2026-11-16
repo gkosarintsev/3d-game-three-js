@@ -72,9 +72,9 @@ export const LEVEL_20 = {
         "file": "chunk-0-0.l14b",
         "id": "0_0",
         "objects": {
-          "buildings": 96,
-          "lights": 2,
-          "props": 55,
+          "buildings": 95,
+          "lights": 1,
+          "props": 56,
           "roads": 24
         },
         "rect": {
@@ -89,8 +89,8 @@ export const LEVEL_20 = {
         "id": "0_1",
         "objects": {
           "buildings": 64,
-          "lights": 1,
-          "props": 51,
+          "lights": 2,
+          "props": 61,
           "roads": 31
         },
         "rect": {
@@ -104,9 +104,9 @@ export const LEVEL_20 = {
         "file": "chunk-1-0.l14b",
         "id": "1_0",
         "objects": {
-          "buildings": 158,
+          "buildings": 157,
           "lights": 2,
-          "props": 154,
+          "props": 145,
           "roads": 10
         },
         "rect": {
@@ -120,9 +120,9 @@ export const LEVEL_20 = {
         "file": "chunk-1-1.l14b",
         "id": "1_1",
         "objects": {
-          "buildings": 86,
+          "buildings": 87,
           "lights": 3,
-          "props": 100,
+          "props": 98,
           "roads": 99
         },
         "rect": {
@@ -7014,6 +7014,74 @@ export const LEVEL_20 = {
           "id": "tr_acc_1_1",
           "points": [
             {
+              "x": -520,
+              "y": 13.18,
+              "z": -344
+            },
+            {
+              "x": -508,
+              "y": 14.54,
+              "z": -344
+            },
+            {
+              "x": -496,
+              "y": 15.75,
+              "z": -344
+            },
+            {
+              "x": -484,
+              "y": 16.77,
+              "z": -344
+            },
+            {
+              "x": -472,
+              "y": 17.58,
+              "z": -344
+            },
+            {
+              "x": -460,
+              "y": 18.15,
+              "z": -344
+            },
+            {
+              "x": -448,
+              "y": 18.47,
+              "z": -344
+            }
+          ],
+          "shoulder": 1,
+          "width": 8
+        },
+        {
+          "blend": 5,
+          "crossLevel": true,
+          "id": "tr_acc_1_1_2",
+          "points": [
+            {
+              "x": -448,
+              "y": 18.47,
+              "z": -344
+            },
+            {
+              "x": -448,
+              "y": 19.52,
+              "z": -353.82
+            },
+            {
+              "x": -448,
+              "y": 20.45,
+              "z": -363.64
+            }
+          ],
+          "shoulder": 1,
+          "width": 8
+        },
+        {
+          "blend": 5,
+          "crossLevel": true,
+          "id": "tr_acc_1_3",
+          "points": [
+            {
               "x": 88,
               "y": 51.53,
               "z": -72
@@ -7055,7 +7123,7 @@ export const LEVEL_20 = {
         {
           "blend": 5,
           "crossLevel": true,
-          "id": "tr_acc_1_1_2",
+          "id": "tr_acc_1_3_2",
           "points": [
             {
               "x": 160,
@@ -7099,7 +7167,7 @@ export const LEVEL_20 = {
         {
           "blend": 5,
           "crossLevel": true,
-          "id": "tr_acc_1_3",
+          "id": "tr_acc_1_5",
           "points": [
             {
               "x": 160,
@@ -7143,7 +7211,7 @@ export const LEVEL_20 = {
         {
           "blend": 5,
           "crossLevel": true,
-          "id": "tr_acc_1_3_2",
+          "id": "tr_acc_1_5_2",
           "points": [
             {
               "x": 232,
@@ -7187,7 +7255,7 @@ export const LEVEL_20 = {
         {
           "blend": 5,
           "crossLevel": true,
-          "id": "tr_acc_1_5",
+          "id": "tr_acc_1_7",
           "points": [
             {
               "x": 232,
@@ -7231,7 +7299,7 @@ export const LEVEL_20 = {
         {
           "blend": 5,
           "crossLevel": true,
-          "id": "tr_acc_1_5_2",
+          "id": "tr_acc_1_7_2",
           "points": [
             {
               "x": 304,
@@ -7275,7 +7343,7 @@ export const LEVEL_20 = {
         {
           "blend": 5,
           "crossLevel": true,
-          "id": "tr_acc_1_7",
+          "id": "tr_acc_1_9",
           "points": [
             {
               "x": 304,
@@ -7319,7 +7387,7 @@ export const LEVEL_20 = {
         {
           "blend": 5,
           "crossLevel": true,
-          "id": "tr_acc_1_7_2",
+          "id": "tr_acc_1_9_2",
           "points": [
             {
               "x": 373.33,
@@ -7363,7 +7431,7 @@ export const LEVEL_20 = {
         {
           "blend": 5,
           "crossLevel": true,
-          "id": "tr_acc_1_9",
+          "id": "tr_acc_1_11",
           "points": [
             {
               "x": -216,
@@ -7407,7 +7475,7 @@ export const LEVEL_20 = {
         {
           "blend": 5,
           "crossLevel": true,
-          "id": "tr_acc_1_9_2",
+          "id": "tr_acc_1_11_2",
           "points": [
             {
               "x": -288,
@@ -7451,7 +7519,7 @@ export const LEVEL_20 = {
         {
           "blend": 5,
           "crossLevel": true,
-          "id": "tr_acc_1_11",
+          "id": "tr_acc_1_13",
           "points": [
             {
               "x": -520,
@@ -7495,7 +7563,7 @@ export const LEVEL_20 = {
         {
           "blend": 5,
           "crossLevel": true,
-          "id": "tr_acc_1_11_2",
+          "id": "tr_acc_1_13_2",
           "points": [
             {
               "x": -592,
@@ -7539,7 +7607,7 @@ export const LEVEL_20 = {
         {
           "blend": 5,
           "crossLevel": true,
-          "id": "tr_acc_1_13",
+          "id": "tr_acc_1_15",
           "points": [
             {
               "x": -136,
@@ -7583,7 +7651,7 @@ export const LEVEL_20 = {
         {
           "blend": 5,
           "crossLevel": true,
-          "id": "tr_acc_1_13_2",
+          "id": "tr_acc_1_15_2",
           "points": [
             {
               "x": -208,
@@ -7612,7 +7680,7 @@ export const LEVEL_20 = {
         {
           "blend": 5,
           "crossLevel": true,
-          "id": "tr_acc_1_15",
+          "id": "tr_acc_1_17",
           "points": [
             {
               "x": 160,
@@ -7656,7 +7724,7 @@ export const LEVEL_20 = {
         {
           "blend": 5,
           "crossLevel": true,
-          "id": "tr_acc_1_15_2",
+          "id": "tr_acc_1_17_2",
           "points": [
             {
               "x": 232,
@@ -7692,69 +7760,6 @@ export const LEVEL_20 = {
               "x": 232,
               "y": 51.21,
               "z": -144
-            }
-          ],
-          "shoulder": 1,
-          "width": 8
-        },
-        {
-          "blend": 5,
-          "crossLevel": true,
-          "id": "tr_acc_1_17",
-          "points": [
-            {
-              "x": -592,
-              "y": 0,
-              "z": -160
-            },
-            {
-              "x": -580,
-              "y": 0,
-              "z": -160
-            }
-          ],
-          "shoulder": 1,
-          "width": 8
-        },
-        {
-          "blend": 5,
-          "crossLevel": true,
-          "id": "tr_acc_1_17_2",
-          "points": [
-            {
-              "x": -580,
-              "y": 0,
-              "z": -160
-            },
-            {
-              "x": -580,
-              "y": 0,
-              "z": -148
-            },
-            {
-              "x": -580,
-              "y": 0,
-              "z": -136
-            },
-            {
-              "x": -580,
-              "y": 0,
-              "z": -124
-            },
-            {
-              "x": -580,
-              "y": 0,
-              "z": -112
-            },
-            {
-              "x": -580,
-              "y": 0,
-              "z": -100
-            },
-            {
-              "x": -580,
-              "y": 0,
-              "z": -88
             }
           ],
           "shoulder": 1,

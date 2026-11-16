@@ -1,7 +1,7 @@
 {
   "version": 1,
   "generator": {
-    "generatorVersion": "0.5.0",
+    "generatorVersion": "0.6.0",
     "seed": 16,
     "deterministic": true
   },
@@ -16,7 +16,7 @@
     {
       "id": "1_landscape_hydrology",
       "status": "ok",
-      "diagnostics": 7,
+      "diagnostics": 8,
       "repairs": 0,
       "drops": 0
     },
@@ -135,7 +135,7 @@
       "profileId": "market",
       "cells": 1,
       "parcels": 196,
-      "reservedParcels": 118
+      "reservedParcels": 119
     },
     {
       "id": "district_2_2",
@@ -167,7 +167,7 @@
       "profileId": "slums",
       "cells": 1,
       "parcels": 400,
-      "reservedParcels": 99
+      "reservedParcels": 100
     },
     {
       "id": "district_3_2",
@@ -249,8 +249,8 @@
       "severity": "warn",
       "code": "chunk_props_heavy",
       "stage": "6_finalize_emit",
-      "message": "high prop count in a single chunk (145)",
-      "maxProps": 145,
+      "message": "high prop count in a single chunk (141)",
+      "maxProps": 141,
       "chunk": 640,
       "grid": 2
     },
@@ -259,6 +259,18 @@
       "code": "stage_ok",
       "stage": "0_input_space",
       "message": "stage 0_input_space completed"
+    },
+    {
+      "severity": "info",
+      "code": "core_candidates_marked",
+      "stage": "1_landscape_hydrology",
+      "message": "marked 3 candidate core point(s) (downtown/secondary)",
+      "count": 3,
+      "roles": [
+        "downtown",
+        "secondary",
+        "secondary"
+      ]
     },
     {
       "severity": "info",
@@ -1806,13 +1818,13 @@
       "code": "parcels_reserved_by_reason",
       "stage": "3_districts_parcels",
       "message": "parcel reservations by terrain/hydrology/infrastructure constraints",
-      "reserved": 605,
+      "reserved": 607,
       "total": 2274,
       "byReason": {
         "water": 349,
         "road_corridor": 171,
         "anchor": 3,
-        "reservation": 15,
+        "reservation": 17,
         "crossing": 0,
         "steep_slope": 67,
         "remote_access": 0
@@ -1831,7 +1843,7 @@
       "message": "generated buildings from parcels",
       "count": 403,
       "budget": 420,
-      "skippedConflict": 467
+      "skippedConflict": 469
     },
     {
       "severity": "info",
@@ -1846,18 +1858,18 @@
       "message": "generated district props",
       "count": 360,
       "budget": 360,
-      "attempts": 1041,
+      "attempts": 1066,
       "byDistrictType": {
-        "slums": 61,
-        "old_town": 44,
-        "luxury": 31,
+        "slums": 62,
+        "old_town": 43,
+        "luxury": 35,
         "campus": 12,
         "residential": 72,
-        "industrial": 7,
-        "park": 15,
+        "industrial": 8,
+        "park": 11,
         "commercial": 22,
-        "suburb": 23,
-        "office": 23,
+        "suburb": 24,
+        "office": 21,
         "parking": 10,
         "market": 25,
         "forest": 11,
@@ -1933,7 +1945,7 @@
         "suburb"
       ],
       "parcels": 2274,
-      "reservedParcels": 605,
+      "reservedParcels": 607,
       "parcelAccess": {
         "near": 1107,
         "mid": 964,
@@ -1992,12 +2004,12 @@
         },
         "slums": {
           "parcels": 400,
-          "unreserved": 301,
+          "unreserved": 300,
           "good": 192,
-          "mid": 109,
+          "mid": 108,
           "far": 0,
-          "reserved": 99,
-          "goodOrMid": 301,
+          "reserved": 100,
+          "goodOrMid": 300,
           "accessibleRatio": 1
         },
         "sports": {
@@ -2013,12 +2025,12 @@
       },
       "buildings": 403,
       "buildingsByDistrictType": {
-        "residential": 102,
+        "residential": 105,
         "office": 47,
         "old_town": 53,
         "commercial": 31,
         "slums": 97,
-        "suburb": 13,
+        "suburb": 10,
         "luxury": 15,
         "industrial": 20,
         "parking": 7,
@@ -2031,16 +2043,16 @@
       "lights": 8,
       "props": 360,
       "propsByDistrictType": {
-        "slums": 61,
-        "old_town": 44,
-        "luxury": 31,
+        "slums": 62,
+        "old_town": 43,
+        "luxury": 35,
         "campus": 12,
         "residential": 72,
-        "industrial": 7,
-        "park": 15,
+        "industrial": 8,
+        "park": 11,
         "commercial": 22,
-        "suburb": 23,
-        "office": 23,
+        "suburb": 24,
+        "office": 21,
         "parking": 10,
         "market": 25,
         "forest": 11,
@@ -2049,7 +2061,7 @@
       "chunkLoad": {
         "nonEmptyChunks": 4,
         "maxBuildings": 153,
-        "maxProps": 145,
+        "maxProps": 141,
         "maxLights": 2,
         "avgBuildings": 100.75,
         "avgProps": 90
@@ -2064,7 +2076,7 @@
       "floodplains": 2,
       "crossings": 6,
       "landmarks": 6,
-      "reservations": 11,
+      "reservations": 14,
       "slopeShare": {
         "flat_lt3": 0.325625,
         "gentle_3_8": 0.1775,
@@ -2177,7 +2189,7 @@
       "roadNodes": 142,
       "districts": 16,
       "parcels": 2274,
-      "reservedParcels": 605,
+      "reservedParcels": 607,
       "buildings": 403,
       "enterableBuildings": 0,
       "props": 360,
@@ -2244,7 +2256,7 @@
       "shareByType": {}
     },
     "parcels": {
-      "reservedShare": 0.266051,
+      "reservedShare": 0.266931,
       "byDistrictCount": {
         "district_0_0": 121,
         "district_1_0": 121,
@@ -2286,7 +2298,7 @@
         }
       },
       "crossings": 6,
-      "reservations": 11,
+      "reservations": 14,
       "landmarks": 6,
       "waterBuffers": 2,
       "floodplains": 2
@@ -2300,7 +2312,7 @@
       "dividesPlate": true
     },
     "determinism": {
-      "generatorVersion": "0.5.0",
+      "generatorVersion": "0.6.0",
       "seed": 16,
       "deterministic": true
     },

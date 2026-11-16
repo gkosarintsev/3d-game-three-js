@@ -1,7 +1,7 @@
 {
   "version": 1,
   "generator": {
-    "generatorVersion": "0.5.0",
+    "generatorVersion": "0.6.0",
     "seed": 19,
     "deterministic": true
   },
@@ -16,7 +16,7 @@
     {
       "id": "1_landscape_hydrology",
       "status": "ok",
-      "diagnostics": 5,
+      "diagnostics": 6,
       "repairs": 0,
       "drops": 0
     },
@@ -63,7 +63,7 @@
       "profileId": "forest",
       "cells": 0,
       "parcels": 441,
-      "reservedParcels": 8
+      "reservedParcels": 9
     }
   ],
   "diagnostics": [
@@ -122,6 +122,18 @@
       "code": "stage_ok",
       "stage": "0_input_space",
       "message": "stage 0_input_space completed"
+    },
+    {
+      "severity": "info",
+      "code": "core_candidates_marked",
+      "stage": "1_landscape_hydrology",
+      "message": "marked 3 candidate core point(s) (downtown/secondary)",
+      "count": 3,
+      "roles": [
+        "downtown",
+        "secondary",
+        "secondary"
+      ]
     },
     {
       "severity": "info",
@@ -214,13 +226,13 @@
       "code": "parcels_reserved_by_reason",
       "stage": "3_districts_parcels",
       "message": "parcel reservations by terrain/hydrology/infrastructure constraints",
-      "reserved": 8,
+      "reserved": 9,
       "total": 441,
       "byReason": {
         "water": 0,
         "road_corridor": 0,
         "anchor": 2,
-        "reservation": 6,
+        "reservation": 7,
         "crossing": 0,
         "steep_slope": 0,
         "remote_access": 0
@@ -283,7 +295,7 @@
         "forest"
       ],
       "parcels": 441,
-      "reservedParcels": 8,
+      "reservedParcels": 9,
       "parcelAccess": {
         "near": 79,
         "mid": 107,
@@ -314,7 +326,7 @@
       "floodplains": 0,
       "crossings": 0,
       "landmarks": 1,
-      "reservations": 6,
+      "reservations": 9,
       "slopeShare": {
         "flat_lt3": 1,
         "gentle_3_8": 0,
@@ -365,7 +377,7 @@
       "roadNodes": 124,
       "districts": 1,
       "parcels": 441,
-      "reservedParcels": 8,
+      "reservedParcels": 9,
       "buildings": 24,
       "enterableBuildings": 0,
       "props": 0,
@@ -440,7 +452,7 @@
       "shareByType": {}
     },
     "parcels": {
-      "reservedShare": 0.018141,
+      "reservedShare": 0.020408,
       "byDistrictCount": {
         "d0": 441
       }
@@ -467,7 +479,7 @@
         }
       },
       "crossings": 0,
-      "reservations": 6,
+      "reservations": 9,
       "landmarks": 1,
       "waterBuffers": 0,
       "floodplains": 0
@@ -481,7 +493,7 @@
       "dividesPlate": true
     },
     "determinism": {
-      "generatorVersion": "0.5.0",
+      "generatorVersion": "0.6.0",
       "seed": 19,
       "deterministic": true
     },
