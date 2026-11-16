@@ -141,6 +141,7 @@ function findCrossingCandidates(ctx, baseY, size) {
   const rivers = ctx.hydrology.rivers || [];
   const mods = ctx.terrain.modifiers || [];
   const half = size / 2;
+  const stageId = '1_landscape_hydrology';
   const out = [];
   for (const rv of rivers) {
     const path = Array.isArray(rv.path) ? rv.path : [];
@@ -154,10 +155,7 @@ function findCrossingCandidates(ctx, baseY, size) {
       samples.push({ x: (a[0] + b[0]) / 2, z: (a[2] + b[2]) / 2, t: (i + 0.5) / (path.length - 1), kind: 'mid' });
     }
     if (!samples.length && path.length >= 2) samples.push({ x: (path[0][0] + path[1][0]) / 2, z: (path[0][2] + path[1][2]) / 2, t: 0.5, kind: 'mid' });
-    const scored = [];
-    for (const s of samples) {
-      if (Math.abs(s.x) > half || Math.abs(s.z) > half) continue;
-      // local terrain flatness probe (small cross offsets approximated by sampling around)
+    const scoreSample = (s) => {
       const y = terrainHeightAt(s.x, s.z, baseY, mods);
       const d = 8;
       const s1 = Math.abs(terrainHeightAt(s.x + d, s.z, baseY, mods) - y) / d;
@@ -165,15 +163,39 @@ function findCrossingCandidates(ctx, baseY, size) {
       const s3 = Math.abs(terrainHeightAt(s.x, s.z + d, baseY, mods) - y) / d;
       const s4 = Math.abs(terrainHeightAt(s.x, s.z - d, baseY, mods) - y) / d;
       const bankSlope = Math.max(s1, s2, s3, s4);
-      // prefer narrower parts and flatter banks; penalty near plate edge
       const edgeDist = Math.min(half - Math.abs(s.x), half - Math.abs(s.z));
       const edgePenalty = edgeDist < width * 2 ? 1 : 0;
       const score = bankSlope + width * 0.002 + edgePenalty * 10;
-      scored.push({ riverId: rv.id ?? null, x: +s.x.toFixed(3), z: +s.z.toFixed(3), t: +s.t.toFixed(4), width, bankSlope: +bankSlope.toFixed(6), score: +score.toFixed(6) });
+      return { riverId: rv.id ?? null, x: +s.x.toFixed(3), z: +s.z.toFixed(3), t: +s.t.toFixed(4), width, bankSlope: +bankSlope.toFixed(6), score: +score.toFixed(6) };
+    };
+    const scored = [];
+    for (const s of samples) {
+      if (Math.abs(s.x) > half || Math.abs(s.z) > half) continue;
+      // local terrain flatness probe (small cross offsets approximated by sampling around)
+      scored.push(scoreSample(s));
     }
     scored.sort((a, b) => a.score - b.score || a.t - b.t || a.x - b.x || a.z - b.z);
-    const take = Math.min(4, Math.max(2, Math.min(scored.length, 3)));
-    out.push(...scored.slice(0, take));
+    let takeCount = Math.min(4, Math.max(2, Math.min(scored.length, 3)));
+    let chosen = scored.slice(0, takeCount);
+    // R1.5 (deterministic repair): ensure each river has at least one marked crossing candidate for transport-compatible
+    // floodplain/crossing decisions across scenarios; fallback picks best available sample (or path midpoint clamped in-bounds).
+    if (!chosen.length) {
+      let fallback = null;
+      if (scored.length) fallback = scored[0];
+      if (!fallback && samples.length) {
+        // deterministic: prefer midpoint sample, clamp to plate if needed
+        const mid = samples[Math.floor(samples.length / 2)] ?? samples[0];
+        const cx = clamp(mid.x, -half + 1, half - 1);
+        const cz = clamp(mid.z, -half + 1, half - 1);
+        fallback = scoreSample({ x: cx, z: cz, t: mid.t, kind: 'fallback' });
+      }
+      if (fallback) {
+        chosen = [{ ...fallback, fallback: true }];
+        if (ctx?.report?.diagnostics) ctx.report.diagnostics.push(info('crossing_fallback_added', stageId, `added deterministic fallback crossing for river '${rv.id ?? '?'}'`, { riverId: rv.id ?? null, x: fallback.x, z: fallback.z }));
+        if (ctx?.report?.repairs) ctx.report.repairs.push({ stage: stageId, id: rv.id ?? null, code: 'add_fallback_crossing_candidate' });
+      }
+    }
+    out.push(...chosen);
   }
   // global deterministic order and cap
   out.sort((a, b) => String(a.riverId ?? '').localeCompare(String(b.riverId ?? '')) || a.score - b.score || a.t - b.t);
