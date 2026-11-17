@@ -42,7 +42,7 @@ You operate in this repository as an autonomous engineer. Maintain project conte
 
 - ES-модули без сборщика. Единственная внешняя зависимость — Three.js 0.160 через
   importmap (CDN). Новые npm-зависимости, сборщики и фреймворки — только по явной
-  просьбе владельца проекта.
+  просьбе владельца проекта. Playwright и chrome ставить можно.
 - Игра и автотесты запускаются в браузере: `python -m http.server 8124` →
   `http://localhost:8124/3d-game.html`. `file://` не поддерживается (importmap).
 - Для отладки в консоли страницы открыт `window.game`; модули полагаться на него

@@ -2,11 +2,11 @@
   "file": "src/levels/level-19.json",
   "levelName": "level-19",
   "generator": {
-    "generatorVersion": "0.33.0",
+    "generatorVersion": "0.55.0",
     "seed": 19,
     "deterministic": true
   },
-  "reportHash": "6dc0c26298953ac96a7906892b8ea9d9999b7b49a16618af39c8c8f9562d3b63",
+  "reportHash": "799bc43e6d8896e2464e016020525ab5faa2ff6ca32e2bc41bbd7b6550662021",
   "stages": 7,
   "summary": {
     "errors": 0,
@@ -17,7 +17,7 @@
   "rules": {
     "errors": 0,
     "warnings": 3,
-    "infos": 1
+    "infos": 0
   },
   "metrics": {
     "partial": true,
@@ -28,7 +28,7 @@
       "parcels": 441,
       "reservedParcels": 9,
       "buildings": 24,
-      "enterableBuildings": 0,
+      "enterableBuildings": 5,
       "props": 0,
       "lights": 0,
       "rivers": 0,
@@ -91,7 +91,7 @@
     "gameplay": {
       "spawnToRoad": 179.213,
       "exitToRoad": 0,
-      "enterableShare": 0,
+      "enterableShare": 0.208333,
       "enterableTarget": 0.2
     },
     "districts": {

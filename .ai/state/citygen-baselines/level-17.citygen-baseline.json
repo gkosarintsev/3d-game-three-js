@@ -2,57 +2,57 @@
   "file": "src/levels/level-17.json",
   "levelName": "level-17",
   "generator": {
-    "generatorVersion": "0.33.0",
+    "generatorVersion": "0.55.0",
     "seed": 16,
     "deterministic": true
   },
-  "reportHash": "23f0f5953364e9d05d48ff88b7882d218d92220f8595967b9ebb65f8ab2ecfd7",
+  "reportHash": "361d6a9392e7c57811c8630a26b7d54a18b238eb94656fe10563c2e62913984b",
   "stages": 7,
   "summary": {
     "errors": 0,
-    "warnings": 8,
+    "warnings": 9,
     "repairs": 9,
-    "drops": 0
+    "drops": 2
   },
   "rules": {
     "errors": 0,
     "warnings": 1,
-    "infos": 1
+    "infos": 0
   },
   "metrics": {
     "partial": true,
     "counts": {
-      "roads": 178,
-      "roadNodes": 148,
-      "districts": 44,
-      "parcels": 2256,
-      "reservedParcels": 592,
-      "buildings": 412,
-      "enterableBuildings": 0,
+      "roads": 177,
+      "roadNodes": 147,
+      "districts": 52,
+      "parcels": 1955,
+      "reservedParcels": 499,
+      "buildings": 409,
+      "enterableBuildings": 82,
       "props": 360,
       "lights": 8,
       "rivers": 2,
       "lakes": 0
     },
     "graph": {
-      "nodes": 148,
-      "edges": 178,
+      "nodes": 147,
+      "edges": 177,
       "components": 1,
-      "largestComponent": 148,
-      "deadEnds": 32,
-      "deadEndRatio": 0.216216,
-      "avgDegree": 2.405405,
-      "gamma": 0.406393
+      "largestComponent": 147,
+      "deadEnds": 31,
+      "deadEndRatio": 0.210884,
+      "avgDegree": 2.408163,
+      "gamma": 0.406897
     },
     "roads": {
-      "totalLength": 14252.732,
+      "totalLength": 14291.282,
       "lengthByType": {
         "arterial": 2080,
-        "local": 12172.732
+        "local": 12211.282
       },
       "shareByType": {
-        "arterial": 0.145937,
-        "local": 0.854063
+        "arterial": 0.145543,
+        "local": 0.854457
       },
       "maxSlope": 0.3,
       "slopeByClass": {
@@ -63,9 +63,9 @@
           "overAbsolute": 0
         },
         "local": {
-          "count": 175,
+          "count": 174,
           "maxSlope": 0.3,
-          "overPolicy": 67,
+          "overPolicy": 64,
           "overAbsolute": 0
         }
       },
@@ -75,15 +75,15 @@
         "collector": 10,
         "local": 12
       },
-      "classPolicyViolations": 70,
-      "classPolicyOk": 108,
+      "classPolicyViolations": 67,
+      "classPolicyOk": 110,
       "overAbsolute": 0,
       "version": 2
     },
     "gameplay": {
       "spawnToRoad": 0,
       "exitToRoad": 0,
-      "enterableShare": 0,
+      "enterableShare": 0.200489,
       "enterableTarget": 0.2
     },
     "districts": {
@@ -93,52 +93,60 @@
       "shareByType": {}
     },
     "parcels": {
-      "reservedShare": 0.262411,
+      "reservedShare": 0.255243,
       "byDistrictCount": {
-        "district_0_0_0": 55,
-        "district_0_0_1": 55,
-        "district_1_0_0": 66,
-        "district_1_0_1": 66,
-        "district_2_0_0": 28,
-        "district_2_0_1": 28,
-        "district_3_0_0": 136,
+        "district_0_0_00": 25,
+        "district_0_0_01": 25,
+        "district_0_0_10": 25,
+        "district_0_0_11": 25,
+        "district_1_0": 42,
+        "district_2_0_0": 170,
+        "district_2_0_1": 119,
+        "district_3_0_0": 70,
         "district_3_0_1": 136,
         "district_0_1_0": 32,
         "district_0_1_1": 32,
-        "district_1_1_0": 18,
-        "district_1_1_1": 18,
-        "district_2_1_0": 98,
-        "district_2_1_100": 21,
-        "district_2_1_101": 28,
-        "district_2_1_110": 21,
-        "district_2_1_111": 28,
-        "district_3_1_000": 40,
-        "district_3_1_001": 60,
-        "district_3_1_010": 40,
-        "district_3_1_011": 60,
-        "district_3_1_1": 200,
-        "district_0_2_0": 32,
-        "district_0_2_1": 32,
-        "district_1_2_0": 28,
-        "district_1_2_1": 28,
+        "district_1_1": 64,
+        "district_2_1_0": 28,
+        "district_2_1_10": 8,
+        "district_2_1_11": 8,
+        "district_3_1_000": 4,
+        "district_3_1_001": 4,
+        "district_3_1_01": 16,
+        "district_3_1_10": 12,
+        "district_3_1_11": 24,
+        "district_3_1_200": 6,
+        "district_3_1_201": 8,
+        "district_3_1_2100": 4,
+        "district_3_1_2101": 8,
+        "district_3_1_211": 8,
+        "district_3_1_30": 12,
+        "district_3_1_31": 24,
+        "district_0_2": 64,
+        "district_1_2_0": 105,
+        "district_1_2_1": 105,
         "district_2_2_0": 66,
         "district_2_2_1": 66,
         "district_3_2_0": 105,
         "district_3_2_1": 105,
         "district_0_3_0": 21,
         "district_0_3_1": 21,
-        "district_1_3_0": 105,
-        "district_1_3_1": 105,
-        "district_2_3_0": 66,
-        "district_2_3_1": 66,
-        "district_3_3_000": 12,
-        "district_3_3_001": 24,
-        "district_3_3_010": 12,
-        "district_3_3_011": 24,
-        "district_3_3_100": 12,
-        "district_3_3_101": 24,
-        "district_3_3_110": 12,
-        "district_3_3_111": 24
+        "district_1_3_0": 66,
+        "district_1_3_1": 66,
+        "district_2_3_0": 28,
+        "district_2_3_1": 28,
+        "district_3_3_0": 66,
+        "district_3_3_1": 66,
+        "district_1_0_b0": 6,
+        "district_2_0_1_b1": 3,
+        "district_2_0_0_b2": 3,
+        "district_2_1_10_b3": 4,
+        "district_2_1_11_b4": 4,
+        "district_3_0_0_b5": 7,
+        "district_2_0_1_b6": 5,
+        "district_3_1_000_b7": 2,
+        "district_3_0_0_b8": 2,
+        "district_3_1_01_b9": 2
       }
     },
     "terrain": {

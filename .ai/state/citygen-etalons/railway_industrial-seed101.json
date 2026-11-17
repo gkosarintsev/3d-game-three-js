@@ -1,29 +1,29 @@
 {
   "profile": "railway_industrial",
   "seed": 101,
-  "generatorVersion": "0.33.0",
-  "reportHash": "6537200ac14307b0a0dec15dc011c5b5bd81efa6fdb07eaaad9ef1c21bee3a37",
+  "generatorVersion": "0.55.0",
+  "reportHash": "a665a7b623ee79ba3a28b76434a597f4d2e5fbe2eb90793c1b5edb82e7fe488d",
   "summary": {
     "errors": 0,
-    "warnings": 8,
+    "warnings": 10,
     "repairs": 0,
     "drops": 0
   },
   "rules": {
     "errors": 0,
     "warnings": 0,
-    "infos": 1
+    "infos": 0
   },
   "metrics": {
     "partial": true,
     "counts": {
       "roads": 0,
       "roadNodes": 0,
-      "districts": 40,
-      "parcels": 2410,
-      "reservedParcels": 308,
-      "buildings": 410,
-      "enterableBuildings": 0,
+      "districts": 41,
+      "parcels": 2384,
+      "reservedParcels": 333,
+      "buildings": 407,
+      "enterableBuildings": 81,
       "props": 360,
       "lights": 0,
       "rivers": 1,
@@ -59,7 +59,7 @@
     "gameplay": {
       "spawnToRoad": null,
       "exitToRoad": null,
-      "enterableShare": 0,
+      "enterableShare": 0.199017,
       "enterableTarget": 0.2
     },
     "terrain": {
@@ -90,28 +90,34 @@
       "floodplains": 1
     },
     "parcels": {
-      "reservedShare": 0.127801,
+      "reservedShare": 0.139681,
       "byDistrictCount": {
-        "district_0_0_0": 55,
-        "district_0_0_1": 55,
+        "district_0_0_00": 25,
+        "district_0_0_01": 25,
+        "district_0_0_10": 25,
+        "district_0_0_11": 25,
         "district_1_0_0": 66,
-        "district_1_0_1": 66,
-        "district_2_0_0": 105,
-        "district_2_0_1": 105,
+        "district_1_0_1": 44,
+        "district_2_0_0": 200,
+        "district_2_0_1": 200,
         "district_3_0_0": 136,
         "district_3_0_1": 136,
         "district_0_1_0": 32,
         "district_0_1_1": 32,
         "district_1_1_0": 18,
         "district_1_1_1": 18,
-        "district_2_1_000": 21,
-        "district_2_1_001": 28,
+        "district_2_1_00": 49,
         "district_2_1_01": 49,
         "district_2_1_1": 98,
-        "district_3_1_0": 200,
-        "district_3_1_1": 200,
-        "district_0_2_0": 32,
-        "district_0_2_1": 32,
+        "district_3_1_000": 12,
+        "district_3_1_001": 24,
+        "district_3_1_010": 12,
+        "district_3_1_011": 24,
+        "district_3_1_100": 12,
+        "district_3_1_101": 24,
+        "district_3_1_110": 12,
+        "district_3_1_111": 24,
+        "district_0_2": 64,
         "district_1_2_0": 28,
         "district_1_2_1": 28,
         "district_2_2_0": 66,
@@ -122,16 +128,11 @@
         "district_0_3_1": 21,
         "district_1_3_0": 105,
         "district_1_3_1": 105,
-        "district_2_3_000": 12,
-        "district_2_3_001": 24,
-        "district_2_3_010": 12,
-        "district_2_3_011": 24,
-        "district_2_3_100": 12,
-        "district_2_3_101": 24,
-        "district_2_3_110": 12,
-        "district_2_3_111": 24,
-        "district_3_3_0": 66,
-        "district_3_3_1": 66
+        "district_2_3_0": 66,
+        "district_2_3_1": 66,
+        "district_3_3_0": 105,
+        "district_3_3_1": 105,
+        "district_1_0_1_b0": 6
       }
     }
   }

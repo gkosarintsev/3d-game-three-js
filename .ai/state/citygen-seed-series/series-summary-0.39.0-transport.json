@@ -1,0 +1,489 @@
+{
+  "generatorVersion": "0.39.0",
+  "profiles": [
+    "river_trade",
+    "hill_town",
+    "railway_industrial"
+  ],
+  "seeds": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11,
+    12,
+    13,
+    14,
+    15,
+    16,
+    17,
+    18,
+    19,
+    20,
+    21,
+    22,
+    23,
+    24,
+    25,
+    26,
+    27,
+    28,
+    29,
+    30,
+    31,
+    32,
+    33,
+    34,
+    35,
+    36,
+    37,
+    38,
+    39,
+    40,
+    41,
+    42,
+    43,
+    44,
+    45,
+    46,
+    47,
+    48,
+    49,
+    50,
+    51,
+    52,
+    53,
+    54,
+    55,
+    56,
+    57,
+    58,
+    59,
+    60,
+    61,
+    62,
+    63,
+    64,
+    65,
+    66,
+    67,
+    68,
+    69,
+    70,
+    71,
+    72,
+    73,
+    74,
+    75,
+    76,
+    77,
+    78,
+    79,
+    80,
+    81,
+    82,
+    83,
+    84,
+    85,
+    86,
+    87,
+    88,
+    89,
+    90,
+    91,
+    92,
+    93,
+    94,
+    95,
+    96,
+    97,
+    98,
+    99,
+    100
+  ],
+  "seedCount": 100,
+  "runs": 300,
+  "hardFailures": 0,
+  "transport": true,
+  "singleRun": false,
+  "failFast": false,
+  "aborted": false,
+  "concurrency": 4,
+  "byProfile": {
+    "river_trade": {
+      "runs": 100,
+      "determinismCheckedRuns": 100,
+      "deterministicOk": 100,
+      "errorRuns": 0,
+      "warningRuns": 100,
+      "dropsRuns": 0,
+      "hashesUnique": 100,
+      "errors": {
+        "count": 100,
+        "min": 0,
+        "max": 0,
+        "mean": 0,
+        "median": 0,
+        "p95": 0
+      },
+      "warnings": {
+        "count": 100,
+        "min": 3,
+        "max": 21,
+        "mean": 7.99,
+        "median": 8,
+        "p95": 11
+      },
+      "repairs": {
+        "count": 100,
+        "min": 0,
+        "max": 38,
+        "mean": 15.18,
+        "median": 16.5,
+        "p95": 33
+      },
+      "drops": {
+        "count": 100,
+        "min": 0,
+        "max": 0,
+        "mean": 0,
+        "median": 0,
+        "p95": 0
+      },
+      "ruleErrors": {
+        "count": 100,
+        "min": 0,
+        "max": 0,
+        "mean": 0,
+        "median": 0,
+        "p95": 0
+      },
+      "ruleWarnings": {
+        "count": 100,
+        "min": 0,
+        "max": 1,
+        "mean": 0.93,
+        "median": 1,
+        "p95": 1
+      },
+      "roads": {
+        "count": 100,
+        "min": 0,
+        "max": 215,
+        "mean": 133.72,
+        "median": 167,
+        "p95": 206
+      },
+      "parcels": {
+        "count": 100,
+        "min": 2079,
+        "max": 2388,
+        "mean": 2224.31,
+        "median": 2239,
+        "p95": 2371
+      },
+      "buildings": {
+        "count": 100,
+        "min": 384,
+        "max": 416,
+        "mean": 402.16,
+        "median": 402,
+        "p95": 407
+      },
+      "enterableBuildings": {
+        "count": 100,
+        "min": 0,
+        "max": 0,
+        "mean": 0,
+        "median": 0,
+        "p95": 0
+      },
+      "props": {
+        "count": 100,
+        "min": 360,
+        "max": 360,
+        "mean": 360,
+        "median": 360,
+        "p95": 360
+      },
+      "deadEndRatio": {
+        "count": 93,
+        "min": 0.190476,
+        "max": 0.666667,
+        "mean": 0.30927,
+        "median": 0.267606,
+        "p95": 0.666667
+      },
+      "gamma": {
+        "count": 93,
+        "min": 0.4,
+        "max": 0.666667,
+        "mean": 0.452399,
+        "median": 0.434568,
+        "p95": 0.666667
+      },
+      "rho": {
+        "count": 100,
+        "min": 0.6821,
+        "max": 0.9449,
+        "mean": 0.884997,
+        "median": 0.888,
+        "p95": 0.9368,
+        "okCount": 100,
+        "missing": 0
+      }
+    },
+    "hill_town": {
+      "runs": 100,
+      "determinismCheckedRuns": 100,
+      "deterministicOk": 100,
+      "errorRuns": 0,
+      "warningRuns": 100,
+      "dropsRuns": 0,
+      "hashesUnique": 100,
+      "errors": {
+        "count": 100,
+        "min": 0,
+        "max": 0,
+        "mean": 0,
+        "median": 0,
+        "p95": 0
+      },
+      "warnings": {
+        "count": 100,
+        "min": 4,
+        "max": 33,
+        "mean": 10.65,
+        "median": 9,
+        "p95": 20
+      },
+      "repairs": {
+        "count": 100,
+        "min": 0,
+        "max": 25,
+        "mean": 9.3,
+        "median": 12,
+        "p95": 19
+      },
+      "drops": {
+        "count": 100,
+        "min": 0,
+        "max": 0,
+        "mean": 0,
+        "median": 0,
+        "p95": 0
+      },
+      "ruleErrors": {
+        "count": 100,
+        "min": 0,
+        "max": 0,
+        "mean": 0,
+        "median": 0,
+        "p95": 0
+      },
+      "ruleWarnings": {
+        "count": 100,
+        "min": 0,
+        "max": 1,
+        "mean": 0.64,
+        "median": 1,
+        "p95": 1
+      },
+      "roads": {
+        "count": 100,
+        "min": 0,
+        "max": 187,
+        "mean": 104.47,
+        "median": 156.5,
+        "p95": 174
+      },
+      "parcels": {
+        "count": 100,
+        "min": 2021,
+        "max": 2409,
+        "mean": 2216.85,
+        "median": 2210,
+        "p95": 2333
+      },
+      "buildings": {
+        "count": 100,
+        "min": 401,
+        "max": 417,
+        "mean": 407.3,
+        "median": 407,
+        "p95": 414
+      },
+      "enterableBuildings": {
+        "count": 100,
+        "min": 0,
+        "max": 0,
+        "mean": 0,
+        "median": 0,
+        "p95": 0
+      },
+      "props": {
+        "count": 100,
+        "min": 360,
+        "max": 360,
+        "mean": 360,
+        "median": 360,
+        "p95": 360
+      },
+      "deadEndRatio": {
+        "count": 64,
+        "min": 0.2,
+        "max": 0.306452,
+        "mean": 0.24513,
+        "median": 0.25,
+        "p95": 0.285714
+      },
+      "gamma": {
+        "count": 64,
+        "min": 0.402878,
+        "max": 0.435897,
+        "mean": 0.414905,
+        "median": 0.414492,
+        "p95": 0.426573
+      },
+      "rho": {
+        "count": 100,
+        "min": 0.797,
+        "max": 0.9496,
+        "mean": 0.900631,
+        "median": 0.9061,
+        "p95": 0.9419,
+        "okCount": 100,
+        "missing": 0
+      }
+    },
+    "railway_industrial": {
+      "runs": 100,
+      "determinismCheckedRuns": 100,
+      "deterministicOk": 100,
+      "errorRuns": 0,
+      "warningRuns": 100,
+      "dropsRuns": 0,
+      "hashesUnique": 100,
+      "errors": {
+        "count": 100,
+        "min": 0,
+        "max": 0,
+        "mean": 0,
+        "median": 0,
+        "p95": 0
+      },
+      "warnings": {
+        "count": 100,
+        "min": 3,
+        "max": 19,
+        "mean": 7.91,
+        "median": 8,
+        "p95": 12
+      },
+      "repairs": {
+        "count": 100,
+        "min": 0,
+        "max": 36,
+        "mean": 13.49,
+        "median": 15,
+        "p95": 28
+      },
+      "drops": {
+        "count": 100,
+        "min": 0,
+        "max": 0,
+        "mean": 0,
+        "median": 0,
+        "p95": 0
+      },
+      "ruleErrors": {
+        "count": 100,
+        "min": 0,
+        "max": 0,
+        "mean": 0,
+        "median": 0,
+        "p95": 0
+      },
+      "ruleWarnings": {
+        "count": 100,
+        "min": 0,
+        "max": 1,
+        "mean": 0.91,
+        "median": 1,
+        "p95": 1
+      },
+      "roads": {
+        "count": 100,
+        "min": 0,
+        "max": 216,
+        "mean": 127.75,
+        "median": 168,
+        "p95": 193
+      },
+      "parcels": {
+        "count": 100,
+        "min": 2227,
+        "max": 2540,
+        "mean": 2381.85,
+        "median": 2398.5,
+        "p95": 2540
+      },
+      "buildings": {
+        "count": 100,
+        "min": 400,
+        "max": 417,
+        "mean": 403.5,
+        "median": 403,
+        "p95": 409
+      },
+      "enterableBuildings": {
+        "count": 100,
+        "min": 0,
+        "max": 0,
+        "mean": 0,
+        "median": 0,
+        "p95": 0
+      },
+      "props": {
+        "count": 100,
+        "min": 360,
+        "max": 360,
+        "mean": 360,
+        "median": 360,
+        "p95": 360
+      },
+      "deadEndRatio": {
+        "count": 91,
+        "min": 0.191489,
+        "max": 0.666667,
+        "mean": 0.311671,
+        "median": 0.257576,
+        "p95": 0.666667
+      },
+      "gamma": {
+        "count": 91,
+        "min": 0.4,
+        "max": 0.666667,
+        "mean": 0.452728,
+        "median": 0.431078,
+        "p95": 0.666667
+      },
+      "rho": {
+        "count": 100,
+        "min": 0.7688,
+        "max": 0.9379,
+        "mean": 0.861516,
+        "median": 0.86535,
+        "p95": 0.9223,
+        "okCount": 100,
+        "missing": 0
+      }
+    }
+  }
+}

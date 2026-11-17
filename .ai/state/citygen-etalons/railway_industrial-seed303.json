@@ -1,8 +1,8 @@
 {
   "profile": "railway_industrial",
   "seed": 303,
-  "generatorVersion": "0.33.0",
-  "reportHash": "cdcac88c2695466a508110c4d16aaac4e51b500e648db9f3eca612c70b16708f",
+  "generatorVersion": "0.55.0",
+  "reportHash": "436b93f9b1550ff61105edd67b8e7d5bea7d19eecb2c8791363019801d25d9f1",
   "summary": {
     "errors": 0,
     "warnings": 9,
@@ -12,7 +12,7 @@
   "rules": {
     "errors": 0,
     "warnings": 0,
-    "infos": 1
+    "infos": 0
   },
   "metrics": {
     "partial": true,
@@ -20,10 +20,10 @@
       "roads": 0,
       "roadNodes": 0,
       "districts": 40,
-      "parcels": 2342,
-      "reservedParcels": 290,
-      "buildings": 411,
-      "enterableBuildings": 0,
+      "parcels": 2332,
+      "reservedParcels": 283,
+      "buildings": 410,
+      "enterableBuildings": 82,
       "props": 360,
       "lights": 0,
       "rivers": 1,
@@ -59,7 +59,7 @@
     "gameplay": {
       "spawnToRoad": null,
       "exitToRoad": null,
-      "enterableShare": 0,
+      "enterableShare": 0.2,
       "enterableTarget": 0.2
     },
     "terrain": {
@@ -90,28 +90,28 @@
       "floodplains": 1
     },
     "parcels": {
-      "reservedShare": 0.123826,
+      "reservedShare": 0.121355,
       "byDistrictCount": {
-        "district_0_0_0": 55,
-        "district_0_0_1": 55,
+        "district_0_0_00": 25,
+        "district_0_0_01": 25,
+        "district_0_0_10": 25,
+        "district_0_0_11": 25,
         "district_1_0_0": 66,
         "district_1_0_1": 66,
         "district_2_0_0": 105,
         "district_2_0_1": 105,
-        "district_3_0_0": 32,
-        "district_3_0_1": 32,
+        "district_3_0": 64,
         "district_0_1_0": 32,
         "district_0_1_1": 32,
         "district_1_1_0": 18,
-        "district_1_1_1": 18,
-        "district_2_1_000": 21,
-        "district_2_1_001": 28,
+        "district_1_1_10": 9,
+        "district_1_1_11": 9,
+        "district_2_1_00": 49,
         "district_2_1_01": 49,
         "district_2_1_1": 98,
         "district_3_1_0": 200,
         "district_3_1_1": 200,
-        "district_0_2_0": 32,
-        "district_0_2_1": 32,
+        "district_0_2": 64,
         "district_1_2_0": 28,
         "district_1_2_1": 28,
         "district_2_2_0": 66,

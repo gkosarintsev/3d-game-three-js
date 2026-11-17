@@ -1,0 +1,6 @@
+{
+  "name": "Apex Drive — 3D Автосимулятор",
+  "description": "Трехмерный автосимулятор с реалистичной физикой подвески и дрифта, видом от первого и третьего лица.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

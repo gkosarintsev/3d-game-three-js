@@ -1,7 +1,7 @@
 {
   "version": 1,
   "generator": {
-    "generatorVersion": "0.33.0",
+    "generatorVersion": "0.55.0",
     "seed": 19,
     "deterministic": true
   },
@@ -30,14 +30,14 @@
     {
       "id": "3_districts_parcels",
       "status": "ok",
-      "diagnostics": 13,
+      "diagnostics": 20,
       "repairs": 0,
       "drops": 0
     },
     {
       "id": "4_buildings_structures",
       "status": "ok",
-      "diagnostics": 3,
+      "diagnostics": 7,
       "repairs": 0,
       "drops": 0
     },
@@ -238,6 +238,36 @@
     },
     {
       "severity": "info",
+      "code": "buffer_strips_carved",
+      "stage": "3_districts_parcels",
+      "message": "spatial buffer strips skipped for declared districts (author intent preserved)",
+      "carved": 0,
+      "unresolvedGeom": 0,
+      "swapResolved": 0,
+      "skipped": true
+    },
+    {
+      "severity": "info",
+      "code": "buffer_width_check",
+      "stage": "3_districts_parcels",
+      "message": "geometric separation check for incompatible district pairs (section 6.6, target buffer 40–80m where applicable)",
+      "incompatiblePairs": 0,
+      "touchingIncompatible": 0,
+      "edgeTouchingIncompatible": 0,
+      "cornerTouchingIncompatible": 0,
+      "minDistance": null,
+      "industrialResidential": {
+        "pairs": 0,
+        "minDistance": null,
+        "gapBelow40": 0,
+        "edgeTouches": 0,
+        "cornerTouches": 0,
+        "bufferSeparated": 0
+      },
+      "note": "declared"
+    },
+    {
+      "severity": "info",
       "code": "district_frames_assigned",
       "stage": "3_districts_parcels",
       "message": "district frames assigned by dominant axis",
@@ -248,6 +278,26 @@
         "railway": 0,
         "arterial": 0
       }
+    },
+    {
+      "severity": "info",
+      "code": "district_metrics_check",
+      "stage": "3_districts_parcels",
+      "message": "district form/size metrics vs section 6.7 (typical 15-60 ha, 8-14 districts per 2000 m)",
+      "districts": 1,
+      "areaHaMin": 655.36,
+      "areaHaMedian": 655.36,
+      "areaHaMax": 655.36,
+      "areaHaTotal": 655.36,
+      "plateSizeM": 2560,
+      "districtsPerKm2": 0.15,
+      "districtsPer2000m": 0.61,
+      "frames": 0,
+      "barriers": 0,
+      "edgeSnappedFraction": 0,
+      "planningGroups": 1,
+      "planningAreaHaMedian": 655.36,
+      "planningDistrictsPer2000m": 0.61
     },
     {
       "severity": "info",
@@ -269,6 +319,46 @@
         "suburb": 0
       },
       "maxCost": 2720
+    },
+    {
+      "severity": "info",
+      "code": "floors_contrast_check",
+      "stage": "3_districts_parcels",
+      "message": "floorsCount contrast between adjacent district profiles (section 6.6, target <= 2.5x)",
+      "adjacentPairs": 0,
+      "violations": 0,
+      "violationsExcludingGreenSeam": 0,
+      "maxRatio": 0,
+      "worst": []
+    },
+    {
+      "severity": "info",
+      "code": "green_belt_repair",
+      "stage": "3_districts_parcels",
+      "message": "net-neutral river-belt relocation of green cells towards the belt (section 6.8)",
+      "beltRelocated": 0,
+      "coverageAfter": null
+    },
+    {
+      "severity": "info",
+      "code": "green_corridors_check",
+      "stage": "3_districts_parcels",
+      "message": "section 6.8 green framework morphology (share 8-15%, connected corridors, river belts, 2-3 edge wedges)",
+      "share": 1,
+      "shareInRange": false,
+      "components": 1,
+      "largestComponent": 1,
+      "riverBeltCoverage": null,
+      "riverBeltSamples": 0,
+      "wedgeComponents": 1
+    },
+    {
+      "severity": "info",
+      "code": "green_wedge_repair",
+      "stage": "3_districts_parcels",
+      "message": "edge wedges anchored along wedge axes (section 6.8)",
+      "wedgeFixed": 0,
+      "wedgeCells": 0
     },
     {
       "severity": "info",
@@ -304,7 +394,8 @@
         "reservation": 7,
         "crossing": 0,
         "steep_slope": 0,
-        "remote_access": 0
+        "remote_access": 0,
+        "railway": 0
       }
     },
     {
@@ -375,6 +466,59 @@
       "stage": "4_buildings_structures",
       "message": "reassigned buildings to current districts by footprint center",
       "count": 24
+    },
+    {
+      "severity": "info",
+      "code": "enterable_share",
+      "stage": "4_buildings_structures",
+      "message": "enterable buildings share (section 9.8, target 15-25%)",
+      "total": 24,
+      "enterable": 5,
+      "share": 0.208,
+      "targetShare": 0.2,
+      "required": {
+        "min": 4,
+        "max": 6
+      }
+    },
+    {
+      "severity": "info",
+      "code": "facade_no_three_consecutive_same",
+      "stage": "4_buildings_structures",
+      "message": "three consecutive identical facades remediated (section 9.7)",
+      "swapped": 1
+    },
+    {
+      "severity": "info",
+      "code": "floors_clamp_bydist",
+      "stage": "4_buildings_structures",
+      "message": "trace byDist in clamp",
+      "iter": 0,
+      "keys": [
+        {
+          "id": "district_3_1_01",
+          "max": null
+        },
+        {
+          "id": "district_3_1_2100",
+          "max": null
+        },
+        {
+          "id": "district_3_1_201",
+          "max": null
+        }
+      ],
+      "totKeys": 1
+    },
+    {
+      "severity": "info",
+      "code": "floors_contrast_built",
+      "stage": "4_buildings_structures",
+      "message": "building floors distribution (section 9.4): L-modulation, adjacency contrast <= 2.5x, one dominant per high-L district",
+      "clamped": 0,
+      "dominants": 1,
+      "districts": 1,
+      "adjacencyPairs": 0
     },
     {
       "severity": "info",
@@ -504,7 +648,7 @@
       "parcels": 441,
       "reservedParcels": 9,
       "buildings": 24,
-      "enterableBuildings": 0,
+      "enterableBuildings": 5,
       "props": 0,
       "lights": 0,
       "rivers": 0,
@@ -567,7 +711,7 @@
     "gameplay": {
       "spawnToRoad": 179.213,
       "exitToRoad": 0,
-      "enterableShare": 0,
+      "enterableShare": 0.208333,
       "enterableTarget": 0.2
     },
     "districts": {
@@ -618,7 +762,7 @@
       "dividesPlate": true
     },
     "determinism": {
-      "generatorVersion": "0.33.0",
+      "generatorVersion": "0.55.0",
       "seed": 19,
       "deterministic": true
     },
@@ -655,20 +799,12 @@
         "stage": "rules",
         "message": "gameplay.spawn is far from road network (>20m)",
         "distance": 179.213
-      },
-      {
-        "severity": "info",
-        "code": "enterable_share_far_from_target",
-        "stage": "rules",
-        "message": "enterable building share differs from policy target (informational)",
-        "share": 0,
-        "target": 0.2
       }
     ],
     "summary": {
       "errors": 0,
       "warnings": 3,
-      "infos": 1
+      "infos": 0
     }
   }
 }

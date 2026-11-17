@@ -6,6 +6,7 @@
 import { info, warn } from '../diagnostics.mjs';
 import { makeRng, mix } from '../rng.mjs';
 import { createSpatialIndex } from '../spatial.mjs';
+import { CONFIG } from '../../../src/config.js';
 import { addAxisAlignedAccessRoadsForParcels, makeRoadSegment, buildAxisAlignedTerrainPath, isValidAxisAlignedTerrainPath, makeTerrainSampler } from './stage-2-transport.mjs';
 
 const clamp = (v, lo, hi) => Math.max(lo, Math.min(hi, v));
@@ -22,6 +23,63 @@ function footprintRect(cx, cz, w, d) {
     { x: +(cx + hx).toFixed(3), z: +(cz + hz).toFixed(3) },
     { x: +(cx - hx).toFixed(3), z: +(cz + hz).toFixed(3) },
   ];
+}
+
+function rotateFootprint(fp, cx, cz, yawDeg) {
+  const r = (yawDeg * Math.PI) / 180, c = Math.cos(r), s = Math.sin(r);
+  return fp.map(p => {
+    const dx = p.x - cx, dz = p.z - cz;
+    return { x: +(cx + dx * c - dz * s).toFixed(3), z: +(cz + dx * s + dz * c).toFixed(3) };
+  });
+}
+
+function snapYaw90(yaw) {
+  let a = Math.round(Math.abs(yaw ?? 0) / 90) * 90;
+  a = ((a % 360) + 360) % 360;
+  return [0, 90, 180, 270].includes(a) ? a : 0;
+}
+
+function streetYawFromEdge(edge, rng, jitterDeg = 0) {
+  const base = (edge === 'east' || edge === 'west') ? 90 : 0;
+  if (!edge) return 0;
+  // jitter disabled: the validator demands axis-aligned room edges, so buildings stay axis-aligned
+  const jitter = jitterDeg > 0 ? (rng() - 0.5) * 2 * jitterDeg : 0;
+  return +(((base + jitter) % 180 + 180) % 180).toFixed(1);
+}
+
+const SETBACK_BY_TYPE = {
+  old_town: 0.3, office: 4.0, commercial: 4.5, market: 4.0, residential: 7.0,
+  luxury: 5.0, suburb: 11.0, slums: 2.0, industrial: 5.0, campus: 3.0,
+  sports: 3.0, parking: 2.0, forest: 5.0, park: 5.0,
+};
+function setbackShift(edge, type, avail) {
+  if (!edge) return { dx: 0, dz: 0 };
+  const b = SETBACK_BY_TYPE[type] ?? 5.0;
+  const need = Number.isFinite(avail) && avail > 0 ? Math.min(b, avail) : 0;
+  const n = +need.toFixed(3);
+  if (edge === 'north') return { dx: 0, dz: -n };
+  if (edge === 'south') return { dx: 0, dz: +n };
+  if (edge === 'east') return { dx: -n, dz: 0 };
+  if (edge === 'west') return { dx: +n, dz: 0 };
+  return { dx: 0, dz: 0 };
+}
+
+function finalizeByAccess(fp, cx, cz, p, maxW, maxD, rng) {
+  const access = p?.access ?? null;
+  if (!access || !access.edge) return { fp, rotation: 0 };
+  const edge = access.edge;
+  const minX = Math.min(...fp.map(v => v.x)), maxX = Math.max(...fp.map(v => v.x));
+  const minZ = Math.min(...fp.map(v => v.z)), maxZ = Math.max(...fp.map(v => v.z));
+  const spanX = maxX - minX, spanZ = maxZ - minZ;
+  const avail = (edge === 'north' || edge === 'south')
+    ? Math.max(0.5, Math.min(maxD - spanZ, maxD * 0.5))
+    : Math.max(0.5, Math.min(maxW - spanX, maxW * 0.5));
+  const s = setbackShift(edge, p?.type, avail);
+  // Разрешаем поворот только на кратные 90°+джиттер — лестница может содержать 0/90/180/270.
+  const yaw = streetYawFromEdge(edge, rng);
+  const rot = rotateFootprint(fp, cx, cz, yaw);
+  const shifted = rot.map(pt => ({ x: +(pt.x + s.dx).toFixed(3), z: +(pt.z + s.dz).toFixed(3) }));
+  return { fp: shifted, rotation: yaw };
 }
 
 function aabbOfFootprint(fp) {
@@ -466,6 +524,7 @@ export function makeStage4() {
         const panelkaL17 = kind === 'panelka' && /level-17/i.test(levelName);
         const panelkaSectionW = 13.6, panelkaDepth = 11.8, panelkaEntrances = 3;
         let footprint = null;
+        let buildingRotation = 0;
         if (panelkaL17) {
           // оригинал: 3 секции × 13.6м = 40.8м, глубина 11.8м. Ищем максимально широкое
           // размещение в рамках участка (пропорции 3-секционной панельки), не уже ~24м.
@@ -481,8 +540,12 @@ export function makeStage4() {
             const fp = footprintRect(cx, cz, w, d);
             const riverIndex = (rivers === (ctx.hydrology?.rivers ?? null) || rivers === (ctx.masks?.easement?.rivers ?? null)) ? (ctx.spatial?.riverSegments ?? null) : null;
             const lakes = ctx.masks?.easement?.lakes ?? [];
-            if (footprintNearAnchors(fp, anchors, 10) || footprintIntersectsRiver(fp, rivers, riverIndex, waterBufferById) || footprintIntersectsLake(fp, lakes) || footprintIntersectsFloodplainMask(fp, floodplainMasks) || footprintIntersectsRoad(fp, roads, roadSegments, ctx.spatial?.roadEasements, { ignoreEasements: !!force && !!relaxChunk })) continue;
-            footprint = fp;
+            // R4.3 §9.5/§9.6: orientation aligned to street + setback pushes away from street — for rotated footprint
+            const fin = finalizeByAccess(fp, cx, cz, p, maxW, maxD, rng);
+            const fpAligned = fin.fp;
+            if (footprintNearAnchors(fpAligned, anchors, 10) || footprintIntersectsRiver(fpAligned, rivers, riverIndex, waterBufferById) || footprintIntersectsLake(fpAligned, lakes) || footprintIntersectsFloodplainMask(fpAligned, floodplainMasks) || footprintIntersectsRoad(fpAligned, roads, roadSegments, ctx.spatial?.roadEasements, { ignoreEasements: !!force && !!relaxChunk })) continue;
+            footprint = fpAligned;
+            buildingRotation = fin.rotation;
             break;
           }
         }
@@ -497,8 +560,11 @@ export function makeStage4() {
             const fp = footprintRect(cx, cz, w, d);
             const riverIndex = (rivers === (ctx.hydrology?.rivers ?? null) || rivers === (ctx.masks?.easement?.rivers ?? null)) ? (ctx.spatial?.riverSegments ?? null) : null;
             const lakes = ctx.masks?.easement?.lakes ?? [];
-            if (footprintNearAnchors(fp, anchors, 10) || footprintIntersectsRiver(fp, rivers, riverIndex, waterBufferById) || footprintIntersectsLake(fp, lakes) || footprintIntersectsFloodplainMask(fp, floodplainMasks) || footprintIntersectsRoad(fp, roads, roadSegments, ctx.spatial?.roadEasements, { ignoreEasements: !!force && !!relaxChunk })) continue;
-            footprint = fp;
+            const fin = finalizeByAccess(fp, cx, cz, p, maxW, maxD, rng);
+            const fpAligned = fin.fp;
+            if (footprintNearAnchors(fpAligned, anchors, 10) || footprintIntersectsRiver(fpAligned, rivers, riverIndex, waterBufferById) || footprintIntersectsLake(fpAligned, lakes) || footprintIntersectsFloodplainMask(fpAligned, floodplainMasks) || footprintIntersectsRoad(fpAligned, roads, roadSegments, ctx.spatial?.roadEasements, { ignoreEasements: !!force && !!relaxChunk })) continue;
+            footprint = fpAligned;
+            buildingRotation = fin.rotation;
             break;
           }
         }
@@ -593,6 +659,8 @@ export function makeStage4() {
         const detailedVisual = isL17Panelka ? 'soviet_panel' : (DETAILED_VISUAL_BY_KIND[kind] || null);
         out.push({
           id,
+          districtId: p.districtId ?? null,
+          districtType: p.type ?? null,
           name: `B ${placed + 1}`,
           isEnterable: false,
           floorsCount: floors,
@@ -606,6 +674,7 @@ export function makeStage4() {
           windowDensity: 1 + Math.floor(rng() * 3),
           windowScale: +(0.85 + rng() * 0.35).toFixed(2),
           footprint,
+          ...(buildingRotation ? { rotation: buildingRotation } : {}),
           rooms: [],
           stairs: [],
         });
@@ -718,6 +787,8 @@ export function makeStage4() {
             const detailedVisual = isL17PanelkaFallback ? 'soviet_panel' : (DETAILED_VISUAL_BY_KIND[kind] || null);
             out.push({
               id,
+              districtId: d.id ?? null,
+              districtType: d.type ?? null,
               name: `B ${placed + 1}`,
               isEnterable: false,
               floorsCount: floors,
@@ -914,7 +985,202 @@ export function makeStage4() {
         if (rebalanced > 0) ctx.report.diagnostics.push(info('buildings_rebalanced_to_empty_split_districts', stageId, 'moved buildings to split child districts with parcels but no buildings', { count: rebalanced }));
       }
 
+      // R4.4 §9.7: два одинаковых соседа не используются в брилинтенских секторах — устраняем три подряд одинаковых фасада.
+      // Replacement the wallColor of every third building with a deterministic palette color.
+      {
+        const PALETTE = ['#b8c2cc', '#8899ab', '#c8ab89', '#d9dde2', '#c9bfae', '#a95842', '#d5cbb8', '#adb5bd', '#5f6770', '#4b5563', '#4b4e54', '#8d949b', '#b0b7bd'];
+        const byDistrict = new Map();
+        for (const b of filtered) {
+          const k = b?.districtType || b?.type || 'x';
+          if (!byDistrict.has(k)) byDistrict.set(k, []);
+          byDistrict.get(k).push(b);
+        }
+        let swapped = 0;
+        for (const arr of byDistrict.values()) {
+          for (let j = 0; j + 2 < arr.length; j++) {
+            const a = arr[j], b = arr[j + 1], c = arr[j + 2];
+            if (a?.houseKind === b?.houseKind && b?.houseKind === c?.houseKind
+              && a?.facadeMaterial === b?.facadeMaterial && b?.facadeMaterial === c?.facadeMaterial
+              && a?.wallColor === b?.wallColor && b?.wallColor === c?.wallColor) {
+              const alt = PALETTE.find(x => x !== a?.wallColor && x !== b?.wallColor && x !== c?.wallColor) ?? PALETTE[0];
+              c.wallColor = alt;
+              swapped += 1;
+            }
+          }
+        }
+        ctx.report.diagnostics.push(info('facade_no_three_consecutive_same', stageId, 'three consecutive identical facades remediated (section 9.7)', { swapped }));
+      }
+
       ctx.buildings = filtered;
+      // R4.2 §9.4/§6.6 + R4.5 §9.5/§9.8 — applied on the final building set (post-drop/reassign/rebalance).
+      const seedPlan = mix(ctx.meta.seed ?? 0, stageId);
+      const roadSegmentsPlan = ctx.networks?.roads?.segments ?? [];
+      const out = filtered;
+      // R4.2 §9.4/§6.6: floors distribution & neighbour contrast.
+      // L-modulation: higher landValue -> taller (bounded), then adjacency clamp for built-floors contrast <= 2.5x,
+      // exempting green seams (park/forest/parking/sports) as §10 relief, then one dominant per high-L district.
+      {
+        const DS = ctx.districts ?? [];
+        const rectOf = (d) => d?.geometry?.rect ?? null;
+        const edgeTouch = (a, b, eps = 0.75) => {
+          const ixMin = Math.max(a.minX, b.minX), ixMax = Math.min(a.maxX, b.maxX);
+          const izMin = Math.max(a.minZ, b.minZ), izMax = Math.min(a.maxZ, b.maxZ);
+          return (Math.abs(a.maxX - b.minX) <= eps && (izMax - izMin) > eps)
+            || (Math.abs(b.maxX - a.minX) <= eps && (izMax - izMin) > eps)
+            || (Math.abs(a.maxZ - b.minZ) <= eps && (ixMax - ixMin) > eps)
+            || (Math.abs(b.maxZ - a.minZ) <= eps && (ixMax - ixMin) > eps);
+        };
+        const adjD = Array.from({ length: DS.length }, () => new Set());
+        for (let i = 0; i < DS.length; i++) for (let j = i + 1; j < DS.length; j++) {
+          const ra = rectOf(DS[i]), rb = rectOf(DS[j]); if (!ra || !rb) continue;
+          if (edgeTouch(ra, rb)) { adjD[i].add(j); adjD[j].add(i); }
+        }
+        // L-modulation of floors (0.75..1.25 by landValue), railway-like profiles have LV in [0.35..1]
+        for (const b of out) {
+          const d = DS.find(x => x?.id === b.districtId);
+          const lv = Number(d?.landValue);
+          if (Number.isFinite(lv)) b.floorsCount = Math.max(1, Math.min(60, Math.floor((b.floorsCount ?? 1) * (0.75 + lv * 0.5))));
+        }
+
+        // dominants: one per district with landValue >= 0.6 — bump the local tallest
+        const byDistrict = new Map();
+        for (const b of out) { const arr = byDistrict.get(b.districtId) ?? []; arr.push(b); byDistrict.set(b.districtId, arr); }
+        let dominants = 0;
+        for (const [did, arr] of byDistrict) {
+          const d = DS.find(x => x?.id === did); if (!d || !Number.isFinite(Number(d?.landValue)) || Number(d.landValue) < 0.6) continue;
+          const hi = [...arr].sort((x, y) => (Number(y.floorsCount ?? 0) - Number(x.floorsCount ?? 0)) || String(x.id).localeCompare(String(y.id)))[0];
+          if (!hi) continue;
+          hi.floorsCount = Math.min(60, Number(hi.floorsCount ?? 1) + 1);
+          dominants += 1;
+        }
+
+        // adjacency clamp AFTER dominants: enforce <=2.5x for built floors
+
+        const greenish = new Set(['park', 'forest', 'parking', 'sports']);
+        let clamped = 0;
+        for (let iter = 0; iter < 3; iter++) {
+          const byDist = new Map();
+          for (const b of out) {
+            const cur = byDist.get(b.districtId) ?? 1;
+            byDist.set(b.districtId, Math.max(cur, Number(b.floorsCount ?? 1)));
+          }
+          const traceKeys = ['district_3_1_01', 'district_3_1_2100', 'district_3_1_201'];
+          ctx.report.diagnostics.push(info('floors_clamp_bydist', stageId, 'trace byDist in clamp', { iter, keys: traceKeys.map(k => ({ id: k, max: byDist.get(k) ?? null })), totKeys: byDist.size }));
+          let changed = false;
+          for (let i = 0; i < DS.length; i++) {
+            for (const j of adjD[i]) {
+              if (j <= i) continue;
+              const ti = DS[i]?.type, tj = DS[j]?.type;
+              if (greenish.has(ti) || greenish.has(tj)) continue;
+              const vi = byDist.get(DS[i]?.id), vj = byDist.get(DS[j]?.id);
+              if (!Number.isFinite(vi) || !Number.isFinite(vj)) continue;
+              if ((DS[i]?.id === 'district_3_1_01' && DS[j]?.id === 'district_3_1_2100') || (DS[j]?.id === 'district_3_1_01' && DS[i]?.id === 'district_3_1_2100')) {
+                ctx.report.diagnostics.push(info('floors_clamp_pair', stageId, 'trace pair', { i, j, idI: DS[i]?.id, idJ: DS[j]?.id, ti: DS[i]?.type, tj: DS[j]?.type, vi, vj, cap: Math.max(1, Math.floor(2.5 * Math.max(1, Math.min(vi, vj)))) }));
+              }
+              const hi = vi >= vj ? i : j;
+              const hiMax = Math.max(vi, vj), loMax = Math.max(1, Math.min(vi, vj));
+              const cap = Math.max(1, Math.floor(2.5 * loMax));
+              if (hiMax > cap) {
+                for (const b of out) {
+                  if (b.districtId === DS[hi]?.id && Number(b.floorsCount ?? 1) > cap) { b.floorsCount = cap; clamped += 1; changed = true; }
+                }
+              }
+            }
+          }
+          if (!changed) break;
+        }
+        ctx.report.diagnostics.push(info('floors_contrast_built', stageId, 'building floors distribution (section 9.4): L-modulation, adjacency contrast <= 2.5x, one dominant per high-L district', { clamped, dominants, districts: DS.length, adjacencyPairs: adjD.reduce((s, s2) => s + s2.size, 0) / 2 }));
+      }
+
+      // R4.5 §9.5/§9.8: enterable share target = policies.enterableShare (default 0.2, clamp 0.15–0.25).
+      // Маршрутная плотность: кандидаты у дорог приоритезируются. Каждый enterable несёт lobby/corridor/room и straight stairs.
+      {
+        const genEnterableCap = Number.isFinite(CONFIG?.jsonMap?.genEnterableFloors) ? CONFIG.jsonMap.genEnterableFloors : 4;
+        const hardEnterableCap = Number.isFinite(CONFIG?.jsonMap?.enterableFloors) ? CONFIG.jsonMap.enterableFloors : 12;
+        const enterableTarget = (() => {
+          const p = Number(ctx?.meta?.policies?.enterableShare);
+          return Number.isFinite(p) ? Math.min(0.25, Math.max(0.15, p)) : 0.2;
+        })();
+        const erng = makeRng(mix(mix(seedPlan, 'r45_enterable'), 'gen'));
+        const cand = [];
+        for (const b of out) {
+          const fp = b?.footprint;
+          let roadDist = Infinity;
+          if (Array.isArray(fp) && fp.length >= 4) {
+            const minX = Math.min(...fp.map(v => v.x)), maxX = Math.max(...fp.map(v => v.x));
+            const minZ = Math.min(...fp.map(v => v.z)), maxZ = Math.max(...fp.map(v => v.z));
+            roadDist = minDistanceToRoadSegments((minX + maxX) / 2, (minZ + maxZ) / 2, roadSegmentsPlan);
+          }
+          const routeBoost = Number.isFinite(roadDist) && roadDist < 60 ? 0.1 : 0;
+          const score = erng() + routeBoost; // больше — вероятнее enterable
+          const floorsOk0 = Number.isFinite(Number(b?.floorsCount)) && Number(b.floorsCount) <= hardEnterableCap;
+          // лестница обязана помещаться в footprint с отступом >= 0.5 м (raster-grid 0.5/probeCell),
+          // иначе парсер бракует марш как «вне footprint»
+          let stairFit = false;
+          if (floorsOk0 && Array.isArray(fp) && fp.length >= 4) {
+            const sx0 = Math.min(...fp.map(v => v.x)), sx1 = Math.max(...fp.map(v => v.x));
+            const sz0 = Math.min(...fp.map(v => v.z)), sz1 = Math.max(...fp.map(v => v.z));
+            const spanMin = Math.min(sx1 - sx0, sz1 - sz0);
+            const rise = Number.isFinite(Number(b?.floorHeight)) && Number(b.floorHeight) > 0 ? Number(b.floorHeight) : 3.3;
+            const needLen = Math.max(3, Math.ceil((rise / 0.78 + 0.001) * 2) / 2);
+            stairFit = needLen <= Math.floor((spanMin - 1.0) * 2) / 2;
+          }
+          const floorsOk = floorsOk0 && stairFit;
+          cand.push({ b, roadDist, score, isEnterable: false, floorsOk });
+        }
+        const tierOf = (x) => (x.floorsOk && Number(x.b?.floorsCount ?? 1) <= genEnterableCap) ? 0 : (x.floorsOk ? 1 : 2);
+        const sortedByScore = [...cand].sort((a, b) => (tierOf(a) - tierOf(b)) || (b.score - a.score) || (a.roadDist - b.roadDist) || (String(a.b.id).localeCompare(String(b.b.id))));
+        const targetCount = out.length ? Math.round(out.length * enterableTarget) : 0;
+        const capCount = Math.floor(out.length * 0.25);
+        const floorCount = Math.max(0, Math.ceil(out.length * 0.15));
+        const eligible = sortedByScore.filter(x => x.floorsOk).length;
+        const want = Math.min(capCount, Math.max(floorCount, Math.min(targetCount, eligible)));
+        for (let i = 0; i < sortedByScore.length; i++) sortedByScore[i].isEnterable = (i < want && sortedByScore[i].floorsOk);
+        const polyOf = (r) => ([{ x: r.minX, z: r.minZ }, { x: r.maxX, z: r.minZ }, { x: r.maxX, z: r.maxZ }, { x: r.minX, z: r.maxZ }]);
+        let enterCount = 0;
+        for (const x of cand) {
+          const b = x.b;
+          b.isEnterable = x.isEnterable;
+          if (!x.isEnterable) { b.rooms = []; b.stairs = []; continue; }
+          enterCount += 1;
+          const id = b.id;
+          const fp = b.footprint;
+          const fpCx = (fp[0].x + fp[2].x) / 2, fpCz = (fp[0].z + fp[2].z) / 2;
+          const fpEx = fp[1].x - fp[0].x, fpEz = fp[1].z - fp[0].z;
+          const fpFx = fp[3].x - fp[0].x, fpFz = fp[3].z - fp[0].z;
+          const Lside = Math.hypot(fpEx, fpEz), Wside = Math.hypot(fpFx, fpFz);
+          const ex = fpEx / Lside, ez = fpEz / Lside, fx = fpFx / Wside, fz = fpFz / Wside;
+          const inL = Math.max(0.5, Lside * 0.12), inW = Math.max(0.5, Wside * 0.12);
+          const innerPoly = (() => {
+            const hw = Math.max(0.5, Lside / 2 - inL), hd = Math.max(0.5, Wside / 2 - inW);
+            return [[-hw, -hd], [hw, -hd], [hw, hd], [-hw, hd]].map(([x, z]) => ({
+              x: +(fpCx + x * ex + z * fx).toFixed(3),
+              z: +(fpCz + x * ez + z * fz).toFixed(3),
+            }));
+          })();
+          // axis-aligned inner bounds used only for stair dimensions and stairCenter (axis variant fine)
+          const inner = (() => {
+            const xs = innerPoly.map(p => p.x), zs = innerPoly.map(p => p.z);
+            return { minX: Math.min(...xs), maxX: Math.max(...xs), minZ: Math.min(...zs), maxZ: Math.max(...zs) };
+          })();
+          const floorsN = Math.max(1, Math.floor(Number(b.floorsCount) || 1));
+          const rooms = [];
+          for (let s = 0; s < floorsN; s++) {
+            rooms.push({ id: `${id}:r${s}`, type: s === 0 ? 'lobby' : 'room', floor: s, polygon: innerPoly });
+          }
+          const stairsPos = { x: fpCx, z: fpCz };
+          const stairRise = Number.isFinite(Number(b.floorHeight)) && Number(b.floorHeight) > 0 ? Number(b.floorHeight) : 3.3;
+          const stairLen = Math.max(3, Math.ceil((stairRise / 0.78 + 0.001) * 2) / 2);
+          const stairs = [];
+          for (let s = 0; s + 1 < floorsN; s++) {
+            stairs.push({ id: `${id}:s${s}_${s + 1}`, connectsFloors: [s, s + 1], type: 'straight', position: stairsPos, rotation: snapYaw90(b.rotation ?? 0), dimensions: { width: 2, length: stairLen } });
+          }
+          b.rooms = rooms;
+          b.stairs = stairs;
+        }
+        ctx.report.diagnostics.push(info('enterable_share', stageId, 'enterable buildings share (section 9.8, target 15-25%)', { total: out.length, enterable: enterCount, share: out.length ? +(enterCount / out.length).toFixed(3) : 0, targetShare: +enterableTarget.toFixed(3), required: { min: Math.max(1, Math.ceil(out.length * 0.15)), max: Math.floor(out.length * 0.25) } }));
+      }
+      ctx.buildings = out;
     },
     repair(_ctx) {},
     emit(ctx) {

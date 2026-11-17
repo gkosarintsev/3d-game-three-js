@@ -1,5 +1,5 @@
 {
-  "generatorVersion": "0.33.0",
+  "generatorVersion": "0.55.0",
   "profiles": [
     "hill_town",
     "railway_industrial",
@@ -16,9 +16,9 @@
     "hill_town": {
       "runs": 3,
       "hashes": [
-        "f733fc0fcc8f1677b3acc9bee675fd6518d22c89d5c0684ddb49079cafc86c94",
-        "152270b3cf0d2d0a922a85e5949220caf0f48960b32095983553f9a50346dc62",
-        "4b95b4f9720a0aec9f6bbeb33d2ed82ab3aeb394d87e56455296a5f743e17330"
+        "1127bc85eba2a0240a4fad1415f7ee1b6016181ab30def9bb1763c88295f37cb",
+        "a820d29721f59b4c0dfc5515ab9e884d67f6d634475e42e279bf9bd369f62f69",
+        "16060376412d44e7d8fb4ba82609ca87da87e9ce0b46fe2c4538a58fe8e35f53"
       ],
       "errors": {
         "count": 3,
@@ -29,8 +29,8 @@
       "warnings": {
         "count": 3,
         "min": 8,
-        "max": 12,
-        "mean": 10
+        "max": 13,
+        "mean": 10.333333
       },
       "roads": {
         "count": 3,
@@ -40,23 +40,23 @@
       },
       "parcels": {
         "count": 3,
-        "min": 2188,
-        "max": 2320,
-        "mean": 2258.666667
+        "min": 2246,
+        "max": 2389,
+        "mean": 2293.666667
       },
       "buildings": {
         "count": 3,
-        "min": 408,
-        "max": 418,
-        "mean": 413.666667
+        "min": 410,
+        "max": 411,
+        "mean": 410.333333
       }
     },
     "railway_industrial": {
       "runs": 3,
       "hashes": [
-        "6537200ac14307b0a0dec15dc011c5b5bd81efa6fdb07eaaad9ef1c21bee3a37",
-        "6acfaa057a6fe214c3d311d64b366f1ca02cefaa5383b196546b5610c0b54ebc",
-        "cdcac88c2695466a508110c4d16aaac4e51b500e648db9f3eca612c70b16708f"
+        "a665a7b623ee79ba3a28b76434a597f4d2e5fbe2eb90793c1b5edb82e7fe488d",
+        "bffe0b79df20b13da19d54c7010f501c8419282a35423d426a02fa264db1b93b",
+        "436b93f9b1550ff61105edd67b8e7d5bea7d19eecb2c8791363019801d25d9f1"
       ],
       "errors": {
         "count": 3,
@@ -78,23 +78,23 @@
       },
       "parcels": {
         "count": 3,
-        "min": 2342,
-        "max": 2410,
-        "mean": 2364.666667
+        "min": 2266,
+        "max": 2384,
+        "mean": 2327.333333
       },
       "buildings": {
         "count": 3,
-        "min": 406,
-        "max": 411,
-        "mean": 409
+        "min": 407,
+        "max": 410,
+        "mean": 408
       }
     },
     "river_trade": {
       "runs": 3,
       "hashes": [
-        "09a1711a285baf58ff3d6975cbcf319445acd417d1253efbe4f7d470568290d9",
-        "6424011fc3e4cb9abec08955447e717acf90ddf1ef010ba6d08a4f7e7a979f13",
-        "5d9ed51684846083032758a8d05ad983bd711e0ab607db8f60599ddc3b05b5e1"
+        "99847952bf9c38afc58162a1c245034cc093bdf63c060a68ae081f742d221d32",
+        "5b7bd8b8e210be41dd3a65d747b038b3823908604f0db25b64ebe9f54a9b19bb",
+        "532b27bc03abbe201358c7f4e4563685322931c3b0841fda7bc880fabf8a8544"
       ],
       "errors": {
         "count": 3,
@@ -106,7 +106,7 @@
         "count": 3,
         "min": 8,
         "max": 10,
-        "mean": 9.333333
+        "mean": 9
       },
       "roads": {
         "count": 3,
@@ -116,15 +116,15 @@
       },
       "parcels": {
         "count": 3,
-        "min": 2188,
-        "max": 2320,
-        "mean": 2254.666667
+        "min": 2112,
+        "max": 2416,
+        "mean": 2237
       },
       "buildings": {
         "count": 3,
-        "min": 407,
-        "max": 412,
-        "mean": 409.333333
+        "min": 405,
+        "max": 413,
+        "mean": 407.666667
       }
     }
   }

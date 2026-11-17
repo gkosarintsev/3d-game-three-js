@@ -12720,7 +12720,7 @@
     "chunks": []
   },
   "generator": {
-    "generatorVersion": "0.33.0",
+    "generatorVersion": "0.55.0",
     "seed": 16,
     "deterministic": true,
     "stages": [],
@@ -12860,7 +12860,7 @@
     {
       "id": "b_district_3_0_3",
       "name": "B 3",
-      "isEnterable": false,
+      "isEnterable": true,
       "floorsCount": 3,
       "floorHeight": 3.2,
       "foundation": "terrain",
@@ -12888,8 +12888,113 @@
           "z": -344.632
         }
       ],
-      "rooms": [],
-      "stairs": []
+      "rooms": [
+        {
+          "id": "b_district_3_0_3:r0",
+          "type": "lobby",
+          "floor": 0,
+          "polygon": [
+            {
+              "x": 364.49084,
+              "z": -350.97416
+            },
+            {
+              "x": 369.62616,
+              "z": -350.97416
+            },
+            {
+              "x": 369.62616,
+              "z": -345.49684
+            },
+            {
+              "x": 364.49084,
+              "z": -345.49684
+            }
+          ]
+        },
+        {
+          "id": "b_district_3_0_3:r1",
+          "type": "room",
+          "floor": 1,
+          "polygon": [
+            {
+              "x": 364.49084,
+              "z": -350.97416
+            },
+            {
+              "x": 369.62616,
+              "z": -350.97416
+            },
+            {
+              "x": 369.62616,
+              "z": -345.49684
+            },
+            {
+              "x": 364.49084,
+              "z": -345.49684
+            }
+          ]
+        },
+        {
+          "id": "b_district_3_0_3:r2",
+          "type": "room",
+          "floor": 2,
+          "polygon": [
+            {
+              "x": 364.49084,
+              "z": -350.97416
+            },
+            {
+              "x": 369.62616,
+              "z": -350.97416
+            },
+            {
+              "x": 369.62616,
+              "z": -345.49684
+            },
+            {
+              "x": 364.49084,
+              "z": -345.49684
+            }
+          ]
+        }
+      ],
+      "stairs": [
+        {
+          "id": "b_district_3_0_3:s0_1",
+          "connectsFloors": [
+            0,
+            1
+          ],
+          "type": "straight",
+          "position": {
+            "x": 367.0585,
+            "z": -348.2355
+          },
+          "rotation": 0,
+          "dimensions": {
+            "width": 2,
+            "length": 4.5
+          }
+        },
+        {
+          "id": "b_district_3_0_3:s1_2",
+          "connectsFloors": [
+            1,
+            2
+          ],
+          "type": "straight",
+          "position": {
+            "x": 367.0585,
+            "z": -348.2355
+          },
+          "rotation": 0,
+          "dimensions": {
+            "width": 2,
+            "length": 4.5
+          }
+        }
+      ]
     },
     {
       "id": "b_district_3_0_4",
@@ -12993,7 +13098,7 @@
     {
       "id": "b_district_2_3_7",
       "name": "B 7",
-      "isEnterable": false,
+      "isEnterable": true,
       "floorsCount": 1,
       "floorHeight": 3.87,
       "foundation": "terrain",
@@ -13021,7 +13126,31 @@
           "z": 513.319
         }
       ],
-      "rooms": [],
+      "rooms": [
+        {
+          "id": "b_district_2_3_7:r0",
+          "type": "lobby",
+          "floor": 0,
+          "polygon": [
+            {
+              "x": 67.35379999999999,
+              "z": 505.87772
+            },
+            {
+              "x": 78.1002,
+              "z": 505.87772
+            },
+            {
+              "x": 78.1002,
+              "z": 512.30428
+            },
+            {
+              "x": 67.35379999999999,
+              "z": 512.30428
+            }
+          ]
+        }
+      ],
       "stairs": []
     },
     {
@@ -13093,7 +13222,7 @@
     {
       "id": "b_district_2_3_10",
       "name": "B 10",
-      "isEnterable": false,
+      "isEnterable": true,
       "floorsCount": 2,
       "floorHeight": 2.97,
       "foundation": "terrain",
@@ -13121,8 +13250,73 @@
           "z": 513.919
         }
       ],
-      "rooms": [],
-      "stairs": []
+      "rooms": [
+        {
+          "id": "b_district_2_3_10:r0",
+          "type": "lobby",
+          "floor": 0,
+          "polygon": [
+            {
+              "x": 215.19216,
+              "z": 505.42172
+            },
+            {
+              "x": 221.17184,
+              "z": 505.42172
+            },
+            {
+              "x": 221.17184,
+              "z": 512.76028
+            },
+            {
+              "x": 215.19216,
+              "z": 512.76028
+            }
+          ]
+        },
+        {
+          "id": "b_district_2_3_10:r1",
+          "type": "room",
+          "floor": 1,
+          "polygon": [
+            {
+              "x": 215.19216,
+              "z": 505.42172
+            },
+            {
+              "x": 221.17184,
+              "z": 505.42172
+            },
+            {
+              "x": 221.17184,
+              "z": 512.76028
+            },
+            {
+              "x": 215.19216,
+              "z": 512.76028
+            }
+          ]
+        }
+      ],
+      "stairs": [
+        {
+          "id": "b_district_2_3_10:s0_1",
+          "connectsFloors": [
+            0,
+            1
+          ],
+          "type": "straight",
+          "position": {
+            "x": 218.18200000000002,
+            "z": 509.091
+          },
+          "rotation": 0,
+          "dimensions": {
+            "width": 2,
+            "length": 4
+          }
+        }
+      ]
     },
     {
       "id": "b_district_2_3_11",
@@ -13195,7 +13389,7 @@
     {
       "id": "b_district_2_3_13",
       "name": "B 13",
-      "isEnterable": false,
+      "isEnterable": true,
       "floorsCount": 3,
       "floorHeight": 3.18,
       "foundation": "terrain",
@@ -13223,13 +13417,118 @@
           "z": 513.695
         }
       ],
-      "rooms": [],
-      "stairs": []
+      "rooms": [
+        {
+          "id": "b_district_2_3_13:r0",
+          "type": "lobby",
+          "floor": 0,
+          "polygon": [
+            {
+              "x": 301.35164,
+              "z": 505.59196000000003
+            },
+            {
+              "x": 309.55736,
+              "z": 505.59196000000003
+            },
+            {
+              "x": 309.55736,
+              "z": 512.59004
+            },
+            {
+              "x": 301.35164,
+              "z": 512.59004
+            }
+          ]
+        },
+        {
+          "id": "b_district_2_3_13:r1",
+          "type": "room",
+          "floor": 1,
+          "polygon": [
+            {
+              "x": 301.35164,
+              "z": 505.59196000000003
+            },
+            {
+              "x": 309.55736,
+              "z": 505.59196000000003
+            },
+            {
+              "x": 309.55736,
+              "z": 512.59004
+            },
+            {
+              "x": 301.35164,
+              "z": 512.59004
+            }
+          ]
+        },
+        {
+          "id": "b_district_2_3_13:r2",
+          "type": "room",
+          "floor": 2,
+          "polygon": [
+            {
+              "x": 301.35164,
+              "z": 505.59196000000003
+            },
+            {
+              "x": 309.55736,
+              "z": 505.59196000000003
+            },
+            {
+              "x": 309.55736,
+              "z": 512.59004
+            },
+            {
+              "x": 301.35164,
+              "z": 512.59004
+            }
+          ]
+        }
+      ],
+      "stairs": [
+        {
+          "id": "b_district_2_3_13:s0_1",
+          "connectsFloors": [
+            0,
+            1
+          ],
+          "type": "straight",
+          "position": {
+            "x": 305.4545,
+            "z": 509.091
+          },
+          "rotation": 0,
+          "dimensions": {
+            "width": 2,
+            "length": 4.5
+          }
+        },
+        {
+          "id": "b_district_2_3_13:s1_2",
+          "connectsFloors": [
+            1,
+            2
+          ],
+          "type": "straight",
+          "position": {
+            "x": 305.4545,
+            "z": 509.091
+          },
+          "rotation": 0,
+          "dimensions": {
+            "width": 2,
+            "length": 4.5
+          }
+        }
+      ]
     },
     {
       "id": "b_district_2_2_14",
       "name": "B 14",
-      "isEnterable": false,
+      "isEnterable": true,
       "floorsCount": 2,
       "floorHeight": 3.95,
       "foundation": "terrain",
@@ -13257,8 +13556,73 @@
           "z": 282.399
         }
       ],
-      "rooms": [],
-      "stairs": []
+      "rooms": [
+        {
+          "id": "b_district_2_2_14:r0",
+          "type": "lobby",
+          "floor": 0,
+          "polygon": [
+            {
+              "x": 270.38496000000004,
+              "z": 271.77652
+            },
+            {
+              "x": 282.34204,
+              "z": 271.77652
+            },
+            {
+              "x": 282.34204,
+              "z": 280.95047999999997
+            },
+            {
+              "x": 270.38496000000004,
+              "z": 280.95047999999997
+            }
+          ]
+        },
+        {
+          "id": "b_district_2_2_14:r1",
+          "type": "room",
+          "floor": 1,
+          "polygon": [
+            {
+              "x": 270.38496000000004,
+              "z": 271.77652
+            },
+            {
+              "x": 282.34204,
+              "z": 271.77652
+            },
+            {
+              "x": 282.34204,
+              "z": 280.95047999999997
+            },
+            {
+              "x": 270.38496000000004,
+              "z": 280.95047999999997
+            }
+          ]
+        }
+      ],
+      "stairs": [
+        {
+          "id": "b_district_2_2_14:s0_1",
+          "connectsFloors": [
+            0,
+            1
+          ],
+          "type": "straight",
+          "position": {
+            "x": 276.36350000000004,
+            "z": 276.3635
+          },
+          "rotation": 0,
+          "dimensions": {
+            "width": 2,
+            "length": 5.5
+          }
+        }
+      ]
     },
     {
       "id": "b_district_2_2_15",
@@ -13464,7 +13828,7 @@
     {
       "id": "b_district_3_0_21",
       "name": "B 21",
-      "isEnterable": false,
+      "isEnterable": true,
       "floorsCount": 3,
       "floorHeight": 3.26,
       "foundation": "terrain",
@@ -13491,13 +13855,118 @@
           "z": -419.432
         }
       ],
-      "rooms": [],
-      "stairs": []
+      "rooms": [
+        {
+          "id": "b_district_3_0_21:r0",
+          "type": "lobby",
+          "floor": 0,
+          "polygon": [
+            {
+              "x": 514.49072,
+              "z": -426.6436
+            },
+            {
+              "x": 520.80328,
+              "z": -426.6436
+            },
+            {
+              "x": 520.80328,
+              "z": -420.41540000000003
+            },
+            {
+              "x": 514.49072,
+              "z": -420.41540000000003
+            }
+          ]
+        },
+        {
+          "id": "b_district_3_0_21:r1",
+          "type": "room",
+          "floor": 1,
+          "polygon": [
+            {
+              "x": 514.49072,
+              "z": -426.6436
+            },
+            {
+              "x": 520.80328,
+              "z": -426.6436
+            },
+            {
+              "x": 520.80328,
+              "z": -420.41540000000003
+            },
+            {
+              "x": 514.49072,
+              "z": -420.41540000000003
+            }
+          ]
+        },
+        {
+          "id": "b_district_3_0_21:r2",
+          "type": "room",
+          "floor": 2,
+          "polygon": [
+            {
+              "x": 514.49072,
+              "z": -426.6436
+            },
+            {
+              "x": 520.80328,
+              "z": -426.6436
+            },
+            {
+              "x": 520.80328,
+              "z": -420.41540000000003
+            },
+            {
+              "x": 514.49072,
+              "z": -420.41540000000003
+            }
+          ]
+        }
+      ],
+      "stairs": [
+        {
+          "id": "b_district_3_0_21:s0_1",
+          "connectsFloors": [
+            0,
+            1
+          ],
+          "type": "straight",
+          "position": {
+            "x": 517.6469999999999,
+            "z": -423.5295
+          },
+          "rotation": 0,
+          "dimensions": {
+            "width": 2,
+            "length": 4.5
+          }
+        },
+        {
+          "id": "b_district_3_0_21:s1_2",
+          "connectsFloors": [
+            1,
+            2
+          ],
+          "type": "straight",
+          "position": {
+            "x": 517.6469999999999,
+            "z": -423.5295
+          },
+          "rotation": 0,
+          "dimensions": {
+            "width": 2,
+            "length": 4.5
+          }
+        }
+      ]
     },
     {
       "id": "b_district_3_3_22",
       "name": "B 22",
-      "isEnterable": false,
+      "isEnterable": true,
       "floorsCount": 1,
       "floorHeight": 3.31,
       "foundation": "terrain",
@@ -13525,7 +13994,31 @@
           "z": 364.652
         }
       ],
-      "rooms": [],
+      "rooms": [
+        {
+          "id": "b_district_3_3_22:r0",
+          "type": "lobby",
+          "floor": 0,
+          "polygon": [
+            {
+              "x": 407.28352,
+              "z": 356.46448000000004
+            },
+            {
+              "x": 419.38347999999996,
+              "z": 356.46448000000004
+            },
+            {
+              "x": 419.38347999999996,
+              "z": 363.53551999999996
+            },
+            {
+              "x": 407.28352,
+              "z": 363.53551999999996
+            }
+          ]
+        }
+      ],
       "stairs": []
     },
     {
@@ -14001,7 +14494,7 @@
     {
       "id": "b_district_3_1_37",
       "name": "B 37",
-      "isEnterable": false,
+      "isEnterable": true,
       "floorsCount": 2,
       "floorHeight": 3.08,
       "foundation": "terrain",
@@ -14028,8 +14521,73 @@
           "z": -132.309
         }
       ],
-      "rooms": [],
-      "stairs": []
+      "rooms": [
+        {
+          "id": "b_district_3_1_37:r0",
+          "type": "lobby",
+          "floor": 0,
+          "polygon": [
+            {
+              "x": 501.29212,
+              "z": -138.80516
+            },
+            {
+              "x": 506.70788,
+              "z": -138.80516
+            },
+            {
+              "x": 506.70788,
+              "z": -133.19484
+            },
+            {
+              "x": 501.29212,
+              "z": -133.19484
+            }
+          ]
+        },
+        {
+          "id": "b_district_3_1_37:r1",
+          "type": "room",
+          "floor": 1,
+          "polygon": [
+            {
+              "x": 501.29212,
+              "z": -138.80516
+            },
+            {
+              "x": 506.70788,
+              "z": -138.80516
+            },
+            {
+              "x": 506.70788,
+              "z": -133.19484
+            },
+            {
+              "x": 501.29212,
+              "z": -133.19484
+            }
+          ]
+        }
+      ],
+      "stairs": [
+        {
+          "id": "b_district_3_1_37:s0_1",
+          "connectsFloors": [
+            0,
+            1
+          ],
+          "type": "straight",
+          "position": {
+            "x": 504,
+            "z": -136
+          },
+          "rotation": 0,
+          "dimensions": {
+            "width": 2,
+            "length": 4
+          }
+        }
+      ]
     },
     {
       "id": "b_district_3_1_38",
@@ -14101,7 +14659,7 @@
     {
       "id": "b_district_3_1_40",
       "name": "B 40",
-      "isEnterable": false,
+      "isEnterable": true,
       "floorsCount": 1,
       "floorHeight": 3.07,
       "foundation": "terrain",
@@ -14128,13 +14686,37 @@
           "z": -116.596
         }
       ],
-      "rooms": [],
+      "rooms": [
+        {
+          "id": "b_district_3_1_40:r0",
+          "type": "lobby",
+          "floor": 0,
+          "polygon": [
+            {
+              "x": 533.14544,
+              "z": -122.58704
+            },
+            {
+              "x": 538.85456,
+              "z": -122.58704
+            },
+            {
+              "x": 538.85456,
+              "z": -117.41296
+            },
+            {
+              "x": 533.14544,
+              "z": -117.41296
+            }
+          ]
+        }
+      ],
       "stairs": []
     },
     {
       "id": "b_district_3_1_41",
       "name": "B 41",
-      "isEnterable": false,
+      "isEnterable": true,
       "floorsCount": 2,
       "floorHeight": 2.98,
       "foundation": "terrain",
@@ -14161,8 +14743,73 @@
           "z": -101.011
         }
       ],
-      "rooms": [],
-      "stairs": []
+      "rooms": [
+        {
+          "id": "b_district_3_1_41:r0",
+          "type": "lobby",
+          "floor": 0,
+          "polygon": [
+            {
+              "x": 501.7314,
+              "z": -106.27164
+            },
+            {
+              "x": 506.2686,
+              "z": -106.27164
+            },
+            {
+              "x": 506.2686,
+              "z": -101.72836
+            },
+            {
+              "x": 501.7314,
+              "z": -101.72836
+            }
+          ]
+        },
+        {
+          "id": "b_district_3_1_41:r1",
+          "type": "room",
+          "floor": 1,
+          "polygon": [
+            {
+              "x": 501.7314,
+              "z": -106.27164
+            },
+            {
+              "x": 506.2686,
+              "z": -106.27164
+            },
+            {
+              "x": 506.2686,
+              "z": -101.72836
+            },
+            {
+              "x": 501.7314,
+              "z": -101.72836
+            }
+          ]
+        }
+      ],
+      "stairs": [
+        {
+          "id": "b_district_3_1_41:s0_1",
+          "connectsFloors": [
+            0,
+            1
+          ],
+          "type": "straight",
+          "position": {
+            "x": 504,
+            "z": -104
+          },
+          "rotation": 0,
+          "dimensions": {
+            "width": 2,
+            "length": 4
+          }
+        }
+      ]
     },
     {
       "id": "b_district_3_1_42",
@@ -14468,7 +15115,7 @@
     {
       "id": "b_district_3_1_51",
       "name": "B 51",
-      "isEnterable": false,
+      "isEnterable": true,
       "floorsCount": 2,
       "floorHeight": 3.19,
       "foundation": "terrain",
@@ -14495,8 +15142,73 @@
           "z": -5.087
         }
       ],
-      "rooms": [],
-      "stairs": []
+      "rooms": [
+        {
+          "id": "b_district_3_1_51:r0",
+          "type": "lobby",
+          "floor": 0,
+          "polygon": [
+            {
+              "x": 325.42663999999996,
+              "z": -10.21388
+            },
+            {
+              "x": 330.57336000000004,
+              "z": -10.21388
+            },
+            {
+              "x": 330.57336000000004,
+              "z": -5.7861199999999995
+            },
+            {
+              "x": 325.42663999999996,
+              "z": -5.7861199999999995
+            }
+          ]
+        },
+        {
+          "id": "b_district_3_1_51:r1",
+          "type": "room",
+          "floor": 1,
+          "polygon": [
+            {
+              "x": 325.42663999999996,
+              "z": -10.21388
+            },
+            {
+              "x": 330.57336000000004,
+              "z": -10.21388
+            },
+            {
+              "x": 330.57336000000004,
+              "z": -5.7861199999999995
+            },
+            {
+              "x": 325.42663999999996,
+              "z": -5.7861199999999995
+            }
+          ]
+        }
+      ],
+      "stairs": [
+        {
+          "id": "b_district_3_1_51:s0_1",
+          "connectsFloors": [
+            0,
+            1
+          ],
+          "type": "straight",
+          "position": {
+            "x": 328,
+            "z": -8
+          },
+          "rotation": 0,
+          "dimensions": {
+            "width": 2,
+            "length": 4.5
+          }
+        }
+      ]
     },
     {
       "id": "b_district_3_1_52",
@@ -14766,7 +15478,7 @@
     {
       "id": "b_district_3_1_60",
       "name": "B 60",
-      "isEnterable": false,
+      "isEnterable": true,
       "floorsCount": 3,
       "floorHeight": 2.66,
       "foundation": "terrain",
@@ -14794,8 +15506,113 @@
           "z": -5.607
         }
       ],
-      "rooms": [],
-      "stairs": []
+      "rooms": [
+        {
+          "id": "b_district_3_1_60:r0",
+          "type": "lobby",
+          "floor": 0,
+          "polygon": [
+            {
+              "x": 501.83552,
+              "z": -9.81868
+            },
+            {
+              "x": 506.16448,
+              "z": -9.81868
+            },
+            {
+              "x": 506.16448,
+              "z": -6.18132
+            },
+            {
+              "x": 501.83552,
+              "z": -6.18132
+            }
+          ]
+        },
+        {
+          "id": "b_district_3_1_60:r1",
+          "type": "room",
+          "floor": 1,
+          "polygon": [
+            {
+              "x": 501.83552,
+              "z": -9.81868
+            },
+            {
+              "x": 506.16448,
+              "z": -9.81868
+            },
+            {
+              "x": 506.16448,
+              "z": -6.18132
+            },
+            {
+              "x": 501.83552,
+              "z": -6.18132
+            }
+          ]
+        },
+        {
+          "id": "b_district_3_1_60:r2",
+          "type": "room",
+          "floor": 2,
+          "polygon": [
+            {
+              "x": 501.83552,
+              "z": -9.81868
+            },
+            {
+              "x": 506.16448,
+              "z": -9.81868
+            },
+            {
+              "x": 506.16448,
+              "z": -6.18132
+            },
+            {
+              "x": 501.83552,
+              "z": -6.18132
+            }
+          ]
+        }
+      ],
+      "stairs": [
+        {
+          "id": "b_district_3_1_60:s0_1",
+          "connectsFloors": [
+            0,
+            1
+          ],
+          "type": "straight",
+          "position": {
+            "x": 504,
+            "z": -8
+          },
+          "rotation": 0,
+          "dimensions": {
+            "width": 2,
+            "length": 3.5
+          }
+        },
+        {
+          "id": "b_district_3_1_60:s1_2",
+          "connectsFloors": [
+            1,
+            2
+          ],
+          "type": "straight",
+          "position": {
+            "x": 504,
+            "z": -8
+          },
+          "rotation": 0,
+          "dimensions": {
+            "width": 2,
+            "length": 3.5
+          }
+        }
+      ]
     },
     {
       "id": "b_district_3_1_61",
@@ -15036,7 +15853,7 @@
     {
       "id": "b_district_2_1_68",
       "name": "B 68",
-      "isEnterable": false,
+      "isEnterable": true,
       "floorsCount": 2,
       "floorHeight": 2.81,
       "foundation": "terrain",
@@ -15063,8 +15880,73 @@
           "z": -7.823
         }
       ],
-      "rooms": [],
-      "stairs": []
+      "rooms": [
+        {
+          "id": "b_district_2_1_68:r0",
+          "type": "lobby",
+          "floor": 0,
+          "polygon": [
+            {
+              "x": 260.13924000000003,
+              "z": -14.16868
+            },
+            {
+              "x": 265.57475999999997,
+              "z": -14.16868
+            },
+            {
+              "x": 265.57475999999997,
+              "z": -8.688320000000001
+            },
+            {
+              "x": 260.13924000000003,
+              "z": -8.688320000000001
+            }
+          ]
+        },
+        {
+          "id": "b_district_2_1_68:r1",
+          "type": "room",
+          "floor": 1,
+          "polygon": [
+            {
+              "x": 260.13924000000003,
+              "z": -14.16868
+            },
+            {
+              "x": 265.57475999999997,
+              "z": -14.16868
+            },
+            {
+              "x": 265.57475999999997,
+              "z": -8.688320000000001
+            },
+            {
+              "x": 260.13924000000003,
+              "z": -8.688320000000001
+            }
+          ]
+        }
+      ],
+      "stairs": [
+        {
+          "id": "b_district_2_1_68:s0_1",
+          "connectsFloors": [
+            0,
+            1
+          ],
+          "type": "straight",
+          "position": {
+            "x": 262.85699999999997,
+            "z": -11.4285
+          },
+          "rotation": 0,
+          "dimensions": {
+            "width": 2,
+            "length": 4
+          }
+        }
+      ]
     },
     {
       "id": "b_district_2_1_69",
@@ -15469,7 +16351,7 @@
     {
       "id": "b_district_2_3_81",
       "name": "B 81",
-      "isEnterable": false,
+      "isEnterable": true,
       "floorsCount": 3,
       "floorHeight": 3.22,
       "foundation": "terrain",
@@ -15496,13 +16378,118 @@
           "z": 546.303
         }
       ],
-      "rooms": [],
-      "stairs": []
+      "rooms": [
+        {
+          "id": "b_district_2_3_81:r0",
+          "type": "lobby",
+          "floor": 0,
+          "polygon": [
+            {
+              "x": 212.5618,
+              "z": 532.00916
+            },
+            {
+              "x": 223.8022,
+              "z": 532.00916
+            },
+            {
+              "x": 223.8022,
+              "z": 544.35384
+            },
+            {
+              "x": 212.5618,
+              "z": 544.35384
+            }
+          ]
+        },
+        {
+          "id": "b_district_2_3_81:r1",
+          "type": "room",
+          "floor": 1,
+          "polygon": [
+            {
+              "x": 212.5618,
+              "z": 532.00916
+            },
+            {
+              "x": 223.8022,
+              "z": 532.00916
+            },
+            {
+              "x": 223.8022,
+              "z": 544.35384
+            },
+            {
+              "x": 212.5618,
+              "z": 544.35384
+            }
+          ]
+        },
+        {
+          "id": "b_district_2_3_81:r2",
+          "type": "room",
+          "floor": 2,
+          "polygon": [
+            {
+              "x": 212.5618,
+              "z": 532.00916
+            },
+            {
+              "x": 223.8022,
+              "z": 532.00916
+            },
+            {
+              "x": 223.8022,
+              "z": 544.35384
+            },
+            {
+              "x": 212.5618,
+              "z": 544.35384
+            }
+          ]
+        }
+      ],
+      "stairs": [
+        {
+          "id": "b_district_2_3_81:s0_1",
+          "connectsFloors": [
+            0,
+            1
+          ],
+          "type": "straight",
+          "position": {
+            "x": 218.18200000000002,
+            "z": 538.1814999999999
+          },
+          "rotation": 0,
+          "dimensions": {
+            "width": 2,
+            "length": 4.5
+          }
+        },
+        {
+          "id": "b_district_2_3_81:s1_2",
+          "connectsFloors": [
+            1,
+            2
+          ],
+          "type": "straight",
+          "position": {
+            "x": 218.18200000000002,
+            "z": 538.1814999999999
+          },
+          "rotation": 0,
+          "dimensions": {
+            "width": 2,
+            "length": 4.5
+          }
+        }
+      ]
     },
     {
       "id": "b_district_2_3_82",
       "name": "B 82",
-      "isEnterable": false,
+      "isEnterable": true,
       "floorsCount": 3,
       "floorHeight": 2.89,
       "foundation": "terrain",
@@ -15530,8 +16517,113 @@
           "z": 544.597
         }
       ],
-      "rooms": [],
-      "stairs": []
+      "rooms": [
+        {
+          "id": "b_district_2_3_82:r0",
+          "type": "lobby",
+          "floor": 0,
+          "polygon": [
+            {
+              "x": 242.76076,
+              "z": 533.3066
+            },
+            {
+              "x": 251.78424,
+              "z": 533.3066
+            },
+            {
+              "x": 251.78424,
+              "z": 543.0574
+            },
+            {
+              "x": 242.76076,
+              "z": 543.0574
+            }
+          ]
+        },
+        {
+          "id": "b_district_2_3_82:r1",
+          "type": "room",
+          "floor": 1,
+          "polygon": [
+            {
+              "x": 242.76076,
+              "z": 533.3066
+            },
+            {
+              "x": 251.78424,
+              "z": 533.3066
+            },
+            {
+              "x": 251.78424,
+              "z": 543.0574
+            },
+            {
+              "x": 242.76076,
+              "z": 543.0574
+            }
+          ]
+        },
+        {
+          "id": "b_district_2_3_82:r2",
+          "type": "room",
+          "floor": 2,
+          "polygon": [
+            {
+              "x": 242.76076,
+              "z": 533.3066
+            },
+            {
+              "x": 251.78424,
+              "z": 533.3066
+            },
+            {
+              "x": 251.78424,
+              "z": 543.0574
+            },
+            {
+              "x": 242.76076,
+              "z": 543.0574
+            }
+          ]
+        }
+      ],
+      "stairs": [
+        {
+          "id": "b_district_2_3_82:s0_1",
+          "connectsFloors": [
+            0,
+            1
+          ],
+          "type": "straight",
+          "position": {
+            "x": 247.2725,
+            "z": 538.182
+          },
+          "rotation": 0,
+          "dimensions": {
+            "width": 2,
+            "length": 4
+          }
+        },
+        {
+          "id": "b_district_2_3_82:s1_2",
+          "connectsFloors": [
+            1,
+            2
+          ],
+          "type": "straight",
+          "position": {
+            "x": 247.2725,
+            "z": 538.182
+          },
+          "rotation": 0,
+          "dimensions": {
+            "width": 2,
+            "length": 4
+          }
+        }
+      ]
     },
     {
       "id": "b_district_2_3_83",
@@ -15670,7 +16762,7 @@
     {
       "id": "b_district_3_2_87",
       "name": "B 87",
-      "isEnterable": false,
+      "isEnterable": true,
       "floorsCount": 3,
       "floorHeight": 3.29,
       "foundation": "terrain",
@@ -15697,8 +16789,113 @@
           "z": 229.957
         }
       ],
-      "rooms": [],
-      "stairs": []
+      "rooms": [
+        {
+          "id": "b_district_3_2_87:r0",
+          "type": "lobby",
+          "floor": 0,
+          "polygon": [
+            {
+              "x": 497.46624,
+              "z": 219.47268
+            },
+            {
+              "x": 505.20076,
+              "z": 219.47268
+            },
+            {
+              "x": 505.20076,
+              "z": 228.52732
+            },
+            {
+              "x": 497.46624,
+              "z": 228.52732
+            }
+          ]
+        },
+        {
+          "id": "b_district_3_2_87:r1",
+          "type": "room",
+          "floor": 1,
+          "polygon": [
+            {
+              "x": 497.46624,
+              "z": 219.47268
+            },
+            {
+              "x": 505.20076,
+              "z": 219.47268
+            },
+            {
+              "x": 505.20076,
+              "z": 228.52732
+            },
+            {
+              "x": 497.46624,
+              "z": 228.52732
+            }
+          ]
+        },
+        {
+          "id": "b_district_3_2_87:r2",
+          "type": "room",
+          "floor": 2,
+          "polygon": [
+            {
+              "x": 497.46624,
+              "z": 219.47268
+            },
+            {
+              "x": 505.20076,
+              "z": 219.47268
+            },
+            {
+              "x": 505.20076,
+              "z": 228.52732
+            },
+            {
+              "x": 497.46624,
+              "z": 228.52732
+            }
+          ]
+        }
+      ],
+      "stairs": [
+        {
+          "id": "b_district_3_2_87:s0_1",
+          "connectsFloors": [
+            0,
+            1
+          ],
+          "type": "straight",
+          "position": {
+            "x": 501.3335,
+            "z": 224
+          },
+          "rotation": 0,
+          "dimensions": {
+            "width": 2,
+            "length": 4.5
+          }
+        },
+        {
+          "id": "b_district_3_2_87:s1_2",
+          "connectsFloors": [
+            1,
+            2
+          ],
+          "type": "straight",
+          "position": {
+            "x": 501.3335,
+            "z": 224
+          },
+          "rotation": 0,
+          "dimensions": {
+            "width": 2,
+            "length": 4.5
+          }
+        }
+      ]
     },
     {
       "id": "b_district_3_2_88",
@@ -15802,7 +16999,7 @@
     {
       "id": "b_district_3_2_91",
       "name": "B 91",
-      "isEnterable": false,
+      "isEnterable": true,
       "floorsCount": 4,
       "floorHeight": 3.12,
       "foundation": "terrain",
@@ -15829,8 +17026,153 @@
           "z": 313.207
         }
       ],
-      "rooms": [],
-      "stairs": []
+      "rooms": [
+        {
+          "id": "b_district_3_2_91:r0",
+          "type": "lobby",
+          "floor": 0,
+          "polygon": [
+            {
+              "x": 497.92452000000003,
+              "z": 306.38964
+            },
+            {
+              "x": 504.74248,
+              "z": 306.38964
+            },
+            {
+              "x": 504.74248,
+              "z": 312.27736
+            },
+            {
+              "x": 497.92452000000003,
+              "z": 312.27736
+            }
+          ]
+        },
+        {
+          "id": "b_district_3_2_91:r1",
+          "type": "room",
+          "floor": 1,
+          "polygon": [
+            {
+              "x": 497.92452000000003,
+              "z": 306.38964
+            },
+            {
+              "x": 504.74248,
+              "z": 306.38964
+            },
+            {
+              "x": 504.74248,
+              "z": 312.27736
+            },
+            {
+              "x": 497.92452000000003,
+              "z": 312.27736
+            }
+          ]
+        },
+        {
+          "id": "b_district_3_2_91:r2",
+          "type": "room",
+          "floor": 2,
+          "polygon": [
+            {
+              "x": 497.92452000000003,
+              "z": 306.38964
+            },
+            {
+              "x": 504.74248,
+              "z": 306.38964
+            },
+            {
+              "x": 504.74248,
+              "z": 312.27736
+            },
+            {
+              "x": 497.92452000000003,
+              "z": 312.27736
+            }
+          ]
+        },
+        {
+          "id": "b_district_3_2_91:r3",
+          "type": "room",
+          "floor": 3,
+          "polygon": [
+            {
+              "x": 497.92452000000003,
+              "z": 306.38964
+            },
+            {
+              "x": 504.74248,
+              "z": 306.38964
+            },
+            {
+              "x": 504.74248,
+              "z": 312.27736
+            },
+            {
+              "x": 497.92452000000003,
+              "z": 312.27736
+            }
+          ]
+        }
+      ],
+      "stairs": [
+        {
+          "id": "b_district_3_2_91:s0_1",
+          "connectsFloors": [
+            0,
+            1
+          ],
+          "type": "straight",
+          "position": {
+            "x": 501.3335,
+            "z": 309.33349999999996
+          },
+          "rotation": 0,
+          "dimensions": {
+            "width": 2,
+            "length": 4.5
+          }
+        },
+        {
+          "id": "b_district_3_2_91:s1_2",
+          "connectsFloors": [
+            1,
+            2
+          ],
+          "type": "straight",
+          "position": {
+            "x": 501.3335,
+            "z": 309.33349999999996
+          },
+          "rotation": 0,
+          "dimensions": {
+            "width": 2,
+            "length": 4.5
+          }
+        },
+        {
+          "id": "b_district_3_2_91:s2_3",
+          "connectsFloors": [
+            2,
+            3
+          ],
+          "type": "straight",
+          "position": {
+            "x": 501.3335,
+            "z": 309.33349999999996
+          },
+          "rotation": 0,
+          "dimensions": {
+            "width": 2,
+            "length": 4.5
+          }
+        }
+      ]
     },
     {
       "id": "b_district_3_3_92",
@@ -16097,7 +17439,7 @@
     {
       "id": "b_district_0_1_100",
       "name": "B 100",
-      "isEnterable": false,
+      "isEnterable": true,
       "floorsCount": 2,
       "floorHeight": 5.27,
       "foundation": "terrain",
@@ -16123,8 +17465,73 @@
           "z": -170.463
         }
       ],
-      "rooms": [],
-      "stairs": []
+      "rooms": [
+        {
+          "id": "b_district_0_1_100:r0",
+          "type": "lobby",
+          "floor": 0,
+          "polygon": [
+            {
+              "x": -549.82072,
+              "z": -187.24812
+            },
+            {
+              "x": -530.17928,
+              "z": -187.24812
+            },
+            {
+              "x": -530.17928,
+              "z": -172.75188
+            },
+            {
+              "x": -549.82072,
+              "z": -172.75188
+            }
+          ]
+        },
+        {
+          "id": "b_district_0_1_100:r1",
+          "type": "room",
+          "floor": 1,
+          "polygon": [
+            {
+              "x": -549.82072,
+              "z": -187.24812
+            },
+            {
+              "x": -530.17928,
+              "z": -187.24812
+            },
+            {
+              "x": -530.17928,
+              "z": -172.75188
+            },
+            {
+              "x": -549.82072,
+              "z": -172.75188
+            }
+          ]
+        }
+      ],
+      "stairs": [
+        {
+          "id": "b_district_0_1_100:s0_1",
+          "connectsFloors": [
+            0,
+            1
+          ],
+          "type": "straight",
+          "position": {
+            "x": -540,
+            "z": -180
+          },
+          "rotation": 0,
+          "dimensions": {
+            "width": 2,
+            "length": 7
+          }
+        }
+      ]
     },
     {
       "id": "b_district_0_1_101",
@@ -16161,7 +17568,7 @@
     {
       "id": "b_district_0_1_102",
       "name": "B 102",
-      "isEnterable": false,
+      "isEnterable": true,
       "floorsCount": 1,
       "floorHeight": 6.25,
       "foundation": "terrain",
@@ -16187,7 +17594,31 @@
           "z": -92.132
         }
       ],
-      "rooms": [],
+      "rooms": [
+        {
+          "id": "b_district_0_1_102:r0",
+          "type": "lobby",
+          "floor": 0,
+          "polygon": [
+            {
+              "x": -549.43008,
+              "z": -105.97968
+            },
+            {
+              "x": -530.56992,
+              "z": -105.97968
+            },
+            {
+              "x": -530.56992,
+              "z": -94.02032
+            },
+            {
+              "x": -549.43008,
+              "z": -94.02032
+            }
+          ]
+        }
+      ],
       "stairs": []
     },
     {
@@ -16323,7 +17754,7 @@
     {
       "id": "b_district_0_2_107",
       "name": "B 107",
-      "isEnterable": false,
+      "isEnterable": true,
       "floorsCount": 1,
       "floorHeight": 3.09,
       "foundation": "terrain",
@@ -16350,13 +17781,37 @@
           "z": 224.104
         }
       ],
-      "rooms": [],
+      "rooms": [
+        {
+          "id": "b_district_0_2_107:r0",
+          "type": "lobby",
+          "floor": 0,
+          "polygon": [
+            {
+              "x": -543.49144,
+              "z": 216.88096
+            },
+            {
+              "x": -536.50856,
+              "z": 216.88096
+            },
+            {
+              "x": -536.50856,
+              "z": 223.11904
+            },
+            {
+              "x": -543.49144,
+              "z": 223.11904
+            }
+          ]
+        }
+      ],
       "stairs": []
     },
     {
       "id": "b_district_3_3_108",
       "name": "B 108",
-      "isEnterable": false,
+      "isEnterable": true,
       "floorsCount": 4,
       "floorHeight": 3.44,
       "foundation": "terrain",
@@ -16383,8 +17838,153 @@
           "z": 364.924
         }
       ],
-      "rooms": [],
-      "stairs": []
+      "rooms": [
+        {
+          "id": "b_district_3_3_108:r0",
+          "type": "lobby",
+          "floor": 0,
+          "polygon": [
+            {
+              "x": 435.03416,
+              "z": 356.25776
+            },
+            {
+              "x": 444.96584,
+              "z": 356.25776
+            },
+            {
+              "x": 444.96584,
+              "z": 363.74224
+            },
+            {
+              "x": 435.03416,
+              "z": 363.74224
+            }
+          ]
+        },
+        {
+          "id": "b_district_3_3_108:r1",
+          "type": "room",
+          "floor": 1,
+          "polygon": [
+            {
+              "x": 435.03416,
+              "z": 356.25776
+            },
+            {
+              "x": 444.96584,
+              "z": 356.25776
+            },
+            {
+              "x": 444.96584,
+              "z": 363.74224
+            },
+            {
+              "x": 435.03416,
+              "z": 363.74224
+            }
+          ]
+        },
+        {
+          "id": "b_district_3_3_108:r2",
+          "type": "room",
+          "floor": 2,
+          "polygon": [
+            {
+              "x": 435.03416,
+              "z": 356.25776
+            },
+            {
+              "x": 444.96584,
+              "z": 356.25776
+            },
+            {
+              "x": 444.96584,
+              "z": 363.74224
+            },
+            {
+              "x": 435.03416,
+              "z": 363.74224
+            }
+          ]
+        },
+        {
+          "id": "b_district_3_3_108:r3",
+          "type": "room",
+          "floor": 3,
+          "polygon": [
+            {
+              "x": 435.03416,
+              "z": 356.25776
+            },
+            {
+              "x": 444.96584,
+              "z": 356.25776
+            },
+            {
+              "x": 444.96584,
+              "z": 363.74224
+            },
+            {
+              "x": 435.03416,
+              "z": 363.74224
+            }
+          ]
+        }
+      ],
+      "stairs": [
+        {
+          "id": "b_district_3_3_108:s0_1",
+          "connectsFloors": [
+            0,
+            1
+          ],
+          "type": "straight",
+          "position": {
+            "x": 440,
+            "z": 360
+          },
+          "rotation": 0,
+          "dimensions": {
+            "width": 2,
+            "length": 4.5
+          }
+        },
+        {
+          "id": "b_district_3_3_108:s1_2",
+          "connectsFloors": [
+            1,
+            2
+          ],
+          "type": "straight",
+          "position": {
+            "x": 440,
+            "z": 360
+          },
+          "rotation": 0,
+          "dimensions": {
+            "width": 2,
+            "length": 4.5
+          }
+        },
+        {
+          "id": "b_district_3_3_108:s2_3",
+          "connectsFloors": [
+            2,
+            3
+          ],
+          "type": "straight",
+          "position": {
+            "x": 440,
+            "z": 360
+          },
+          "rotation": 0,
+          "dimensions": {
+            "width": 2,
+            "length": 4.5
+          }
+        }
+      ]
     },
     {
       "id": "b_district_2_2_109",
@@ -16557,7 +18157,7 @@
     {
       "id": "b_district_3_3_114",
       "name": "B 114",
-      "isEnterable": false,
+      "isEnterable": true,
       "floorsCount": 2,
       "floorHeight": 3.31,
       "foundation": "terrain",
@@ -16585,8 +18185,73 @@
           "z": 391.297
         }
       ],
-      "rooms": [],
-      "stairs": []
+      "rooms": [
+        {
+          "id": "b_district_3_3_114:r0",
+          "type": "lobby",
+          "floor": 0,
+          "polygon": [
+            {
+              "x": 488.0496,
+              "z": 383.14732
+            },
+            {
+              "x": 498.6174,
+              "z": 383.14732
+            },
+            {
+              "x": 498.6174,
+              "z": 390.18568000000005
+            },
+            {
+              "x": 488.0496,
+              "z": 390.18568000000005
+            }
+          ]
+        },
+        {
+          "id": "b_district_3_3_114:r1",
+          "type": "room",
+          "floor": 1,
+          "polygon": [
+            {
+              "x": 488.0496,
+              "z": 383.14732
+            },
+            {
+              "x": 498.6174,
+              "z": 383.14732
+            },
+            {
+              "x": 498.6174,
+              "z": 390.18568000000005
+            },
+            {
+              "x": 488.0496,
+              "z": 390.18568000000005
+            }
+          ]
+        }
+      ],
+      "stairs": [
+        {
+          "id": "b_district_3_3_114:s0_1",
+          "connectsFloors": [
+            0,
+            1
+          ],
+          "type": "straight",
+          "position": {
+            "x": 493.33349999999996,
+            "z": 386.66650000000004
+          },
+          "rotation": 0,
+          "dimensions": {
+            "width": 2,
+            "length": 4.5
+          }
+        }
+      ]
     },
     {
       "id": "b_district_3_3_115",
@@ -16659,7 +18324,7 @@
     {
       "id": "b_district_3_3_117",
       "name": "B 117",
-      "isEnterable": false,
+      "isEnterable": true,
       "floorsCount": 4,
       "floorHeight": 3.93,
       "foundation": "terrain",
@@ -16687,13 +18352,158 @@
           "z": 606.739
         }
       ],
-      "rooms": [],
-      "stairs": []
+      "rooms": [
+        {
+          "id": "b_district_3_3_117:r0",
+          "type": "lobby",
+          "floor": 0,
+          "polygon": [
+            {
+              "x": 381.12116000000003,
+              "z": 594.8783599999999
+            },
+            {
+              "x": 392.21184,
+              "z": 594.8783599999999
+            },
+            {
+              "x": 392.21184,
+              "z": 605.1216400000001
+            },
+            {
+              "x": 381.12116000000003,
+              "z": 605.1216400000001
+            }
+          ]
+        },
+        {
+          "id": "b_district_3_3_117:r1",
+          "type": "room",
+          "floor": 1,
+          "polygon": [
+            {
+              "x": 381.12116000000003,
+              "z": 594.8783599999999
+            },
+            {
+              "x": 392.21184,
+              "z": 594.8783599999999
+            },
+            {
+              "x": 392.21184,
+              "z": 605.1216400000001
+            },
+            {
+              "x": 381.12116000000003,
+              "z": 605.1216400000001
+            }
+          ]
+        },
+        {
+          "id": "b_district_3_3_117:r2",
+          "type": "room",
+          "floor": 2,
+          "polygon": [
+            {
+              "x": 381.12116000000003,
+              "z": 594.8783599999999
+            },
+            {
+              "x": 392.21184,
+              "z": 594.8783599999999
+            },
+            {
+              "x": 392.21184,
+              "z": 605.1216400000001
+            },
+            {
+              "x": 381.12116000000003,
+              "z": 605.1216400000001
+            }
+          ]
+        },
+        {
+          "id": "b_district_3_3_117:r3",
+          "type": "room",
+          "floor": 3,
+          "polygon": [
+            {
+              "x": 381.12116000000003,
+              "z": 594.8783599999999
+            },
+            {
+              "x": 392.21184,
+              "z": 594.8783599999999
+            },
+            {
+              "x": 392.21184,
+              "z": 605.1216400000001
+            },
+            {
+              "x": 381.12116000000003,
+              "z": 605.1216400000001
+            }
+          ]
+        }
+      ],
+      "stairs": [
+        {
+          "id": "b_district_3_3_117:s0_1",
+          "connectsFloors": [
+            0,
+            1
+          ],
+          "type": "straight",
+          "position": {
+            "x": 386.66650000000004,
+            "z": 600
+          },
+          "rotation": 0,
+          "dimensions": {
+            "width": 2,
+            "length": 5.5
+          }
+        },
+        {
+          "id": "b_district_3_3_117:s1_2",
+          "connectsFloors": [
+            1,
+            2
+          ],
+          "type": "straight",
+          "position": {
+            "x": 386.66650000000004,
+            "z": 600
+          },
+          "rotation": 0,
+          "dimensions": {
+            "width": 2,
+            "length": 5.5
+          }
+        },
+        {
+          "id": "b_district_3_3_117:s2_3",
+          "connectsFloors": [
+            2,
+            3
+          ],
+          "type": "straight",
+          "position": {
+            "x": 386.66650000000004,
+            "z": 600
+          },
+          "rotation": 0,
+          "dimensions": {
+            "width": 2,
+            "length": 5.5
+          }
+        }
+      ]
     },
     {
       "id": "b_district_3_3_118",
       "name": "B 118",
-      "isEnterable": false,
+      "isEnterable": true,
       "floorsCount": 2,
       "floorHeight": 4.78,
       "foundation": "terrain",
@@ -16720,8 +18530,73 @@
           "z": 634.489
         }
       ],
-      "rooms": [],
-      "stairs": []
+      "rooms": [
+        {
+          "id": "b_district_3_3_118:r0",
+          "type": "lobby",
+          "floor": 0,
+          "polygon": [
+            {
+              "x": 378.66116,
+              "z": 620.7214
+            },
+            {
+              "x": 394.67284,
+              "z": 620.7214
+            },
+            {
+              "x": 394.67284,
+              "z": 632.6116000000001
+            },
+            {
+              "x": 378.66116,
+              "z": 632.6116000000001
+            }
+          ]
+        },
+        {
+          "id": "b_district_3_3_118:r1",
+          "type": "room",
+          "floor": 1,
+          "polygon": [
+            {
+              "x": 378.66116,
+              "z": 620.7214
+            },
+            {
+              "x": 394.67284,
+              "z": 620.7214
+            },
+            {
+              "x": 394.67284,
+              "z": 632.6116000000001
+            },
+            {
+              "x": 378.66116,
+              "z": 632.6116000000001
+            }
+          ]
+        }
+      ],
+      "stairs": [
+        {
+          "id": "b_district_3_3_118:s0_1",
+          "connectsFloors": [
+            0,
+            1
+          ],
+          "type": "straight",
+          "position": {
+            "x": 386.66700000000003,
+            "z": 626.6665
+          },
+          "rotation": 0,
+          "dimensions": {
+            "width": 2,
+            "length": 6.5
+          }
+        }
+      ]
     },
     {
       "id": "b_district_2_1_119",
@@ -16792,7 +18667,7 @@
     {
       "id": "b_district_2_1_121",
       "name": "B 121",
-      "isEnterable": false,
+      "isEnterable": true,
       "floorsCount": 2,
       "floorHeight": 3.04,
       "foundation": "terrain",
@@ -16819,8 +18694,73 @@
           "z": -190.59
         }
       ],
-      "rooms": [],
-      "stairs": []
+      "rooms": [
+        {
+          "id": "b_district_2_1_121:r0",
+          "type": "lobby",
+          "floor": 0,
+          "polygon": [
+            {
+              "x": 122.64676,
+              "z": -197.09496
+            },
+            {
+              "x": 128.78224,
+              "z": -197.09496
+            },
+            {
+              "x": 128.78224,
+              "z": -191.47704000000002
+            },
+            {
+              "x": 122.64676,
+              "z": -191.47704000000002
+            }
+          ]
+        },
+        {
+          "id": "b_district_2_1_121:r1",
+          "type": "room",
+          "floor": 1,
+          "polygon": [
+            {
+              "x": 122.64676,
+              "z": -197.09496
+            },
+            {
+              "x": 128.78224,
+              "z": -197.09496
+            },
+            {
+              "x": 128.78224,
+              "z": -191.47704000000002
+            },
+            {
+              "x": 122.64676,
+              "z": -191.47704000000002
+            }
+          ]
+        }
+      ],
+      "stairs": [
+        {
+          "id": "b_district_2_1_121:s0_1",
+          "connectsFloors": [
+            0,
+            1
+          ],
+          "type": "straight",
+          "position": {
+            "x": 125.7145,
+            "z": -194.286
+          },
+          "rotation": 0,
+          "dimensions": {
+            "width": 2,
+            "length": 4
+          }
+        }
+      ]
     },
     {
       "id": "b_district_2_1_122",
@@ -16858,7 +18798,7 @@
     {
       "id": "b_district_2_1_123",
       "name": "B 123",
-      "isEnterable": false,
+      "isEnterable": true,
       "floorsCount": 2,
       "floorHeight": 3.18,
       "foundation": "terrain",
@@ -16885,8 +18825,73 @@
           "z": -188.516
         }
       ],
-      "rooms": [],
-      "stairs": []
+      "rooms": [
+        {
+          "id": "b_district_2_1_123:r0",
+          "type": "lobby",
+          "floor": 0,
+          "polygon": [
+            {
+              "x": 167.98304000000002,
+              "z": -198.6712
+            },
+            {
+              "x": 174.87395999999998,
+              "z": -198.6712
+            },
+            {
+              "x": 174.87395999999998,
+              "z": -189.9008
+            },
+            {
+              "x": 167.98304000000002,
+              "z": -189.9008
+            }
+          ]
+        },
+        {
+          "id": "b_district_2_1_123:r1",
+          "type": "room",
+          "floor": 1,
+          "polygon": [
+            {
+              "x": 167.98304000000002,
+              "z": -198.6712
+            },
+            {
+              "x": 174.87395999999998,
+              "z": -198.6712
+            },
+            {
+              "x": 174.87395999999998,
+              "z": -189.9008
+            },
+            {
+              "x": 167.98304000000002,
+              "z": -189.9008
+            }
+          ]
+        }
+      ],
+      "stairs": [
+        {
+          "id": "b_district_2_1_123:s0_1",
+          "connectsFloors": [
+            0,
+            1
+          ],
+          "type": "straight",
+          "position": {
+            "x": 171.42849999999999,
+            "z": -194.286
+          },
+          "rotation": 0,
+          "dimensions": {
+            "width": 2,
+            "length": 4.5
+          }
+        }
+      ]
     },
     {
       "id": "b_district_2_1_124",
@@ -16957,7 +18962,7 @@
     {
       "id": "b_district_2_1_126",
       "name": "B 126",
-      "isEnterable": false,
+      "isEnterable": true,
       "floorsCount": 2,
       "floorHeight": 4.03,
       "foundation": "terrain",
@@ -16984,8 +18989,73 @@
           "z": -142.525
         }
       ],
-      "rooms": [],
-      "stairs": []
+      "rooms": [
+        {
+          "id": "b_district_2_1_126:r0",
+          "type": "lobby",
+          "floor": 0,
+          "polygon": [
+            {
+              "x": 189.57692,
+              "z": -153.16684
+            },
+            {
+              "x": 198.99408,
+              "z": -153.16684
+            },
+            {
+              "x": 198.99408,
+              "z": -143.97616
+            },
+            {
+              "x": 189.57692,
+              "z": -143.97616
+            }
+          ]
+        },
+        {
+          "id": "b_district_2_1_126:r1",
+          "type": "room",
+          "floor": 1,
+          "polygon": [
+            {
+              "x": 189.57692,
+              "z": -153.16684
+            },
+            {
+              "x": 198.99408,
+              "z": -153.16684
+            },
+            {
+              "x": 198.99408,
+              "z": -143.97616
+            },
+            {
+              "x": 189.57692,
+              "z": -143.97616
+            }
+          ]
+        }
+      ],
+      "stairs": [
+        {
+          "id": "b_district_2_1_126:s0_1",
+          "connectsFloors": [
+            0,
+            1
+          ],
+          "type": "straight",
+          "position": {
+            "x": 194.2855,
+            "z": -148.57150000000001
+          },
+          "rotation": 0,
+          "dimensions": {
+            "width": 2,
+            "length": 5.5
+          }
+        }
+      ]
     },
     {
       "id": "b_district_2_1_127",
@@ -17023,7 +19093,7 @@
     {
       "id": "b_district_2_1_128",
       "name": "B 128",
-      "isEnterable": false,
+      "isEnterable": true,
       "floorsCount": 1,
       "floorHeight": 3.02,
       "foundation": "terrain",
@@ -17050,13 +19120,37 @@
           "z": -76.19
         }
       ],
-      "rooms": [],
+      "rooms": [
+        {
+          "id": "b_district_2_1_128:r0",
+          "type": "lobby",
+          "floor": 0,
+          "polygon": [
+            {
+              "x": 190.22444000000002,
+              "z": -82.8956
+            },
+            {
+              "x": 198.34655999999998,
+              "z": -82.8956
+            },
+            {
+              "x": 198.34655999999998,
+              "z": -77.1044
+            },
+            {
+              "x": 190.22444000000002,
+              "z": -77.1044
+            }
+          ]
+        }
+      ],
       "stairs": []
     },
     {
       "id": "b_district_2_1_129",
       "name": "B 129",
-      "isEnterable": false,
+      "isEnterable": true,
       "floorsCount": 1,
       "floorHeight": 2.8,
       "foundation": "terrain",
@@ -17083,7 +19177,31 @@
           "z": -29.429
         }
       ],
-      "rooms": [],
+      "rooms": [
+        {
+          "id": "b_district_2_1_129:r0",
+          "type": "lobby",
+          "floor": 0,
+          "polygon": [
+            {
+              "x": 167.61368,
+              "z": -37.976440000000004
+            },
+            {
+              "x": 175.24332,
+              "z": -37.976440000000004
+            },
+            {
+              "x": 175.24332,
+              "z": -30.594559999999998
+            },
+            {
+              "x": 167.61368,
+              "z": -30.594559999999998
+            }
+          ]
+        }
+      ],
       "stairs": []
     },
     {
@@ -17321,7 +19439,7 @@
     {
       "id": "b_district_3_0_137",
       "name": "B 137",
-      "isEnterable": false,
+      "isEnterable": true,
       "floorsCount": 2,
       "floorHeight": 3.5,
       "foundation": "terrain",
@@ -17348,8 +19466,73 @@
           "z": -382.925
         }
       ],
-      "rooms": [],
-      "stairs": []
+      "rooms": [
+        {
+          "id": "b_district_3_0_137:r0",
+          "type": "lobby",
+          "floor": 0,
+          "polygon": [
+            {
+              "x": 437.15536000000003,
+              "z": -388.12932
+            },
+            {
+              "x": 447.55064,
+              "z": -388.12932
+            },
+            {
+              "x": 447.55064,
+              "z": -383.63468
+            },
+            {
+              "x": 437.15536000000003,
+              "z": -383.63468
+            }
+          ]
+        },
+        {
+          "id": "b_district_3_0_137:r1",
+          "type": "room",
+          "floor": 1,
+          "polygon": [
+            {
+              "x": 437.15536000000003,
+              "z": -388.12932
+            },
+            {
+              "x": 447.55064,
+              "z": -388.12932
+            },
+            {
+              "x": 447.55064,
+              "z": -383.63468
+            },
+            {
+              "x": 437.15536000000003,
+              "z": -383.63468
+            }
+          ]
+        }
+      ],
+      "stairs": [
+        {
+          "id": "b_district_3_0_137:s0_1",
+          "connectsFloors": [
+            0,
+            1
+          ],
+          "type": "straight",
+          "position": {
+            "x": 442.353,
+            "z": -385.882
+          },
+          "rotation": 0,
+          "dimensions": {
+            "width": 2,
+            "length": 4.5
+          }
+        }
+      ]
     },
     {
       "id": "b_district_3_1_138",
@@ -17387,7 +19570,7 @@
     {
       "id": "b_district_2_2_139",
       "name": "B 139",
-      "isEnterable": false,
+      "isEnterable": true,
       "floorsCount": 2,
       "floorHeight": 3.56,
       "foundation": "terrain",
@@ -17415,8 +19598,73 @@
           "z": 165.523
         }
       ],
-      "rooms": [],
-      "stairs": []
+      "rooms": [
+        {
+          "id": "b_district_2_2_139:r0",
+          "type": "lobby",
+          "floor": 0,
+          "polygon": [
+            {
+              "x": 152.55732,
+              "z": 155.80252000000002
+            },
+            {
+              "x": 167.44268,
+              "z": 155.80252000000002
+            },
+            {
+              "x": 167.44268,
+              "z": 164.19747999999998
+            },
+            {
+              "x": 152.55732,
+              "z": 164.19747999999998
+            }
+          ]
+        },
+        {
+          "id": "b_district_2_2_139:r1",
+          "type": "room",
+          "floor": 1,
+          "polygon": [
+            {
+              "x": 152.55732,
+              "z": 155.80252000000002
+            },
+            {
+              "x": 167.44268,
+              "z": 155.80252000000002
+            },
+            {
+              "x": 167.44268,
+              "z": 164.19747999999998
+            },
+            {
+              "x": 152.55732,
+              "z": 164.19747999999998
+            }
+          ]
+        }
+      ],
+      "stairs": [
+        {
+          "id": "b_district_2_2_139:s0_1",
+          "connectsFloors": [
+            0,
+            1
+          ],
+          "type": "straight",
+          "position": {
+            "x": 160,
+            "z": 160
+          },
+          "rotation": 0,
+          "dimensions": {
+            "width": 2,
+            "length": 5
+          }
+        }
+      ]
     },
     {
       "id": "b_district_3_0_140",
@@ -17520,7 +19768,7 @@
     {
       "id": "b_district_2_1_143",
       "name": "B 143",
-      "isEnterable": false,
+      "isEnterable": true,
       "floorsCount": 1,
       "floorHeight": 3.11,
       "foundation": "terrain",
@@ -17547,13 +19795,37 @@
           "z": -236.926
         }
       ],
-      "rooms": [],
+      "rooms": [
+        {
+          "id": "b_district_2_1_143:r0",
+          "type": "lobby",
+          "floor": 0,
+          "polygon": [
+            {
+              "x": 145.35176,
+              "z": -242.33624
+            },
+            {
+              "x": 151.79124,
+              "z": -242.33624
+            },
+            {
+              "x": 151.79124,
+              "z": -237.66376
+            },
+            {
+              "x": 145.35176,
+              "z": -237.66376
+            }
+          ]
+        }
+      ],
       "stairs": []
     },
     {
       "id": "b_district_2_1_144",
       "name": "B 144",
-      "isEnterable": false,
+      "isEnterable": true,
       "floorsCount": 2,
       "floorHeight": 3.1,
       "foundation": "terrain",
@@ -17580,13 +19852,78 @@
           "z": -235.742
         }
       ],
-      "rooms": [],
-      "stairs": []
+      "rooms": [
+        {
+          "id": "b_district_2_1_144:r0",
+          "type": "lobby",
+          "floor": 0,
+          "polygon": [
+            {
+              "x": 167.44648,
+              "z": -243.23608000000002
+            },
+            {
+              "x": 175.41052,
+              "z": -243.23608000000002
+            },
+            {
+              "x": 175.41052,
+              "z": -236.76391999999998
+            },
+            {
+              "x": 167.44648,
+              "z": -236.76391999999998
+            }
+          ]
+        },
+        {
+          "id": "b_district_2_1_144:r1",
+          "type": "room",
+          "floor": 1,
+          "polygon": [
+            {
+              "x": 167.44648,
+              "z": -243.23608000000002
+            },
+            {
+              "x": 175.41052,
+              "z": -243.23608000000002
+            },
+            {
+              "x": 175.41052,
+              "z": -236.76391999999998
+            },
+            {
+              "x": 167.44648,
+              "z": -236.76391999999998
+            }
+          ]
+        }
+      ],
+      "stairs": [
+        {
+          "id": "b_district_2_1_144:s0_1",
+          "connectsFloors": [
+            0,
+            1
+          ],
+          "type": "straight",
+          "position": {
+            "x": 171.42849999999999,
+            "z": -240
+          },
+          "rotation": 0,
+          "dimensions": {
+            "width": 2,
+            "length": 4
+          }
+        }
+      ]
     },
     {
       "id": "b_district_2_1_145",
       "name": "B 145",
-      "isEnterable": false,
+      "isEnterable": true,
       "floorsCount": 1,
       "floorHeight": 3.03,
       "foundation": "terrain",
@@ -17613,7 +19950,31 @@
           "z": -190.032
         }
       ],
-      "rooms": [],
+      "rooms": [
+        {
+          "id": "b_district_2_1_145:r0",
+          "type": "lobby",
+          "floor": 0,
+          "polygon": [
+            {
+              "x": 235.28344,
+              "z": -197.51904
+            },
+            {
+              "x": 244.71656,
+              "z": -197.51904
+            },
+            {
+              "x": 244.71656,
+              "z": -191.05296
+            },
+            {
+              "x": 235.28344,
+              "z": -191.05296
+            }
+          ]
+        }
+      ],
       "stairs": []
     },
     {
@@ -17751,7 +20112,7 @@
     {
       "id": "b_district_3_2_150",
       "name": "B 150",
-      "isEnterable": false,
+      "isEnterable": true,
       "floorsCount": 3,
       "floorHeight": 3.29,
       "foundation": "terrain",
@@ -17778,13 +20139,118 @@
           "z": 37.067
         }
       ],
-      "rooms": [],
-      "stairs": []
+      "rooms": [
+        {
+          "id": "b_district_3_2_150:r0",
+          "type": "lobby",
+          "floor": 0,
+          "polygon": [
+            {
+              "x": 369.73528,
+              "z": 28.14908
+            },
+            {
+              "x": 376.93172,
+              "z": 28.14908
+            },
+            {
+              "x": 376.93172,
+              "z": 35.85092
+            },
+            {
+              "x": 369.73528,
+              "z": 35.85092
+            }
+          ]
+        },
+        {
+          "id": "b_district_3_2_150:r1",
+          "type": "room",
+          "floor": 1,
+          "polygon": [
+            {
+              "x": 369.73528,
+              "z": 28.14908
+            },
+            {
+              "x": 376.93172,
+              "z": 28.14908
+            },
+            {
+              "x": 376.93172,
+              "z": 35.85092
+            },
+            {
+              "x": 369.73528,
+              "z": 35.85092
+            }
+          ]
+        },
+        {
+          "id": "b_district_3_2_150:r2",
+          "type": "room",
+          "floor": 2,
+          "polygon": [
+            {
+              "x": 369.73528,
+              "z": 28.14908
+            },
+            {
+              "x": 376.93172,
+              "z": 28.14908
+            },
+            {
+              "x": 376.93172,
+              "z": 35.85092
+            },
+            {
+              "x": 369.73528,
+              "z": 35.85092
+            }
+          ]
+        }
+      ],
+      "stairs": [
+        {
+          "id": "b_district_3_2_150:s0_1",
+          "connectsFloors": [
+            0,
+            1
+          ],
+          "type": "straight",
+          "position": {
+            "x": 373.33349999999996,
+            "z": 32
+          },
+          "rotation": 0,
+          "dimensions": {
+            "width": 2,
+            "length": 4.5
+          }
+        },
+        {
+          "id": "b_district_3_2_150:s1_2",
+          "connectsFloors": [
+            1,
+            2
+          ],
+          "type": "straight",
+          "position": {
+            "x": 373.33349999999996,
+            "z": 32
+          },
+          "rotation": 0,
+          "dimensions": {
+            "width": 2,
+            "length": 4.5
+          }
+        }
+      ]
     },
     {
       "id": "b_district_3_2_151",
       "name": "B 151",
-      "isEnterable": false,
+      "isEnterable": true,
       "floorsCount": 3,
       "floorHeight": 3.11,
       "foundation": "terrain",
@@ -17811,8 +20277,113 @@
           "z": 36.218
         }
       ],
-      "rooms": [],
-      "stairs": []
+      "rooms": [
+        {
+          "id": "b_district_3_2_151:r0",
+          "type": "lobby",
+          "floor": 0,
+          "polygon": [
+            {
+              "x": 390.6632,
+              "z": 28.79432
+            },
+            {
+              "x": 398.6698,
+              "z": 28.79432
+            },
+            {
+              "x": 398.6698,
+              "z": 35.20568
+            },
+            {
+              "x": 390.6632,
+              "z": 35.20568
+            }
+          ]
+        },
+        {
+          "id": "b_district_3_2_151:r1",
+          "type": "room",
+          "floor": 1,
+          "polygon": [
+            {
+              "x": 390.6632,
+              "z": 28.79432
+            },
+            {
+              "x": 398.6698,
+              "z": 28.79432
+            },
+            {
+              "x": 398.6698,
+              "z": 35.20568
+            },
+            {
+              "x": 390.6632,
+              "z": 35.20568
+            }
+          ]
+        },
+        {
+          "id": "b_district_3_2_151:r2",
+          "type": "room",
+          "floor": 2,
+          "polygon": [
+            {
+              "x": 390.6632,
+              "z": 28.79432
+            },
+            {
+              "x": 398.6698,
+              "z": 28.79432
+            },
+            {
+              "x": 398.6698,
+              "z": 35.20568
+            },
+            {
+              "x": 390.6632,
+              "z": 35.20568
+            }
+          ]
+        }
+      ],
+      "stairs": [
+        {
+          "id": "b_district_3_2_151:s0_1",
+          "connectsFloors": [
+            0,
+            1
+          ],
+          "type": "straight",
+          "position": {
+            "x": 394.66650000000004,
+            "z": 32
+          },
+          "rotation": 0,
+          "dimensions": {
+            "width": 2,
+            "length": 4
+          }
+        },
+        {
+          "id": "b_district_3_2_151:s1_2",
+          "connectsFloors": [
+            1,
+            2
+          ],
+          "type": "straight",
+          "position": {
+            "x": 394.66650000000004,
+            "z": 32
+          },
+          "rotation": 0,
+          "dimensions": {
+            "width": 2,
+            "length": 4
+          }
+        }
+      ]
     },
     {
       "id": "b_district_3_2_152",
@@ -17850,7 +20421,7 @@
     {
       "id": "b_district_3_2_153",
       "name": "B 153",
-      "isEnterable": false,
+      "isEnterable": true,
       "floorsCount": 4,
       "floorHeight": 3.12,
       "foundation": "terrain",
@@ -17877,8 +20448,153 @@
           "z": 59.453
         }
       ],
-      "rooms": [],
-      "stairs": []
+      "rooms": [
+        {
+          "id": "b_district_3_2_153:r0",
+          "type": "lobby",
+          "floor": 0,
+          "polygon": [
+            {
+              "x": 539.8587600000001,
+              "z": 48.6818
+            },
+            {
+              "x": 548.1412399999999,
+              "z": 48.6818
+            },
+            {
+              "x": 548.1412399999999,
+              "z": 57.9842
+            },
+            {
+              "x": 539.8587600000001,
+              "z": 57.9842
+            }
+          ]
+        },
+        {
+          "id": "b_district_3_2_153:r1",
+          "type": "room",
+          "floor": 1,
+          "polygon": [
+            {
+              "x": 539.8587600000001,
+              "z": 48.6818
+            },
+            {
+              "x": 548.1412399999999,
+              "z": 48.6818
+            },
+            {
+              "x": 548.1412399999999,
+              "z": 57.9842
+            },
+            {
+              "x": 539.8587600000001,
+              "z": 57.9842
+            }
+          ]
+        },
+        {
+          "id": "b_district_3_2_153:r2",
+          "type": "room",
+          "floor": 2,
+          "polygon": [
+            {
+              "x": 539.8587600000001,
+              "z": 48.6818
+            },
+            {
+              "x": 548.1412399999999,
+              "z": 48.6818
+            },
+            {
+              "x": 548.1412399999999,
+              "z": 57.9842
+            },
+            {
+              "x": 539.8587600000001,
+              "z": 57.9842
+            }
+          ]
+        },
+        {
+          "id": "b_district_3_2_153:r3",
+          "type": "room",
+          "floor": 3,
+          "polygon": [
+            {
+              "x": 539.8587600000001,
+              "z": 48.6818
+            },
+            {
+              "x": 548.1412399999999,
+              "z": 48.6818
+            },
+            {
+              "x": 548.1412399999999,
+              "z": 57.9842
+            },
+            {
+              "x": 539.8587600000001,
+              "z": 57.9842
+            }
+          ]
+        }
+      ],
+      "stairs": [
+        {
+          "id": "b_district_3_2_153:s0_1",
+          "connectsFloors": [
+            0,
+            1
+          ],
+          "type": "straight",
+          "position": {
+            "x": 544,
+            "z": 53.333
+          },
+          "rotation": 0,
+          "dimensions": {
+            "width": 2,
+            "length": 4.5
+          }
+        },
+        {
+          "id": "b_district_3_2_153:s1_2",
+          "connectsFloors": [
+            1,
+            2
+          ],
+          "type": "straight",
+          "position": {
+            "x": 544,
+            "z": 53.333
+          },
+          "rotation": 0,
+          "dimensions": {
+            "width": 2,
+            "length": 4.5
+          }
+        },
+        {
+          "id": "b_district_3_2_153:s2_3",
+          "connectsFloors": [
+            2,
+            3
+          ],
+          "type": "straight",
+          "position": {
+            "x": 544,
+            "z": 53.333
+          },
+          "rotation": 0,
+          "dimensions": {
+            "width": 2,
+            "length": 4.5
+          }
+        }
+      ]
     },
     {
       "id": "b_district_3_2_154",
@@ -18087,7 +20803,7 @@
     {
       "id": "b_district_3_2_160",
       "name": "B 160",
-      "isEnterable": false,
+      "isEnterable": true,
       "floorsCount": 3,
       "floorHeight": 3.29,
       "foundation": "terrain",
@@ -18114,8 +20830,113 @@
           "z": 313.214
         }
       ],
-      "rooms": [],
-      "stairs": []
+      "rooms": [
+        {
+          "id": "b_district_3_2_160:r0",
+          "type": "lobby",
+          "floor": 0,
+          "polygon": [
+            {
+              "x": 540.52528,
+              "z": 306.38432
+            },
+            {
+              "x": 547.47472,
+              "z": 306.38432
+            },
+            {
+              "x": 547.47472,
+              "z": 312.28267999999997
+            },
+            {
+              "x": 540.52528,
+              "z": 312.28267999999997
+            }
+          ]
+        },
+        {
+          "id": "b_district_3_2_160:r1",
+          "type": "room",
+          "floor": 1,
+          "polygon": [
+            {
+              "x": 540.52528,
+              "z": 306.38432
+            },
+            {
+              "x": 547.47472,
+              "z": 306.38432
+            },
+            {
+              "x": 547.47472,
+              "z": 312.28267999999997
+            },
+            {
+              "x": 540.52528,
+              "z": 312.28267999999997
+            }
+          ]
+        },
+        {
+          "id": "b_district_3_2_160:r2",
+          "type": "room",
+          "floor": 2,
+          "polygon": [
+            {
+              "x": 540.52528,
+              "z": 306.38432
+            },
+            {
+              "x": 547.47472,
+              "z": 306.38432
+            },
+            {
+              "x": 547.47472,
+              "z": 312.28267999999997
+            },
+            {
+              "x": 540.52528,
+              "z": 312.28267999999997
+            }
+          ]
+        }
+      ],
+      "stairs": [
+        {
+          "id": "b_district_3_2_160:s0_1",
+          "connectsFloors": [
+            0,
+            1
+          ],
+          "type": "straight",
+          "position": {
+            "x": 544,
+            "z": 309.33349999999996
+          },
+          "rotation": 0,
+          "dimensions": {
+            "width": 2,
+            "length": 4.5
+          }
+        },
+        {
+          "id": "b_district_3_2_160:s1_2",
+          "connectsFloors": [
+            1,
+            2
+          ],
+          "type": "straight",
+          "position": {
+            "x": 544,
+            "z": 309.33349999999996
+          },
+          "rotation": 0,
+          "dimensions": {
+            "width": 2,
+            "length": 4.5
+          }
+        }
+      ]
     },
     {
       "id": "b_district_1_3_161",
@@ -18287,7 +21108,7 @@
     {
       "id": "b_district_1_3_166",
       "name": "B 166",
-      "isEnterable": false,
+      "isEnterable": true,
       "floorsCount": 3,
       "floorHeight": 3.2,
       "foundation": "terrain",
@@ -18314,8 +21135,113 @@
           "z": 548.429
         }
       ],
-      "rooms": [],
-      "stairs": []
+      "rooms": [
+        {
+          "id": "b_district_1_3_166:r0",
+          "type": "lobby",
+          "floor": 0,
+          "polygon": [
+            {
+              "x": -185.79128,
+              "z": 540.63396
+            },
+            {
+              "x": -176.87572,
+              "z": 540.63396
+            },
+            {
+              "x": -176.87572,
+              "z": 547.36604
+            },
+            {
+              "x": -185.79128,
+              "z": 547.36604
+            }
+          ]
+        },
+        {
+          "id": "b_district_1_3_166:r1",
+          "type": "room",
+          "floor": 1,
+          "polygon": [
+            {
+              "x": -185.79128,
+              "z": 540.63396
+            },
+            {
+              "x": -176.87572,
+              "z": 540.63396
+            },
+            {
+              "x": -176.87572,
+              "z": 547.36604
+            },
+            {
+              "x": -185.79128,
+              "z": 547.36604
+            }
+          ]
+        },
+        {
+          "id": "b_district_1_3_166:r2",
+          "type": "room",
+          "floor": 2,
+          "polygon": [
+            {
+              "x": -185.79128,
+              "z": 540.63396
+            },
+            {
+              "x": -176.87572,
+              "z": 540.63396
+            },
+            {
+              "x": -176.87572,
+              "z": 547.36604
+            },
+            {
+              "x": -185.79128,
+              "z": 547.36604
+            }
+          ]
+        }
+      ],
+      "stairs": [
+        {
+          "id": "b_district_1_3_166:s0_1",
+          "connectsFloors": [
+            0,
+            1
+          ],
+          "type": "straight",
+          "position": {
+            "x": -181.33350000000002,
+            "z": 544
+          },
+          "rotation": 0,
+          "dimensions": {
+            "width": 2,
+            "length": 4.5
+          }
+        },
+        {
+          "id": "b_district_1_3_166:s1_2",
+          "connectsFloors": [
+            1,
+            2
+          ],
+          "type": "straight",
+          "position": {
+            "x": -181.33350000000002,
+            "z": 544
+          },
+          "rotation": 0,
+          "dimensions": {
+            "width": 2,
+            "length": 4.5
+          }
+        }
+      ]
     },
     {
       "id": "b_district_1_3_167",
@@ -18588,7 +21514,7 @@
     {
       "id": "b_district_3_0_175",
       "name": "B 175",
-      "isEnterable": false,
+      "isEnterable": true,
       "floorsCount": 2,
       "floorHeight": 3.76,
       "foundation": "terrain",
@@ -18615,8 +21541,73 @@
           "z": -476.167
         }
       ],
-      "rooms": [],
-      "stairs": []
+      "rooms": [
+        {
+          "id": "b_district_3_0_175:r0",
+          "type": "lobby",
+          "floor": 0,
+          "polygon": [
+            {
+              "x": 474.74688000000003,
+              "z": -482.91308000000004
+            },
+            {
+              "x": 485.25311999999997,
+              "z": -482.91308000000004
+            },
+            {
+              "x": 485.25311999999997,
+              "z": -477.08691999999996
+            },
+            {
+              "x": 474.74688000000003,
+              "z": -477.08691999999996
+            }
+          ]
+        },
+        {
+          "id": "b_district_3_0_175:r1",
+          "type": "room",
+          "floor": 1,
+          "polygon": [
+            {
+              "x": 474.74688000000003,
+              "z": -482.91308000000004
+            },
+            {
+              "x": 485.25311999999997,
+              "z": -482.91308000000004
+            },
+            {
+              "x": 485.25311999999997,
+              "z": -477.08691999999996
+            },
+            {
+              "x": 474.74688000000003,
+              "z": -477.08691999999996
+            }
+          ]
+        }
+      ],
+      "stairs": [
+        {
+          "id": "b_district_3_0_175:s0_1",
+          "connectsFloors": [
+            0,
+            1
+          ],
+          "type": "straight",
+          "position": {
+            "x": 480,
+            "z": -480
+          },
+          "rotation": 0,
+          "dimensions": {
+            "width": 2,
+            "length": 5
+          }
+        }
+      ]
     },
     {
       "id": "b_district_2_2_176",
@@ -18922,7 +21913,7 @@
     {
       "id": "b_district_3_3_185",
       "name": "B 185",
-      "isEnterable": false,
+      "isEnterable": true,
       "floorsCount": 1,
       "floorHeight": 3.61,
       "foundation": "terrain",
@@ -18950,7 +21941,31 @@
           "z": 471.993
         }
       ],
-      "rooms": [],
+      "rooms": [
+        {
+          "id": "b_district_3_3_185:r0",
+          "type": "lobby",
+          "floor": 0,
+          "polygon": [
+            {
+              "x": 541.3271199999999,
+              "z": 462.61836
+            },
+            {
+              "x": 552.00588,
+              "z": 462.61836
+            },
+            {
+              "x": 552.00588,
+              "z": 470.71464
+            },
+            {
+              "x": 541.3271199999999,
+              "z": 470.71464
+            }
+          ]
+        }
+      ],
       "stairs": []
     },
     {
@@ -19491,7 +22506,7 @@
     {
       "id": "b_district_3_2_202",
       "name": "B 202",
-      "isEnterable": false,
+      "isEnterable": true,
       "floorsCount": 3,
       "floorHeight": 3.25,
       "foundation": "terrain",
@@ -19518,13 +22533,118 @@
           "z": 313.681
         }
       ],
-      "rooms": [],
-      "stairs": []
+      "rooms": [
+        {
+          "id": "b_district_3_2_202:r0",
+          "type": "lobby",
+          "floor": 0,
+          "polygon": [
+            {
+              "x": 369.23519999999996,
+              "z": 306.0294
+            },
+            {
+              "x": 377.4318,
+              "z": 306.0294
+            },
+            {
+              "x": 377.4318,
+              "z": 312.63759999999996
+            },
+            {
+              "x": 369.23519999999996,
+              "z": 312.63759999999996
+            }
+          ]
+        },
+        {
+          "id": "b_district_3_2_202:r1",
+          "type": "room",
+          "floor": 1,
+          "polygon": [
+            {
+              "x": 369.23519999999996,
+              "z": 306.0294
+            },
+            {
+              "x": 377.4318,
+              "z": 306.0294
+            },
+            {
+              "x": 377.4318,
+              "z": 312.63759999999996
+            },
+            {
+              "x": 369.23519999999996,
+              "z": 312.63759999999996
+            }
+          ]
+        },
+        {
+          "id": "b_district_3_2_202:r2",
+          "type": "room",
+          "floor": 2,
+          "polygon": [
+            {
+              "x": 369.23519999999996,
+              "z": 306.0294
+            },
+            {
+              "x": 377.4318,
+              "z": 306.0294
+            },
+            {
+              "x": 377.4318,
+              "z": 312.63759999999996
+            },
+            {
+              "x": 369.23519999999996,
+              "z": 312.63759999999996
+            }
+          ]
+        }
+      ],
+      "stairs": [
+        {
+          "id": "b_district_3_2_202:s0_1",
+          "connectsFloors": [
+            0,
+            1
+          ],
+          "type": "straight",
+          "position": {
+            "x": 373.33349999999996,
+            "z": 309.33349999999996
+          },
+          "rotation": 0,
+          "dimensions": {
+            "width": 2,
+            "length": 4.5
+          }
+        },
+        {
+          "id": "b_district_3_2_202:s1_2",
+          "connectsFloors": [
+            1,
+            2
+          ],
+          "type": "straight",
+          "position": {
+            "x": 373.33349999999996,
+            "z": 309.33349999999996
+          },
+          "rotation": 0,
+          "dimensions": {
+            "width": 2,
+            "length": 4.5
+          }
+        }
+      ]
     },
     {
       "id": "b_district_2_2_203",
       "name": "B 203",
-      "isEnterable": false,
+      "isEnterable": true,
       "floorsCount": 2,
       "floorHeight": 3.68,
       "foundation": "terrain",
@@ -19552,8 +22672,73 @@
           "z": 108.872
         }
       ],
-      "rooms": [],
-      "stairs": []
+      "rooms": [
+        {
+          "id": "b_district_2_2_203:r0",
+          "type": "lobby",
+          "floor": 0,
+          "polygon": [
+            {
+              "x": 212.28212000000002,
+              "z": 96.45696
+            },
+            {
+              "x": 224.08187999999998,
+              "z": 96.45696
+            },
+            {
+              "x": 224.08187999999998,
+              "z": 107.17904
+            },
+            {
+              "x": 212.28212000000002,
+              "z": 107.17904
+            }
+          ]
+        },
+        {
+          "id": "b_district_2_2_203:r1",
+          "type": "room",
+          "floor": 1,
+          "polygon": [
+            {
+              "x": 212.28212000000002,
+              "z": 96.45696
+            },
+            {
+              "x": 224.08187999999998,
+              "z": 96.45696
+            },
+            {
+              "x": 224.08187999999998,
+              "z": 107.17904
+            },
+            {
+              "x": 212.28212000000002,
+              "z": 107.17904
+            }
+          ]
+        }
+      ],
+      "stairs": [
+        {
+          "id": "b_district_2_2_203:s0_1",
+          "connectsFloors": [
+            0,
+            1
+          ],
+          "type": "straight",
+          "position": {
+            "x": 218.18200000000002,
+            "z": 101.818
+          },
+          "rotation": 0,
+          "dimensions": {
+            "width": 2,
+            "length": 5
+          }
+        }
+      ]
     },
     {
       "id": "b_district_2_2_204",
@@ -20088,7 +23273,7 @@
     {
       "id": "b_district_2_2_220",
       "name": "B 220",
-      "isEnterable": false,
+      "isEnterable": true,
       "floorsCount": 3,
       "floorHeight": 3.31,
       "foundation": "terrain",
@@ -20115,8 +23300,113 @@
           "z": 310.653
         }
       ],
-      "rooms": [],
-      "stairs": []
+      "rooms": [
+        {
+          "id": "b_district_2_2_220:r0",
+          "type": "lobby",
+          "floor": 0,
+          "polygon": [
+            {
+              "x": 272.90068,
+              "z": 301.50363999999996
+            },
+            {
+              "x": 279.82732,
+              "z": 301.50363999999996
+            },
+            {
+              "x": 279.82732,
+              "z": 309.40536000000003
+            },
+            {
+              "x": 272.90068,
+              "z": 309.40536000000003
+            }
+          ]
+        },
+        {
+          "id": "b_district_2_2_220:r1",
+          "type": "room",
+          "floor": 1,
+          "polygon": [
+            {
+              "x": 272.90068,
+              "z": 301.50363999999996
+            },
+            {
+              "x": 279.82732,
+              "z": 301.50363999999996
+            },
+            {
+              "x": 279.82732,
+              "z": 309.40536000000003
+            },
+            {
+              "x": 272.90068,
+              "z": 309.40536000000003
+            }
+          ]
+        },
+        {
+          "id": "b_district_2_2_220:r2",
+          "type": "room",
+          "floor": 2,
+          "polygon": [
+            {
+              "x": 272.90068,
+              "z": 301.50363999999996
+            },
+            {
+              "x": 279.82732,
+              "z": 301.50363999999996
+            },
+            {
+              "x": 279.82732,
+              "z": 309.40536000000003
+            },
+            {
+              "x": 272.90068,
+              "z": 309.40536000000003
+            }
+          ]
+        }
+      ],
+      "stairs": [
+        {
+          "id": "b_district_2_2_220:s0_1",
+          "connectsFloors": [
+            0,
+            1
+          ],
+          "type": "straight",
+          "position": {
+            "x": 276.36400000000003,
+            "z": 305.4545
+          },
+          "rotation": 0,
+          "dimensions": {
+            "width": 2,
+            "length": 4.5
+          }
+        },
+        {
+          "id": "b_district_2_2_220:s1_2",
+          "connectsFloors": [
+            1,
+            2
+          ],
+          "type": "straight",
+          "position": {
+            "x": 276.36400000000003,
+            "z": 305.4545
+          },
+          "rotation": 0,
+          "dimensions": {
+            "width": 2,
+            "length": 4.5
+          }
+        }
+      ]
     },
     {
       "id": "b_district_3_0_221",
@@ -20220,7 +23510,7 @@
     {
       "id": "b_district_3_0_224",
       "name": "B 224",
-      "isEnterable": false,
+      "isEnterable": true,
       "floorsCount": 1,
       "floorHeight": 3.1,
       "foundation": "terrain",
@@ -20248,7 +23538,31 @@
           "z": -438.773
         }
       ],
-      "rooms": [],
+      "rooms": [
+        {
+          "id": "b_district_3_0_224:r0",
+          "type": "lobby",
+          "floor": 0,
+          "polygon": [
+            {
+              "x": 382.57372,
+              "z": -445.07292
+            },
+            {
+              "x": 389.19028000000003,
+              "z": -445.07292
+            },
+            {
+              "x": 389.19028000000003,
+              "z": -439.63208000000003
+            },
+            {
+              "x": 382.57372,
+              "z": -439.63208000000003
+            }
+          ]
+        }
+      ],
       "stairs": []
     },
     {
@@ -20589,7 +23903,7 @@
     {
       "id": "b_district_3_3_235",
       "name": "B 235",
-      "isEnterable": false,
+      "isEnterable": true,
       "floorsCount": 2,
       "floorHeight": 3.39,
       "foundation": "terrain",
@@ -20617,8 +23931,73 @@
           "z": 392.904
         }
       ],
-      "rooms": [],
-      "stairs": []
+      "rooms": [
+        {
+          "id": "b_district_3_3_235:r0",
+          "type": "lobby",
+          "floor": 0,
+          "polygon": [
+            {
+              "x": 594.5052,
+              "z": 381.926
+            },
+            {
+              "x": 605.4948,
+              "z": 381.926
+            },
+            {
+              "x": 605.4948,
+              "z": 391.407
+            },
+            {
+              "x": 594.5052,
+              "z": 391.407
+            }
+          ]
+        },
+        {
+          "id": "b_district_3_3_235:r1",
+          "type": "room",
+          "floor": 1,
+          "polygon": [
+            {
+              "x": 594.5052,
+              "z": 381.926
+            },
+            {
+              "x": 605.4948,
+              "z": 381.926
+            },
+            {
+              "x": 605.4948,
+              "z": 391.407
+            },
+            {
+              "x": 594.5052,
+              "z": 391.407
+            }
+          ]
+        }
+      ],
+      "stairs": [
+        {
+          "id": "b_district_3_3_235:s0_1",
+          "connectsFloors": [
+            0,
+            1
+          ],
+          "type": "straight",
+          "position": {
+            "x": 600,
+            "z": 386.6665
+          },
+          "rotation": 0,
+          "dimensions": {
+            "width": 2,
+            "length": 4.5
+          }
+        }
+      ]
     },
     {
       "id": "b_district_0_0_236",
@@ -20826,7 +24205,7 @@
     {
       "id": "b_district_3_2_242",
       "name": "B 242",
-      "isEnterable": false,
+      "isEnterable": true,
       "floorsCount": 1,
       "floorHeight": 3.14,
       "foundation": "terrain",
@@ -20853,7 +24232,31 @@
           "z": 228.384
         }
       ],
-      "rooms": [],
+      "rooms": [
+        {
+          "id": "b_district_3_2_242:r0",
+          "type": "lobby",
+          "floor": 0,
+          "polygon": [
+            {
+              "x": 327.09044,
+              "z": 220.66816
+            },
+            {
+              "x": 334.24356,
+              "z": 220.66816
+            },
+            {
+              "x": 334.24356,
+              "z": 227.33184
+            },
+            {
+              "x": 327.09044,
+              "z": 227.33184
+            }
+          ]
+        }
+      ],
       "stairs": []
     },
     {
@@ -20892,7 +24295,7 @@
     {
       "id": "b_district_3_2_244",
       "name": "B 244",
-      "isEnterable": false,
+      "isEnterable": true,
       "floorsCount": 3,
       "floorHeight": 3.14,
       "foundation": "terrain",
@@ -20919,8 +24322,113 @@
           "z": 249.946
         }
       ],
-      "rooms": [],
-      "stairs": []
+      "rooms": [
+        {
+          "id": "b_district_3_2_244:r0",
+          "type": "lobby",
+          "floor": 0,
+          "polygon": [
+            {
+              "x": 476.86956,
+              "z": 241.828
+            },
+            {
+              "x": 483.13044,
+              "z": 241.828
+            },
+            {
+              "x": 483.13044,
+              "z": 248.839
+            },
+            {
+              "x": 476.86956,
+              "z": 248.839
+            }
+          ]
+        },
+        {
+          "id": "b_district_3_2_244:r1",
+          "type": "room",
+          "floor": 1,
+          "polygon": [
+            {
+              "x": 476.86956,
+              "z": 241.828
+            },
+            {
+              "x": 483.13044,
+              "z": 241.828
+            },
+            {
+              "x": 483.13044,
+              "z": 248.839
+            },
+            {
+              "x": 476.86956,
+              "z": 248.839
+            }
+          ]
+        },
+        {
+          "id": "b_district_3_2_244:r2",
+          "type": "room",
+          "floor": 2,
+          "polygon": [
+            {
+              "x": 476.86956,
+              "z": 241.828
+            },
+            {
+              "x": 483.13044,
+              "z": 241.828
+            },
+            {
+              "x": 483.13044,
+              "z": 248.839
+            },
+            {
+              "x": 476.86956,
+              "z": 248.839
+            }
+          ]
+        }
+      ],
+      "stairs": [
+        {
+          "id": "b_district_3_2_244:s0_1",
+          "connectsFloors": [
+            0,
+            1
+          ],
+          "type": "straight",
+          "position": {
+            "x": 480,
+            "z": 245.33350000000002
+          },
+          "rotation": 0,
+          "dimensions": {
+            "width": 2,
+            "length": 4.5
+          }
+        },
+        {
+          "id": "b_district_3_2_244:s1_2",
+          "connectsFloors": [
+            1,
+            2
+          ],
+          "type": "straight",
+          "position": {
+            "x": 480,
+            "z": 245.33350000000002
+          },
+          "rotation": 0,
+          "dimensions": {
+            "width": 2,
+            "length": 4.5
+          }
+        }
+      ]
     },
     {
       "id": "b_district_3_2_245",
@@ -21027,7 +24535,7 @@
     {
       "id": "b_district_2_3_248",
       "name": "B 248",
-      "isEnterable": false,
+      "isEnterable": true,
       "floorsCount": 3,
       "floorHeight": 3.16,
       "foundation": "terrain",
@@ -21055,8 +24563,113 @@
           "z": 486.998
         }
       ],
-      "rooms": [],
-      "stairs": []
+      "rooms": [
+        {
+          "id": "b_district_2_3_248:r0",
+          "type": "lobby",
+          "floor": 0,
+          "polygon": [
+            {
+              "x": 125.88387999999999,
+              "z": 474.68152000000003
+            },
+            {
+              "x": 135.93411999999998,
+              "z": 474.68152000000003
+            },
+            {
+              "x": 135.93411999999998,
+              "z": 485.31847999999997
+            },
+            {
+              "x": 125.88387999999999,
+              "z": 485.31847999999997
+            }
+          ]
+        },
+        {
+          "id": "b_district_2_3_248:r1",
+          "type": "room",
+          "floor": 1,
+          "polygon": [
+            {
+              "x": 125.88387999999999,
+              "z": 474.68152000000003
+            },
+            {
+              "x": 135.93411999999998,
+              "z": 474.68152000000003
+            },
+            {
+              "x": 135.93411999999998,
+              "z": 485.31847999999997
+            },
+            {
+              "x": 125.88387999999999,
+              "z": 485.31847999999997
+            }
+          ]
+        },
+        {
+          "id": "b_district_2_3_248:r2",
+          "type": "room",
+          "floor": 2,
+          "polygon": [
+            {
+              "x": 125.88387999999999,
+              "z": 474.68152000000003
+            },
+            {
+              "x": 135.93411999999998,
+              "z": 474.68152000000003
+            },
+            {
+              "x": 135.93411999999998,
+              "z": 485.31847999999997
+            },
+            {
+              "x": 125.88387999999999,
+              "z": 485.31847999999997
+            }
+          ]
+        }
+      ],
+      "stairs": [
+        {
+          "id": "b_district_2_3_248:s0_1",
+          "connectsFloors": [
+            0,
+            1
+          ],
+          "type": "straight",
+          "position": {
+            "x": 130.909,
+            "z": 480
+          },
+          "rotation": 0,
+          "dimensions": {
+            "width": 2,
+            "length": 4.5
+          }
+        },
+        {
+          "id": "b_district_2_3_248:s1_2",
+          "connectsFloors": [
+            1,
+            2
+          ],
+          "type": "straight",
+          "position": {
+            "x": 130.909,
+            "z": 480
+          },
+          "rotation": 0,
+          "dimensions": {
+            "width": 2,
+            "length": 4.5
+          }
+        }
+      ]
     },
     {
       "id": "b_district_2_3_249",
@@ -21094,7 +24707,7 @@
     {
       "id": "b_district_2_3_250",
       "name": "B 250",
-      "isEnterable": false,
+      "isEnterable": true,
       "floorsCount": 2,
       "floorHeight": 2.85,
       "foundation": "terrain",
@@ -21122,8 +24735,73 @@
           "z": 486.948
         }
       ],
-      "rooms": [],
-      "stairs": []
+      "rooms": [
+        {
+          "id": "b_district_2_3_250:r0",
+          "type": "lobby",
+          "floor": 0,
+          "polygon": [
+            {
+              "x": 213.35372,
+              "z": 474.71952
+            },
+            {
+              "x": 223.01028,
+              "z": 474.71952
+            },
+            {
+              "x": 223.01028,
+              "z": 485.28048
+            },
+            {
+              "x": 213.35372,
+              "z": 485.28048
+            }
+          ]
+        },
+        {
+          "id": "b_district_2_3_250:r1",
+          "type": "room",
+          "floor": 1,
+          "polygon": [
+            {
+              "x": 213.35372,
+              "z": 474.71952
+            },
+            {
+              "x": 223.01028,
+              "z": 474.71952
+            },
+            {
+              "x": 223.01028,
+              "z": 485.28048
+            },
+            {
+              "x": 213.35372,
+              "z": 485.28048
+            }
+          ]
+        }
+      ],
+      "stairs": [
+        {
+          "id": "b_district_2_3_250:s0_1",
+          "connectsFloors": [
+            0,
+            1
+          ],
+          "type": "straight",
+          "position": {
+            "x": 218.18200000000002,
+            "z": 480
+          },
+          "rotation": 0,
+          "dimensions": {
+            "width": 2,
+            "length": 4
+          }
+        }
+      ]
     },
     {
       "id": "b_district_2_1_251",
@@ -21161,7 +24839,7 @@
     {
       "id": "b_district_2_2_252",
       "name": "B 252",
-      "isEnterable": false,
+      "isEnterable": true,
       "floorsCount": 2,
       "floorHeight": 3.49,
       "foundation": "terrain",
@@ -21189,8 +24867,73 @@
           "z": 283.659
         }
       ],
-      "rooms": [],
-      "stairs": []
+      "rooms": [
+        {
+          "id": "b_district_2_2_252:r0",
+          "type": "lobby",
+          "floor": 0,
+          "polygon": [
+            {
+              "x": 210.86916,
+              "z": 270.81892
+            },
+            {
+              "x": 225.49384,
+              "z": 270.81892
+            },
+            {
+              "x": 225.49384,
+              "z": 281.90808
+            },
+            {
+              "x": 210.86916,
+              "z": 281.90808
+            }
+          ]
+        },
+        {
+          "id": "b_district_2_2_252:r1",
+          "type": "room",
+          "floor": 1,
+          "polygon": [
+            {
+              "x": 210.86916,
+              "z": 270.81892
+            },
+            {
+              "x": 225.49384,
+              "z": 270.81892
+            },
+            {
+              "x": 225.49384,
+              "z": 281.90808
+            },
+            {
+              "x": 210.86916,
+              "z": 281.90808
+            }
+          ]
+        }
+      ],
+      "stairs": [
+        {
+          "id": "b_district_2_2_252:s0_1",
+          "connectsFloors": [
+            0,
+            1
+          ],
+          "type": "straight",
+          "position": {
+            "x": 218.1815,
+            "z": 276.3635
+          },
+          "rotation": 0,
+          "dimensions": {
+            "width": 2,
+            "length": 4.5
+          }
+        }
+      ]
     },
     {
       "id": "b_district_3_0_253",
@@ -21329,7 +25072,7 @@
     {
       "id": "b_district_3_0_257",
       "name": "B 257",
-      "isEnterable": false,
+      "isEnterable": true,
       "floorsCount": 3,
       "floorHeight": 3.6,
       "foundation": "terrain",
@@ -21356,8 +25099,113 @@
           "z": -363.837
         }
       ],
-      "rooms": [],
-      "stairs": []
+      "rooms": [
+        {
+          "id": "b_district_3_0_257:r0",
+          "type": "lobby",
+          "floor": 0,
+          "polygon": [
+            {
+              "x": 513.5354,
+              "z": -369.50683999999995
+            },
+            {
+              "x": 521.7586,
+              "z": -369.50683999999995
+            },
+            {
+              "x": 521.7586,
+              "z": -364.61016
+            },
+            {
+              "x": 513.5354,
+              "z": -364.61016
+            }
+          ]
+        },
+        {
+          "id": "b_district_3_0_257:r1",
+          "type": "room",
+          "floor": 1,
+          "polygon": [
+            {
+              "x": 513.5354,
+              "z": -369.50683999999995
+            },
+            {
+              "x": 521.7586,
+              "z": -369.50683999999995
+            },
+            {
+              "x": 521.7586,
+              "z": -364.61016
+            },
+            {
+              "x": 513.5354,
+              "z": -364.61016
+            }
+          ]
+        },
+        {
+          "id": "b_district_3_0_257:r2",
+          "type": "room",
+          "floor": 2,
+          "polygon": [
+            {
+              "x": 513.5354,
+              "z": -369.50683999999995
+            },
+            {
+              "x": 521.7586,
+              "z": -369.50683999999995
+            },
+            {
+              "x": 521.7586,
+              "z": -364.61016
+            },
+            {
+              "x": 513.5354,
+              "z": -364.61016
+            }
+          ]
+        }
+      ],
+      "stairs": [
+        {
+          "id": "b_district_3_0_257:s0_1",
+          "connectsFloors": [
+            0,
+            1
+          ],
+          "type": "straight",
+          "position": {
+            "x": 517.6469999999999,
+            "z": -367.0585
+          },
+          "rotation": 0,
+          "dimensions": {
+            "width": 2,
+            "length": 5
+          }
+        },
+        {
+          "id": "b_district_3_0_257:s1_2",
+          "connectsFloors": [
+            1,
+            2
+          ],
+          "type": "straight",
+          "position": {
+            "x": 517.6469999999999,
+            "z": -367.0585
+          },
+          "rotation": 0,
+          "dimensions": {
+            "width": 2,
+            "length": 5
+          }
+        }
+      ]
     },
     {
       "id": "b_district_3_0_258",
@@ -21461,7 +25309,7 @@
     {
       "id": "b_district_2_1_261",
       "name": "B 261",
-      "isEnterable": false,
+      "isEnterable": true,
       "floorsCount": 1,
       "floorHeight": 3.96,
       "foundation": "terrain",
@@ -21488,7 +25336,31 @@
           "z": -6.667
         }
       ],
-      "rooms": [],
+      "rooms": [
+        {
+          "id": "b_district_2_1_261:r0",
+          "type": "lobby",
+          "floor": 0,
+          "polygon": [
+            {
+              "x": 166.4486,
+              "z": -15.04724
+            },
+            {
+              "x": 176.4084,
+              "z": -15.04724
+            },
+            {
+              "x": 176.4084,
+              "z": -7.80976
+            },
+            {
+              "x": 166.4486,
+              "z": -7.80976
+            }
+          ]
+        }
+      ],
       "stairs": []
     },
     {
@@ -21596,7 +25468,7 @@
     {
       "id": "b_district_3_2_265",
       "name": "B 265",
-      "isEnterable": false,
+      "isEnterable": true,
       "floorsCount": 4,
       "floorHeight": 3.36,
       "foundation": "terrain",
@@ -21623,8 +25495,153 @@
           "z": 271.845
         }
       ],
-      "rooms": [],
-      "stairs": []
+      "rooms": [
+        {
+          "id": "b_district_3_2_265:r0",
+          "type": "lobby",
+          "floor": 0,
+          "polygon": [
+            {
+              "x": 560.7868,
+              "z": 262.73084
+            },
+            {
+              "x": 569.8802000000001,
+              "z": 262.73084
+            },
+            {
+              "x": 569.8802000000001,
+              "z": 270.60216
+            },
+            {
+              "x": 560.7868,
+              "z": 270.60216
+            }
+          ]
+        },
+        {
+          "id": "b_district_3_2_265:r1",
+          "type": "room",
+          "floor": 1,
+          "polygon": [
+            {
+              "x": 560.7868,
+              "z": 262.73084
+            },
+            {
+              "x": 569.8802000000001,
+              "z": 262.73084
+            },
+            {
+              "x": 569.8802000000001,
+              "z": 270.60216
+            },
+            {
+              "x": 560.7868,
+              "z": 270.60216
+            }
+          ]
+        },
+        {
+          "id": "b_district_3_2_265:r2",
+          "type": "room",
+          "floor": 2,
+          "polygon": [
+            {
+              "x": 560.7868,
+              "z": 262.73084
+            },
+            {
+              "x": 569.8802000000001,
+              "z": 262.73084
+            },
+            {
+              "x": 569.8802000000001,
+              "z": 270.60216
+            },
+            {
+              "x": 560.7868,
+              "z": 270.60216
+            }
+          ]
+        },
+        {
+          "id": "b_district_3_2_265:r3",
+          "type": "room",
+          "floor": 3,
+          "polygon": [
+            {
+              "x": 560.7868,
+              "z": 262.73084
+            },
+            {
+              "x": 569.8802000000001,
+              "z": 262.73084
+            },
+            {
+              "x": 569.8802000000001,
+              "z": 270.60216
+            },
+            {
+              "x": 560.7868,
+              "z": 270.60216
+            }
+          ]
+        }
+      ],
+      "stairs": [
+        {
+          "id": "b_district_3_2_265:s0_1",
+          "connectsFloors": [
+            0,
+            1
+          ],
+          "type": "straight",
+          "position": {
+            "x": 565.3335,
+            "z": 266.66650000000004
+          },
+          "rotation": 0,
+          "dimensions": {
+            "width": 2,
+            "length": 4.5
+          }
+        },
+        {
+          "id": "b_district_3_2_265:s1_2",
+          "connectsFloors": [
+            1,
+            2
+          ],
+          "type": "straight",
+          "position": {
+            "x": 565.3335,
+            "z": 266.66650000000004
+          },
+          "rotation": 0,
+          "dimensions": {
+            "width": 2,
+            "length": 4.5
+          }
+        },
+        {
+          "id": "b_district_3_2_265:s2_3",
+          "connectsFloors": [
+            2,
+            3
+          ],
+          "type": "straight",
+          "position": {
+            "x": 565.3335,
+            "z": 266.66650000000004
+          },
+          "rotation": 0,
+          "dimensions": {
+            "width": 2,
+            "length": 4.5
+          }
+        }
+      ]
     },
     {
       "id": "b_district_3_2_266",
@@ -21662,7 +25679,7 @@
     {
       "id": "b_district_1_3_267",
       "name": "B 267",
-      "isEnterable": false,
+      "isEnterable": true,
       "floorsCount": 3,
       "floorHeight": 3.07,
       "foundation": "terrain",
@@ -21689,8 +25706,113 @@
           "z": 569.611
         }
       ],
-      "rooms": [],
-      "stairs": []
+      "rooms": [
+        {
+          "id": "b_district_1_3_267:r0",
+          "type": "lobby",
+          "floor": 0,
+          "polygon": [
+            {
+              "x": -313.61952,
+              "z": 562.0826000000001
+            },
+            {
+              "x": -305.04748,
+              "z": 562.0826000000001
+            },
+            {
+              "x": -305.04748,
+              "z": 568.5844
+            },
+            {
+              "x": -313.61952,
+              "z": 568.5844
+            }
+          ]
+        },
+        {
+          "id": "b_district_1_3_267:r1",
+          "type": "room",
+          "floor": 1,
+          "polygon": [
+            {
+              "x": -313.61952,
+              "z": 562.0826000000001
+            },
+            {
+              "x": -305.04748,
+              "z": 562.0826000000001
+            },
+            {
+              "x": -305.04748,
+              "z": 568.5844
+            },
+            {
+              "x": -313.61952,
+              "z": 568.5844
+            }
+          ]
+        },
+        {
+          "id": "b_district_1_3_267:r2",
+          "type": "room",
+          "floor": 2,
+          "polygon": [
+            {
+              "x": -313.61952,
+              "z": 562.0826000000001
+            },
+            {
+              "x": -305.04748,
+              "z": 562.0826000000001
+            },
+            {
+              "x": -305.04748,
+              "z": 568.5844
+            },
+            {
+              "x": -313.61952,
+              "z": 568.5844
+            }
+          ]
+        }
+      ],
+      "stairs": [
+        {
+          "id": "b_district_1_3_267:s0_1",
+          "connectsFloors": [
+            0,
+            1
+          ],
+          "type": "straight",
+          "position": {
+            "x": -309.3335,
+            "z": 565.3335
+          },
+          "rotation": 0,
+          "dimensions": {
+            "width": 2,
+            "length": 4
+          }
+        },
+        {
+          "id": "b_district_1_3_267:s1_2",
+          "connectsFloors": [
+            1,
+            2
+          ],
+          "type": "straight",
+          "position": {
+            "x": -309.3335,
+            "z": 565.3335
+          },
+          "rotation": 0,
+          "dimensions": {
+            "width": 2,
+            "length": 4
+          }
+        }
+      ]
     },
     {
       "id": "b_district_1_3_268",
@@ -21998,7 +26120,7 @@
     {
       "id": "b_district_2_1_277",
       "name": "B 277",
-      "isEnterable": false,
+      "isEnterable": true,
       "floorsCount": 1,
       "floorHeight": 2.91,
       "foundation": "terrain",
@@ -22025,7 +26147,31 @@
           "z": -235.737
         }
       ],
-      "rooms": [],
+      "rooms": [
+        {
+          "id": "b_district_2_1_277:r0",
+          "type": "lobby",
+          "floor": 0,
+          "polygon": [
+            {
+              "x": 258.9354,
+              "z": -243.23988
+            },
+            {
+              "x": 266.7786,
+              "z": -243.23988
+            },
+            {
+              "x": 266.7786,
+              "z": -236.76012
+            },
+            {
+              "x": 258.9354,
+              "z": -236.76012
+            }
+          ]
+        }
+      ],
       "stairs": []
     },
     {
@@ -22432,7 +26578,7 @@
     {
       "id": "b_district_2_1_290",
       "name": "B 290",
-      "isEnterable": false,
+      "isEnterable": true,
       "floorsCount": 1,
       "floorHeight": 3.4,
       "foundation": "terrain",
@@ -22459,13 +26605,37 @@
           "z": -258.784
         }
       ],
-      "rooms": [],
+      "rooms": [
+        {
+          "id": "b_district_2_1_290:r0",
+          "type": "lobby",
+          "floor": 0,
+          "polygon": [
+            {
+              "x": 96.68048,
+              "z": -265.95336
+            },
+            {
+              "x": 109.03352,
+              "z": -265.95336
+            },
+            {
+              "x": 109.03352,
+              "z": -259.76164
+            },
+            {
+              "x": 96.68048,
+              "z": -259.76164
+            }
+          ]
+        }
+      ],
       "stairs": []
     },
     {
       "id": "b_district_3_0_291",
       "name": "B 291",
-      "isEnterable": false,
+      "isEnterable": true,
       "floorsCount": 2,
       "floorHeight": 3.18,
       "foundation": "terrain",
@@ -22492,8 +26662,73 @@
           "z": -494.586
         }
       ],
-      "rooms": [],
-      "stairs": []
+      "rooms": [
+        {
+          "id": "b_district_3_0_291:r0",
+          "type": "lobby",
+          "floor": 0,
+          "polygon": [
+            {
+              "x": 458.6856,
+              "z": -502.044
+            },
+            {
+              "x": 463.6674,
+              "z": -502.044
+            },
+            {
+              "x": 463.6674,
+              "z": -495.603
+            },
+            {
+              "x": 458.6856,
+              "z": -495.603
+            }
+          ]
+        },
+        {
+          "id": "b_district_3_0_291:r1",
+          "type": "room",
+          "floor": 1,
+          "polygon": [
+            {
+              "x": 458.6856,
+              "z": -502.044
+            },
+            {
+              "x": 463.6674,
+              "z": -502.044
+            },
+            {
+              "x": 463.6674,
+              "z": -495.603
+            },
+            {
+              "x": 458.6856,
+              "z": -495.603
+            }
+          ]
+        }
+      ],
+      "stairs": [
+        {
+          "id": "b_district_3_0_291:s0_1",
+          "connectsFloors": [
+            0,
+            1
+          ],
+          "type": "straight",
+          "position": {
+            "x": 461.17650000000003,
+            "z": -498.82349999999997
+          },
+          "rotation": 0,
+          "dimensions": {
+            "width": 2,
+            "length": 4.5
+          }
+        }
+      ]
     },
     {
       "id": "b_district_3_1_292",
@@ -22531,7 +26766,7 @@
     {
       "id": "b_district_2_2_293",
       "name": "B 293",
-      "isEnterable": false,
+      "isEnterable": true,
       "floorsCount": 2,
       "floorHeight": 3.6,
       "foundation": "terrain",
@@ -22559,8 +26794,73 @@
           "z": 106.948
         }
       ],
-      "rooms": [],
-      "stairs": []
+      "rooms": [
+        {
+          "id": "b_district_2_2_293:r0",
+          "type": "lobby",
+          "floor": 0,
+          "polygon": [
+            {
+              "x": 37.63668,
+              "z": 97.92008
+            },
+            {
+              "x": 49.63632,
+              "z": 97.92008
+            },
+            {
+              "x": 49.63632,
+              "z": 105.71691999999999
+            },
+            {
+              "x": 37.63668,
+              "z": 105.71691999999999
+            }
+          ]
+        },
+        {
+          "id": "b_district_2_2_293:r1",
+          "type": "room",
+          "floor": 1,
+          "polygon": [
+            {
+              "x": 37.63668,
+              "z": 97.92008
+            },
+            {
+              "x": 49.63632,
+              "z": 97.92008
+            },
+            {
+              "x": 49.63632,
+              "z": 105.71691999999999
+            },
+            {
+              "x": 37.63668,
+              "z": 105.71691999999999
+            }
+          ]
+        }
+      ],
+      "stairs": [
+        {
+          "id": "b_district_2_2_293:s0_1",
+          "connectsFloors": [
+            0,
+            1
+          ],
+          "type": "straight",
+          "position": {
+            "x": 43.6365,
+            "z": 101.8185
+          },
+          "rotation": 0,
+          "dimensions": {
+            "width": 2,
+            "length": 5
+          }
+        }
+      ]
     },
     {
       "id": "b_district_0_3_294",
@@ -22764,7 +27064,7 @@
     {
       "id": "b_district_0_1_300",
       "name": "B 300",
-      "isEnterable": false,
+      "isEnterable": true,
       "floorsCount": 2,
       "floorHeight": 4.78,
       "foundation": "terrain",
@@ -22790,8 +27090,73 @@
           "z": -286.231
         }
       ],
-      "rooms": [],
-      "stairs": []
+      "rooms": [
+        {
+          "id": "b_district_0_1_300:r0",
+          "type": "lobby",
+          "floor": 0,
+          "polygon": [
+            {
+              "x": -589.2529999999999,
+              "z": -310.46444
+            },
+            {
+              "x": -570.7470000000001,
+              "z": -310.46444
+            },
+            {
+              "x": -570.7470000000001,
+              "z": -289.53556
+            },
+            {
+              "x": -589.2529999999999,
+              "z": -289.53556
+            }
+          ]
+        },
+        {
+          "id": "b_district_0_1_300:r1",
+          "type": "room",
+          "floor": 1,
+          "polygon": [
+            {
+              "x": -589.2529999999999,
+              "z": -310.46444
+            },
+            {
+              "x": -570.7470000000001,
+              "z": -310.46444
+            },
+            {
+              "x": -570.7470000000001,
+              "z": -289.53556
+            },
+            {
+              "x": -589.2529999999999,
+              "z": -289.53556
+            }
+          ]
+        }
+      ],
+      "stairs": [
+        {
+          "id": "b_district_0_1_300:s0_1",
+          "connectsFloors": [
+            0,
+            1
+          ],
+          "type": "straight",
+          "position": {
+            "x": -580,
+            "z": -300
+          },
+          "rotation": 0,
+          "dimensions": {
+            "width": 2,
+            "length": 6.5
+          }
+        }
+      ]
     },
     {
       "id": "b_district_0_1_301",
@@ -22828,7 +27193,7 @@
     {
       "id": "b_district_0_1_302",
       "name": "B 302",
-      "isEnterable": false,
+      "isEnterable": true,
       "floorsCount": 1,
       "floorHeight": 4.29,
       "foundation": "terrain",
@@ -22854,7 +27219,31 @@
           "z": -211.584
         }
       ],
-      "rooms": [],
+      "rooms": [
+        {
+          "id": "b_district_0_1_302:r0",
+          "type": "lobby",
+          "floor": 0,
+          "polygon": [
+            {
+              "x": -588.95964,
+              "z": -226.39616
+            },
+            {
+              "x": -571.04036,
+              "z": -226.39616
+            },
+            {
+              "x": -571.04036,
+              "z": -213.60384
+            },
+            {
+              "x": -588.95964,
+              "z": -213.60384
+            }
+          ]
+        }
+      ],
       "stairs": []
     },
     {
@@ -22956,7 +27345,7 @@
     {
       "id": "b_district_0_2_306",
       "name": "B 306",
-      "isEnterable": false,
+      "isEnterable": true,
       "floorsCount": 1,
       "floorHeight": 3.1,
       "foundation": "terrain",
@@ -22983,13 +27372,37 @@
           "z": 24.119
         }
       ],
-      "rooms": [],
+      "rooms": [
+        {
+          "id": "b_district_0_2_306:r0",
+          "type": "lobby",
+          "floor": 0,
+          "polygon": [
+            {
+              "x": -582.55892,
+              "z": 16.86956
+            },
+            {
+              "x": -577.44108,
+              "z": 16.86956
+            },
+            {
+              "x": -577.44108,
+              "z": 23.13044
+            },
+            {
+              "x": -582.55892,
+              "z": 23.13044
+            }
+          ]
+        }
+      ],
       "stairs": []
     },
     {
       "id": "b_district_0_2_307",
       "name": "B 307",
-      "isEnterable": false,
+      "isEnterable": true,
       "floorsCount": 1,
       "floorHeight": 3.15,
       "foundation": "terrain",
@@ -23016,7 +27429,31 @@
           "z": 63.24
         }
       ],
-      "rooms": [],
+      "rooms": [
+        {
+          "id": "b_district_0_2_307:r0",
+          "type": "lobby",
+          "floor": 0,
+          "polygon": [
+            {
+              "x": -582.86824,
+              "z": 57.5376
+            },
+            {
+              "x": -577.13176,
+              "z": 57.5376
+            },
+            {
+              "x": -577.13176,
+              "z": 62.4624
+            },
+            {
+              "x": -582.86824,
+              "z": 62.4624
+            }
+          ]
+        }
+      ],
       "stairs": []
     },
     {
@@ -23088,7 +27525,7 @@
     {
       "id": "b_district_0_2_310",
       "name": "B 310",
-      "isEnterable": false,
+      "isEnterable": true,
       "floorsCount": 1,
       "floorHeight": 3.04,
       "foundation": "terrain",
@@ -23115,7 +27552,31 @@
           "z": 264.066
         }
       ],
-      "rooms": [],
+      "rooms": [
+        {
+          "id": "b_district_0_2_310:r0",
+          "type": "lobby",
+          "floor": 0,
+          "polygon": [
+            {
+              "x": -583.9405999999999,
+              "z": 256.90984
+            },
+            {
+              "x": -576.0594000000001,
+              "z": 256.90984
+            },
+            {
+              "x": -576.0594000000001,
+              "z": 263.09015999999997
+            },
+            {
+              "x": -583.9405999999999,
+              "z": 263.09015999999997
+            }
+          ]
+        }
+      ],
       "stairs": []
     },
     {
@@ -23388,7 +27849,7 @@
     {
       "id": "b_district_3_2_319",
       "name": "B 319",
-      "isEnterable": false,
+      "isEnterable": true,
       "floorsCount": 3,
       "floorHeight": 3.24,
       "foundation": "terrain",
@@ -23415,8 +27876,113 @@
           "z": 271.617
         }
       ],
-      "rooms": [],
-      "stairs": []
+      "rooms": [
+        {
+          "id": "b_district_3_2_319:r0",
+          "type": "lobby",
+          "floor": 0,
+          "polygon": [
+            {
+              "x": 583.04624,
+              "z": 262.90412000000003
+            },
+            {
+              "x": 590.28676,
+              "z": 262.90412000000003
+            },
+            {
+              "x": 590.28676,
+              "z": 270.42888
+            },
+            {
+              "x": 583.04624,
+              "z": 270.42888
+            }
+          ]
+        },
+        {
+          "id": "b_district_3_2_319:r1",
+          "type": "room",
+          "floor": 1,
+          "polygon": [
+            {
+              "x": 583.04624,
+              "z": 262.90412000000003
+            },
+            {
+              "x": 590.28676,
+              "z": 262.90412000000003
+            },
+            {
+              "x": 590.28676,
+              "z": 270.42888
+            },
+            {
+              "x": 583.04624,
+              "z": 270.42888
+            }
+          ]
+        },
+        {
+          "id": "b_district_3_2_319:r2",
+          "type": "room",
+          "floor": 2,
+          "polygon": [
+            {
+              "x": 583.04624,
+              "z": 262.90412000000003
+            },
+            {
+              "x": 590.28676,
+              "z": 262.90412000000003
+            },
+            {
+              "x": 590.28676,
+              "z": 270.42888
+            },
+            {
+              "x": 583.04624,
+              "z": 270.42888
+            }
+          ]
+        }
+      ],
+      "stairs": [
+        {
+          "id": "b_district_3_2_319:s0_1",
+          "connectsFloors": [
+            0,
+            1
+          ],
+          "type": "straight",
+          "position": {
+            "x": 586.6665,
+            "z": 266.66650000000004
+          },
+          "rotation": 0,
+          "dimensions": {
+            "width": 2,
+            "length": 4.5
+          }
+        },
+        {
+          "id": "b_district_3_2_319:s1_2",
+          "connectsFloors": [
+            1,
+            2
+          ],
+          "type": "straight",
+          "position": {
+            "x": 586.6665,
+            "z": 266.66650000000004
+          },
+          "rotation": 0,
+          "dimensions": {
+            "width": 2,
+            "length": 4.5
+          }
+        }
+      ]
     },
     {
       "id": "b_district_1_3_320",
@@ -23557,7 +28123,7 @@
     {
       "id": "b_district_1_3_324",
       "name": "B 324",
-      "isEnterable": false,
+      "isEnterable": true,
       "floorsCount": 4,
       "floorHeight": 3.26,
       "foundation": "terrain",
@@ -23584,8 +28150,153 @@
           "z": 590.422
         }
       ],
-      "rooms": [],
-      "stairs": []
+      "rooms": [
+        {
+          "id": "b_district_1_3_324:r0",
+          "type": "lobby",
+          "floor": 0,
+          "polygon": [
+            {
+              "x": -186.5794,
+              "z": 583.81232
+            },
+            {
+              "x": -176.0876,
+              "z": 583.81232
+            },
+            {
+              "x": -176.0876,
+              "z": 589.52068
+            },
+            {
+              "x": -186.5794,
+              "z": 589.52068
+            }
+          ]
+        },
+        {
+          "id": "b_district_1_3_324:r1",
+          "type": "room",
+          "floor": 1,
+          "polygon": [
+            {
+              "x": -186.5794,
+              "z": 583.81232
+            },
+            {
+              "x": -176.0876,
+              "z": 583.81232
+            },
+            {
+              "x": -176.0876,
+              "z": 589.52068
+            },
+            {
+              "x": -186.5794,
+              "z": 589.52068
+            }
+          ]
+        },
+        {
+          "id": "b_district_1_3_324:r2",
+          "type": "room",
+          "floor": 2,
+          "polygon": [
+            {
+              "x": -186.5794,
+              "z": 583.81232
+            },
+            {
+              "x": -176.0876,
+              "z": 583.81232
+            },
+            {
+              "x": -176.0876,
+              "z": 589.52068
+            },
+            {
+              "x": -186.5794,
+              "z": 589.52068
+            }
+          ]
+        },
+        {
+          "id": "b_district_1_3_324:r3",
+          "type": "room",
+          "floor": 3,
+          "polygon": [
+            {
+              "x": -186.5794,
+              "z": 583.81232
+            },
+            {
+              "x": -176.0876,
+              "z": 583.81232
+            },
+            {
+              "x": -176.0876,
+              "z": 589.52068
+            },
+            {
+              "x": -186.5794,
+              "z": 589.52068
+            }
+          ]
+        }
+      ],
+      "stairs": [
+        {
+          "id": "b_district_1_3_324:s0_1",
+          "connectsFloors": [
+            0,
+            1
+          ],
+          "type": "straight",
+          "position": {
+            "x": -181.33350000000002,
+            "z": 586.6665
+          },
+          "rotation": 0,
+          "dimensions": {
+            "width": 2,
+            "length": 4.5
+          }
+        },
+        {
+          "id": "b_district_1_3_324:s1_2",
+          "connectsFloors": [
+            1,
+            2
+          ],
+          "type": "straight",
+          "position": {
+            "x": -181.33350000000002,
+            "z": 586.6665
+          },
+          "rotation": 0,
+          "dimensions": {
+            "width": 2,
+            "length": 4.5
+          }
+        },
+        {
+          "id": "b_district_1_3_324:s2_3",
+          "connectsFloors": [
+            2,
+            3
+          ],
+          "type": "straight",
+          "position": {
+            "x": -181.33350000000002,
+            "z": 586.6665
+          },
+          "rotation": 0,
+          "dimensions": {
+            "width": 2,
+            "length": 4.5
+          }
+        }
+      ]
     },
     {
       "id": "b_district_1_3_325",
@@ -24192,7 +28903,7 @@
     {
       "id": "b_district_2_1_343",
       "name": "B 343",
-      "isEnterable": false,
+      "isEnterable": true,
       "floorsCount": 1,
       "floorHeight": 3.01,
       "foundation": "terrain",
@@ -24219,13 +28930,37 @@
           "z": -8.061
         }
       ],
-      "rooms": [],
+      "rooms": [
+        {
+          "id": "b_district_2_1_343:r0",
+          "type": "lobby",
+          "floor": 0,
+          "polygon": [
+            {
+              "x": 99.93556000000001,
+              "z": -13.9878
+            },
+            {
+              "x": 105.77843999999999,
+              "z": -13.9878
+            },
+            {
+              "x": 105.77843999999999,
+              "z": -8.8692
+            },
+            {
+              "x": 99.93556000000001,
+              "z": -8.8692
+            }
+          ]
+        }
+      ],
       "stairs": []
     },
     {
       "id": "b_district_3_1_344",
       "name": "B 344",
-      "isEnterable": false,
+      "isEnterable": true,
       "floorsCount": 1,
       "floorHeight": 3.17,
       "foundation": "terrain",
@@ -24252,7 +28987,31 @@
           "z": -276.225
         }
       ],
-      "rooms": [],
+      "rooms": [
+        {
+          "id": "b_district_3_1_344:r0",
+          "type": "lobby",
+          "floor": 0,
+          "polygon": [
+            {
+              "x": 421.59688,
+              "z": -282.86899999999997
+            },
+            {
+              "x": 426.40312,
+              "z": -282.86899999999997
+            },
+            {
+              "x": 426.40312,
+              "z": -277.13100000000003
+            },
+            {
+              "x": 421.59688,
+              "z": -277.13100000000003
+            }
+          ]
+        }
+      ],
       "stairs": []
     },
     {
@@ -24493,7 +29252,7 @@
     {
       "id": "b_district_2_2_352",
       "name": "B 352",
-      "isEnterable": false,
+      "isEnterable": true,
       "floorsCount": 2,
       "floorHeight": 2.94,
       "foundation": "terrain",
@@ -24521,8 +29280,73 @@
           "z": 20.904
         }
       ],
-      "rooms": [],
-      "stairs": []
+      "rooms": [
+        {
+          "id": "b_district_2_2_352:r0",
+          "type": "lobby",
+          "floor": 0,
+          "polygon": [
+            {
+              "x": 67.40928000000001,
+              "z": 9.71304
+            },
+            {
+              "x": 78.04472,
+              "z": 9.71304
+            },
+            {
+              "x": 78.04472,
+              "z": 19.37796
+            },
+            {
+              "x": 67.40928000000001,
+              "z": 19.37796
+            }
+          ]
+        },
+        {
+          "id": "b_district_2_2_352:r1",
+          "type": "room",
+          "floor": 1,
+          "polygon": [
+            {
+              "x": 67.40928000000001,
+              "z": 9.71304
+            },
+            {
+              "x": 78.04472,
+              "z": 9.71304
+            },
+            {
+              "x": 78.04472,
+              "z": 19.37796
+            },
+            {
+              "x": 67.40928000000001,
+              "z": 19.37796
+            }
+          ]
+        }
+      ],
+      "stairs": [
+        {
+          "id": "b_district_2_2_352:s0_1",
+          "connectsFloors": [
+            0,
+            1
+          ],
+          "type": "straight",
+          "position": {
+            "x": 72.727,
+            "z": 14.5455
+          },
+          "rotation": 0,
+          "dimensions": {
+            "width": 2,
+            "length": 4
+          }
+        }
+      ]
     },
     {
       "id": "b_district_2_2_353",
@@ -24694,7 +29518,7 @@
     {
       "id": "b_district_0_3_358",
       "name": "B 358",
-      "isEnterable": false,
+      "isEnterable": true,
       "floorsCount": 2,
       "floorHeight": 4.67,
       "foundation": "terrain",
@@ -24722,8 +29546,73 @@
           "z": 626.668
         }
       ],
-      "rooms": [],
-      "stairs": []
+      "rooms": [
+        {
+          "id": "b_district_0_3_358:r0",
+          "type": "lobby",
+          "floor": 0,
+          "polygon": [
+            {
+              "x": -400.67411999999996,
+              "z": 609.904
+            },
+            {
+              "x": -376.46888,
+              "z": 609.904
+            },
+            {
+              "x": -376.46888,
+              "z": 624.3820000000001
+            },
+            {
+              "x": -400.67411999999996,
+              "z": 624.3820000000001
+            }
+          ]
+        },
+        {
+          "id": "b_district_0_3_358:r1",
+          "type": "room",
+          "floor": 1,
+          "polygon": [
+            {
+              "x": -400.67411999999996,
+              "z": 609.904
+            },
+            {
+              "x": -376.46888,
+              "z": 609.904
+            },
+            {
+              "x": -376.46888,
+              "z": 624.3820000000001
+            },
+            {
+              "x": -400.67411999999996,
+              "z": 624.3820000000001
+            }
+          ]
+        }
+      ],
+      "stairs": [
+        {
+          "id": "b_district_0_3_358:s0_1",
+          "connectsFloors": [
+            0,
+            1
+          ],
+          "type": "straight",
+          "position": {
+            "x": -388.5715,
+            "z": 617.143
+          },
+          "rotation": 0,
+          "dimensions": {
+            "width": 2,
+            "length": 6
+          }
+        }
+      ]
     },
     {
       "id": "b_district_0_3_359",
@@ -24862,7 +29751,7 @@
     {
       "id": "b_district_2_3_363",
       "name": "B 363",
-      "isEnterable": false,
+      "isEnterable": true,
       "floorsCount": 1,
       "floorHeight": 3.58,
       "foundation": "terrain",
@@ -24890,7 +29779,31 @@
           "z": 426.43
         }
       ],
-      "rooms": [],
+      "rooms": [
+        {
+          "id": "b_district_2_3_363:r0",
+          "type": "lobby",
+          "floor": 0,
+          "polygon": [
+            {
+              "x": 8.46664,
+              "z": 418.31376
+            },
+            {
+              "x": 20.62436,
+              "z": 418.31376
+            },
+            {
+              "x": 20.62436,
+              "z": 425.32324
+            },
+            {
+              "x": 8.46664,
+              "z": 425.32324
+            }
+          ]
+        }
+      ],
       "stairs": []
     },
     {
@@ -25059,7 +29972,7 @@
     {
       "id": "b_district_0_1_369",
       "name": "B 369",
-      "isEnterable": false,
+      "isEnterable": true,
       "floorsCount": 2,
       "floorHeight": 4.74,
       "foundation": "terrain",
@@ -25085,8 +29998,73 @@
           "z": -90.537
         }
       ],
-      "rooms": [],
-      "stairs": []
+      "rooms": [
+        {
+          "id": "b_district_0_1_369:r0",
+          "type": "lobby",
+          "floor": 0,
+          "polygon": [
+            {
+              "x": -631.67664,
+              "z": -107.19188
+            },
+            {
+              "x": -608.32336,
+              "z": -107.19188
+            },
+            {
+              "x": -608.32336,
+              "z": -92.80812
+            },
+            {
+              "x": -631.67664,
+              "z": -92.80812
+            }
+          ]
+        },
+        {
+          "id": "b_district_0_1_369:r1",
+          "type": "room",
+          "floor": 1,
+          "polygon": [
+            {
+              "x": -631.67664,
+              "z": -107.19188
+            },
+            {
+              "x": -608.32336,
+              "z": -107.19188
+            },
+            {
+              "x": -608.32336,
+              "z": -92.80812
+            },
+            {
+              "x": -631.67664,
+              "z": -92.80812
+            }
+          ]
+        }
+      ],
+      "stairs": [
+        {
+          "id": "b_district_0_1_369:s0_1",
+          "connectsFloors": [
+            0,
+            1
+          ],
+          "type": "straight",
+          "position": {
+            "x": -620,
+            "z": -100
+          },
+          "rotation": 0,
+          "dimensions": {
+            "width": 2,
+            "length": 6.5
+          }
+        }
+      ]
     },
     {
       "id": "b_district_0_1_370",
@@ -25494,7 +30472,7 @@
     {
       "id": "b_district_1_3_382",
       "name": "B 382",
-      "isEnterable": false,
+      "isEnterable": true,
       "floorsCount": 3,
       "floorHeight": 3.19,
       "foundation": "terrain",
@@ -25521,8 +30499,113 @@
           "z": 633.784
         }
       ],
-      "rooms": [],
-      "stairs": []
+      "rooms": [
+        {
+          "id": "b_district_1_3_382:r0",
+          "type": "lobby",
+          "floor": 0,
+          "polygon": [
+            {
+              "x": -100.1002,
+              "z": 625.9511200000001
+            },
+            {
+              "x": -91.8998,
+              "z": 625.9511200000001
+            },
+            {
+              "x": -91.8998,
+              "z": 632.71588
+            },
+            {
+              "x": -100.1002,
+              "z": 632.71588
+            }
+          ]
+        },
+        {
+          "id": "b_district_1_3_382:r1",
+          "type": "room",
+          "floor": 1,
+          "polygon": [
+            {
+              "x": -100.1002,
+              "z": 625.9511200000001
+            },
+            {
+              "x": -91.8998,
+              "z": 625.9511200000001
+            },
+            {
+              "x": -91.8998,
+              "z": 632.71588
+            },
+            {
+              "x": -100.1002,
+              "z": 632.71588
+            }
+          ]
+        },
+        {
+          "id": "b_district_1_3_382:r2",
+          "type": "room",
+          "floor": 2,
+          "polygon": [
+            {
+              "x": -100.1002,
+              "z": 625.9511200000001
+            },
+            {
+              "x": -91.8998,
+              "z": 625.9511200000001
+            },
+            {
+              "x": -91.8998,
+              "z": 632.71588
+            },
+            {
+              "x": -100.1002,
+              "z": 632.71588
+            }
+          ]
+        }
+      ],
+      "stairs": [
+        {
+          "id": "b_district_1_3_382:s0_1",
+          "connectsFloors": [
+            0,
+            1
+          ],
+          "type": "straight",
+          "position": {
+            "x": -96,
+            "z": 629.3335
+          },
+          "rotation": 0,
+          "dimensions": {
+            "width": 2,
+            "length": 4.5
+          }
+        },
+        {
+          "id": "b_district_1_3_382:s1_2",
+          "connectsFloors": [
+            1,
+            2
+          ],
+          "type": "straight",
+          "position": {
+            "x": -96,
+            "z": 629.3335
+          },
+          "rotation": 0,
+          "dimensions": {
+            "width": 2,
+            "length": 4.5
+          }
+        }
+      ]
     },
     {
       "id": "b_district_0_3_383",
@@ -25593,7 +30676,7 @@
     {
       "id": "b_district_2_1_385",
       "name": "B 385",
-      "isEnterable": false,
+      "isEnterable": true,
       "floorsCount": 1,
       "floorHeight": 4.34,
       "foundation": "terrain",
@@ -25620,7 +30703,31 @@
           "z": -50.765
         }
       ],
-      "rooms": [],
+      "rooms": [
+        {
+          "id": "b_district_2_1_385:r0",
+          "type": "lobby",
+          "floor": 0,
+          "polygon": [
+            {
+              "x": 52.127,
+              "z": -61.9894
+            },
+            {
+              "x": 62.159,
+              "z": -61.9894
+            },
+            {
+              "x": 62.159,
+              "z": -52.2956
+            },
+            {
+              "x": 52.127,
+              "z": -52.2956
+            }
+          ]
+        }
+      ],
       "stairs": []
     },
     {
@@ -25659,7 +30766,7 @@
     {
       "id": "b_district_2_1_387",
       "name": "B 387",
-      "isEnterable": false,
+      "isEnterable": true,
       "floorsCount": 1,
       "floorHeight": 2.94,
       "foundation": "terrain",
@@ -25686,7 +30793,31 @@
           "z": -29.5
         }
       ],
-      "rooms": [],
+      "rooms": [
+        {
+          "id": "b_district_2_1_387:r0",
+          "type": "lobby",
+          "floor": 0,
+          "polygon": [
+            {
+              "x": 53.41672,
+              "z": -37.92336
+            },
+            {
+              "x": 60.86928,
+              "z": -37.92336
+            },
+            {
+              "x": 60.86928,
+              "z": -30.64864
+            },
+            {
+              "x": 53.41672,
+              "z": -30.64864
+            }
+          ]
+        }
+      ],
       "stairs": []
     },
     {
@@ -25759,7 +30890,7 @@
     {
       "id": "b_district_3_0_390",
       "name": "B 390",
-      "isEnterable": false,
+      "isEnterable": true,
       "floorsCount": 2,
       "floorHeight": 3.47,
       "foundation": "terrain",
@@ -25786,8 +30917,73 @@
           "z": -533.22
         }
       ],
-      "rooms": [],
-      "stairs": []
+      "rooms": [
+        {
+          "id": "b_district_3_0_390:r0",
+          "type": "lobby",
+          "floor": 0,
+          "polygon": [
+            {
+              "x": 400.7502,
+              "z": -538.94088
+            },
+            {
+              "x": 408.66179999999997,
+              "z": -538.94088
+            },
+            {
+              "x": 408.66179999999997,
+              "z": -534.00012
+            },
+            {
+              "x": 400.7502,
+              "z": -534.00012
+            }
+          ]
+        },
+        {
+          "id": "b_district_3_0_390:r1",
+          "type": "room",
+          "floor": 1,
+          "polygon": [
+            {
+              "x": 400.7502,
+              "z": -538.94088
+            },
+            {
+              "x": 408.66179999999997,
+              "z": -538.94088
+            },
+            {
+              "x": 408.66179999999997,
+              "z": -534.00012
+            },
+            {
+              "x": 400.7502,
+              "z": -534.00012
+            }
+          ]
+        }
+      ],
+      "stairs": [
+        {
+          "id": "b_district_3_0_390:s0_1",
+          "connectsFloors": [
+            0,
+            1
+          ],
+          "type": "straight",
+          "position": {
+            "x": 404.706,
+            "z": -536.4705
+          },
+          "rotation": 0,
+          "dimensions": {
+            "width": 2,
+            "length": 4.5
+          }
+        }
+      ]
     },
     {
       "id": "b_district_2_3_391",
@@ -26026,7 +31222,7 @@
     {
       "id": "b_district_1_0_398",
       "name": "B 398",
-      "isEnterable": false,
+      "isEnterable": true,
       "floorsCount": 3,
       "floorHeight": 2.92,
       "foundation": "terrain",
@@ -26054,13 +31250,118 @@
           "z": -533.026
         }
       ],
-      "rooms": [],
-      "stairs": []
+      "rooms": [
+        {
+          "id": "b_district_1_0_398:r0",
+          "type": "lobby",
+          "floor": 0,
+          "polygon": [
+            {
+              "x": -251.6582,
+              "z": -542.10056
+            },
+            {
+              "x": -242.8878,
+              "z": -542.10056
+            },
+            {
+              "x": -242.8878,
+              "z": -534.26344
+            },
+            {
+              "x": -251.6582,
+              "z": -534.26344
+            }
+          ]
+        },
+        {
+          "id": "b_district_1_0_398:r1",
+          "type": "room",
+          "floor": 1,
+          "polygon": [
+            {
+              "x": -251.6582,
+              "z": -542.10056
+            },
+            {
+              "x": -242.8878,
+              "z": -542.10056
+            },
+            {
+              "x": -242.8878,
+              "z": -534.26344
+            },
+            {
+              "x": -251.6582,
+              "z": -534.26344
+            }
+          ]
+        },
+        {
+          "id": "b_district_1_0_398:r2",
+          "type": "room",
+          "floor": 2,
+          "polygon": [
+            {
+              "x": -251.6582,
+              "z": -542.10056
+            },
+            {
+              "x": -242.8878,
+              "z": -542.10056
+            },
+            {
+              "x": -242.8878,
+              "z": -534.26344
+            },
+            {
+              "x": -251.6582,
+              "z": -534.26344
+            }
+          ]
+        }
+      ],
+      "stairs": [
+        {
+          "id": "b_district_1_0_398:s0_1",
+          "connectsFloors": [
+            0,
+            1
+          ],
+          "type": "straight",
+          "position": {
+            "x": -247.273,
+            "z": -538.182
+          },
+          "rotation": 0,
+          "dimensions": {
+            "width": 2,
+            "length": 4
+          }
+        },
+        {
+          "id": "b_district_1_0_398:s1_2",
+          "connectsFloors": [
+            1,
+            2
+          ],
+          "type": "straight",
+          "position": {
+            "x": -247.273,
+            "z": -538.182
+          },
+          "rotation": 0,
+          "dimensions": {
+            "width": 2,
+            "length": 4
+          }
+        }
+      ]
     },
     {
       "id": "b_district_2_3_399",
       "name": "B 399",
-      "isEnterable": false,
+      "isEnterable": true,
       "floorsCount": 3,
       "floorHeight": 3.16,
       "foundation": "terrain",
@@ -26087,8 +31388,113 @@
           "z": 342.666
         }
       ],
-      "rooms": [],
-      "stairs": []
+      "rooms": [
+        {
+          "id": "b_district_2_3_399:r0",
+          "type": "lobby",
+          "floor": 0,
+          "polygon": [
+            {
+              "x": 8.30628,
+              "z": 328.37392
+            },
+            {
+              "x": 20.78472,
+              "z": 328.37392
+            },
+            {
+              "x": 20.78472,
+              "z": 340.71708
+            },
+            {
+              "x": 8.30628,
+              "z": 340.71708
+            }
+          ]
+        },
+        {
+          "id": "b_district_2_3_399:r1",
+          "type": "room",
+          "floor": 1,
+          "polygon": [
+            {
+              "x": 8.30628,
+              "z": 328.37392
+            },
+            {
+              "x": 20.78472,
+              "z": 328.37392
+            },
+            {
+              "x": 20.78472,
+              "z": 340.71708
+            },
+            {
+              "x": 8.30628,
+              "z": 340.71708
+            }
+          ]
+        },
+        {
+          "id": "b_district_2_3_399:r2",
+          "type": "room",
+          "floor": 2,
+          "polygon": [
+            {
+              "x": 8.30628,
+              "z": 328.37392
+            },
+            {
+              "x": 20.78472,
+              "z": 328.37392
+            },
+            {
+              "x": 20.78472,
+              "z": 340.71708
+            },
+            {
+              "x": 8.30628,
+              "z": 340.71708
+            }
+          ]
+        }
+      ],
+      "stairs": [
+        {
+          "id": "b_district_2_3_399:s0_1",
+          "connectsFloors": [
+            0,
+            1
+          ],
+          "type": "straight",
+          "position": {
+            "x": 14.5455,
+            "z": 334.5455
+          },
+          "rotation": 0,
+          "dimensions": {
+            "width": 2,
+            "length": 4.5
+          }
+        },
+        {
+          "id": "b_district_2_3_399:s1_2",
+          "connectsFloors": [
+            1,
+            2
+          ],
+          "type": "straight",
+          "position": {
+            "x": 14.5455,
+            "z": 334.5455
+          },
+          "rotation": 0,
+          "dimensions": {
+            "width": 2,
+            "length": 4.5
+          }
+        }
+      ]
     },
     {
       "id": "b_district_1_0_400",
@@ -26126,7 +31532,7 @@
     {
       "id": "b_district_1_1_401",
       "name": "B 401",
-      "isEnterable": false,
+      "isEnterable": true,
       "floorsCount": 2,
       "floorHeight": 3.53,
       "foundation": "terrain",
@@ -26154,13 +31560,78 @@
           "z": -283.082
         }
       ],
-      "rooms": [],
-      "stairs": []
+      "rooms": [
+        {
+          "id": "b_district_1_1_401:r0",
+          "type": "lobby",
+          "floor": 0,
+          "polygon": [
+            {
+              "x": -246.42504,
+              "z": -301.12376
+            },
+            {
+              "x": -233.57496,
+              "z": -301.12376
+            },
+            {
+              "x": -233.57496,
+              "z": -285.54224
+            },
+            {
+              "x": -246.42504,
+              "z": -285.54224
+            }
+          ]
+        },
+        {
+          "id": "b_district_1_1_401:r1",
+          "type": "room",
+          "floor": 1,
+          "polygon": [
+            {
+              "x": -246.42504,
+              "z": -301.12376
+            },
+            {
+              "x": -233.57496,
+              "z": -301.12376
+            },
+            {
+              "x": -233.57496,
+              "z": -285.54224
+            },
+            {
+              "x": -246.42504,
+              "z": -285.54224
+            }
+          ]
+        }
+      ],
+      "stairs": [
+        {
+          "id": "b_district_1_1_401:s0_1",
+          "connectsFloors": [
+            0,
+            1
+          ],
+          "type": "straight",
+          "position": {
+            "x": -240,
+            "z": -293.33299999999997
+          },
+          "rotation": 0,
+          "dimensions": {
+            "width": 2,
+            "length": 5
+          }
+        }
+      ]
     },
     {
       "id": "b_district_1_2_402",
       "name": "B 402",
-      "isEnterable": false,
+      "isEnterable": true,
       "floorsCount": 1,
       "floorHeight": 4.74,
       "foundation": "terrain",
@@ -26187,7 +31658,31 @@
           "z": 212.927
         }
       ],
-      "rooms": [],
+      "rooms": [
+        {
+          "id": "b_district_1_2_402:r0",
+          "type": "lobby",
+          "floor": 0,
+          "polygon": [
+            {
+              "x": -211.27643999999998,
+              "z": 200.233
+            },
+            {
+              "x": -200.15156000000002,
+              "z": 200.233
+            },
+            {
+              "x": -200.15156000000002,
+              "z": 211.196
+            },
+            {
+              "x": -211.27643999999998,
+              "z": 211.196
+            }
+          ]
+        }
+      ],
       "stairs": []
     }
   ],

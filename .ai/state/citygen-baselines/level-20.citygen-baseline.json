@@ -2,57 +2,57 @@
   "file": "src/levels/level-20.json",
   "levelName": "level-20",
   "generator": {
-    "generatorVersion": "0.33.0",
+    "generatorVersion": "0.55.0",
     "seed": 20,
     "deterministic": true
   },
-  "reportHash": "d18c23e51c3d8573fd559dd540b2e8f01c59804bc6847d34e748f9456a652a97",
+  "reportHash": "476a634b70f33478d76e9731665b363cdb917ad181b1da8b318240312ed77b15",
   "stages": 7,
   "summary": {
     "errors": 0,
-    "warnings": 7,
+    "warnings": 8,
     "repairs": 10,
-    "drops": 0
+    "drops": 1
   },
   "rules": {
     "errors": 0,
     "warnings": 1,
-    "infos": 1
+    "infos": 0
   },
   "metrics": {
     "partial": true,
     "counts": {
-      "roads": 155,
-      "roadNodes": 127,
-      "districts": 44,
-      "parcels": 2320,
-      "reservedParcels": 165,
-      "buildings": 420,
-      "enterableBuildings": 0,
+      "roads": 159,
+      "roadNodes": 131,
+      "districts": 40,
+      "parcels": 2381,
+      "reservedParcels": 179,
+      "buildings": 417,
+      "enterableBuildings": 83,
       "props": 360,
       "lights": 8,
       "rivers": 0,
       "lakes": 0
     },
     "graph": {
-      "nodes": 127,
-      "edges": 155,
+      "nodes": 131,
+      "edges": 159,
       "components": 1,
-      "largestComponent": 127,
+      "largestComponent": 131,
       "deadEnds": 36,
-      "deadEndRatio": 0.283465,
-      "avgDegree": 2.440945,
-      "gamma": 0.413333
+      "deadEndRatio": 0.274809,
+      "avgDegree": 2.427481,
+      "gamma": 0.410853
     },
     "roads": {
-      "totalLength": 13514.193,
+      "totalLength": 13765.803,
       "lengthByType": {
         "arterial": 2080,
-        "local": 11434.193
+        "local": 11685.803
       },
       "shareByType": {
-        "arterial": 0.153912,
-        "local": 0.846088
+        "arterial": 0.151099,
+        "local": 0.848901
       },
       "maxSlope": 0.3,
       "slopeByClass": {
@@ -63,7 +63,7 @@
           "overAbsolute": 0
         },
         "local": {
-          "count": 154,
+          "count": 158,
           "maxSlope": 0.3,
           "overPolicy": 17,
           "overAbsolute": 0
@@ -76,14 +76,14 @@
         "local": 12
       },
       "classPolicyViolations": 18,
-      "classPolicyOk": 137,
+      "classPolicyOk": 141,
       "overAbsolute": 0,
       "version": 2
     },
     "gameplay": {
       "spawnToRoad": 0,
       "exitToRoad": 0,
-      "enterableShare": 0,
+      "enterableShare": 0.199041,
       "enterableTarget": 0.2
     },
     "districts": {
@@ -93,32 +93,28 @@
       "shareByType": {}
     },
     "parcels": {
-      "reservedShare": 0.071121,
+      "reservedShare": 0.075178,
       "byDistrictCount": {
-        "district_0_0_0": 55,
-        "district_0_0_1": 55,
-        "district_1_0_0": 66,
-        "district_1_0_1": 66,
-        "district_2_0_0": 28,
-        "district_2_0_1": 28,
+        "district_0_0_00": 25,
+        "district_0_0_01": 25,
+        "district_0_0_10": 25,
+        "district_0_0_11": 25,
+        "district_1_0": 49,
+        "district_2_0_0": 105,
+        "district_2_0_1": 105,
         "district_3_0_0": 136,
         "district_3_0_1": 136,
         "district_0_1_0": 32,
         "district_0_1_1": 32,
         "district_1_1_0": 18,
         "district_1_1_1": 18,
-        "district_2_1_000": 28,
-        "district_2_1_001": 21,
-        "district_2_1_010": 28,
-        "district_2_1_011": 21,
-        "district_2_1_100": 28,
-        "district_2_1_101": 21,
-        "district_2_1_110": 28,
-        "district_2_1_111": 21,
+        "district_2_1_00": 49,
+        "district_2_1_01": 49,
+        "district_2_1_10": 49,
+        "district_2_1_11": 49,
         "district_3_1_0": 200,
         "district_3_1_1": 200,
-        "district_0_2_0": 32,
-        "district_0_2_1": 32,
+        "district_0_2": 64,
         "district_1_2_0": 28,
         "district_1_2_1": 28,
         "district_2_2_0": 66,

@@ -2,11 +2,11 @@
   "file": "src/levels/level-18.json",
   "levelName": "level-18",
   "generator": {
-    "generatorVersion": "0.33.0",
+    "generatorVersion": "0.55.0",
     "seed": 18,
     "deterministic": true
   },
-  "reportHash": "2e9f09f72c15b96a7daaf36720907425f0626e8b325ef76684714c3bf1f9ee4b",
+  "reportHash": "980a79e973322e382709b67aec2b6007b9c1ffe49a8b3ad39f013cfc375ef9bc",
   "stages": 7,
   "summary": {
     "errors": 0,
@@ -17,7 +17,7 @@
   "rules": {
     "errors": 0,
     "warnings": 1,
-    "infos": 1
+    "infos": 0
   },
   "metrics": {
     "partial": true,
@@ -28,7 +28,7 @@
       "parcels": 121,
       "reservedParcels": 16,
       "buildings": 15,
-      "enterableBuildings": 0,
+      "enterableBuildings": 3,
       "props": 0,
       "lights": 0,
       "rivers": 0,
@@ -91,7 +91,7 @@
     "gameplay": {
       "spawnToRoad": 0,
       "exitToRoad": 0,
-      "enterableShare": 0,
+      "enterableShare": 0.2,
       "enterableTarget": 0.2
     },
     "districts": {

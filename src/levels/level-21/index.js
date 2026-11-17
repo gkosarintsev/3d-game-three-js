@@ -72,10 +72,10 @@ export const LEVEL_21 = {
         "file": "chunk-0-0.l14b",
         "id": "0_0",
         "objects": {
-          "buildings": 64,
+          "buildings": 69,
           "channels": 2,
           "lights": 2,
-          "props": 63,
+          "props": 64,
           "roads": 20
         },
         "rect": {
@@ -89,10 +89,10 @@ export const LEVEL_21 = {
         "file": "chunk-0-1.l14b",
         "id": "0_1",
         "objects": {
-          "buildings": 42,
+          "buildings": 35,
           "channels": 1,
           "lights": 1,
-          "props": 47,
+          "props": 56,
           "roads": 1
         },
         "rect": {
@@ -106,10 +106,10 @@ export const LEVEL_21 = {
         "file": "chunk-1-0.l14b",
         "id": "1_0",
         "objects": {
-          "buildings": 185,
+          "buildings": 171,
           "channels": 2,
-          "lights": 3,
-          "props": 156,
+          "lights": 2,
+          "props": 151,
           "roads": 43
         },
         "rect": {
@@ -123,11 +123,11 @@ export const LEVEL_21 = {
         "file": "chunk-1-1.l14b",
         "id": "1_1",
         "objects": {
-          "buildings": 115,
+          "buildings": 126,
           "channels": 2,
-          "lights": 2,
-          "props": 102,
-          "roads": 101
+          "lights": 3,
+          "props": 96,
+          "roads": 104
         },
         "rect": {
           "maxX": 640,
@@ -7902,37 +7902,144 @@ export const LEVEL_21 = {
             {
               "x": 408,
               "y": 0,
-              "z": 328
+              "z": 408
             },
             {
-              "x": 419.33,
+              "x": 396.33,
               "y": 0,
-              "z": 328
+              "z": 408
             },
             {
-              "x": 430.67,
-              "y": 0,
-              "z": 328
+              "x": 384.67,
+              "y": 0.02,
+              "z": 408
             },
             {
-              "x": 442,
-              "y": 0,
-              "z": 328
+              "x": 373,
+              "y": 0.17,
+              "z": 408
             },
             {
-              "x": 453.33,
-              "y": 0,
-              "z": 328
+              "x": 361.33,
+              "y": 0.44,
+              "z": 408
             },
             {
-              "x": 464.67,
-              "y": 0,
-              "z": 328
+              "x": 349.67,
+              "y": 0.79,
+              "z": 408
             },
             {
-              "x": 476,
+              "x": 338,
+              "y": 1.21,
+              "z": 408
+            }
+          ],
+          "shoulder": 1,
+          "width": 6
+        },
+        {
+          "blend": 5,
+          "crossLevel": true,
+          "id": "tr_postb_2",
+          "points": [
+            {
+              "x": 338,
+              "y": 1.21,
+              "z": 408
+            },
+            {
+              "x": 338,
+              "y": 1.48,
+              "z": 398.49
+            },
+            {
+              "x": 338,
+              "y": 1.74,
+              "z": 388.99
+            },
+            {
+              "x": 338,
+              "y": 1.97,
+              "z": 379.48
+            },
+            {
+              "x": 338,
+              "y": 2.17,
+              "z": 369.97
+            }
+          ],
+          "shoulder": 1,
+          "width": 6
+        },
+        {
+          "blend": 5,
+          "crossLevel": true,
+          "id": "tr_postb_2_2",
+          "points": [
+            {
+              "x": 338,
+              "y": 2.17,
+              "z": 369.97
+            },
+            {
+              "x": 327.13,
+              "y": 2.75,
+              "z": 369.97
+            },
+            {
+              "x": 316.25,
+              "y": 3.44,
+              "z": 369.97
+            },
+            {
+              "x": 305.38,
+              "y": 4.2,
+              "z": 369.97
+            }
+          ],
+          "shoulder": 1,
+          "width": 6
+        },
+        {
+          "blend": 5,
+          "crossLevel": true,
+          "id": "tr_postb_3_2",
+          "points": [
+            {
+              "x": 408,
               "y": 0,
-              "z": 328
+              "z": 632
+            },
+            {
+              "x": 396.33,
+              "y": 0,
+              "z": 632
+            },
+            {
+              "x": 384.67,
+              "y": 0,
+              "z": 632
+            },
+            {
+              "x": 373,
+              "y": 0,
+              "z": 632
+            },
+            {
+              "x": 361.33,
+              "y": 0,
+              "z": 632
+            },
+            {
+              "x": 349.67,
+              "y": 0,
+              "z": 632
+            },
+            {
+              "x": 338,
+              "y": 0,
+              "z": 632
             }
           ],
           "shoulder": 1,

@@ -8,7 +8,7 @@ const clamp01 = (v) => Math.max(0, Math.min(1, v));
 
 // R0.4: canonical generator version for deterministic behavior/regression snapshots.
 // Bump on intentional layout/IR/report-affecting changes (see .ai/state/citygen-procedural-rules.md).
-export const DEFAULT_GENERATOR_VERSION = '0.33.0';
+export const DEFAULT_GENERATOR_VERSION = '0.55.0';
 
 export const DEFAULT_CITY_POLICIES = Object.freeze({
   roadDensity: { bMin: 60, bMax: 260, gamma: 0.8 },

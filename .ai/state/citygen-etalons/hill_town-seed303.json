@@ -1,29 +1,29 @@
 {
   "profile": "hill_town",
   "seed": 303,
-  "generatorVersion": "0.33.0",
-  "reportHash": "4b95b4f9720a0aec9f6bbeb33d2ed82ab3aeb394d87e56455296a5f743e17330",
+  "generatorVersion": "0.55.0",
+  "reportHash": "16060376412d44e7d8fb4ba82609ca87da87e9ce0b46fe2c4538a58fe8e35f53",
   "summary": {
     "errors": 0,
-    "warnings": 12,
+    "warnings": 13,
     "repairs": 2,
-    "drops": 0
+    "drops": 2
   },
   "rules": {
     "errors": 0,
     "warnings": 0,
-    "infos": 1
+    "infos": 0
   },
   "metrics": {
     "partial": true,
     "counts": {
       "roads": 0,
       "roadNodes": 0,
-      "districts": 38,
-      "parcels": 2320,
-      "reservedParcels": 93,
-      "buildings": 415,
-      "enterableBuildings": 0,
+      "districts": 40,
+      "parcels": 2389,
+      "reservedParcels": 92,
+      "buildings": 411,
+      "enterableBuildings": 82,
       "props": 360,
       "lights": 0,
       "rivers": 0,
@@ -59,7 +59,7 @@
     "gameplay": {
       "spawnToRoad": null,
       "exitToRoad": null,
-      "enterableShare": 0,
+      "enterableShare": 0.199513,
       "enterableTarget": 0.2
     },
     "terrain": {
@@ -90,14 +90,15 @@
       "floodplains": 0
     },
     "parcels": {
-      "reservedShare": 0.040086,
+      "reservedShare": 0.03851,
       "byDistrictCount": {
-        "district_0_0_0": 55,
-        "district_0_0_1": 55,
-        "district_1_0_0": 66,
-        "district_1_0_1": 66,
-        "district_2_0_0": 28,
-        "district_2_0_1": 28,
+        "district_0_0_00": 25,
+        "district_0_0_01": 25,
+        "district_0_0_10": 25,
+        "district_0_0_11": 25,
+        "district_1_0": 49,
+        "district_2_0_0": 105,
+        "district_2_0_1": 105,
         "district_3_0_0": 136,
         "district_3_0_1": 136,
         "district_0_1_0": 32,
@@ -108,10 +109,11 @@
         "district_2_1_1": 98,
         "district_3_1_0": 200,
         "district_3_1_1": 200,
-        "district_0_2_0": 32,
-        "district_0_2_1": 32,
-        "district_1_2_0": 28,
-        "district_1_2_1": 28,
+        "district_0_2": 64,
+        "district_1_2_00": 16,
+        "district_1_2_01": 16,
+        "district_1_2_10": 16,
+        "district_1_2_11": 16,
         "district_2_2_0": 66,
         "district_2_2_1": 66,
         "district_3_2_0": 105,
