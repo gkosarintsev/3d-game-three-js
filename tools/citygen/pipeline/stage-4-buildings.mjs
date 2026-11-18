@@ -140,6 +140,20 @@ function finalizeByAccess(fp, cx, cz, p, maxW, maxD, rng, worldHalf = Infinity) 
       dx = wantMaxX - b.maxX;
     }
     aligned = translateFootprint(rot, +dx.toFixed(3), +dz.toFixed(3));
+    // R4.3 §9.5: угловой дом — смещаем к пересечению уличных граней (вторичная грань участка на углу квартала).
+    if (access?.corner && Array.isArray(access.cornerEdges) && access.cornerEdges.length > 1) {
+      const b2 = aabbOfFootprint(aligned);
+      let cdx = 0, cdz = 0;
+      if (access.cornerEdges.includes('west') && edge !== 'west') cdx += (parcel.minX + margin) - b2.minX;
+      else if (access.cornerEdges.includes('east') && edge !== 'east') cdx += (parcel.maxX - margin) - b2.maxX;
+      if (access.cornerEdges.includes('south') && edge !== 'south') cdz += (parcel.minZ + margin) - b2.minZ;
+      else if (access.cornerEdges.includes('north') && edge !== 'north') cdz += (parcel.maxZ - margin) - b2.maxZ;
+      // ограничиваем сдвиг к углу, чтобы не ломать фасадную линию вдоль основной улицы
+      const maxCornerShift = 4.0;
+      cdx = clamp(cdx, -maxCornerShift, maxCornerShift);
+      cdz = clamp(cdz, -maxCornerShift, maxCornerShift);
+      if (cdx || cdz) aligned = translateFootprint(aligned, +cdx.toFixed(3), +cdz.toFixed(3));
+    }
     aligned = clampFootprintToParcel(aligned, parcel, margin);
   } else {
     // fallback: legacy center shift when parcel bounds are unavailable
@@ -646,6 +660,7 @@ export function makeStage4() {
         let footprint = null;
         let buildingRotation = 0;
         let reliefStats = null;
+        let placedAccessEdge = p?.access?.edge ?? null;
         const capByCoverage = (w, d) => {
           // R4.3 §9.5: доля застройки участка не больше maxFootprintRatio (coverage).
           let ww = w, dd = d;
@@ -826,6 +841,8 @@ export function makeStage4() {
           ...(buildingRotation ? { rotation: buildingRotation } : {}),
           rooms: [],
           stairs: [],
+          _accessEdge: placedAccessEdge,
+          _cornerAccess: p?.access?.corner ? { edges: Array.isArray(p.access.cornerEdges) ? [...p.access.cornerEdges] : [] } : null,
         });
         placed++;
         placedParcel.add(p);
@@ -953,6 +970,8 @@ export function makeStage4() {
               footprint,
               rooms: [],
               stairs: [],
+              _accessEdge: p?.access?.edge ?? null,
+              _cornerAccess: p?.access?.corner ? { edges: Array.isArray(p.access.cornerEdges) ? [...p.access.cornerEdges] : [] } : null,
             });
             placed++;
             placedParcel.add(p);
@@ -1317,9 +1336,33 @@ export function makeStage4() {
           for (let s = 0; s < floorsN; s++) {
             rooms.push({ id: `${id}:r${s}`, type: s === 0 ? 'lobby' : 'room', floor: s, polygon: innerPoly });
           }
-          const stairsPos = { x: fpCx, z: fpCz };
+          // R4.3 §9.6: вход/лестница ближе к уличному фасаду (сторона доступа/тротуара), а не в геометрическом центре.
           const stairRise = Number.isFinite(Number(b.floorHeight)) && Number(b.floorHeight) > 0 ? Number(b.floorHeight) : 3.3;
           const stairLen = Math.max(3, Math.ceil((stairRise / 0.78 + 0.001) * 2) / 2);
+          const innerW = Math.max(0.1, inner.maxX - inner.minX);
+          const innerD = Math.max(0.1, inner.maxZ - inner.minZ);
+          const margin = 0.75;
+          let sx = fpCx, sz = fpCz;
+          const edge = b._accessEdge || null;
+          // offset inward from facade edge so stair body stays inside inner polygon
+          const offZ = Math.min(innerD / 2 - 0.25, Math.max(stairLen / 2 + 0.5, innerD * 0.22));
+          const offX = Math.min(innerW / 2 - 0.25, Math.max(stairLen / 2 + 0.5, innerW * 0.22));
+          if (edge === 'south') sz = inner.minZ + Math.max(margin, offZ);
+          else if (edge === 'north') sz = inner.maxZ - Math.max(margin, offZ);
+          else if (edge === 'west') sx = inner.minX + Math.max(margin, offX);
+          else if (edge === 'east') sx = inner.maxX - Math.max(margin, offX);
+          // corner house: slight bias toward secondary corner edge to keep entrance near corner
+          const cornerEdges = Array.isArray(b?._cornerAccess?.edges) ? b._cornerAccess.edges : null;
+          if (cornerEdges && cornerEdges.length > 1) {
+            if (cornerEdges.includes('west') && edge !== 'west') sx = inner.minX + Math.max(margin, Math.min(offX, innerW * 0.28));
+            else if (cornerEdges.includes('east') && edge !== 'east') sx = inner.maxX - Math.max(margin, Math.min(offX, innerW * 0.28));
+            if (cornerEdges.includes('south') && edge !== 'south') sz = inner.minZ + Math.max(margin, Math.min(offZ, innerD * 0.28));
+            else if (cornerEdges.includes('north') && edge !== 'north') sz = inner.maxZ - Math.max(margin, Math.min(offZ, innerD * 0.28));
+          }
+          // clamp to inner bounds with stair footprint margin
+          sx = clamp(sx, inner.minX + 1.2, inner.maxX - 1.2);
+          sz = clamp(sz, inner.minZ + 1.2, inner.maxZ - 1.2);
+          const stairsPos = { x: +sx.toFixed(3), z: +sz.toFixed(3) };
           const stairs = [];
           for (let s = 0; s + 1 < floorsN; s++) {
             stairs.push({ id: `${id}:s${s}_${s + 1}`, connectsFloors: [s, s + 1], type: 'straight', position: stairsPos, rotation: snapYaw90(b.rotation ?? 0), dimensions: { width: 2, length: stairLen } });
@@ -1497,12 +1540,16 @@ export function makeStage4() {
       }
 
       // Emit into source so compileCityforge/build pipeline can pass buildings through.
-      // Strip internal reporting-only refs (post-split reassignment) to keep schema compatibility.
+      // Strip internal/transient refs to keep schema compatibility.
       const emitBuildings = (ctx.buildings ?? []).map(b => {
         if (!b || typeof b !== 'object') return b;
-        const { districtId: _districtId, districtType: _districtType, ...rest } = b;
+        const { districtId: _districtId, districtType: _districtType, _accessEdge, _cornerAccess, ...rest } = b;
         return rest;
       });
+      // also clean transient fields from ctx.buildings (kept for downstream spatial/indexing in this run)
+      for (const b of (ctx.buildings ?? [])) {
+        if (b && typeof b === 'object') { delete b._accessEdge; delete b._cornerAccess; }
+      }
       if (!Array.isArray(ctx.input.buildings) || ctx.input.buildings.length === 0) {
         ctx.input.buildings = emitBuildings;
       } else if (emitBuildings.length) {

@@ -72,10 +72,10 @@ export const LEVEL_17 = {
         "file": "chunk-0-0.l14b",
         "id": "0_0",
         "objects": {
-          "buildings": 67,
+          "buildings": 63,
           "channels": 1,
           "lights": 3,
-          "props": 64,
+          "props": 67,
           "roads": 36
         },
         "rect": {
@@ -89,9 +89,9 @@ export const LEVEL_17 = {
         "file": "chunk-0-1.l14b",
         "id": "0_1",
         "objects": {
-          "buildings": 49,
-          "lights": 1,
-          "props": 99,
+          "buildings": 39,
+          "lights": 2,
+          "props": 92,
           "roads": 16
         },
         "rect": {
@@ -105,11 +105,11 @@ export const LEVEL_17 = {
         "file": "chunk-1-0.l14b",
         "id": "1_0",
         "objects": {
-          "buildings": 161,
+          "buildings": 174,
           "channels": 2,
           "lights": 1,
-          "props": 119,
-          "roads": 35
+          "props": 114,
+          "roads": 34
         },
         "rect": {
           "maxX": 640,
@@ -122,10 +122,10 @@ export const LEVEL_17 = {
         "file": "chunk-1-1.l14b",
         "id": "1_1",
         "objects": {
-          "buildings": 119,
+          "buildings": 117,
           "channels": 2,
-          "lights": 3,
-          "props": 105,
+          "lights": 2,
+          "props": 113,
           "roads": 108
         },
         "rect": {
@@ -8618,12 +8618,17 @@ export const LEVEL_17 = {
             {
               "x": 590,
               "y": 0,
-              "z": -82.66
+              "z": -61.33
             },
             {
               "x": 590,
               "y": 0,
-              "z": -93.33
+              "z": -50.67
+            },
+            {
+              "x": 590,
+              "y": 0,
+              "z": -40
             }
           ],
           "shoulder": 1,
@@ -8633,6 +8638,84 @@ export const LEVEL_17 = {
           "blend": 5,
           "crossLevel": true,
           "id": "tr_postb_3",
+          "points": [
+            {
+              "x": 590,
+              "y": 0,
+              "z": -72
+            },
+            {
+              "x": 590,
+              "y": 0,
+              "z": -83.67
+            },
+            {
+              "x": 590,
+              "y": 0,
+              "z": -95.33
+            },
+            {
+              "x": 590,
+              "y": 0,
+              "z": -107
+            },
+            {
+              "x": 590,
+              "y": 0,
+              "z": -118.67
+            },
+            {
+              "x": 590,
+              "y": 0,
+              "z": -130.33
+            },
+            {
+              "x": 590,
+              "y": 0,
+              "z": -142
+            }
+          ],
+          "shoulder": 1,
+          "width": 6
+        },
+        {
+          "blend": 5,
+          "crossLevel": true,
+          "id": "tr_postb_3_2",
+          "points": [
+            {
+              "x": 590,
+              "y": 0,
+              "z": -142
+            },
+            {
+              "x": 600,
+              "y": 0,
+              "z": -142
+            },
+            {
+              "x": 610,
+              "y": 0,
+              "z": -142
+            },
+            {
+              "x": 620,
+              "y": 0,
+              "z": -142
+            },
+            {
+              "x": 630,
+              "y": 0,
+              "z": -142
+            }
+          ],
+          "shoulder": 1,
+          "width": 6
+        },
+        {
+          "blend": 5,
+          "crossLevel": true,
+          "id": "tr_postb_4",
           "points": [
             {
               "x": 520,
@@ -8676,7 +8759,7 @@ export const LEVEL_17 = {
         {
           "blend": 5,
           "crossLevel": true,
-          "id": "tr_postb_3_2",
+          "id": "tr_postb_4_2",
           "points": [
             {
               "x": 590,
@@ -8705,66 +8788,27 @@ export const LEVEL_17 = {
         {
           "blend": 5,
           "crossLevel": true,
-          "id": "tr_postb_4",
+          "id": "tr_postb_5",
           "points": [
             {
               "x": 590,
               "y": 0,
-              "z": -93.33
+              "z": -251.98
             },
             {
               "x": 590,
               "y": 0,
-              "z": -104.77
+              "z": -243.54
             },
             {
               "x": 590,
               "y": 0,
-              "z": -116.21
+              "z": -235.11
             },
             {
               "x": 590,
               "y": 0,
-              "z": -127.64
-            },
-            {
-              "x": 590,
-              "y": 0,
-              "z": -139.08
-            }
-          ],
-          "shoulder": 1,
-          "width": 6
-        },
-        {
-          "blend": 5,
-          "crossLevel": true,
-          "id": "tr_postb_4_2",
-          "points": [
-            {
-              "x": 590,
-              "y": 0,
-              "z": -139.08
-            },
-            {
-              "x": 599.5,
-              "y": 0,
-              "z": -139.08
-            },
-            {
-              "x": 609,
-              "y": 0,
-              "z": -139.08
-            },
-            {
-              "x": 618.5,
-              "y": 0,
-              "z": -139.08
-            },
-            {
-              "x": 628,
-              "y": 0,
-              "z": -139.08
+              "z": -226.67
             }
           ],
           "shoulder": 1,
@@ -8776,82 +8820,19 @@ export const LEVEL_17 = {
           "id": "tr_postb_5_2",
           "points": [
             {
-              "x": 628,
-              "y": 0,
-              "z": -139.08
-            },
-            {
-              "x": 628,
-              "y": 0,
-              "z": -149.31
-            },
-            {
-              "x": 628,
-              "y": 0,
-              "z": -159.55
-            },
-            {
-              "x": 628,
-              "y": 0,
-              "z": -169.78
-            },
-            {
-              "x": 628,
-              "y": 0,
-              "z": -180.01
-            }
-          ],
-          "shoulder": 1,
-          "width": 6
-        },
-        {
-          "blend": 5,
-          "crossLevel": true,
-          "id": "tr_postb_6",
-          "points": [
-            {
               "x": 590,
               "y": 0,
-              "z": -72
+              "z": -226.67
             },
             {
-              "x": 590,
+              "x": 597.78,
               "y": 0,
-              "z": -61.33
+              "z": -226.67
             },
             {
-              "x": 590,
+              "x": 605.56,
               "y": 0,
-              "z": -50.67
-            },
-            {
-              "x": 590,
-              "y": 0,
-              "z": -40
-            }
-          ],
-          "shoulder": 1,
-          "width": 6
-        },
-        {
-          "blend": 5,
-          "crossLevel": true,
-          "id": "tr_postb_6_2",
-          "points": [
-            {
-              "x": 590,
-              "y": 0,
-              "z": -40
-            },
-            {
-              "x": 597.24,
-              "y": 0,
-              "z": -40
-            },
-            {
-              "x": 604.47,
-              "y": 0,
-              "z": -40
+              "z": -226.67
             }
           ],
           "shoulder": 1,
