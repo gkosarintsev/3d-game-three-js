@@ -82,7 +82,8 @@ Protocol: `.ai/plans/22-parallel-agents-github-ci.md`, `.ai/prompts/agent-ci-pro
 - **Iteration 2 (fast, failure/retry):** run [44407906458](https://github.com/gkosarintsev/3d-game-three-js/actions/runs/44407906458), SHA `7fd2407`, conclusion `failure`. Same fast-check failure: `tools/level-parser.test.mjs` "expand детерминирован, идемпотентен и не мутирует исходный бриф" with expanded level-17 buildings `b_district_0_3_0_252` / `b_district_0_3_0_397` out of world. `ci-watch` (`--iteration 2`): `nextAction=retry`, `errorClass=determinism`.
 - **Fix for iteration 3 (root cause):** stage-4 stores a world-oriented footprint together with `rotation=yaw`, while `validateLevel` (v4/open) computes the effective outline as `rotatedBounds(polyBounds(footprint), frameOf(bounds, rotation))`. Clamping raw footprint points left the rotated outline exceeding world bounds near the -X edge. Updated `tools/citygen/pipeline/stage-4-buildings.mjs` to clamp against the **rotated outline** (`clampFootprintToWorld(fp, worldHalf, rotation, margin)` via `src/geo2d.js` `polyBounds/frameOf/rotatedBounds`).
 - **Deterministic rebuild/update (iteration 3 prep):** rebuilt `src/levels/level-16..22/` catalogs and `generation-report.json` (`node tools/build-level.mjs ...`, 0 warnings). Refreshed pilot baselines (`node tools/citygen-baseline.mjs --out .ai/state/citygen-baselines src/levels/level-16..22.json`) and synthetic etalons (`node tools/citygen-etalon-check.mjs --update --generatorVersion 0.57.0`: 16/16 passed, 2 updated incl. `railway_industrial-seed303` and summary; report hashes for pilot levels unchanged, geometry/catalog chunks updated where placement changed). Local checks: `node --check tools/citygen/pipeline/stage-4-buildings.mjs`; `expandCityforgeSource` + `validateLevel(..., LEVEL_SPEC_V4)` for `src/levels/level-17.json` reports 0 out-of-world errors; reverted unintended diagnostic edit in `tools/level-parser.test.mjs`.
-- **Iteration 3:** _pending commit/push/watch (`--iteration 3 --max-iterations 4`)_.
+- **Iteration 3 (fast, success):** run [44410203971](https://github.com/gkosarintsev/3d-game-three-js/actions/runs/44410203971), SHA `c6da16e`, conclusion `success` (fast profile). Passed: `node / fast checks` (incl. `Сюита парсера глав из брифа` / `tools/level-parser.test.mjs`, determinism/warnings/bytes checks, chunking, level-model, codec/baked ground) and `aggregate / report`. Skipped by fast profile: `node / citygen unit tests`, `node / etalon regression`, `rebuild / build-level --check` shards, `browser` matrix, `series`. `ci-watch` (`--iteration 3`): `nextAction=success`, `errorClass=none`. Local result files: `.ai/state/ci-results/agent_plan21-wave1-r43.{json,md,-failed.log}`.
+- **Scoped/full checks still required before merge:** run/confirm required scoped/full CI gates for impacted scope (`node / citygen unit tests`, `node / etalon regression`, `rebuild / build-level --check` shards, `browser` suites, series as applicable). Fast CI green for this increment does not replace those gates.
 
 ### Remaining R4.3 gaps (not addressed in this increment)
 >>>>>>> c6da16e (fix(citygen): clamp R4.3 building outlines to world bounds and rebuild artifacts)
@@ -90,7 +91,13 @@ Protocol: `.ai/plans/22-parallel-agents-github-ci.md`, `.ai/prompts/agent-ci-pro
 #### Remaining R4.3 gaps (not addressed in this increment)
 - Full §9.5 coverage: corner-house specific handling, explicit building-line frontage continuity across adjacent parcels, and coverage-ratio (`maxFootprintRatio`) enforcement refinements.
 - Full §9.6 coverage: terrain-aware `baseY`/foundation selection per footprint relief delta (median + plinth, stepped plinth / podium / `buildable:false` thresholds), orientation along contours where appropriate, and explicit entrance placement/orientation to sidewalk beyond access-edge alignment/count cues.
+<<<<<<< HEAD
 - Broader validation: ensure no regressions in chunk/build budgets, navigation/streaming behavior, and all scoped/full gates impacted by rebuilt v4 outputs as scope expands.
+=======
+- Broader validation: ensure no regressions in chunk/build budgets, navigation/streaming behavior, and all scoped/full gates impacted by rebuilt v4 outputs (fast CI green on `c6da16e`; scoped/full matrix still pending).
+
+### Notes
+>>>>>>> da9bacb (docs(state): record successful fast CI iteration 3 for plan21 R4.3)
 
 #### Notes
 - `DEFAULT_GENERATOR_VERSION` bumped `0.56.0 -> 0.57.0` due to layout/placement-affecting building generation changes and regenerated derived artifacts.
