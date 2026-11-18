@@ -101,6 +101,7 @@ Protocol: `.ai/plans/22-parallel-agents-github-ci.md`, `.ai/prompts/agent-ci-pro
 
 #### Notes
 - `DEFAULT_GENERATOR_VERSION` bumped `0.56.0 -> 0.57.0` due to layout/placement-affecting building generation changes and regenerated derived artifacts.
+<<<<<<< HEAD
 - Heavy/browser/node gate execution deferred to CI per protocol.
 
 ## Next waves (draft)
@@ -112,3 +113,12 @@ Protocol: `.ai/plans/22-parallel-agents-github-ci.md`, `.ai/prompts/agent-ci-pro
 - Output-changing generator work requires strict coordination of derived artifacts and versioning (`generatorVersion` bump policy in `.ai/state/citygen-procedural-rules.md`).
 - Fast CI does not cover all heavy gates; use scoped/full confirmation by scope before merge of output-changing branches.
 - ~20 concurrent runner limit: avoid excessive parallel full/series runs.
+=======
+- Heavy/browser/node gate execution intentionally deferred to CI per protocol.
+
+- **Scoped CI (workflow_dispatch, run_node_extended=true, run_browser=true, run_full_series=false) - iteration 1/failure:** run [44411130067](https://github.com/gkosarintsev/3d-game-three-js/actions/runs/44411130067), SHA da9bacb, conclusion failure. Failed: \
+ode / citygen unit tests\ (job 135179458672) - \pilot level-16 v4: generateOutput deterministic (report and catalog contents)\ in \	ools/citygen.test.mjs\ expected roadComponents=1, roadSegments=176, roadNodes=146, buildings=410 but actual deterministic output for rebuilt level-16/fixture under 0.57.0+R4.3 is roadComponents=7, roadSegments=191, roadNodes=166, buildings=361, props=360, lights=8 (matches committed \src/levels/level-16/generation-report.json\). Passed: \
+ode / fast checks\, \
+ode / etalon regression\, all \ebuild / build-level --check\ shards (07-22), browser (\open-world\, \level-contract-lifecycle\, \stream-vehicle-rotated-solid\, \lien\, \misc\). Skipped: \series\. ci-watch (--no-push, iteration 1/4): nextAction=retry, errorClass=determinism. Evidence: \.ai/state/ci-results/agent_plan21-wave1-r43.{json,md,-failed.log}\, artifacts/manual logs (junit/timing) downloaded.
+- **Fix for scoped iteration 2:** updated hardcoded pilot level-16 finalize expectations in \	ools/citygen.test.mjs\ (commit 3b53190, no generator/derived artifact changes). Pending: scoped CI re-verification for fixed HEAD via CI.
+>>>>>>> 170c8fd (docs(state): record scoped CI 44411130067 failure and R4.3 test fix for re-verify)
