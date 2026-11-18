@@ -789,6 +789,14 @@
           "type": "boolean",
           "description": "Carve the riverbed into the terrain.",
           "default": false
+        },
+        "downslope": {
+          "type": "boolean",
+          "description": "служебное: русло трассировано вниз по уклону (генератор)."
+        },
+        "tributaryOf": {
+          "type": "string",
+          "description": "служебное: id основной реки для притока (генератор)."
         }
       },
       "required": [

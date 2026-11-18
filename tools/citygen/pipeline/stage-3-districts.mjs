@@ -2725,11 +2725,14 @@ export function makeStage3() {
           if (!changed) break;
         }
         // Fallback: resolve remaining incompatible touching pairs (edge/corner) by safe type swap to a buffer district
+        // Fixed: iterate until no more changes, try all districts and all buffer types per pass.
+        // Removed early break after first fix to allow resolving all resolvable pairs in one pass.
         let swapResolved = 0;
-        for (let iter = 0; iter < 6; iter++) {
+        let totalChanged = true;
+        while (totalChanged) {
+          totalChanged = false;
           const DS3 = ctx.districts ?? [];
           const { adj } = geomDistrictAdjacency(DS3, 0.75);
-          let changed = false;
           for (let i = 0; i < DS3.length; i++) {
             for (const j of adj[i]) {
               if (j <= i) continue;
@@ -2738,15 +2741,20 @@ export function makeStage3() {
               let fixed = false;
               for (const bt of BUFFER_TYPES) {
                 // try make i a buffer compatible with all its neighbors (including j)
-                if (COMPAT[bt]?.has(tb) && COMPAT[tb]?.has(bt) && canSwapToType(DS3, adj, i, bt)) { swapDistrictType(DS3, adj, i, bt); fixed = true; }
-                else if (COMPAT[bt]?.has(ta) && COMPAT[ta]?.has(bt) && canSwapToType(DS3, adj, j, bt)) { swapDistrictType(DS3, adj, j, bt); fixed = true; }
-                if (fixed) { swapResolved += 1; changed = true; break; }
+                if (COMPAT[bt]?.has(tb) && COMPAT[tb]?.has(bt) && canSwapToType(DS3, adj, i, bt)) {
+                  swapDistrictType(DS3, adj, i, bt);
+                  fixed = true;
+                  break;
+                }
+                else if (COMPAT[bt]?.has(ta) && COMPAT[ta]?.has(bt) && canSwapToType(DS3, adj, j, bt)) {
+                  swapDistrictType(DS3, adj, j, bt);
+                  fixed = true;
+                  break;
+                }
               }
-              if (fixed) break;
+              if (fixed) { swapResolved += 1; totalChanged = true; }
             }
-            if (changed) break;
           }
-          if (!changed) break;
         }
         if (carved > 0 || unresolvedGeom > 0 || swapResolved > 0) {
           // recompute pressure/landValue/targetB for affected/new districts

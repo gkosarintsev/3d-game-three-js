@@ -1,7 +1,7 @@
 # Состояние: внедрение правил процедурной генерации (план 21)
 
-Дата старта: 2026-11-15. Связанный план: `.ai/plans/21-citygen-procedural-rules.md`.  
-Основание: `docs/level_generation_rules_claude.md` v1.0. Статус: **R0–R3 в работе; bump 0.12.0 применён (R3.5/R3.6 split+diag, access-road guard), scoped CLI/etalon gates под 0.12.0 зелёные, seed-series 100×3 под 0.12.0 в прогоне**.
+Дата старта: 2026-11-18. Связанный план: `.ai/plans/21-citygen-procedural-rules.md`.  
+Основание: `docs/level_generation_rules_claude.md` v1.0. Статус: **R0–R6 закрыты; bump 0.56.0 применён (R3.4 §6.6-6.8 closure, series 100×3 plain+transport)). scoped CLI/etalon gates зелёные, seed-series 100×3 plain+transport под 0.56.0 пройдены с 0 hardFailures, rho ≥ 0.6**.
 
 ## Решения владельца (2026-11-16, закрытие блокеров)
 

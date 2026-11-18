@@ -677,6 +677,8 @@ const CF_WATERWAY = obj({
   depth: num({ min: 0, req: true }),
   flow: str({ enum: ['start_to_end', 'end_to_start', 'cyclic'] }),
   carveTerrain: bool({ default: false, doc: 'Carve the riverbed into the terrain.' }),
+  downslope: bool({ doc: 'служебное: русло трассировано вниз по уклону (генератор).' }),
+  tributaryOf: str({ doc: 'служебное: id основной реки для притока (генератор).' }),
 });
 
 const CF_LAKE = obj({

@@ -1,5 +1,5 @@
 /**
- * Браузерный прогон автотестов для CI: `node tools/ci-browser.mjs [--port 8124] [--suites a,b] [--flake файл::проверка] [--fast]`.
+ * Браузерный прогон автотестов для CI: `node tools/ci-browser.mjs [--port 8124] [--suites a,b] [--flake файл::проверка] [--fast] [--json-report path]`.
  *
  * Делает ровно то, что оператор делает руками: поднимает статический сервер над
  * репозиторием, открывает `3d-game.html`, импортирует каждую сюиту `tests/*.test.js`
@@ -27,7 +27,8 @@
 import { createRequire } from 'node:module';
 import { delimiter, extname, resolve } from 'node:path';
 import { createServer } from 'node:http';
-import { readFile, readdir } from 'node:fs/promises';
+import { mkdir, readFile, readdir, writeFile } from 'node:fs/promises';
+import { dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const ROOT = resolve(fileURLToPath(import.meta.url), '..', '..');
@@ -153,6 +154,7 @@ const only = (arg('suites', '') || '').split(',').filter(Boolean);
 const fast = process.argv.includes('--fast');
 const details = process.argv.includes('--details');
 const levelArg = arg('level', null);
+const jsonReportPath = arg('json-report', null);
 const flakes = argAll('flake').map(spec => {
   const at = spec.indexOf('::');
   return { file: at < 0 ? spec : spec.slice(0, at), name: at < 0 ? '' : spec.slice(at + 2) };
@@ -175,12 +177,23 @@ let failedSuites = 0;
 let checks = 0;
 let checksPassed = 0;
 let flakesRed = 0;
+const suiteReports = [];
+const runStartedAt = new Date().toISOString();
+const runStartedMs = Date.now();
 for (const file of files) {
   console.log(`START ${file}${levelArg != null ? ` [глава ${levelArg}]` : ''}`);
   const r = await runSuite(context, baseUrl, file, fast, levelArg);
   if (r.error) {
     failedSuites++;
     console.log(`FAIL ${file}: ${r.error}`);
+    suiteReports.push({
+      file,
+      status: 'error',
+      error: r.error,
+      durationMs: r.durationMs ?? 0,
+      consoleErrors: r.consoleErrors ?? [],
+      tests: [],
+    });
     continue;
   }
   checks += r.total ?? 0;
@@ -205,6 +218,24 @@ for (const file of files) {
   if (r.consoleErrors?.length) {
     console.log(`       errors: ${r.consoleErrors.slice(0, 3).join(' | ').slice(0, 300)}`);
   }
+  suiteReports.push({
+    file,
+    status: !ok ? 'fail' : (r.skipped ? 'skip' : 'pass'),
+    passed: r.passed ?? 0,
+    total: r.total ?? 0,
+    skipped: !!r.skipped,
+    durationMs: r.durationMs ?? 0,
+    consoleErrors: r.consoleErrors ?? [],
+    tests: (r.results ?? []).map(([passed, name, info]) => ({
+      name: String(name),
+      passed: !!passed,
+      flaky: !passed && isFlaky(file, name),
+      blocking: !passed && !isFlaky(file, name),
+      info: String(info ?? '').slice(0, 4000),
+      // per-check duration is not exposed by browser test suites yet
+      durationMs: null,
+    })),
+  });
 }
 await context.close();
 await browser.close();
@@ -216,6 +247,35 @@ await new Promise(done => server.close(done));
 
 console.log(`\nбраузер: ${checksPassed}/${checks} проверок зелёные по ${files.length - failedSuites}/${files.length} сюжеткам` +
   (flakesRed ? ` (красных флейков вне вердикта: ${flakesRed})` : ''));
+
+const report = {
+  runner: 'ci-browser',
+  startedAt: runStartedAt,
+  finishedAt: new Date().toISOString(),
+  durationMs: Date.now() - runStartedMs,
+  baseUrl,
+  level: levelArg,
+  fast,
+  flakes,
+  suites: files,
+  summary: {
+    suitesTotal: files.length,
+    suitesFailed: failedSuites,
+    suitesPassed: files.length - failedSuites,
+    checksTotal: checks,
+    checksPassed,
+    flakyRedChecks: flakesRed,
+  },
+  results: suiteReports,
+};
+
+if (jsonReportPath) {
+  const absReport = resolve(jsonReportPath);
+  await mkdir(dirname(absReport), { recursive: true });
+  await writeFile(absReport, JSON.stringify(report, null, 2).replace(/\r\n/g, '\n') + '\n', 'utf8');
+  console.log(`json report: ${absReport}`);
+}
+
 if (failedSuites) process.exitCode = 1;
 // Страховка от висящих дескрипторов (keep-alive/stdio браузера): итог уже напечатан,
 // ждать дольше смысла нет. unref, чтобы не держать цикл, если выход штатный.

@@ -1,0 +1,168 @@
+{
+  "profile": "hill_town",
+  "seed": 78,
+  "generatorVersion": "0.56.0",
+  "determinismChecked": true,
+  "deterministic": true,
+  "reportHash": "e44443c1bde39b0891d549b9b857fe9cba1f3ddd4e9bb0152c7b149dce810f46",
+  "rho": 0.9091,
+  "rhoOk": true,
+  "summary": {
+    "errors": 0,
+    "warnings": 8,
+    "repairs": 14,
+    "drops": 1
+  },
+  "rules": {
+    "errors": 0,
+    "warnings": 1,
+    "infos": 0
+  },
+  "metrics": {
+    "partial": true,
+    "counts": {
+      "roads": 167,
+      "roadNodes": 135,
+      "districts": 39,
+      "parcels": 2179,
+      "reservedParcels": 121,
+      "buildings": 403,
+      "enterableBuildings": 81,
+      "props": 360,
+      "lights": 8,
+      "rivers": 0,
+      "lakes": 0
+    },
+    "graph": {
+      "nodes": 135,
+      "edges": 167,
+      "components": 1,
+      "largestComponent": 135,
+      "deadEnds": 35,
+      "deadEndRatio": 0.259259,
+      "avgDegree": 2.474074,
+      "gamma": 0.418546
+    },
+    "roads": {
+      "totalLength": 12135.68,
+      "lengthByType": {
+        "arterial": 200,
+        "local": 11935.68
+      },
+      "shareByType": {
+        "arterial": 0.01648,
+        "local": 0.98352
+      },
+      "maxSlope": 0.184602,
+      "slopeByClass": {
+        "arterial": {
+          "count": 1,
+          "maxSlope": 0.105311,
+          "overPolicy": 1,
+          "overAbsolute": 0
+        },
+        "local": {
+          "count": 166,
+          "maxSlope": 0.184602,
+          "overPolicy": 22,
+          "overAbsolute": 0
+        }
+      },
+      "slopePolicy": {
+        "highway": 6,
+        "arterial": 8,
+        "collector": 10,
+        "local": 12
+      },
+      "classPolicyViolations": 23,
+      "classPolicyOk": 144,
+      "overAbsolute": 0,
+      "version": 2
+    },
+    "gameplay": {
+      "spawnToRoad": 0,
+      "exitToRoad": 0,
+      "enterableShare": 0.200993,
+      "enterableTarget": 0.2
+    },
+    "terrain": {
+      "slope": {
+        "step": 16,
+        "grid": 80,
+        "cells": 6400,
+        "maxSlope": 1.038127,
+        "share": {
+          "flat_lt3": 0.383437,
+          "gentle_3_8": 0.310469,
+          "moderate_8_15": 0.230781,
+          "steep_15_25": 0.0675,
+          "very_steep_gt25": 0.007813
+        },
+        "counts": {
+          "flat_lt3": 2454,
+          "gentle_3_8": 1987,
+          "moderate_8_15": 1477,
+          "steep_15_25": 432,
+          "very_steep_gt25": 50
+        }
+      },
+      "crossings": 0,
+      "reservations": 12,
+      "landmarks": 4,
+      "waterBuffers": 0,
+      "floodplains": 0
+    },
+    "parcels": {
+      "reservedShare": 0.05553,
+      "byDistrictCount": {
+        "district_0_0_0": 200,
+        "district_0_0_1": 200,
+        "district_1_0": 36,
+        "district_2_0": 49,
+        "district_3_0_0": 66,
+        "district_3_0_1": 66,
+        "district_0_1_0": 32,
+        "district_0_1_1": 32,
+        "district_1_1_0": 32,
+        "district_1_1_1": 32,
+        "district_2_1_0": 98,
+        "district_2_1_1": 98,
+        "district_3_1_0": 136,
+        "district_3_1_1": 136,
+        "district_0_2": 64,
+        "district_1_2_00": 16,
+        "district_1_2_01": 16,
+        "district_1_2_10": 16,
+        "district_1_2_11": 16,
+        "district_2_2_0": 66,
+        "district_2_2_1": 66,
+        "district_3_2_0": 105,
+        "district_3_2_1": 105,
+        "district_0_3_0": 105,
+        "district_0_3_1": 105,
+        "district_1_3_0": 21,
+        "district_1_3_1": 21,
+        "district_2_3_000": 18,
+        "district_2_3_001": 18,
+        "district_2_3_010": 18,
+        "district_2_3_011": 18,
+        "district_2_3_100": 18,
+        "district_2_3_101": 18,
+        "district_2_3_110": 18,
+        "district_2_3_111": 18,
+        "district_3_3_00": 25,
+        "district_3_3_01": 25,
+        "district_3_3_10": 25,
+        "district_3_3_11": 25
+      }
+    },
+    "stream": {
+      "chunk": 256,
+      "keep": 1,
+      "aheadMin": 200,
+      "aheadMax": 900,
+      "budgetMs": 120,
+      "dividesPlate": true
+    }
+  }
+}

@@ -64,6 +64,7 @@ function makeSynthetic(profileId, seed, opts) {
 }
 
 function executeTask(task) {
+  const startedMs = Date.now();
   const { profileId, seed, generatorVersion, singleRun, opts } = task;
   const raw = makeSynthetic(profileId, seed, opts);
   let r1, r2 = null;
@@ -71,7 +72,7 @@ function executeTask(task) {
     r1 = runCitygen(structuredClone(raw));
     if (!singleRun) r2 = runCitygen(structuredClone(raw));
   } catch (e) {
-    return { profile: profileId, seed, generatorVersion, determinismChecked: !singleRun, error: String(e?.stack || e), _exception: true };
+    return { profile: profileId, seed, generatorVersion, determinismChecked: !singleRun, error: String(e?.stack || e), _exception: true, durationMs: Date.now() - startedMs };
   }
   const h1 = createHash('sha256').update(r1.reportJson).digest('hex');
   const h2 = r2 ? createHash('sha256').update(r2.reportJson).digest('hex') : h1;
@@ -100,6 +101,7 @@ function executeTask(task) {
       parcels: m.parcels ?? null,
       stream: m.stream ?? null,
     },
+    durationMs: Date.now() - startedMs,
   };
 }
 
@@ -205,6 +207,8 @@ const opts = { size, chunk, generatorVersion, transport };
 const runs = new Array(tasks.length);
 let hardFailures = 0;
 let aborted = false;
+const seriesStartedAt = new Date().toISOString();
+const seriesStartedMs = Date.now();
 
 function processResult(idx, run) {
   runs[idx] = run;
@@ -222,7 +226,7 @@ if (concurrency <= 1) {
     const t = tasks[idx];
     if (!DEFAULT_CITY_PROFILES[t.profileId]) {
       console.error(`unknown profile: ${t.profileId}`);
-      const run = { profile: t.profileId, seed: t.seed, generatorVersion, error: `unknown profile: ${t.profileId}` };
+      const run = { profile: t.profileId, seed: t.seed, generatorVersion, error: `unknown profile: ${t.profileId}`, durationMs: 0 };
       processResult(idx, run);
       if (failFast) { aborted = true; break outer; }
       continue;
@@ -242,7 +246,7 @@ if (concurrency <= 1) {
         const t = tasks[idx];
         if (!DEFAULT_CITY_PROFILES[t.profileId]) {
           console.error(`unknown profile: ${t.profileId}`);
-          const run = { profile: t.profileId, seed: t.seed, generatorVersion, error: `unknown profile: ${t.profileId}` };
+          const run = { profile: t.profileId, seed: t.seed, generatorVersion, error: `unknown profile: ${t.profileId}`, durationMs: 0 };
           processResult(idx, run);
           if (failFast) { aborted = true; }
           continue;
@@ -261,10 +265,10 @@ if (concurrency <= 1) {
         };
         w.on('message', (msg) => {
           if (msg && msg.ok) done(msg.result);
-          else done({ profile: t.profileId, seed: t.seed, generatorVersion, determinismChecked: !singleRun, error: String(msg?.error || 'worker error'), _exception: true });
+          else done({ profile: t.profileId, seed: t.seed, generatorVersion, determinismChecked: !singleRun, error: String(msg?.error || 'worker error'), _exception: true, durationMs: 0 });
         });
-        w.on('error', (err) => done({ profile: t.profileId, seed: t.seed, generatorVersion, determinismChecked: !singleRun, error: String(err?.stack || err), _exception: true }));
-        w.on('exit', (code) => { if (code !== 0) done({ profile: t.profileId, seed: t.seed, generatorVersion, determinismChecked: !singleRun, error: `worker exited with code ${code}`, _exception: true }); });
+        w.on('error', (err) => done({ profile: t.profileId, seed: t.seed, generatorVersion, determinismChecked: !singleRun, error: String(err?.stack || err), _exception: true, durationMs: 0 }));
+        w.on('exit', (code) => { if (code !== 0) done({ profile: t.profileId, seed: t.seed, generatorVersion, determinismChecked: !singleRun, error: `worker exited with code ${code}`, _exception: true, durationMs: 0 }); });
       }
       if ((aborted || next >= tasks.length) && active === 0) resolveAll();
     };
@@ -281,6 +285,7 @@ for (const p of profiles) {
   const detCheckedRuns = rs.filter(r => r.determinismChecked !== false);
   const detOk = detCheckedRuns.filter(r => r.deterministic === true).length;
   const errRuns = rs.filter(r => (r.summary?.errors ?? 0) > 0 || (r.rules?.errors ?? 0) > 0 || r.deterministic === false).length;
+  const profTimed = runs.filter(r => r && !r.skipped && r.profile === p);
   byProfile[p] = {
     runs: rs.length,
     determinismCheckedRuns: detCheckedRuns.length,
@@ -307,26 +312,47 @@ for (const p of profiles) {
       const a = agg(vals);
       return a ? { ...a, okCount: vals.filter(v => v >= 0.6).length, missing: rs.length - vals.length } : null;
     })(),
+    taskDurationMs: agg(profTimed.map(r => r.durationMs ?? NaN)),
   };
 }
 
+const timedRuns = runs.filter(r => r && !r.skipped);
+const taskTimings = timedRuns.map(r => ({
+  profile: r.profile,
+  seed: r.seed,
+  durationMs: r.durationMs ?? null,
+  hardFailure: isHardFailure(r),
+  error: !!(r && (r.error || r._exception)),
+  deterministic: r?.deterministic ?? null,
+}));
+const totalDurationMs = Date.now() - seriesStartedMs;
 const summary = {
   generatorVersion,
   profiles,
   seeds,
   seedCount: seeds.length,
-  runs: runs.filter(r => r && !r.skipped).length,
+  runs: timedRuns.length,
   hardFailures,
   transport,
   singleRun,
   failFast,
   aborted,
   concurrency,
+  startedAt: seriesStartedAt,
+  finishedAt: new Date().toISOString(),
+  totalDurationMs,
+  timing: {
+    taskDurationMs: agg(timedRuns.map(r => r.durationMs ?? NaN)),
+    tasksTimed: timedRuns.filter(r => Number.isFinite(r.durationMs)).length,
+  },
+  taskTimings,
   byProfile,
 };
 
 if (outDir) {
-  writeFileSync(join(resolve(outDir), 'series-summary.json'), JSON.stringify(summary, null, 2).replace(/\r\n/g, '\n') + '\n', 'utf8');
+  const out = resolve(outDir);
+  writeFileSync(join(out, 'series-summary.json'), JSON.stringify(summary, null, 2).replace(/\r\n/g, '\n') + '\n', 'utf8');
+  writeFileSync(join(out, 'series-timings.json'), JSON.stringify({ startedAt: seriesStartedAt, finishedAt: summary.finishedAt, totalDurationMs, tasks: taskTimings, byProfileTiming: Object.fromEntries(Object.entries(byProfile).map(([p, v]) => [p, v.taskDurationMs])) }, null, 2).replace(/\r\n/g, '\n') + '\n', 'utf8');
 }
 if (jsonOut) console.log(JSON.stringify(summary, null, 2));
 else {

@@ -1,32 +1,44 @@
 name: ci
 
-# Два джоба, ровно как два рантайма проекта:
-#   node    — пайплайн «бриф → модуль» и арифметика парсера, зависимостей нет;
-#   browser — движок Three.js в браузере, потому что `src/json-map.js:1` импортирует
-#             'three' и npm-зависимостей в репозитории не водится (AGENTS.md, «База»).
-# Браузерный джоб берёт playwright из официального образа, а не из package.json:
-# своего package.json в проекте нет, и CI это правило не отменяет. Сам образ,
-# однако, npm-пакета не несёт — его Dockerfile (utils/docker/Dockerfile.noble)
-# ставит только браузеры в /ms-playwright и вычищает сборочный каталог вместе с
-# пакетом. Поэтому шаг ниже доустанавливает пакет в глобальный префикс
-# контейнера: версия обязана совпадать с тегом образа (ревизии браузеров в
-# /ms-playwright соответствуют ровно ей), а PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD
-# не даёт постустановке тянуть их повторно.
-
 on:
   push:
   pull_request:
   workflow_dispatch:
+    inputs:
+      run_full_series:
+        description: 'Run full 100x3 seed-series shards (plain+transport)'
+        required: false
+        default: 'true'
+        type: choice
+        options: ['true', 'false']
+      run_browser:
+        description: 'Run browser test shards'
+        required: false
+        default: 'true'
+        type: choice
+        options: ['true', 'false']
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
 
 jobs:
-  node:
+  node-fast:
+    name: node / fast checks
     runs-on: ubuntu-latest
+    timeout-minutes: 20
     steps:
       - uses: actions/checkout@v4
 
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
+
+      - name: Node version
+        run: node --version
 
       - name: Приёмка закоммиченных брифов (детерминизм, warnings, байты, атрибуция)
         run: node tools/check-levels.mjs
@@ -43,36 +55,338 @@ jobs:
       - name: Сюита разрезки на чанки (этап 1 открытого мира)
         run: node tools/chunk.test.mjs
 
-      - name: Сюита citygen v4 (IR/стадии, детерминизм/repair/report)
-        run: node --test tools/citygen.test.mjs
-
-      - name: Регрессия citygen эталонов/базовых снимков (R0.4/R6)
-        run: node tools/citygen-etalon-check.mjs
-
       - name: Сюита модели визуализатора уровней
         run: node --test tools/visualizer/model.test.mjs
 
       - name: Сюита кодека и запечённой земли (TASK-004)
         run: node tools/ground-bake.test.mjs
 
-  browser:
+      - name: Upload node-fast logs on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: node-fast-failure-${{ github.run_attempt }}
+          path: |
+            .ai/state/citygen-baselines/**
+            .ai/state/citygen-etalons/**
+          if-no-files-found: ignore
+          retention-days: 7
+
+  node-citygen:
+    name: node / citygen unit tests
     runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Сюита citygen v4 (IR/стадии, детерминизм/repair/report)
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p ci-artifacts
+          start=$(date +%s%3N)
+          set +e
+          node --test --test-reporter=spec --test-reporter-destination=stdout --test-reporter=junit --test-reporter-destination=ci-artifacts/citygen.junit.xml tools/citygen.test.mjs
+          code=$?
+          set -e
+          end=$(date +%s%3N)
+          dur=$((end-start))
+          echo "{\"suite\":\"tools/citygen.test.mjs\",\"exitCode\":$code,\"durationMs\":$dur}" > ci-artifacts/node-citygen-timing.json
+          exit $code
+
+      - name: Upload citygen test artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: node-citygen-report
+          path: ci-artifacts/**
+          if-no-files-found: warn
+          retention-days: 7
+
+  node-etalon:
+    name: node / etalon regression
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Регрессия citygen эталонов/базовых снимков (R0.4/R6)
+        run: node tools/citygen-etalon-check.mjs
+
+  build-rebuild:
+    name: rebuild / build-level --check (${{ matrix.group }})
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - group: levels-07-08-09
+            files: "src/levels/level-07.json src/levels/level-08.json src/levels/level-09.json"
+          - group: levels-10-15-16
+            files: "src/levels/level-10.json src/levels/level-15.json src/levels/level-16.json"
+          - group: levels-17-18-19
+            files: "src/levels/level-17.json src/levels/level-18.json src/levels/level-19.json"
+          - group: levels-20-21-22
+            files: "src/levels/level-20.json src/levels/level-21.json src/levels/level-22.json"
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Пересборка/проверка детерминизма (${{ matrix.group }})
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p ci-artifacts
+          status=0
+          for f in ${{ matrix.files }}; do
+            echo "=== build-level --check $f ==="
+            start=$(date +%s%3N)
+            if node tools/build-level.mjs --check "$f"; then
+              result=ok
+            else
+              result=fail
+              status=1
+            fi
+            end=$(date +%s%3N)
+            dur=$((end-start))
+            echo "{\"file\":\"$f\",\"result\":\"$result\",\"durationMs\":$dur}" >> ci-artifacts/build-check-${{ matrix.group }}.jsonl
+            echo "result=$result durationMs=$dur"
+          done
+          exit $status
+
+      - name: Upload build-check timings
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-check-${{ matrix.group }}
+          path: ci-artifacts/build-check-${{ matrix.group }}.jsonl
+          if-no-files-found: warn
+          retention-days: 7
+
+  browser:
+    name: browser / ${{ matrix.group }}
+    runs-on: ubuntu-latest
+    if: github.event_name != 'workflow_dispatch' || inputs.run_browser == 'true'
+    timeout-minutes: 45
     container:
       image: mcr.microsoft.com/playwright:v1.49.0-noble
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - group: open-world
+            suites: "open-world"
+          - group: level-contract-lifecycle
+            suites: "level-contract,level-lifecycle"
+          - group: stream-vehicle-rotated-solid
+            suites: "stream-map,streaming-build,vehicle,rotated-solid"
+          - group: alien
+            suites: "alien-climb,alien-enemy"
+          - group: misc
+            suites: "night-lights,relief-city,relief-terrain,rotated-house,rotated-road,rotated-sweep"
     steps:
       - uses: actions/checkout@v4
 
       - name: Версия Node в образе
         run: node --version
 
-      - name: Ставка npm-пакета playwright (образ несёт только браузеры)
+      - name: Установка npm-пакета playwright (образ несёт только браузеры)
         env:
           PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: '1'
         run: npm install --global --no-audit --no-fund playwright@1.49.0
 
-      - name: Браузерные автотесты (каждая сюита в свежей странице)
-        # Все проверки блокирующие: каждая сюита идёт в своей свежей странице,
-        # поэтому бюджеты не смешиваются между файлами.
+      - name: Браузерные автотесты (${{ matrix.group }})
+        shell: bash
         run: |
-          NODE_PATH="$(npm root --global)" \
-            node tools/ci-browser.mjs
+          set -euo pipefail
+          mkdir -p ci-artifacts
+          start=$(date +%s%3N)
+          set +e
+          NODE_PATH="$(npm root --global)" node tools/ci-browser.mjs \
+            --suites "${{ matrix.suites }}" \
+            --json-report "ci-artifacts/browser-${{ matrix.group }}-report.json" \
+            2>&1 | tee ci-artifacts/browser-${{ matrix.group }}.log
+          code=${PIPESTATUS[0]}
+          set -e
+          end=$(date +%s%3N)
+          dur=$((end-start))
+          echo "{\"group\":\"${{ matrix.group }}\",\"suites\":\"${{ matrix.suites }}\",\"exitCode\":$code,\"durationMs\":$dur,\"jsonReport\":\"browser-${{ matrix.group }}-report.json\"}" > ci-artifacts/browser-${{ matrix.group }}.json
+          exit $code
+
+      - name: Upload browser artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: browser-${{ matrix.group }}
+          path: ci-artifacts/browser-${{ matrix.group }}.*
+          if-no-files-found: warn
+          retention-days: 7
+
+  seed-series:
+    name: series / ${{ matrix.mode }} / ${{ matrix.profile }}
+    runs-on: ubuntu-latest
+    if: github.event_name != 'workflow_dispatch' || inputs.run_full_series == 'true'
+    timeout-minutes: 60
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - mode: plain
+            profile: river_trade
+            transport_flag: ""
+          - mode: plain
+            profile: hill_town
+            transport_flag: ""
+          - mode: plain
+            profile: railway_industrial
+            transport_flag: ""
+          - mode: transport
+            profile: river_trade
+            transport_flag: "--transport"
+          - mode: transport
+            profile: hill_town
+            transport_flag: "--transport"
+          - mode: transport
+            profile: railway_industrial
+            transport_flag: "--transport"
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Seed series ${{ matrix.mode }} ${{ matrix.profile }} (100 seeds)
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p ci-artifacts/series-${{ matrix.mode }}-${{ matrix.profile }}
+          start=$(date +%s%3N)
+          node tools/citygen-seed-series.mjs \
+            --profiles "${{ matrix.profile }}" \
+            --count 100 \
+            --concurrency 2 \
+            ${{ matrix.transport_flag }} \
+            --out "ci-artifacts/series-${{ matrix.mode }}-${{ matrix.profile }}" \
+            2>&1 | tee "ci-artifacts/series-${{ matrix.mode }}-${{ matrix.profile }}.log"
+          end=$(date +%s%3N)
+          dur=$((end-start))
+          echo "{\"mode\":\"${{ matrix.mode }}\",\"profile\":\"${{ matrix.profile }}\",\"durationMs\":$dur}" > "ci-artifacts/series-${{ matrix.mode }}-${{ matrix.profile }}-runner.json"
+
+      - name: Upload series artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: series-${{ matrix.mode }}-${{ matrix.profile }}
+          path: |
+            ci-artifacts/series-${{ matrix.mode }}-${{ matrix.profile }}/**
+            ci-artifacts/series-${{ matrix.mode }}-${{ matrix.profile }}.log
+            ci-artifacts/series-${{ matrix.mode }}-${{ matrix.profile }}-runner.json
+          if-no-files-found: warn
+          retention-days: 14
+
+  report:
+    name: aggregate / report
+    runs-on: ubuntu-latest
+    needs: [node-fast, node-citygen, node-etalon, build-rebuild, browser, seed-series]
+    if: always()
+    timeout-minutes: 10
+    steps:
+      - name: Download all artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: ci-artifacts
+          merge-multiple: false
+
+      - name: Generate aggregate summary
+        shell: bash
+        run: |
+          set -euo pipefail
+          echo "# CI aggregate report" > ci-artifacts/aggregate-summary.md
+          echo "" >> ci-artifacts/aggregate-summary.md
+          echo "- run: ${{ github.run_id }} attempt ${{ github.run_attempt }}" >> ci-artifacts/aggregate-summary.md
+          echo "- sha: ${{ github.sha }}" >> ci-artifacts/aggregate-summary.md
+          echo "- ref: ${{ github.ref }}" >> ci-artifacts/aggregate-summary.md
+          echo "- event: ${{ github.event_name }}" >> ci-artifacts/aggregate-summary.md
+          echo "" >> ci-artifacts/aggregate-summary.md
+
+          echo "## Job results" >> ci-artifacts/aggregate-summary.md
+          echo "- node-fast: ${{ needs.node-fast.result }}" >> ci-artifacts/aggregate-summary.md
+          echo "- node-citygen: ${{ needs.node-citygen.result }}" >> ci-artifacts/aggregate-summary.md
+          echo "- node-etalon: ${{ needs.node-etalon.result }}" >> ci-artifacts/aggregate-summary.md
+          echo "- build-rebuild: ${{ needs.build-rebuild.result }}" >> ci-artifacts/aggregate-summary.md
+          echo "- browser: ${{ needs.browser.result }}" >> ci-artifacts/aggregate-summary.md
+          echo "- seed-series: ${{ needs.seed-series.result }}" >> ci-artifacts/aggregate-summary.md
+          echo "" >> ci-artifacts/aggregate-summary.md
+
+          echo "## Artifacts" >> ci-artifacts/aggregate-summary.md
+          find ci-artifacts -type f | sort >> ci-artifacts/aggregate-summary.md || true
+
+          echo "" >> ci-artifacts/aggregate-summary.md
+          echo "## Series summaries (if present)" >> ci-artifacts/aggregate-summary.md
+          for f in $(find ci-artifacts -name 'series-summary.json' 2>/dev/null | sort); do
+            echo "### $f" >> ci-artifacts/aggregate-summary.md
+            echo '```json' >> ci-artifacts/aggregate-summary.md
+            cat "$f" >> ci-artifacts/aggregate-summary.md || true
+            echo '```' >> ci-artifacts/aggregate-summary.md
+          done
+
+          echo "" >> ci-artifacts/aggregate-summary.md
+          echo "## Build/browser/node timing JSON (if present)" >> ci-artifacts/aggregate-summary.md
+          for f in $(find ci-artifacts -name 'build-check-*.jsonl' -o -name 'browser-*.json' -o -name '*-runner.json' -o -name 'node-*-timing.json' 2>/dev/null | sort); do
+            echo "### $f" >> ci-artifacts/aggregate-summary.md
+            echo '```' >> ci-artifacts/aggregate-summary.md
+            cat "$f" >> ci-artifacts/aggregate-summary.md || true
+            echo '```' >> ci-artifacts/aggregate-summary.md
+          done
+
+          if [ -n "${GITHUB_STEP_SUMMARY:-}" ]; then
+            cat ci-artifacts/aggregate-summary.md >> "$GITHUB_STEP_SUMMARY" || true
+          fi
+
+      - name: Upload aggregate report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ci-aggregate-report
+          path: ci-artifacts/aggregate-summary.md
+          if-no-files-found: warn
+          retention-days: 14
+
+      - name: Fail if any required job failed
+        if: always()
+        shell: bash
+        run: |
+          fail=0
+          check() {
+            local name="$1"
+            local result="$2"
+            # skipped is allowed when job was intentionally disabled via workflow_dispatch inputs
+            if [ "$result" != "success" ] && [ "$result" != "skipped" ]; then
+              echo "Job failed: $name ($result)"
+              fail=1
+            fi
+          }
+          check node-fast "${{ needs.node-fast.result }}"
+          check node-citygen "${{ needs.node-citygen.result }}"
+          check node-etalon "${{ needs.node-etalon.result }}"
+          check build-rebuild "${{ needs.build-rebuild.result }}"
+          check browser "${{ needs.browser.result }}"
+          check seed-series "${{ needs.seed-series.result }}"
+          if [ "$fail" -ne 0 ]; then
+            echo "One or more required jobs failed."
+            exit 1
+          fi
+          echo "All required jobs succeeded (or were intentionally skipped)."

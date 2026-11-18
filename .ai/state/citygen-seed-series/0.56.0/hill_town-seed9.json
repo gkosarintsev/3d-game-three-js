@@ -1,0 +1,154 @@
+{
+  "profile": "hill_town",
+  "seed": 9,
+  "generatorVersion": "0.56.0",
+  "determinismChecked": true,
+  "deterministic": true,
+  "reportHash": "dfce2df329a9876bd9a933aaee0e71bc07ffa180842392fa3fad77788670fb30",
+  "rho": 0.9391,
+  "rhoOk": true,
+  "summary": {
+    "errors": 0,
+    "warnings": 11,
+    "repairs": 3,
+    "drops": 0
+  },
+  "rules": {
+    "errors": 0,
+    "warnings": 0,
+    "infos": 0
+  },
+  "metrics": {
+    "partial": true,
+    "counts": {
+      "roads": 0,
+      "roadNodes": 0,
+      "districts": 44,
+      "parcels": 2223,
+      "reservedParcels": 113,
+      "buildings": 409,
+      "enterableBuildings": 82,
+      "props": 360,
+      "lights": 0,
+      "rivers": 0,
+      "lakes": 0
+    },
+    "graph": {
+      "nodes": 0,
+      "edges": 0,
+      "components": 0,
+      "largestComponent": 0,
+      "deadEnds": 0,
+      "deadEndRatio": null,
+      "avgDegree": null,
+      "gamma": null
+    },
+    "roads": {
+      "totalLength": 0,
+      "lengthByType": {},
+      "shareByType": {},
+      "maxSlope": 0,
+      "slopeByClass": {},
+      "slopePolicy": {
+        "highway": 6,
+        "arterial": 8,
+        "collector": 10,
+        "local": 12
+      },
+      "classPolicyViolations": 0,
+      "classPolicyOk": 0,
+      "overAbsolute": 0,
+      "version": 2
+    },
+    "gameplay": {
+      "spawnToRoad": null,
+      "exitToRoad": null,
+      "enterableShare": 0.200489,
+      "enterableTarget": 0.2
+    },
+    "terrain": {
+      "slope": {
+        "step": 16,
+        "grid": 80,
+        "cells": 6400,
+        "maxSlope": 1.264003,
+        "share": {
+          "flat_lt3": 0.102344,
+          "gentle_3_8": 0.317344,
+          "moderate_8_15": 0.446094,
+          "steep_15_25": 0.086719,
+          "very_steep_gt25": 0.0475
+        },
+        "counts": {
+          "flat_lt3": 655,
+          "gentle_3_8": 2031,
+          "moderate_8_15": 2855,
+          "steep_15_25": 555,
+          "very_steep_gt25": 304
+        }
+      },
+      "crossings": 0,
+      "reservations": 12,
+      "landmarks": 4,
+      "waterBuffers": 0,
+      "floodplains": 0
+    },
+    "parcels": {
+      "reservedShare": 0.050832,
+      "byDistrictCount": {
+        "district_0_0_00": 25,
+        "district_0_0_01": 25,
+        "district_0_0_10": 25,
+        "district_0_0_11": 25,
+        "district_1_0_0": 105,
+        "district_1_0_1": 105,
+        "district_2_0_0": 200,
+        "district_2_0_1": 200,
+        "district_3_0_00": 64,
+        "district_3_0_010": 32,
+        "district_3_0_011": 32,
+        "district_3_0_10": 64,
+        "district_3_0_11": 64,
+        "district_0_1_0": 32,
+        "district_0_1_1": 32,
+        "district_1_1": 36,
+        "district_2_1_0": 98,
+        "district_2_1_10": 49,
+        "district_2_1_11": 49,
+        "district_3_1_000": 9,
+        "district_3_1_001": 9,
+        "district_3_1_010": 9,
+        "district_3_1_011": 9,
+        "district_3_1_10": 18,
+        "district_3_1_11": 18,
+        "district_3_1_200": 9,
+        "district_3_1_201": 9,
+        "district_3_1_21": 18,
+        "district_3_1_30": 18,
+        "district_3_1_31": 18,
+        "district_0_2": 64,
+        "district_1_2": 49,
+        "district_2_2_0": 66,
+        "district_2_2_1": 66,
+        "district_3_2_0": 105,
+        "district_3_2_1": 105,
+        "district_0_3_0": 21,
+        "district_0_3_1": 21,
+        "district_1_3_0": 66,
+        "district_1_3_1": 66,
+        "district_2_3_0": 28,
+        "district_2_3_1": 28,
+        "district_3_3_0": 66,
+        "district_3_3_1": 66
+      }
+    },
+    "stream": {
+      "chunk": 256,
+      "keep": 1,
+      "aheadMin": 200,
+      "aheadMax": 900,
+      "budgetMs": 120,
+      "dividesPlate": true
+    }
+  }
+}

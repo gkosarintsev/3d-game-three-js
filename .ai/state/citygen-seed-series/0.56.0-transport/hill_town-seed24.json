@@ -1,0 +1,173 @@
+{
+  "profile": "hill_town",
+  "seed": 24,
+  "generatorVersion": "0.56.0",
+  "determinismChecked": true,
+  "deterministic": true,
+  "reportHash": "156b6d77b20977dda14213b0d72e365c3defacc0ba8de55533ee2354d53aad1c",
+  "rho": 0.8939,
+  "rhoOk": true,
+  "summary": {
+    "errors": 0,
+    "warnings": 11,
+    "repairs": 11,
+    "drops": 1
+  },
+  "rules": {
+    "errors": 0,
+    "warnings": 1,
+    "infos": 0
+  },
+  "metrics": {
+    "partial": true,
+    "counts": {
+      "roads": 162,
+      "roadNodes": 133,
+      "districts": 44,
+      "parcels": 2257,
+      "reservedParcels": 180,
+      "buildings": 405,
+      "enterableBuildings": 81,
+      "props": 360,
+      "lights": 8,
+      "rivers": 0,
+      "lakes": 0
+    },
+    "graph": {
+      "nodes": 133,
+      "edges": 162,
+      "components": 1,
+      "largestComponent": 133,
+      "deadEnds": 28,
+      "deadEndRatio": 0.210526,
+      "avgDegree": 2.43609,
+      "gamma": 0.412214
+    },
+    "roads": {
+      "totalLength": 12131.46,
+      "lengthByType": {
+        "arterial": 200,
+        "local": 11931.46
+      },
+      "shareByType": {
+        "arterial": 0.016486,
+        "local": 0.983514
+      },
+      "maxSlope": 0.300268,
+      "slopeByClass": {
+        "arterial": {
+          "count": 1,
+          "maxSlope": 0.168317,
+          "overPolicy": 1,
+          "overAbsolute": 0
+        },
+        "local": {
+          "count": 161,
+          "maxSlope": 0.300268,
+          "overPolicy": 49,
+          "overAbsolute": 0
+        }
+      },
+      "slopePolicy": {
+        "highway": 6,
+        "arterial": 8,
+        "collector": 10,
+        "local": 12
+      },
+      "classPolicyViolations": 50,
+      "classPolicyOk": 112,
+      "overAbsolute": 0,
+      "version": 2
+    },
+    "gameplay": {
+      "spawnToRoad": 0,
+      "exitToRoad": 0,
+      "enterableShare": 0.2,
+      "enterableTarget": 0.2
+    },
+    "terrain": {
+      "slope": {
+        "step": 16,
+        "grid": 80,
+        "cells": 6400,
+        "maxSlope": 1.204596,
+        "share": {
+          "flat_lt3": 0.349687,
+          "gentle_3_8": 0.309063,
+          "moderate_8_15": 0.20125,
+          "steep_15_25": 0.100469,
+          "very_steep_gt25": 0.039531
+        },
+        "counts": {
+          "flat_lt3": 2238,
+          "gentle_3_8": 1978,
+          "moderate_8_15": 1288,
+          "steep_15_25": 643,
+          "very_steep_gt25": 253
+        }
+      },
+      "crossings": 0,
+      "reservations": 12,
+      "landmarks": 4,
+      "waterBuffers": 0,
+      "floodplains": 0
+    },
+    "parcels": {
+      "reservedShare": 0.079752,
+      "byDistrictCount": {
+        "district_0_0_00": 25,
+        "district_0_0_010": 15,
+        "district_0_0_011": 15,
+        "district_0_0_100": 15,
+        "district_0_0_101": 15,
+        "district_0_0_110": 15,
+        "district_0_0_1110": 9,
+        "district_0_0_1111": 9,
+        "district_1_0_0": 105,
+        "district_1_0_1": 105,
+        "district_2_0_0": 200,
+        "district_2_0_1": 200,
+        "district_3_0_0": 136,
+        "district_3_0_1": 136,
+        "district_0_1_0": 32,
+        "district_0_1_10": 16,
+        "district_0_1_11": 16,
+        "district_1_1_00": 9,
+        "district_1_1_01": 9,
+        "district_1_1_1": 18,
+        "district_2_1_0": 98,
+        "district_2_1_1": 98,
+        "district_3_1_000": 18,
+        "district_3_1_001": 18,
+        "district_3_1_010": 18,
+        "district_3_1_011": 18,
+        "district_3_1_100": 18,
+        "district_3_1_101": 18,
+        "district_3_1_110": 18,
+        "district_3_1_111": 18,
+        "district_0_2": 64,
+        "district_1_2": 49,
+        "district_2_2_0": 66,
+        "district_2_2_1": 66,
+        "district_3_2_0": 105,
+        "district_3_2_1": 105,
+        "district_0_3_0": 21,
+        "district_0_3_1": 21,
+        "district_1_3_0": 66,
+        "district_1_3_1": 66,
+        "district_2_3_0": 28,
+        "district_2_3_1": 28,
+        "district_3_3_0": 66,
+        "district_3_3_1": 66
+      }
+    },
+    "stream": {
+      "chunk": 256,
+      "keep": 1,
+      "aheadMin": 200,
+      "aheadMax": 900,
+      "budgetMs": 120,
+      "dividesPlate": true
+    }
+  }
+}
