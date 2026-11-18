@@ -1,4 +1,4 @@
-/**
+﻿/**
  * Stage 4: buildings and large structures (TASK-006, incremental MVP).
  * Places simple deterministic buildings on parcels by district profile, emitting
  * engine-compatible building definitions (no new primitives). Static only.
@@ -79,7 +79,27 @@ function clampFootprintToParcel(fp, parcelAabb, margin = 0.75) {
   return translateFootprint(fp, +dx.toFixed(3), +dz.toFixed(3));
 }
 
-function finalizeByAccess(fp, cx, cz, p, maxW, maxD, rng) {
+function clampFootprintToWorld(fp, worldHalf, margin = 0.75) {
+  if (!Number.isFinite(worldHalf) || worldHalf <= 0) return fp;
+  const limit = Math.max(0, worldHalf - margin);
+  let dx = 0, dz = 0;
+  for (let iter = 0; iter < 2; iter++) {
+    let fMinX = Infinity, fMaxX = -Infinity, fMinZ = Infinity, fMaxZ = -Infinity;
+    for (const pt of fp) {
+      const x = pt.x + dx, z = pt.z + dz;
+      if (x < fMinX) fMinX = x; if (x > fMaxX) fMaxX = x;
+      if (z < fMinZ) fMinZ = z; if (z > fMaxZ) fMaxZ = z;
+    }
+    if (!Number.isFinite(fMinX)) break;
+    if (fMinX < -limit) dx += -limit - fMinX;
+    else if (fMaxX > limit) dx += limit - fMaxX;
+    if (fMinZ < -limit) dz += -limit - fMinZ;
+    else if (fMaxZ > limit) dz += limit - fMaxZ;
+  }
+  return translateFootprint(fp, +dx.toFixed(3), +dz.toFixed(3));
+}
+
+function finalizeByAccess(fp, cx, cz, p, maxW, maxD, rng, worldHalf = Infinity) {
   const access = p?.access ?? null;
   if (!access || !access.edge) return { fp, rotation: 0 };
   const edge = access.edge;
@@ -87,7 +107,7 @@ function finalizeByAccess(fp, cx, cz, p, maxW, maxD, rng) {
   const rot = rotateFootprint(fp, cx, cz, yaw);
 
   // R4.3 §9.5: линия застройки — отступ от улицы (границы участка со стороны доступа) внутрь участка.
-  // Выравниваем фасад к setback-линии, затем гарантируем, что footprint целиком внутри участка.
+  // Выравниваем фасад к setback-линии, затем гарантируем, что footprint целиком внутри участка и мира.
   let aligned = rot;
   const parcel = p?.aabb ?? null;
   if (parcel) {
@@ -129,6 +149,7 @@ function finalizeByAccess(fp, cx, cz, p, maxW, maxD, rng) {
     else if (edge === 'east') aligned = translateFootprint(rot, -n, 0);
     else if (edge === 'west') aligned = translateFootprint(rot, +n, 0);
   }
+  aligned = clampFootprintToWorld(aligned, worldHalf, 0.75);
   return { fp: aligned, rotation: yaw };
 }
 
@@ -591,7 +612,7 @@ export function makeStage4() {
             const riverIndex = (rivers === (ctx.hydrology?.rivers ?? null) || rivers === (ctx.masks?.easement?.rivers ?? null)) ? (ctx.spatial?.riverSegments ?? null) : null;
             const lakes = ctx.masks?.easement?.lakes ?? [];
             // R4.3 §9.5/§9.6: orientation aligned to street + setback pushes away from street — for rotated footprint
-            const fin = finalizeByAccess(fp, cx, cz, p, maxW, maxD, rng);
+            const fin = finalizeByAccess(fp, cx, cz, p, maxW, maxD, rng, size / 2);
             const fpAligned = fin.fp;
             if (footprintNearAnchors(fpAligned, anchors, 10) || footprintIntersectsRiver(fpAligned, rivers, riverIndex, waterBufferById) || footprintIntersectsLake(fpAligned, lakes) || footprintIntersectsFloodplainMask(fpAligned, floodplainMasks) || footprintIntersectsRoad(fpAligned, roads, roadSegments, ctx.spatial?.roadEasements, { ignoreEasements: !!force && !!relaxChunk })) continue;
             footprint = fpAligned;
@@ -610,7 +631,7 @@ export function makeStage4() {
             const fp = footprintRect(cx, cz, w, d);
             const riverIndex = (rivers === (ctx.hydrology?.rivers ?? null) || rivers === (ctx.masks?.easement?.rivers ?? null)) ? (ctx.spatial?.riverSegments ?? null) : null;
             const lakes = ctx.masks?.easement?.lakes ?? [];
-            const fin = finalizeByAccess(fp, cx, cz, p, maxW, maxD, rng);
+            const fin = finalizeByAccess(fp, cx, cz, p, maxW, maxD, rng, size / 2);
             const fpAligned = fin.fp;
             if (footprintNearAnchors(fpAligned, anchors, 10) || footprintIntersectsRiver(fpAligned, rivers, riverIndex, waterBufferById) || footprintIntersectsLake(fpAligned, lakes) || footprintIntersectsFloodplainMask(fpAligned, floodplainMasks) || footprintIntersectsRoad(fpAligned, roads, roadSegments, ctx.spatial?.roadEasements, { ignoreEasements: !!force && !!relaxChunk })) continue;
             footprint = fpAligned;
