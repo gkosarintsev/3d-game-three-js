@@ -8,6 +8,7 @@ import { makeRng, mix } from '../rng.mjs';
 import { createSpatialIndex } from '../spatial.mjs';
 import { CONFIG } from '../../../src/config.js';
 import { addAxisAlignedAccessRoadsForParcels, makeRoadSegment, buildAxisAlignedTerrainPath, isValidAxisAlignedTerrainPath, makeTerrainSampler } from './stage-2-transport.mjs';
+import { frameOf, polyBounds, rotatedBounds } from '../../../src/geo2d.js';
 
 const clamp = (v, lo, hi) => Math.max(lo, Math.min(hi, v));
 const EPS = 1e-9;
@@ -79,22 +80,27 @@ function clampFootprintToParcel(fp, parcelAabb, margin = 0.75) {
   return translateFootprint(fp, +dx.toFixed(3), +dz.toFixed(3));
 }
 
-function clampFootprintToWorld(fp, worldHalf, margin = 0.75) {
+function outlineOfFootprint(fp, rotation = 0) {
+  const b = polyBounds(fp);
+  if (!Number.isFinite(b.minX)) return b;
+  return rotatedBounds(b, frameOf(b, rotation ?? 0));
+}
+
+function clampFootprintToWorld(fp, worldHalf, rotation = 0, margin = 0.75) {
   if (!Number.isFinite(worldHalf) || worldHalf <= 0) return fp;
   const limit = Math.max(0, worldHalf - margin);
   let dx = 0, dz = 0;
-  for (let iter = 0; iter < 2; iter++) {
-    let fMinX = Infinity, fMaxX = -Infinity, fMinZ = Infinity, fMaxZ = -Infinity;
-    for (const pt of fp) {
-      const x = pt.x + dx, z = pt.z + dz;
-      if (x < fMinX) fMinX = x; if (x > fMaxX) fMaxX = x;
-      if (z < fMinZ) fMinZ = z; if (z > fMaxZ) fMaxZ = z;
-    }
-    if (!Number.isFinite(fMinX)) break;
-    if (fMinX < -limit) dx += -limit - fMinX;
-    else if (fMaxX > limit) dx += limit - fMaxX;
-    if (fMinZ < -limit) dz += -limit - fMinZ;
-    else if (fMaxZ > limit) dz += limit - fMaxZ;
+  for (let iter = 0; iter < 4; iter++) {
+    const shifted = (dx || dz) ? translateFootprint(fp, +dx.toFixed(3), +dz.toFixed(3)) : fp;
+    const o = outlineOfFootprint(shifted, rotation);
+    if (!Number.isFinite(o.minX)) break;
+    let ndx = dx, ndz = dz;
+    if (o.minX < -limit) ndx += -limit - o.minX;
+    else if (o.maxX > limit) ndx += limit - o.maxX;
+    if (o.minZ < -limit) ndz += -limit - o.minZ;
+    else if (o.maxZ > limit) ndz += limit - o.maxZ;
+    if (Math.abs(ndx - dx) < 1e-6 && Math.abs(ndz - dz) < 1e-6) { dx = ndx; dz = ndz; break; }
+    dx = ndx; dz = ndz;
   }
   return translateFootprint(fp, +dx.toFixed(3), +dz.toFixed(3));
 }
@@ -149,7 +155,7 @@ function finalizeByAccess(fp, cx, cz, p, maxW, maxD, rng, worldHalf = Infinity) 
     else if (edge === 'east') aligned = translateFootprint(rot, -n, 0);
     else if (edge === 'west') aligned = translateFootprint(rot, +n, 0);
   }
-  aligned = clampFootprintToWorld(aligned, worldHalf, 0.75);
+  aligned = clampFootprintToWorld(aligned, worldHalf, yaw, 0.75);
   return { fp: aligned, rotation: yaw };
 }
 
