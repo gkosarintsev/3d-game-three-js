@@ -1,7 +1,7 @@
 {
   "version": 1,
   "generator": {
-    "generatorVersion": "0.57.0",
+    "generatorVersion": "0.58.0",
     "seed": 22,
     "deterministic": true
   },
@@ -2326,7 +2326,7 @@
       "dividesPlate": true
     },
     "determinism": {
-      "generatorVersion": "0.57.0",
+      "generatorVersion": "0.58.0",
       "seed": 22,
       "deterministic": true
     },

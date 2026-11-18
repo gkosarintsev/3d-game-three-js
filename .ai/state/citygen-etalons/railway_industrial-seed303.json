@@ -1,8 +1,8 @@
 {
   "profile": "railway_industrial",
   "seed": 303,
-  "generatorVersion": "0.57.0",
-  "reportHash": "4408c3f7dc97d6aaed86048f248598b5cd9cee5c613308202b4da3c59f8bcb74",
+  "generatorVersion": "0.58.0",
+  "reportHash": "d8c5767863046033d1b638b23e9d689c5d1835d8f32f712920899ece5ad28642",
   "summary": {
     "errors": 0,
     "warnings": 9,

@@ -172,6 +172,46 @@ function pointSegDistXZ(px, pz, ax, az, bx, bz) {
   return Math.hypot(px - (ax + abx * t), pz - (az + abz * t));
 }
 
+function medianOf(values) {
+  if (!values.length) return 0;
+  const a = [...values].sort((x, y) => x - y);
+  const m = Math.floor(a.length / 2);
+  return a.length % 2 ? a[m] : (a[m - 1] + a[m]) * 0.5;
+}
+
+function footprintReliefStats(fp, sampler) {
+  if (!sampler || typeof sampler.heightAt !== 'function' || !Array.isArray(fp) || fp.length < 3) {
+    return { medianY: Number(sampler?.groundY ?? 0) || 0, delta: 0 };
+  }
+  const b = aabbOfFootprint(fp);
+  const cx = (b.minX + b.maxX) / 2, cz = (b.minZ + b.maxZ) / 2;
+  const pts = [
+    [cx, cz],
+    [b.minX, b.minZ], [b.maxX, b.minZ], [b.maxX, b.maxZ], [b.minX, b.maxZ],
+    [cx, b.minZ], [b.maxX, cz], [cx, b.maxZ], [b.minX, cz],
+  ];
+  const hs = [];
+  for (const [x, z] of pts) {
+    const y = Number(sampler.heightAt(x, z));
+    if (Number.isFinite(y)) hs.push(y);
+  }
+  if (!hs.length) return { medianY: Number(sampler.groundY ?? 0) || 0, delta: 0 };
+  let minY = Infinity, maxY = -Infinity;
+  for (const y of hs) { if (y < minY) minY = y; if (y > maxY) maxY = y; }
+  return { medianY: medianOf(hs), delta: +(maxY - minY).toFixed(4), minY, maxY };
+}
+
+function isFootprintFoundationAllowed(fp, floors, sampler) {
+  const stats = footprintReliefStats(fp, sampler);
+  const d = stats.delta || 0;
+  // R4.3 §9.6: до 1.5 м — terrain; 1.5–3 м и до 4 этажей — ступенчатый цоколь (terrain-compatible);
+  // свыше 3 м или (1.5–3 м и >4 этажей) — podium либо участок снимается. Podium не поддержан текущим normalizer/пайплайном,
+  // поэтому детерминированно снимаем размещение на таком пятне (эквивалент buildable:false для данного footprint).
+  if (d > 3.0) return { ok: false, reason: 'relief_delta_gt_3', stats };
+  if (d > 1.5 && floors > 4) return { ok: false, reason: 'relief_delta_mid_highrise', stats };
+  return { ok: true, reason: null, stats };
+}
+
 function footprintIntersectsRiver(fp, rivers = [], riverIndex = null, waterBufferById = null) {
   const b = aabbOfFootprint(fp);
   const cx = (b.minX + b.maxX) / 2, cz = (b.minZ + b.maxZ) / 2;
@@ -483,6 +523,7 @@ export function makeStage4() {
         : (Array.isArray(ctx.terrain?.analysis?.floodplains) ? ctx.terrain.analysis.floodplains : []);
       const roads = ctx.masks?.easement?.roads ?? [];
       const roadSegments = ctx.networks?.roads?.segments ?? ctx.input?.cityforge?.networks?.roads?.segments ?? [];
+      const terrainSampler = (() => { try { return makeTerrainSampler(ctx); } catch { return null; } })();
       const gp = ctx.input?.gameplay ?? {};
       const anchors = [
         { x: gp.spawn?.x ?? 0, z: gp.spawn?.z ?? 0 },
@@ -580,6 +621,8 @@ export function makeStage4() {
         const maxD = Math.max(4, ph - margin * 2);
         const cx = (b.minX + b.maxX) / 2;
         const cz = (b.minZ + b.maxZ) / 2;
+        const parcelArea = Math.max(EPS, pw * ph);
+        const maxFootprintRatio = clamp(Number(profile.parcels?.coverage ?? profile.parcels?.maxFootprintRatio ?? 0.3), 0.05, 0.85);
         // Road-access metrics used by archetype, scale and placement chance.
         const roadDist = Number.isFinite(p?.access?.roadDist) ? p.access.roadDist : minDistanceToRoadSegments(cx, cz, roadSegments);
         const nearRoad = Number.isFinite(roadDist) && roadDist < 70;
@@ -602,6 +645,21 @@ export function makeStage4() {
         const panelkaSectionW = 13.6, panelkaDepth = 11.8, panelkaEntrances = 3;
         let footprint = null;
         let buildingRotation = 0;
+        let reliefStats = null;
+        const capByCoverage = (w, d) => {
+          // R4.3 §9.5: доля застройки участка не больше maxFootprintRatio (coverage).
+          let ww = w, dd = d;
+          const areaCap = Math.max(16, parcelArea * maxFootprintRatio);
+          const a = ww * dd;
+          if (a > areaCap) {
+            const k = Math.sqrt(areaCap / a);
+            ww = Math.max(4, ww * k);
+            dd = Math.max(4, dd * k);
+          }
+          ww = Math.min(ww, maxW);
+          dd = Math.min(dd, maxD);
+          return [ww, dd];
+        };
         if (panelkaL17) {
           // оригинал: 3 секции × 13.6м = 40.8м, глубина 11.8м. Ищем максимально широкое
           // размещение в рамках участка (пропорции 3-секционной панельки), не уже ~24м.
@@ -612,6 +670,7 @@ export function makeStage4() {
             // подгоняем под границы участка, сохраняя вытянутость 3-секционного дома
             if (w > maxW) { const s = maxW / w; w = maxW; d *= s; }
             if (d > maxD) { const s = maxD / d; d = maxD; w *= s; }
+            [w, d] = capByCoverage(w, d);
             // шире для 3 подъездов (оригинальные пропорции), но допускаем ужатие под участок
             if (w < 18 || d < 7) continue;
             const fp = footprintRect(cx, cz, w, d);
@@ -620,9 +679,12 @@ export function makeStage4() {
             // R4.3 §9.5/§9.6: orientation aligned to street + setback pushes away from street — for rotated footprint
             const fin = finalizeByAccess(fp, cx, cz, p, maxW, maxD, rng, size / 2);
             const fpAligned = fin.fp;
+            const fchk = isFootprintFoundationAllowed(fpAligned, Math.max(1, Number(profile.buildings?.maxFloors ?? 16)), terrainSampler);
+            if (!fchk.ok) continue;
             if (footprintNearAnchors(fpAligned, anchors, 10) || footprintIntersectsRiver(fpAligned, rivers, riverIndex, waterBufferById) || footprintIntersectsLake(fpAligned, lakes) || footprintIntersectsFloodplainMask(fpAligned, floodplainMasks) || footprintIntersectsRoad(fpAligned, roads, roadSegments, ctx.spatial?.roadEasements, { ignoreEasements: !!force && !!relaxChunk })) continue;
             footprint = fpAligned;
             buildingRotation = fin.rotation;
+            reliefStats = fchk.stats;
             break;
           }
         }
@@ -634,14 +696,19 @@ export function makeStage4() {
             // If aspect pushes out of bounds, rebalance.
             if (w >= maxW - 0.01) d = clamp(maxD * s * s / (w / maxW || 1), 4, maxD);
             if (d >= maxD - 0.01) w = clamp(maxW * s * s / (d / maxD || 1), 4, maxW);
+            [w, d] = capByCoverage(w, d);
+            if (w < 4 || d < 4) continue;
             const fp = footprintRect(cx, cz, w, d);
             const riverIndex = (rivers === (ctx.hydrology?.rivers ?? null) || rivers === (ctx.masks?.easement?.rivers ?? null)) ? (ctx.spatial?.riverSegments ?? null) : null;
             const lakes = ctx.masks?.easement?.lakes ?? [];
             const fin = finalizeByAccess(fp, cx, cz, p, maxW, maxD, rng, size / 2);
             const fpAligned = fin.fp;
+            const fchk = isFootprintFoundationAllowed(fpAligned, Math.max(1, Number(profile.buildings?.maxFloors ?? (arch ? arch.floors[1] : 4))), terrainSampler);
+            if (!fchk.ok) continue;
             if (footprintNearAnchors(fpAligned, anchors, 10) || footprintIntersectsRiver(fpAligned, rivers, riverIndex, waterBufferById) || footprintIntersectsLake(fpAligned, lakes) || footprintIntersectsFloodplainMask(fpAligned, floodplainMasks) || footprintIntersectsRoad(fpAligned, roads, roadSegments, ctx.spatial?.roadEasements, { ignoreEasements: !!force && !!relaxChunk })) continue;
             footprint = fpAligned;
             buildingRotation = fin.rotation;
+            reliefStats = fchk.stats;
             break;
           }
         }
@@ -734,12 +801,17 @@ export function makeStage4() {
           modern_pavilion: 'modern-pavilion',
         };
         const detailedVisual = isL17Panelka ? 'soviet_panel' : (DETAILED_VISUAL_BY_KIND[kind] || null);
+        // R4.3 §9.6: baseY от медианы рельефа пятна + цоколь (normalizer зафиксирует по фактической опоре; задаём осмысленный минимум).
+        const reliefBaseY = (reliefStats && Number.isFinite(reliefStats.medianY))
+          ? +(reliefStats.medianY + (floors > 4 ? 0.25 : 0.2)).toFixed(3)
+          : null;
         out.push({
           id,
           districtId: p.districtId ?? null,
           districtType: p.type ?? null,
           name: `B ${placed + 1}`,
           isEnterable: false,
+          ...(reliefBaseY != null ? { baseY: reliefBaseY } : {}),
           floorsCount: floors,
           floorHeight,
           foundation: 'terrain',
