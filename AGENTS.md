@@ -37,6 +37,18 @@ You operate in this repository as an autonomous engineer. Maintain project conte
 - Keep all documentation clear, concise, and machine-readable.
 - Do not ask for user confirmation for internal file updates unless a requirements conflict arises.
 
+## 4. Параллельные агенты, worktree и CI-only (GitHub Actions)
+
+Протокол и детали: [`.ai/plans/22-parallel-agents-github-ci.md`](.ai/plans/22-parallel-agents-github-ci.md), [`.ai/prompts/agent-ci-protocol.md`](.ai/prompts/agent-ci-protocol.md), [`docs/architecture-testing.md`](docs/architecture-testing.md).
+
+- **Изоляция:** один агент/задача = один git worktree + одна ветка (`agent/<task-id>-<slug>` или `feat/<task-id>-<slug>`). **Прямой push в `main` запрещён.** Перед работой запускать `node scripts/agent/check-env.mjs`.
+- **CI — источник истины:** обязательные/тяжёлые тесты и гейты (browser-сюиты, полные/долгие node-наборы, seed-series и т.п.) **не запускать локально** — выполнять в GitHub CI. Локально допустимы только вспомогательные действия (чтение/правки/git, планирование, быстрые `node --check` как подсказка, не гейт).
+- **Пересборка производных:** детерминированно генерировать и коммитить вместе с источником; обязательная верификация — в CI (`node tools/build-level.mjs --check`, `node tools/check-levels.mjs`, проверки схем по scope).
+- **Self-healing цикл:** `commit → push → node scripts/agent/ci-watch.mjs → анализ .ai/state/ci-results/<branch>.{json,md,-failed.log} → fix/retry` (рекомендуемо ≤4 итераций, затем эскалация). Result-файлы локальные, gitignored, не коммитить.
+- **Профили CI:** `fast` (default для push в `agent/**`, быстрый feedback) / `scoped` (dispatch по scope) / `full` (PR/pre-merge/регрессия). Параллельные ветки запускают независимые run’ы; учитывать лимит ~20 одновременных runner’ов.
+- **Merge:** постепенный `agent/*` → PR (опционально `integration/*`) → `main` только при зелёных required checks.
+- **Планирование:** новые планы задач должны включать секцию `### CI & Parallelization` (worktree/branch, parallel-safe/blocked, CI profile, required checks, rebuild/check, merge target).
+
 
 ## База
 

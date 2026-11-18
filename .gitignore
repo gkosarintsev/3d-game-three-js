@@ -1,1 +1,8 @@
 .tmp
+.tmp-*
+.tmp-ci-artifacts/
+
+# Agent CI loop local results (не коммитить)
+.ai/state/ci-results/
+.ai/state/ci-results/**
+

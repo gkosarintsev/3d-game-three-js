@@ -5,16 +5,28 @@ on:
   pull_request:
   workflow_dispatch:
     inputs:
+      ci_profile:
+        description: 'CI profile: auto, fast, scoped, full'
+        required: false
+        default: 'auto'
+        type: choice
+        options: ['auto', 'fast', 'scoped', 'full']
       run_full_series:
-        description: 'Run full 100x3 seed-series shards (plain+transport)'
+        description: 'Run full 100x3 seed-series shards (plain+transport) for non-fast profiles'
         required: false
         default: 'true'
         type: choice
         options: ['true', 'false']
       run_browser:
-        description: 'Run browser test shards'
+        description: 'Run browser test shards for non-fast profiles'
         required: false
         default: 'true'
+        type: choice
+        options: ['true', 'false']
+      run_node_extended:
+        description: 'Run node-citygen/node-etalon/build-rebuild in fast/scoped profiles'
+        required: false
+        default: 'false'
         type: choice
         options: ['true', 'false']
 
@@ -24,6 +36,9 @@ concurrency:
 
 permissions:
   contents: read
+
+env:
+  CI_FAST: ${{ (github.event_name == 'push' && startsWith(github.ref, 'refs/heads/agent/')) || (github.event_name == 'workflow_dispatch' && (inputs.ci_profile == 'fast' || (inputs.ci_profile == 'auto' && startsWith(github.ref, 'refs/heads/agent/')))) }}
 
 jobs:
   node-fast:
@@ -36,6 +51,11 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
+
+      - name: CI profile
+        run: |
+          echo "CI_FAST=${CI_FAST}"
+          echo "event=${{ github.event_name }} ref=${{ github.ref }}"
 
       - name: Node version
         run: node --version
@@ -76,6 +96,7 @@ jobs:
     name: node / citygen unit tests
     runs-on: ubuntu-latest
     timeout-minutes: 20
+    if: ${{ !( (github.event_name == 'push' && startsWith(github.ref, 'refs/heads/agent/')) || (github.event_name == 'workflow_dispatch' && (inputs.ci_profile == 'fast' || (inputs.ci_profile == 'auto' && startsWith(github.ref, 'refs/heads/agent/')))) ) || (github.event_name == 'workflow_dispatch' && inputs.run_node_extended == 'true') }}
     steps:
       - uses: actions/checkout@v4
 
@@ -111,6 +132,7 @@ jobs:
     name: node / etalon regression
     runs-on: ubuntu-latest
     timeout-minutes: 20
+    if: ${{ !( (github.event_name == 'push' && startsWith(github.ref, 'refs/heads/agent/')) || (github.event_name == 'workflow_dispatch' && (inputs.ci_profile == 'fast' || (inputs.ci_profile == 'auto' && startsWith(github.ref, 'refs/heads/agent/')))) ) || (github.event_name == 'workflow_dispatch' && inputs.run_node_extended == 'true') }}
     steps:
       - uses: actions/checkout@v4
 
@@ -125,6 +147,7 @@ jobs:
     name: rebuild / build-level --check (${{ matrix.group }})
     runs-on: ubuntu-latest
     timeout-minutes: 30
+    if: ${{ !( (github.event_name == 'push' && startsWith(github.ref, 'refs/heads/agent/')) || (github.event_name == 'workflow_dispatch' && (inputs.ci_profile == 'fast' || (inputs.ci_profile == 'auto' && startsWith(github.ref, 'refs/heads/agent/')))) ) || (github.event_name == 'workflow_dispatch' && inputs.run_node_extended == 'true') }}
     strategy:
       fail-fast: false
       matrix:
@@ -178,7 +201,7 @@ jobs:
   browser:
     name: browser / ${{ matrix.group }}
     runs-on: ubuntu-latest
-    if: github.event_name != 'workflow_dispatch' || inputs.run_browser == 'true'
+    if: ${{ !( (github.event_name == 'push' && startsWith(github.ref, 'refs/heads/agent/')) || (github.event_name == 'workflow_dispatch' && (inputs.ci_profile == 'fast' || (inputs.ci_profile == 'auto' && startsWith(github.ref, 'refs/heads/agent/')))) ) && (github.event_name != 'workflow_dispatch' || inputs.run_browser == 'true') }}
     timeout-minutes: 45
     container:
       image: mcr.microsoft.com/playwright:v1.49.0-noble
@@ -251,7 +274,7 @@ jobs:
   seed-series:
     name: series / ${{ matrix.mode }} / ${{ matrix.profile }}
     runs-on: ubuntu-latest
-    if: github.event_name != 'workflow_dispatch' || inputs.run_full_series == 'true'
+    if: ${{ !( (github.event_name == 'push' && startsWith(github.ref, 'refs/heads/agent/')) || (github.event_name == 'workflow_dispatch' && (inputs.ci_profile == 'fast' || (inputs.ci_profile == 'auto' && startsWith(github.ref, 'refs/heads/agent/')))) ) && (github.event_name != 'workflow_dispatch' || inputs.run_full_series == 'true') }}
     timeout-minutes: 60
     strategy:
       fail-fast: false
@@ -334,6 +357,7 @@ jobs:
           echo "- sha: ${{ github.sha }}" >> ci-artifacts/aggregate-summary.md
           echo "- ref: ${{ github.ref }}" >> ci-artifacts/aggregate-summary.md
           echo "- event: ${{ github.event_name }}" >> ci-artifacts/aggregate-summary.md
+          echo "- fast_mode(env): ${CI_FAST:-unknown}" >> ci-artifacts/aggregate-summary.md
           echo "" >> ci-artifacts/aggregate-summary.md
 
           echo "## Job results" >> ci-artifacts/aggregate-summary.md
@@ -387,7 +411,7 @@ jobs:
           check() {
             local name="$1"
             local result="$2"
-            # skipped is allowed when job was intentionally disabled via workflow_dispatch inputs
+            # skipped is allowed when job was intentionally disabled via profile/inputs
             if [ "$result" != "success" ] && [ "$result" != "skipped" ]; then
               echo "Job failed: $name ($result)"
               fail=1
