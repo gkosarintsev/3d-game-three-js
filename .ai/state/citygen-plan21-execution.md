@@ -1,4 +1,4 @@
-# Plan 21 execution state (citygen procedural rules)
+﻿# Plan 21 execution state (citygen procedural rules)
 
 Date: 2026-11-19  
 Base plan: `.ai/plans/21-citygen-procedural-rules.md`  
@@ -7,7 +7,7 @@ Protocol: `.ai/plans/22-parallel-agents-github-ci.md`, `.ai/prompts/agent-ci-pro
 
 ## Current position (summary)
 
-- **Generator:** `DEFAULT_GENERATOR_VERSION = 0.58.0` on `origin/main` after merge of PR #3 (`b5d60bd`, 2026-11-18); `0.59.0` prepared in active branch `agent/plan21-r43c-corner-entrance` (continuation R4.3 increment, CI pending). Staged v4 pipeline (`tools/citygen/index.mjs`, `pipeline/stage-1..6-*`), profiles/policies/validation/metrics/etalons/seed-series tooling developed incrementally.
+- **Generator:** DEFAULT_GENERATOR_VERSION = 0.59.0 on origin/main after merge of PR #4 (b7bc9b, 2026-11-18). Active increment branch: gent/plan21-r43d-frontage @ worktree C:\Temp\wt-plan21-r43d (R4.3 continuation, 0.60.0 prepared; CI pending). Staged v4 pipeline (`tools/citygen/index.mjs`, `pipeline/stage-1..6-*`), profiles/policies/validation/metrics/etalons/seed-series tooling developed incrementally.
 - **Gates/artifacts:** `tools/citygen.test.mjs`, `tools/citygen-etalon-check.mjs`, `tools/citygen-seed-series.mjs`, `tools/check-levels.mjs`, `tools/build-level.mjs --check`, browser suites by scope/CI; committed derived outputs and etalon/baseline snapshots are part of determinism/regression.
 - **Constraint:** any IR/report/derived level output changes require deterministic rebuild of committed artifacts and baseline/etalon updates per version policy, verified in GitHub CI.
 
@@ -124,3 +124,13 @@ Protocol: `.ai/plans/22-parallel-agents-github-ci.md`, `.ai/prompts/agent-ci-pro
   - **Scoped dispatch (head `18afe0f`, docs-only over `8291339`, `ci_profile=scoped`, `run_node_extended=true`, `run_browser=true`, `run_full_series=false`):** [44422063331](https://github.com/gkosarintsev/3d-game-three-js/actions/runs/44422063331) **success** (2026-11-18T23:35:35Z→~23:40Z). Jobs green: `node / fast checks`, `node / citygen unit tests`, `node / etalon regression`, all `rebuild / build-level --check` shards (07-08-09, 10-15-16, 17-18-19, 20-21-22), browser `open-world`, `level-contract-lifecycle`, `stream-vehicle-rotated-solid`, `alien`, `misc`, `aggregate / report`; `series` skipped.
   - **Integration:** PR [#4](https://github.com/gkosarintsev/3d-game-three-js/pull/4) (`agent/plan21-r43c-corner-entrance` → `main`, head `501e2bd`) opened for sequential merge of 0.59.0. PR CI [44422779378](https://github.com/gkosarintsev/3d-game-three-js/actions/runs/44422779378) (`pull_request`) **in progress/queued** at time of recording (includes full checks incl. 100×3 series shards per workflow); merge only on green required checks. Push fast CI [44422726687](https://github.com/gkosarintsev/3d-game-three-js/actions/runs/44422726687) in progress for docs head.
 - **Still remaining in R4.3:** stronger explicit building-line frontage continuity across adjacent parcels, contour-aligned orientation where appropriate, explicit entrance/door orientation semantics to sidewalk beyond stair/access cues, and full stepped-plinth/podium representation if/when supported by normalizer/runtime/schema; cross-cutting chunk/build/navigation/streaming validation in CI for rebuilt outputs.
+
+#### Continuation increment (0.60.0, `agent/plan21-r43d-frontage`, in progress)
+- **Scope (partial R4.3 §9.5, frontage continuity):** `tools/citygen/pipeline/stage-4-buildings.mjs`
+  - **§9.5 building-line/frontage continuity (partial):** align access-facing facades to an explicit continuous frontage target from parcel street boundary (`street edge ± desired setback` per type) for adjacent parcels on the same frontage band; best-effort frontage-preserving parcel clamp (avoid shifting the street-facing facade to fix opposite overflow when the building can remain valid) to reduce facade-line drift.
+  - **Emit hygiene:** unchanged (transient access fields stripped as in 0.59.0).
+- **Versioning/artifacts (deterministic, prepared):** bump `DEFAULT_GENERATOR_VERSION` `0.59.0 -> 0.60.0` (`tools/citygen/config.mjs`), update `generator.generatorVersion` in `src/levels/level-16..22.json`, deterministically rebuild committed derived catalogs/reports for level-16..22 (0 warnings), refresh `.ai/state/citygen-baselines/level-16..22*` and `.ai/state/citygen-etalons/*` (`--update --generatorVersion 0.60.0 --skip-baselines`, 9/9 etalons + summary updated). Pilot fixture `tools/fixtures/level-16-pilot.json` finalize expectations unchanged (`roadComponents=1, roadSegments=176, roadNodes=146, buildings=415, props=360, lights=8`, errors 0).
+- **Local prep checks (hints only):** `node --check` for modified files OK; `node tools/build-level.mjs src/levels/level-16..22.json` completed with 0 warnings; baselines/etalons updated locally.
+- **CI:** pending (commit/push fast + scoped/full by scope per protocol; CI source of truth). Sequential merge only on green required checks.
+- **Still remaining in R4.3:** stronger adjacency-aware frontage continuity across parcel groups/blocks, contour-aligned orientation where appropriate, explicit entrance/door orientation semantics to sidewalk beyond stair/access cues, and full stepped-plinth/podium representation if/when supported by normalizer/runtime/schema; cross-cutting chunk/build/navigation/streaming validation in CI for rebuilt outputs.
+
