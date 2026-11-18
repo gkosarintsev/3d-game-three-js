@@ -351,6 +351,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
+          mkdir -p ci-artifacts
           echo "# CI aggregate report" > ci-artifacts/aggregate-summary.md
           echo "" >> ci-artifacts/aggregate-summary.md
           echo "- run: ${{ github.run_id }} attempt ${{ github.run_attempt }}" >> ci-artifacts/aggregate-summary.md
