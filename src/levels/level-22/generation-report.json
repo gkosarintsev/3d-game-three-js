@@ -1,7 +1,7 @@
 {
   "version": 1,
   "generator": {
-    "generatorVersion": "0.58.0",
+    "generatorVersion": "0.59.0",
     "seed": 22,
     "deterministic": true
   },
@@ -1895,8 +1895,8 @@
       "code": "post_buildings_local_connectors",
       "stage": "4_buildings_structures",
       "message": "added local connector segments after building placement (R3.5)",
-      "added": 1,
-      "candidates": 1
+      "added": 2,
+      "candidates": 2
     },
     {
       "severity": "info",
@@ -1964,10 +1964,10 @@
         "grid": 2,
         "total": 4
       },
-      "roadNodes": 67,
-      "roadSegments": 98,
+      "roadNodes": 68,
+      "roadSegments": 99,
       "roadComponents": 1,
-      "roadGraphNodes": 67,
+      "roadGraphNodes": 68,
       "interchanges": {
         "segments": 11,
         "junctions": 4,
@@ -2200,8 +2200,8 @@
     "version": 1,
     "partial": true,
     "counts": {
-      "roads": 98,
-      "roadNodes": 67,
+      "roads": 99,
+      "roadNodes": 68,
       "districts": 15,
       "parcels": 403,
       "reservedParcels": 69,
@@ -2213,24 +2213,24 @@
       "lakes": 0
     },
     "graph": {
-      "nodes": 67,
-      "edges": 98,
+      "nodes": 68,
+      "edges": 99,
       "components": 1,
-      "largestComponent": 67,
+      "largestComponent": 68,
       "deadEnds": 20,
-      "deadEndRatio": 0.298507,
-      "avgDegree": 2.925373,
-      "gamma": 0.502564
+      "deadEndRatio": 0.294118,
+      "avgDegree": 2.911765,
+      "gamma": 0.5
     },
     "roads": {
-      "totalLength": 7184,
+      "totalLength": 7216,
       "lengthByType": {
         "arterial": 800,
-        "local": 6384
+        "local": 6416
       },
       "shareByType": {
-        "arterial": 0.111359,
-        "local": 0.888641
+        "arterial": 0.110865,
+        "local": 0.889135
       },
       "maxSlope": 0.193246,
       "slopeByClass": {
@@ -2241,7 +2241,7 @@
           "overAbsolute": 0
         },
         "local": {
-          "count": 97,
+          "count": 98,
           "maxSlope": 0.193246,
           "overPolicy": 5,
           "overAbsolute": 0
@@ -2254,7 +2254,7 @@
         "local": 12
       },
       "classPolicyViolations": 5,
-      "classPolicyOk": 93,
+      "classPolicyOk": 94,
       "overAbsolute": 0,
       "version": 2
     },
@@ -2326,7 +2326,7 @@
       "dividesPlate": true
     },
     "determinism": {
-      "generatorVersion": "0.58.0",
+      "generatorVersion": "0.59.0",
       "seed": 22,
       "deterministic": true
     },

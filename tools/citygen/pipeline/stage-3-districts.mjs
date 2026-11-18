@@ -3003,12 +3003,21 @@ export function makeStage3() {
             if (!reserved && hardReserveTypes.has(type) && Number.isFinite(rd) && rd > 300) { reserved = true; reservedReason = 'remote_access'; }
             if (!reserved && type === 'slums' && Number.isFinite(rd) && rd > 360) { reserved = true; reservedReason = 'remote_access'; }
             if (reserved && reservedReason) reservedByReason[reservedReason] = (reservedByReason[reservedReason] || 0) + 1;
+            const edge = j === 0 ? 'south' : j === nz - 1 ? 'north' : (i === 0 ? 'west' : 'east');
+            const isGridCorner = (nx > 1 && nz > 1) && ((i === 0 && j === 0) || (i === 0 && j === nz - 1) || (i === nx - 1 && j === 0) || (i === nx - 1 && j === nz - 1));
+            let cornerEdges = null;
+            if (isGridCorner) {
+              cornerEdges = [edge];
+              if (i === 0) cornerEdges.push('west'); else if (i === nx - 1) cornerEdges.push('east');
+              if (j === 0) cornerEdges.push('south'); else if (j === nz - 1) cornerEdges.push('north');
+              cornerEdges = [...new Set(cornerEdges)];
+            }
             parcels.push({
               id: `${d.id}_p${seq}`,
               districtId: d.id,
               type,
               aabb,
-              access: { edge: j === 0 ? 'south' : j === nz - 1 ? 'north' : (i === 0 ? 'west' : 'east'), roadDist: Number.isFinite(rd) ? +rd.toFixed(2) : null },
+              access: { edge, roadDist: Number.isFinite(rd) ? +rd.toFixed(2) : null, ...(cornerEdges ? { corner: true, cornerEdges } : {}) },
               reserved,
             });
           }
