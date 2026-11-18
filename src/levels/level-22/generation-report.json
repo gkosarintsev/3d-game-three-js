@@ -1,7 +1,7 @@
 {
   "version": 1,
   "generator": {
-    "generatorVersion": "0.55.0",
+    "generatorVersion": "0.57.0",
     "seed": 22,
     "deterministic": true
   },
@@ -1789,21 +1789,21 @@
       "code": "buildings_generated",
       "stage": "4_buildings_structures",
       "message": "generated buildings from parcels",
-      "count": 74,
+      "count": 73,
       "budget": 87,
-      "skippedConflict": 237
+      "skippedConflict": 235
     },
     {
       "severity": "info",
       "code": "enterable_share",
       "stage": "4_buildings_structures",
       "message": "enterable buildings share (section 9.8, target 15-25%)",
-      "total": 74,
+      "total": 73,
       "enterable": 15,
-      "share": 0.203,
+      "share": 0.205,
       "targetShare": 0.2,
       "required": {
-        "min": 12,
+        "min": 11,
         "max": 18
       }
     },
@@ -1885,7 +1885,7 @@
       "code": "floors_contrast_built",
       "stage": "4_buildings_structures",
       "message": "building floors distribution (section 9.4): L-modulation, adjacency contrast <= 2.5x, one dominant per high-L district",
-      "clamped": 28,
+      "clamped": 31,
       "dominants": 3,
       "districts": 15,
       "adjacencyPairs": 24
@@ -1895,8 +1895,8 @@
       "code": "post_buildings_local_connectors",
       "stage": "4_buildings_structures",
       "message": "added local connector segments after building placement (R3.5)",
-      "added": 2,
-      "candidates": 2
+      "added": 1,
+      "candidates": 1
     },
     {
       "severity": "info",
@@ -1911,16 +1911,16 @@
       "message": "generated district props",
       "count": 183,
       "budget": 183,
-      "attempts": 403,
+      "attempts": 413,
       "byDistrictType": {
-        "residential": 59,
+        "residential": 53,
         "parking": 5,
-        "slums": 49,
-        "market": 25,
-        "office": 14,
-        "commercial": 19,
-        "forest": 8,
-        "industrial": 4
+        "slums": 48,
+        "market": 26,
+        "office": 15,
+        "commercial": 21,
+        "forest": 9,
+        "industrial": 6
       }
     },
     {
@@ -1964,10 +1964,10 @@
         "grid": 2,
         "total": 4
       },
-      "roadNodes": 69,
-      "roadSegments": 100,
+      "roadNodes": 67,
+      "roadSegments": 98,
       "roadComponents": 1,
-      "roadGraphNodes": 69,
+      "roadGraphNodes": 67,
       "interchanges": {
         "segments": 11,
         "junctions": 4,
@@ -2043,35 +2043,35 @@
           "accessibleRatio": 1
         }
       },
-      "buildings": 74,
+      "buildings": 73,
       "buildingsByDistrictType": {
-        "office": 11,
-        "market": 12,
+        "office": 10,
+        "market": 9,
         "commercial": 15,
-        "residential": 28,
+        "residential": 31,
         "industrial": 4,
+        "parking": 1,
         "forest": 1,
-        "slums": 2,
-        "parking": 1
+        "slums": 2
       },
       "lights": 8,
       "props": 183,
       "propsByDistrictType": {
-        "residential": 59,
+        "residential": 53,
         "parking": 5,
-        "slums": 49,
-        "market": 25,
-        "office": 14,
-        "commercial": 19,
-        "forest": 8,
-        "industrial": 4
+        "slums": 48,
+        "market": 26,
+        "office": 15,
+        "commercial": 21,
+        "forest": 9,
+        "industrial": 6
       },
       "chunkLoad": {
         "nonEmptyChunks": 4,
-        "maxBuildings": 24,
-        "maxProps": 57,
+        "maxBuildings": 25,
+        "maxProps": 55,
         "maxLights": 3,
-        "avgBuildings": 18.5,
+        "avgBuildings": 18.25,
         "avgProps": 45.75
       }
     },
@@ -2200,12 +2200,12 @@
     "version": 1,
     "partial": true,
     "counts": {
-      "roads": 100,
-      "roadNodes": 69,
+      "roads": 98,
+      "roadNodes": 67,
       "districts": 15,
       "parcels": 403,
       "reservedParcels": 69,
-      "buildings": 74,
+      "buildings": 73,
       "enterableBuildings": 15,
       "props": 183,
       "lights": 8,
@@ -2213,24 +2213,24 @@
       "lakes": 0
     },
     "graph": {
-      "nodes": 69,
-      "edges": 100,
+      "nodes": 67,
+      "edges": 98,
       "components": 1,
-      "largestComponent": 69,
+      "largestComponent": 67,
       "deadEnds": 20,
-      "deadEndRatio": 0.289855,
-      "avgDegree": 2.898551,
-      "gamma": 0.497512
+      "deadEndRatio": 0.298507,
+      "avgDegree": 2.925373,
+      "gamma": 0.502564
     },
     "roads": {
-      "totalLength": 7282.41,
+      "totalLength": 7184,
       "lengthByType": {
         "arterial": 800,
-        "local": 6482.41
+        "local": 6384
       },
       "shareByType": {
-        "arterial": 0.109854,
-        "local": 0.890146
+        "arterial": 0.111359,
+        "local": 0.888641
       },
       "maxSlope": 0.193246,
       "slopeByClass": {
@@ -2241,7 +2241,7 @@
           "overAbsolute": 0
         },
         "local": {
-          "count": 99,
+          "count": 97,
           "maxSlope": 0.193246,
           "overPolicy": 5,
           "overAbsolute": 0
@@ -2254,14 +2254,14 @@
         "local": 12
       },
       "classPolicyViolations": 5,
-      "classPolicyOk": 95,
+      "classPolicyOk": 93,
       "overAbsolute": 0,
       "version": 2
     },
     "gameplay": {
       "spawnToRoad": 0,
       "exitToRoad": 0,
-      "enterableShare": 0.202703,
+      "enterableShare": 0.205479,
       "enterableTarget": 0.2
     },
     "districts": {
@@ -2326,7 +2326,7 @@
       "dividesPlate": true
     },
     "determinism": {
-      "generatorVersion": "0.55.0",
+      "generatorVersion": "0.57.0",
       "seed": 22,
       "deterministic": true
     },

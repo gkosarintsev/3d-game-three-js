@@ -180,7 +180,7 @@
                                  ]
                   },
     "generator":  {
-                      "generatorVersion": "0.55.0",
+                      "generatorVersion": "0.57.0",
                       "seed":  22,
                       "deterministic":  true,
                       "stages":  [

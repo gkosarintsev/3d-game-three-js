@@ -1,4 +1,4 @@
-/**
+﻿/**
  * Stage 4: buildings and large structures (TASK-006, incremental MVP).
  * Places simple deterministic buildings on parcels by district profile, emitting
  * engine-compatible building definitions (no new primitives). Static only.
@@ -8,6 +8,7 @@ import { makeRng, mix } from '../rng.mjs';
 import { createSpatialIndex } from '../spatial.mjs';
 import { CONFIG } from '../../../src/config.js';
 import { addAxisAlignedAccessRoadsForParcels, makeRoadSegment, buildAxisAlignedTerrainPath, isValidAxisAlignedTerrainPath, makeTerrainSampler } from './stage-2-transport.mjs';
+import { frameOf, polyBounds, rotatedBounds } from '../../../src/geo2d.js';
 
 const clamp = (v, lo, hi) => Math.max(lo, Math.min(hi, v));
 const EPS = 1e-9;
@@ -52,34 +53,110 @@ const SETBACK_BY_TYPE = {
   luxury: 5.0, suburb: 11.0, slums: 2.0, industrial: 5.0, campus: 3.0,
   sports: 3.0, parking: 2.0, forest: 5.0, park: 5.0,
 };
-function setbackShift(edge, type, avail) {
-  if (!edge) return { dx: 0, dz: 0 };
-  const b = SETBACK_BY_TYPE[type] ?? 5.0;
-  const need = Number.isFinite(avail) && avail > 0 ? Math.min(b, avail) : 0;
-  const n = +need.toFixed(3);
-  if (edge === 'north') return { dx: 0, dz: -n };
-  if (edge === 'south') return { dx: 0, dz: +n };
-  if (edge === 'east') return { dx: -n, dz: 0 };
-  if (edge === 'west') return { dx: +n, dz: 0 };
-  return { dx: 0, dz: 0 };
+function translateFootprint(fp, dx, dz) {
+  if (!dx && !dz) return fp;
+  return fp.map(pt => ({ x: +(pt.x + dx).toFixed(3), z: +(pt.z + dz).toFixed(3) }));
 }
 
-function finalizeByAccess(fp, cx, cz, p, maxW, maxD, rng) {
+function clampFootprintToParcel(fp, parcelAabb, margin = 0.75) {
+  if (!parcelAabb) return fp;
+  const { minX: pMinX, maxX: pMaxX, minZ: pMinZ, maxZ: pMaxZ } = parcelAabb;
+  let dx = 0, dz = 0;
+  for (let iter = 0; iter < 2; iter++) {
+    let fMinX = Infinity, fMaxX = -Infinity, fMinZ = Infinity, fMaxZ = -Infinity;
+    for (const pt of fp) {
+      const x = pt.x + dx, z = pt.z + dz;
+      if (x < fMinX) fMinX = x; if (x > fMaxX) fMaxX = x;
+      if (z < fMinZ) fMinZ = z; if (z > fMaxZ) fMaxZ = z;
+    }
+    if (!Number.isFinite(fMinX)) break;
+    const innerMinX = pMinX + margin, innerMaxX = pMaxX - margin;
+    const innerMinZ = pMinZ + margin, innerMaxZ = pMaxZ - margin;
+    if (fMinX < innerMinX) dx += innerMinX - fMinX;
+    else if (fMaxX > innerMaxX) dx += innerMaxX - fMaxX;
+    if (fMinZ < innerMinZ) dz += innerMinZ - fMinZ;
+    else if (fMaxZ > innerMaxZ) dz += innerMaxZ - fMaxZ;
+  }
+  return translateFootprint(fp, +dx.toFixed(3), +dz.toFixed(3));
+}
+
+function outlineOfFootprint(fp, rotation = 0) {
+  const b = polyBounds(fp);
+  if (!Number.isFinite(b.minX)) return b;
+  return rotatedBounds(b, frameOf(b, rotation ?? 0));
+}
+
+function clampFootprintToWorld(fp, worldHalf, rotation = 0, margin = 0.75) {
+  if (!Number.isFinite(worldHalf) || worldHalf <= 0) return fp;
+  const limit = Math.max(0, worldHalf - margin);
+  let dx = 0, dz = 0;
+  for (let iter = 0; iter < 4; iter++) {
+    const shifted = (dx || dz) ? translateFootprint(fp, +dx.toFixed(3), +dz.toFixed(3)) : fp;
+    const o = outlineOfFootprint(shifted, rotation);
+    if (!Number.isFinite(o.minX)) break;
+    let ndx = dx, ndz = dz;
+    if (o.minX < -limit) ndx += -limit - o.minX;
+    else if (o.maxX > limit) ndx += limit - o.maxX;
+    if (o.minZ < -limit) ndz += -limit - o.minZ;
+    else if (o.maxZ > limit) ndz += limit - o.maxZ;
+    if (Math.abs(ndx - dx) < 1e-6 && Math.abs(ndz - dz) < 1e-6) { dx = ndx; dz = ndz; break; }
+    dx = ndx; dz = ndz;
+  }
+  return translateFootprint(fp, +dx.toFixed(3), +dz.toFixed(3));
+}
+
+function finalizeByAccess(fp, cx, cz, p, maxW, maxD, rng, worldHalf = Infinity) {
   const access = p?.access ?? null;
   if (!access || !access.edge) return { fp, rotation: 0 };
   const edge = access.edge;
-  const minX = Math.min(...fp.map(v => v.x)), maxX = Math.max(...fp.map(v => v.x));
-  const minZ = Math.min(...fp.map(v => v.z)), maxZ = Math.max(...fp.map(v => v.z));
-  const spanX = maxX - minX, spanZ = maxZ - minZ;
-  const avail = (edge === 'north' || edge === 'south')
-    ? Math.max(0.5, Math.min(maxD - spanZ, maxD * 0.5))
-    : Math.max(0.5, Math.min(maxW - spanX, maxW * 0.5));
-  const s = setbackShift(edge, p?.type, avail);
-  // Разрешаем поворот только на кратные 90°+джиттер — лестница может содержать 0/90/180/270.
   const yaw = streetYawFromEdge(edge, rng);
   const rot = rotateFootprint(fp, cx, cz, yaw);
-  const shifted = rot.map(pt => ({ x: +(pt.x + s.dx).toFixed(3), z: +(pt.z + s.dz).toFixed(3) }));
-  return { fp: shifted, rotation: yaw };
+
+  // R4.3 §9.5: линия застройки — отступ от улицы (границы участка со стороны доступа) внутрь участка.
+  // Выравниваем фасад к setback-линии, затем гарантируем, что footprint целиком внутри участка и мира.
+  let aligned = rot;
+  const parcel = p?.aabb ?? null;
+  if (parcel) {
+    const b = aabbOfFootprint(rot);
+    const spanX = b.maxX - b.minX, spanZ = b.maxZ - b.minZ;
+    const margin = 0.75;
+    const innerMinX = parcel.minX + margin, innerMaxX = parcel.maxX - margin;
+    const innerMinZ = parcel.minZ + margin, innerMaxZ = parcel.maxZ - margin;
+    const setback = SETBACK_BY_TYPE[p?.type] ?? 5.0;
+    let dx = 0, dz = 0;
+    if (edge === 'south') {
+      // улица у южной границы участка: фасад (minZ) на setback внутрь
+      const wantMinZ = parcel.minZ + Math.min(setback, Math.max(0, (innerMaxZ - innerMinZ) - spanZ));
+      dz = wantMinZ - b.minZ;
+    } else if (edge === 'north') {
+      // улица у северной границы участка: фасад (maxZ) на setback внутрь
+      const wantMaxZ = parcel.maxZ - Math.min(setback, Math.max(0, (innerMaxZ - innerMinZ) - spanZ));
+      dz = wantMaxZ - b.maxZ;
+    } else if (edge === 'west') {
+      const wantMinX = parcel.minX + Math.min(setback, Math.max(0, (innerMaxX - innerMinX) - spanX));
+      dx = wantMinX - b.minX;
+    } else if (edge === 'east') {
+      const wantMaxX = parcel.maxX - Math.min(setback, Math.max(0, (innerMaxX - innerMinX) - spanX));
+      dx = wantMaxX - b.maxX;
+    }
+    aligned = translateFootprint(rot, +dx.toFixed(3), +dz.toFixed(3));
+    aligned = clampFootprintToParcel(aligned, parcel, margin);
+  } else {
+    // fallback: legacy center shift when parcel bounds are unavailable
+    const b = aabbOfFootprint(rot);
+    const spanX = b.maxX - b.minX, spanZ = b.maxZ - b.minZ;
+    const avail = (edge === 'north' || edge === 'south')
+      ? Math.max(0.5, Math.min(maxD - spanZ, maxD * 0.5))
+      : Math.max(0.5, Math.min(maxW - spanX, maxW * 0.5));
+    const need = Math.min(SETBACK_BY_TYPE[p?.type] ?? 5.0, avail);
+    const n = +need.toFixed(3);
+    if (edge === 'north') aligned = translateFootprint(rot, 0, -n);
+    else if (edge === 'south') aligned = translateFootprint(rot, 0, +n);
+    else if (edge === 'east') aligned = translateFootprint(rot, -n, 0);
+    else if (edge === 'west') aligned = translateFootprint(rot, +n, 0);
+  }
+  aligned = clampFootprintToWorld(aligned, worldHalf, yaw, 0.75);
+  return { fp: aligned, rotation: yaw };
 }
 
 function aabbOfFootprint(fp) {
@@ -541,7 +618,7 @@ export function makeStage4() {
             const riverIndex = (rivers === (ctx.hydrology?.rivers ?? null) || rivers === (ctx.masks?.easement?.rivers ?? null)) ? (ctx.spatial?.riverSegments ?? null) : null;
             const lakes = ctx.masks?.easement?.lakes ?? [];
             // R4.3 §9.5/§9.6: orientation aligned to street + setback pushes away from street — for rotated footprint
-            const fin = finalizeByAccess(fp, cx, cz, p, maxW, maxD, rng);
+            const fin = finalizeByAccess(fp, cx, cz, p, maxW, maxD, rng, size / 2);
             const fpAligned = fin.fp;
             if (footprintNearAnchors(fpAligned, anchors, 10) || footprintIntersectsRiver(fpAligned, rivers, riverIndex, waterBufferById) || footprintIntersectsLake(fpAligned, lakes) || footprintIntersectsFloodplainMask(fpAligned, floodplainMasks) || footprintIntersectsRoad(fpAligned, roads, roadSegments, ctx.spatial?.roadEasements, { ignoreEasements: !!force && !!relaxChunk })) continue;
             footprint = fpAligned;
@@ -560,7 +637,7 @@ export function makeStage4() {
             const fp = footprintRect(cx, cz, w, d);
             const riverIndex = (rivers === (ctx.hydrology?.rivers ?? null) || rivers === (ctx.masks?.easement?.rivers ?? null)) ? (ctx.spatial?.riverSegments ?? null) : null;
             const lakes = ctx.masks?.easement?.lakes ?? [];
-            const fin = finalizeByAccess(fp, cx, cz, p, maxW, maxD, rng);
+            const fin = finalizeByAccess(fp, cx, cz, p, maxW, maxD, rng, size / 2);
             const fpAligned = fin.fp;
             if (footprintNearAnchors(fpAligned, anchors, 10) || footprintIntersectsRiver(fpAligned, rivers, riverIndex, waterBufferById) || footprintIntersectsLake(fpAligned, lakes) || footprintIntersectsFloodplainMask(fpAligned, floodplainMasks) || footprintIntersectsRoad(fpAligned, roads, roadSegments, ctx.spatial?.roadEasements, { ignoreEasements: !!force && !!relaxChunk })) continue;
             footprint = fpAligned;
