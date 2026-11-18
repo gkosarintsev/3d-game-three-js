@@ -216,6 +216,37 @@
 
 Фазы допускают внутренние итерации, но каждая закрывается зелёными гейтами по scope и обновлённым baseline/отчётом.
 
+### CI & Parallelization (plan 22)
+
+### CI & Parallelization (plan 22 protocol)
+
+Execution follows `.ai/plans/22-parallel-agents-github-ci.md` and `.ai/prompts/agent-ci-protocol.md`.
+
+- **Isolation:** one agent/task = one git worktree + one branch (`agent/plan21-<id>-<slug>`). No direct push to `main`.
+- **CI-only verification:** mandatory/heavy gates run in GitHub Actions via `node scripts/agent/ci-watch.mjs`. Local: read/edit/git + `node --check` hints only.
+- **Result tracking:** `.ai/state/ci-results/<branch>.{json,md,-failed.log}` (gitignored), links recorded in `.ai/state/citygen-plan21-execution.md`.
+- **Merge:** gradual `agent/*` → PR (optional integration) → `main` on green required checks.
+- **Rebuild determinism:** generator/output-affecting changes must include regenerated derived artifacts (`build-level` outputs/reports), updated baselines/etalons as required, and pass CI `check-levels`/`build-level --check`/`citygen-etalon-check` by scope/profile.
+
+#### Parallel workstreams (proposed waves)
+
+| Wave | Tasks (plan 21) | Parallel-safe? | CI profile / required checks | Notes |
+| --- | --- | --- | --- | --- |
+| W1 (started) | Planning/state sync + docs alignment (`.ai/state/citygen-plan21-execution.md`, plan status/CI section) | Yes (docs-only) | fast (`node-fast`) | No generator output impact. |
+| W1 (started) | **R4.3** building placement/foundation/relief increment (stage-4) | Parallel branch, but **conflicts on merge** with other output-changing generator work (derived/catalogs, baselines, etalons, reports) | fast for iteration; scoped/full (`run_node_extended`, rebuild-check, etalon, browser by scope) before merge | Requires deterministic rebuild of affected `src/levels/level-*/` artifacts and `.ai/state/citygen-baselines|etalons` updates if behavior/reports change. |
+| W2 | **R4.4** exterior/visual variation (facades/windows/roofs) | Blocked by/serialize after W1 output-changing merges touching stage-4/buildings | scoped/full | High output impact. |
+| W2 | **R5.4** `locked` preservation + `instance.generation` metadata plumbing | Can develop in parallel branch; merge-serialize with other output-changing work | scoped/full + targeted tests | Must not alter existing committed outputs when fields absent. |
+| W2 | **R5.5** `homeChunk`/`coverageChunks`/streaming ownership correctness | Independent module focus (`chunk-level`, build pipeline) but output-affecting for catalogs | scoped/full (`build-level --check`, check-levels) | Requires catalog rebuilds. |
+| W3 | **R5.1/R5.2/R5.3** controlled chaos, readability, gameplay placement | Partially parallel by stage/module; high coupling in finalize/gameplay outputs | scoped/full + browser level-contract/lifecycle/open-world by scope | Needs careful determinism/versioning. |
+| W3 | **R2.2/R2.6-R2.8** transport/cost-path/bridges-tunnels/interchanges/repair-degrade | Mostly stage-2; conflicts with transport-affecting changes | scoped/full + seed-series checks as needed | Prefer sequential increments with etalon/seed evidence. |
+| W4 | **R6** profiles, pilot levels, >=100 seed series, etalons, docs/CI hardening | Parallelizable by profile/tooling/docs subtracks; merge carefully | scoped/full/dispatch seed-series & browser | Final DoD/regression closure. |
+
+#### Coordination rules
+- Before output-changing work: capture baseline (`citygen-etalon-check`, targeted `build-level --check`, relevant reports) and record in branch state.
+- One logical generator behavior change per PR/merge when possible; bump `generatorVersion` and regenerate committed derived artifacts/etalons/baselines together when required by determinism policy.
+- Prefer `--concurrency`/scoped/dispatch runs for long seed-series or rebuild shards; do not run heavy suites locally.
+
+
 ## 9. Definition of Done (плана как инициативы)
 
 - [ ] R0–R6 выполнены или сознательно сужены с зафиксированными причинами в `.ai/state/citygen-procedural-rules.md`.
