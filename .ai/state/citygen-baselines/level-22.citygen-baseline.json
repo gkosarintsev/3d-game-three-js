@@ -2,11 +2,11 @@
   "file": "src/levels/level-22.json",
   "levelName": "level-22",
   "generator": {
-    "generatorVersion": "0.55.0",
+    "generatorVersion": "0.57.0",
     "seed": 22,
     "deterministic": true
   },
-  "reportHash": "f6ebd06276775e37e0fbada88f0923a864aea4d425487bad9e734ccf6b37085a",
+  "reportHash": "0216a00f4e7d11a63ac7af252a1fd468f92ed93377a8547b5bc60c90c650fcfb",
   "stages": 7,
   "summary": {
     "errors": 0,
@@ -22,12 +22,12 @@
   "metrics": {
     "partial": true,
     "counts": {
-      "roads": 100,
-      "roadNodes": 69,
+      "roads": 98,
+      "roadNodes": 67,
       "districts": 15,
       "parcels": 403,
       "reservedParcels": 69,
-      "buildings": 74,
+      "buildings": 73,
       "enterableBuildings": 15,
       "props": 183,
       "lights": 8,
@@ -35,24 +35,24 @@
       "lakes": 0
     },
     "graph": {
-      "nodes": 69,
-      "edges": 100,
+      "nodes": 67,
+      "edges": 98,
       "components": 1,
-      "largestComponent": 69,
+      "largestComponent": 67,
       "deadEnds": 20,
-      "deadEndRatio": 0.289855,
-      "avgDegree": 2.898551,
-      "gamma": 0.497512
+      "deadEndRatio": 0.298507,
+      "avgDegree": 2.925373,
+      "gamma": 0.502564
     },
     "roads": {
-      "totalLength": 7282.41,
+      "totalLength": 7184,
       "lengthByType": {
         "arterial": 800,
-        "local": 6482.41
+        "local": 6384
       },
       "shareByType": {
-        "arterial": 0.109854,
-        "local": 0.890146
+        "arterial": 0.111359,
+        "local": 0.888641
       },
       "maxSlope": 0.193246,
       "slopeByClass": {
@@ -63,7 +63,7 @@
           "overAbsolute": 0
         },
         "local": {
-          "count": 99,
+          "count": 97,
           "maxSlope": 0.193246,
           "overPolicy": 5,
           "overAbsolute": 0
@@ -76,14 +76,14 @@
         "local": 12
       },
       "classPolicyViolations": 5,
-      "classPolicyOk": 95,
+      "classPolicyOk": 93,
       "overAbsolute": 0,
       "version": 2
     },
     "gameplay": {
       "spawnToRoad": 0,
       "exitToRoad": 0,
-      "enterableShare": 0.202703,
+      "enterableShare": 0.205479,
       "enterableTarget": 0.2
     },
     "districts": {

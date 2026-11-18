@@ -426,7 +426,7 @@ function generateCityforge(raw, sourceName, opts = {}) {
       if (!(e instanceof ValidationError)) throw e;
       const ids = new Set();
       for (const msg of e.errors ?? []) {
-        const m = String(msg).match(/buildings\[\d+\]\s+\(([^)]+)\):[\s\S]*?(стоит в воде|стоит в улице|легла на план наземной дороги|легла в русло)/);
+        const m = String(msg).match(/buildings\[\d+\]\s+\(([^)]+)\):[\s\S]*?(стоит в воде|стоит в улице|легла на план наземной дороги|легла в русло|выходит за землю)/);
         if (m) ids.add(m[1]);
       }
       if (!ids.size || !Array.isArray(engine?.buildings) || engine.buildings.length === 0) throw e;

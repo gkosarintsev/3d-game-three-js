@@ -2,17 +2,17 @@
   "file": "src/levels/level-20.json",
   "levelName": "level-20",
   "generator": {
-    "generatorVersion": "0.55.0",
+    "generatorVersion": "0.57.0",
     "seed": 20,
     "deterministic": true
   },
-  "reportHash": "476a634b70f33478d76e9731665b363cdb917ad181b1da8b318240312ed77b15",
+  "reportHash": "11d496649390d190678c8314916458dec2b8be62193a6bd724615224d8253ef5",
   "stages": 7,
   "summary": {
     "errors": 0,
-    "warnings": 8,
+    "warnings": 7,
     "repairs": 10,
-    "drops": 1
+    "drops": 0
   },
   "rules": {
     "errors": 0,
@@ -22,37 +22,37 @@
   "metrics": {
     "partial": true,
     "counts": {
-      "roads": 159,
-      "roadNodes": 131,
+      "roads": 156,
+      "roadNodes": 128,
       "districts": 40,
       "parcels": 2381,
       "reservedParcels": 179,
-      "buildings": 417,
-      "enterableBuildings": 83,
+      "buildings": 410,
+      "enterableBuildings": 82,
       "props": 360,
       "lights": 8,
       "rivers": 0,
       "lakes": 0
     },
     "graph": {
-      "nodes": 131,
-      "edges": 159,
+      "nodes": 128,
+      "edges": 156,
       "components": 1,
-      "largestComponent": 131,
-      "deadEnds": 36,
-      "deadEndRatio": 0.274809,
-      "avgDegree": 2.427481,
-      "gamma": 0.410853
+      "largestComponent": 128,
+      "deadEnds": 34,
+      "deadEndRatio": 0.265625,
+      "avgDegree": 2.4375,
+      "gamma": 0.412698
     },
     "roads": {
-      "totalLength": 13765.803,
+      "totalLength": 13666.953,
       "lengthByType": {
         "arterial": 2080,
-        "local": 11685.803
+        "local": 11586.953
       },
       "shareByType": {
-        "arterial": 0.151099,
-        "local": 0.848901
+        "arterial": 0.152192,
+        "local": 0.847808
       },
       "maxSlope": 0.3,
       "slopeByClass": {
@@ -63,9 +63,9 @@
           "overAbsolute": 0
         },
         "local": {
-          "count": 158,
+          "count": 155,
           "maxSlope": 0.3,
-          "overPolicy": 17,
+          "overPolicy": 16,
           "overAbsolute": 0
         }
       },
@@ -75,15 +75,15 @@
         "collector": 10,
         "local": 12
       },
-      "classPolicyViolations": 18,
-      "classPolicyOk": 141,
+      "classPolicyViolations": 17,
+      "classPolicyOk": 139,
       "overAbsolute": 0,
       "version": 2
     },
     "gameplay": {
       "spawnToRoad": 0,
       "exitToRoad": 0,
-      "enterableShare": 0.199041,
+      "enterableShare": 0.2,
       "enterableTarget": 0.2
     },
     "districts": {

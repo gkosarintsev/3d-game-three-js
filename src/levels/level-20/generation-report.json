@@ -1,7 +1,7 @@
 {
   "version": 1,
   "generator": {
-    "generatorVersion": "0.55.0",
+    "generatorVersion": "0.57.0",
     "seed": 20,
     "deterministic": true
   },
@@ -37,9 +37,9 @@
     {
       "id": "4_buildings_structures",
       "status": "ok",
-      "diagnostics": 10,
+      "diagnostics": 9,
       "repairs": 9,
-      "drops": 1
+      "drops": 0
     },
     {
       "id": "5_infrastructure_props",
@@ -1001,17 +1001,10 @@
     },
     {
       "severity": "warn",
-      "code": "buildings_dropped_steep_slope",
-      "stage": "4_buildings_structures",
-      "message": "dropped 1 building(s) on steep slopes (>25%)",
-      "count": 1
-    },
-    {
-      "severity": "warn",
       "code": "chunk_buildings_heavy",
       "stage": "6_finalize_emit",
-      "message": "high building count in a single chunk (166)",
-      "maxBuildings": 166,
+      "message": "high building count in a single chunk (167)",
+      "maxBuildings": 167,
       "chunk": 640,
       "grid": 2
     },
@@ -1019,8 +1012,8 @@
       "severity": "warn",
       "code": "chunk_props_heavy",
       "stage": "6_finalize_emit",
-      "message": "high prop count in a single chunk (155)",
-      "maxProps": 155,
+      "message": "high prop count in a single chunk (159)",
+      "maxProps": 159,
       "chunk": 640,
       "grid": 2
     },
@@ -3209,22 +3202,22 @@
       "code": "buildings_generated",
       "stage": "4_buildings_structures",
       "message": "generated buildings from parcels",
-      "count": 418,
+      "count": 410,
       "budget": 420,
-      "skippedConflict": 1421
+      "skippedConflict": 1430
     },
     {
       "severity": "info",
       "code": "enterable_share",
       "stage": "4_buildings_structures",
       "message": "enterable buildings share (section 9.8, target 15-25%)",
-      "total": 417,
-      "enterable": 83,
-      "share": 0.199,
+      "total": 410,
+      "enterable": 82,
+      "share": 0.2,
       "targetShare": 0.2,
       "required": {
-        "min": 63,
-        "max": 104
+        "min": 62,
+        "max": 102
       }
     },
     {
@@ -3305,7 +3298,7 @@
       "code": "floors_contrast_built",
       "stage": "4_buildings_structures",
       "message": "building floors distribution (section 9.4): L-modulation, adjacency contrast <= 2.5x, one dominant per high-L district",
-      "clamped": 88,
+      "clamped": 143,
       "dominants": 0,
       "districts": 40,
       "adjacencyPairs": 74
@@ -3315,8 +3308,8 @@
       "code": "post_buildings_local_connectors",
       "stage": "4_buildings_structures",
       "message": "added local connector segments after building placement (R3.5)",
-      "added": 5,
-      "candidates": 5
+      "added": 3,
+      "candidates": 3
     },
     {
       "severity": "info",
@@ -3331,21 +3324,21 @@
       "message": "generated district props",
       "count": 360,
       "budget": 360,
-      "attempts": 857,
+      "attempts": 834,
       "byDistrictType": {
-        "old_town": 41,
+        "old_town": 42,
         "slums": 50,
-        "residential": 84,
-        "industrial": 9,
-        "luxury": 20,
-        "commercial": 16,
-        "sports": 11,
-        "park": 18,
+        "residential": 86,
+        "industrial": 6,
+        "luxury": 23,
+        "commercial": 20,
+        "sports": 12,
+        "park": 17,
         "campus": 8,
-        "market": 69,
-        "office": 16,
-        "parking": 8,
-        "forest": 9
+        "market": 65,
+        "office": 12,
+        "parking": 7,
+        "forest": 11
       }
     },
     {
@@ -3389,10 +3382,10 @@
         "grid": 2,
         "total": 4
       },
-      "roadNodes": 131,
-      "roadSegments": 159,
+      "roadNodes": 128,
+      "roadSegments": 156,
       "roadComponents": 1,
-      "roadGraphNodes": 131,
+      "roadGraphNodes": 128,
       "interchanges": {
         "segments": 13,
         "junctions": 4,
@@ -3493,18 +3486,18 @@
           "accessibleRatio": 1
         }
       },
-      "buildings": 417,
+      "buildings": 410,
       "buildingsByDistrictType": {
-        "office": 39,
-        "old_town": 61,
-        "slums": 70,
-        "residential": 111,
-        "industrial": 19,
-        "parking": 11,
-        "commercial": 38,
-        "market": 50,
-        "campus": 5,
-        "park": 7,
+        "old_town": 65,
+        "office": 35,
+        "slums": 67,
+        "residential": 106,
+        "industrial": 21,
+        "commercial": 41,
+        "campus": 4,
+        "market": 57,
+        "park": 6,
+        "parking": 2,
         "forest": 2,
         "sports": 2,
         "luxury": 2
@@ -3512,26 +3505,26 @@
       "lights": 8,
       "props": 360,
       "propsByDistrictType": {
-        "old_town": 41,
+        "old_town": 42,
         "slums": 50,
-        "residential": 84,
-        "industrial": 9,
-        "luxury": 20,
-        "commercial": 16,
-        "sports": 11,
-        "park": 18,
+        "residential": 86,
+        "industrial": 6,
+        "luxury": 23,
+        "commercial": 20,
+        "sports": 12,
+        "park": 17,
         "campus": 8,
-        "market": 69,
-        "office": 16,
-        "parking": 8,
-        "forest": 9
+        "market": 65,
+        "office": 12,
+        "parking": 7,
+        "forest": 11
       },
       "chunkLoad": {
         "nonEmptyChunks": 4,
-        "maxBuildings": 166,
-        "maxProps": 155,
+        "maxBuildings": 167,
+        "maxProps": 159,
         "maxLights": 3,
-        "avgBuildings": 104.25,
+        "avgBuildings": 102.5,
         "avgProps": 90
       }
     },
@@ -3663,54 +3656,48 @@
       ]
     }
   ],
-  "drops": [
-    {
-      "stage": "4_buildings_structures",
-      "id": "b_district_0_0_01_3",
-      "reason": "building_on_steep_slope"
-    }
-  ],
+  "drops": [],
   "summary": {
     "errors": 0,
-    "warnings": 8,
+    "warnings": 7,
     "repairs": 10,
-    "drops": 1
+    "drops": 0
   },
   "metrics": {
     "version": 1,
     "partial": true,
     "counts": {
-      "roads": 159,
-      "roadNodes": 131,
+      "roads": 156,
+      "roadNodes": 128,
       "districts": 40,
       "parcels": 2381,
       "reservedParcels": 179,
-      "buildings": 417,
-      "enterableBuildings": 83,
+      "buildings": 410,
+      "enterableBuildings": 82,
       "props": 360,
       "lights": 8,
       "rivers": 0,
       "lakes": 0
     },
     "graph": {
-      "nodes": 131,
-      "edges": 159,
+      "nodes": 128,
+      "edges": 156,
       "components": 1,
-      "largestComponent": 131,
-      "deadEnds": 36,
-      "deadEndRatio": 0.274809,
-      "avgDegree": 2.427481,
-      "gamma": 0.410853
+      "largestComponent": 128,
+      "deadEnds": 34,
+      "deadEndRatio": 0.265625,
+      "avgDegree": 2.4375,
+      "gamma": 0.412698
     },
     "roads": {
-      "totalLength": 13765.803,
+      "totalLength": 13666.953,
       "lengthByType": {
         "arterial": 2080,
-        "local": 11685.803
+        "local": 11586.953
       },
       "shareByType": {
-        "arterial": 0.151099,
-        "local": 0.848901
+        "arterial": 0.152192,
+        "local": 0.847808
       },
       "maxSlope": 0.3,
       "slopeByClass": {
@@ -3721,9 +3708,9 @@
           "overAbsolute": 0
         },
         "local": {
-          "count": 158,
+          "count": 155,
           "maxSlope": 0.3,
-          "overPolicy": 17,
+          "overPolicy": 16,
           "overAbsolute": 0
         }
       },
@@ -3733,15 +3720,15 @@
         "collector": 10,
         "local": 12
       },
-      "classPolicyViolations": 18,
-      "classPolicyOk": 141,
+      "classPolicyViolations": 17,
+      "classPolicyOk": 139,
       "overAbsolute": 0,
       "version": 2
     },
     "gameplay": {
       "spawnToRoad": 0,
       "exitToRoad": 0,
-      "enterableShare": 0.199041,
+      "enterableShare": 0.2,
       "enterableTarget": 0.2
     },
     "districts": {
@@ -3831,15 +3818,15 @@
       "dividesPlate": true
     },
     "determinism": {
-      "generatorVersion": "0.55.0",
+      "generatorVersion": "0.57.0",
       "seed": 20,
       "deterministic": true
     },
     "report": {
       "diagnosticsErrors": 0,
-      "diagnosticsWarnings": 8,
+      "diagnosticsWarnings": 7,
       "repairs": 10,
-      "drops": 1
+      "drops": 0
     }
   },
   "rules": {
@@ -3851,7 +3838,7 @@
         "code": "road_slope_over_class_policy",
         "stage": "rules",
         "message": "road segments exceed class slope policy (see policies.slopeLimitPct)",
-        "segments": 18,
+        "segments": 17,
         "maxSlope": 0.3
       }
     ],

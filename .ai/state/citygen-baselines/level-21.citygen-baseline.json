@@ -2,11 +2,11 @@
   "file": "src/levels/level-21.json",
   "levelName": "level-21",
   "generator": {
-    "generatorVersion": "0.55.0",
+    "generatorVersion": "0.57.0",
     "seed": 21,
     "deterministic": true
   },
-  "reportHash": "682242ed14d1aeef72b23afbe999909f33bdf6b19fed4f5a5bdf45021d288a87",
+  "reportHash": "c6b99692d68b8a8e05b27a2d1640dbcf3f54cd591ea713799c8ccbe1982bf506",
   "stages": 7,
   "summary": {
     "errors": 0,
@@ -27,7 +27,7 @@
       "districts": 47,
       "parcels": 2407,
       "reservedParcels": 488,
-      "buildings": 411,
+      "buildings": 410,
       "enterableBuildings": 82,
       "props": 360,
       "lights": 8,
@@ -45,14 +45,14 @@
       "gamma": 0.413437
     },
     "roads": {
-      "totalLength": 13478.796,
+      "totalLength": 13439.746,
       "lengthByType": {
         "arterial": 2080,
-        "local": 11398.796
+        "local": 11359.746
       },
       "shareByType": {
-        "arterial": 0.154316,
-        "local": 0.845684
+        "arterial": 0.154765,
+        "local": 0.845235
       },
       "maxSlope": 0.297561,
       "slopeByClass": {
@@ -83,7 +83,7 @@
     "gameplay": {
       "spawnToRoad": 0,
       "exitToRoad": 0,
-      "enterableShare": 0.199513,
+      "enterableShare": 0.2,
       "enterableTarget": 0.2
     },
     "districts": {
