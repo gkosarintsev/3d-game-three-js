@@ -1,4 +1,4 @@
-/**
+﻿/**
  * R0.5: generator profiles/policies config with defaults (docs/level_generation_rules_claude.md §11, §13.2).
  * Open schema fields (`generator.profiles`, `generator.policies`) are normalized here with fallbacks;
  * stages may read `ctx.meta.cityProfile` / `ctx.meta.policies` without guessing missing structure.
@@ -8,7 +8,7 @@ const clamp01 = (v) => Math.max(0, Math.min(1, v));
 
 // R0.4: canonical generator version for deterministic behavior/regression snapshots.
 // Bump on intentional layout/IR/report-affecting changes (see .ai/state/citygen-procedural-rules.md).
-export const DEFAULT_GENERATOR_VERSION = '0.57.0';
+export const DEFAULT_GENERATOR_VERSION = '0.58.0';
 
 export const DEFAULT_CITY_POLICIES = Object.freeze({
   roadDensity: { bMin: 60, bMax: 260, gamma: 0.8 },
@@ -125,3 +125,4 @@ export function resolveGeneratorConfig(input) {
   const activeProfile = activeProfileId && cityProfiles[activeProfileId] ? cityProfiles[activeProfileId] : null;
   return { policies, cityProfiles, activeProfileId, activeProfile };
 }
+
