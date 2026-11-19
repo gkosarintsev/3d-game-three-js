@@ -32,6 +32,8 @@ import { skeletonOf } from './skeleton.mjs';
 import { decodeChunk, encodeChunk, encodeSkeleton, SKELETON_FILE } from '../src/level-bin.js';
 import { compileCityforge } from './cityforge-compile.mjs';
 import { runCitygen } from './citygen/index.mjs';
+import { resolveGeneratorConfig } from './citygen/config.mjs';
+import { isHandledFeatureType } from './citygen/features.mjs';
 
 /** Корень репозитория: от него печатается браузерный путь каталога (`catalog`). */
 const ROOT = resolve(import.meta.dirname, '..');
@@ -237,6 +239,38 @@ ${constName}.map.skeleton = decodeSkeleton(await loadSkel());
  * (normalize → catalog/module), поэтому глава становится играбельной. Неподдержанное
  * содержимое формата — явная ошибка компилятора.
  */
+function isAlreadyExpandedV4(src) {
+  if (!src || src.schemaVersion !== 4) return false;
+  const gen = src.generator;
+  if (!gen || typeof gen !== 'object') return false;
+  const sections = ['landscape', 'transport', 'districtsGen', 'buildings', 'infrastructure'];
+  let saw = false;
+  for (const s of sections) {
+    const v = gen[s];
+    if (v && typeof v === 'object') {
+      saw = true;
+      if (v.generate !== false || v.enabled !== false) return false;
+    }
+  }
+  return saw && (Array.isArray(src.buildings) || Array.isArray(src?.cityforge?.networks?.roads?.segments));
+}
+
+function hasManifestedFeatureProps(src) {
+  const objs = Array.isArray(src?.landscapeObjects) ? src.landscapeObjects : (Array.isArray(src?.props) ? src.props : []);
+  return objs.some(p => /^prop_9\d{5,}$/.test(String(p?.id ?? '')));
+}
+
+function needsFeatureManifestation(raw) {
+  try {
+    const cfg = resolveGeneratorConfig(raw?.generator ?? {});
+    const selected = Array.isArray(cfg?.profileMutation?.features) ? cfg.profileMutation.features : [];
+    if (!selected.some(isHandledFeatureType)) return false;
+    return !hasManifestedFeatureProps(raw);
+  } catch {
+    return false;
+  }
+}
+
 /** Возвращает source после валидации и citygen (до компиляции). */
 export function expandCityforgeSource(raw, sourceName) {
   const isV4 = raw?.schemaVersion === 4;
@@ -245,6 +279,12 @@ export function expandCityforgeSource(raw, sourceName) {
   let source = raw;
   let report = null;
   if (isV4) {
+    // Idempotent re-expand of a fully expanded output: skip citygen re-run.
+    // But if handled §11.2 features are selected and not yet manifested in a
+    // static expanded source, we must run the pipeline to apply them.
+    if (isAlreadyExpandedV4(raw) && !needsFeatureManifestation(raw)) {
+      return { source: canonicalizeExpandedSource(raw), warnings: v3w, report: null };
+    }
     try {
       // Городогенератор пишет в `ctx.input` (движковый источник — это и есть
       // трансформированный вход), поэтому гоняем его по копии: повторный

@@ -255,6 +255,10 @@ const HANDLERS = {
   river_island_park: applyRiverIslandPark,
 };
 
+export function isHandledFeatureType(type) {
+  return Object.prototype.hasOwnProperty.call(HANDLERS, type);
+}
+
 export function initFeatureManifest(ctx) {
   const selected = Array.isArray(ctx?.meta?.profileMutation?.features) ? [...ctx.meta.profileMutation.features] : [];
   const items = selected.map((type, i) => ({

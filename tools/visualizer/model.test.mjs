@@ -197,7 +197,7 @@ test('integration: level 16 counts and auto-districts', async () => {
   const model = buildModel({ level: n, mode: 'compiled', source, compiledIndex: levelDef.map, decodedCells, report });
   assert.equal(model.entities.buildings.size, 354);
   assert.equal(model.entities.roads.size, 193);
-  assert.equal(model.entities.props.size, 574);
+  assert.equal(model.entities.props.size, 554);
   assert.equal((model.entities.lights || new Map()).size, 8);
   assert.equal((model.entities.channels || new Map()).size, 1);
   assert.equal(model.skeleton.nodes.length, 4862);

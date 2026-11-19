@@ -552,9 +552,13 @@ export function makeStage5() {
   return {
     id: '5_infrastructure_props',
     prepare(ctx) {
+      const fromProps = Array.isArray(ctx.input?.props) ? structuredClone(ctx.input.props) : null;
+      const fromLandscape = Array.isArray(ctx.input?.landscapeObjects) ? structuredClone(ctx.input.landscapeObjects) : null;
       ctx.infrastructure = {
         lights: Array.isArray(ctx.input?.lights) ? structuredClone(ctx.input.lights) : [],
-        props: Array.isArray(ctx.input?.props) ? structuredClone(ctx.input.props) : [],
+        // Load existing props from either field so re-runs on expanded/static sources
+        // can preserve them (generateProps passthrough) and feature application is idempotent.
+        props: fromProps ?? fromLandscape ?? [],
       };
     },
     generate(ctx) {
