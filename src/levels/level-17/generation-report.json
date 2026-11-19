@@ -1,7 +1,7 @@
 {
   "version": 1,
   "generator": {
-    "generatorVersion": "0.84.0",
+    "generatorVersion": "0.85.0",
     "seed": 16,
     "deterministic": true
   },
@@ -51,7 +51,7 @@
     {
       "id": "6_finalize_emit",
       "status": "ok",
-      "diagnostics": 15,
+      "diagnostics": 16,
       "repairs": 0,
       "drops": 13
     }
@@ -4265,6 +4265,20 @@
     },
     {
       "severity": "info",
+      "code": "impression_cadence_route_enforced",
+      "stage": "6_finalize_emit",
+      "message": "retagged 2 route road segment(s) into 2 cadence bands",
+      "changedSegments": 2,
+      "routeEdges": 3,
+      "pathLength": 2080,
+      "bandSpacingMeters": 200,
+      "classes": [
+        "local",
+        "collector"
+      ]
+    },
+    {
+      "severity": "info",
       "code": "interchange_junction_candidates",
       "stage": "6_finalize_emit",
       "message": "identified junction nodes as grade-separation candidates",
@@ -4453,25 +4467,33 @@
     "roads": {
       "totalLength": 14359.162,
       "lengthByType": {
-        "arterial": 2080,
-        "local": 12279.162
+        "arterial": 117.45,
+        "collector": 211.26,
+        "local": 14030.452
       },
       "shareByType": {
-        "arterial": 0.144855,
-        "local": 0.855145
+        "arterial": 0.008179,
+        "collector": 0.014713,
+        "local": 0.977108
       },
       "maxSlope": 0.3,
       "slopeByClass": {
-        "arterial": {
-          "count": 3,
-          "maxSlope": 0.275122,
-          "overPolicy": 3,
-          "overAbsolute": 0
-        },
         "local": {
-          "count": 175,
+          "count": 176,
           "maxSlope": 0.3,
           "overPolicy": 64,
+          "overAbsolute": 0
+        },
+        "arterial": {
+          "count": 1,
+          "maxSlope": 0.275122,
+          "overPolicy": 1,
+          "overAbsolute": 0
+        },
+        "collector": {
+          "count": 1,
+          "maxSlope": 0.116795,
+          "overPolicy": 1,
           "overAbsolute": 0
         }
       },
@@ -4481,8 +4503,8 @@
         "collector": 10,
         "local": 12
       },
-      "classPolicyViolations": 67,
-      "classPolicyOk": 111,
+      "classPolicyViolations": 66,
+      "classPolicyOk": 112,
       "overAbsolute": 0,
       "version": 2
     },
@@ -4653,58 +4675,73 @@
     },
     "impressionCadence": {
       "partial": true,
-      "method": "spawn_exit_shortest_path_25m_district_roadclass",
-      "samples": 62,
-      "changes": 14,
-      "pathLength": 1588.7,
-      "avgSpacingMeters": 105.9,
+      "method": "spawn_exit_path_geometry_25m_district_roadclass",
+      "samples": 83,
+      "changes": 8,
+      "pathLength": 2080,
+      "avgSpacingMeters": 231.1,
       "minSpacingMeters": 25,
       "targetMin": 150,
       "targetMax": 300,
-      "ok": false
+      "ok": true
     },
     "impressionAnchors": {
-      "method": "spawn_exit_anchors_spacing",
+      "method": "spawn_exit_anchors_spacing_path",
       "spacingMeters": 200,
       "anchors": [
         {
           "d": 200,
-          "x": -407.1,
-          "z": -354.9
+          "x": -520,
+          "z": -320
         },
         {
           "d": 400,
-          "x": -294.2,
-          "z": -189.8
+          "x": -520,
+          "z": -120
         },
         {
           "d": 600,
-          "x": -181.3,
-          "z": -24.8
+          "x": -520,
+          "z": 80
         },
         {
           "d": 800,
-          "x": -68.4,
-          "z": 140.3
+          "x": -520,
+          "z": 280
         },
         {
           "d": 1000,
-          "x": 44.5,
-          "z": 305.4
+          "x": -520,
+          "z": 480
         },
         {
           "d": 1200,
-          "x": 157.4,
-          "z": 470.5
+          "x": -360,
+          "z": 520
         },
         {
           "d": 1400,
-          "x": 331.3,
+          "x": -160,
+          "z": 520
+        },
+        {
+          "d": 1600,
+          "x": 40,
+          "z": 520
+        },
+        {
+          "d": 1800,
+          "x": 240,
+          "z": 520
+        },
+        {
+          "d": 2000,
+          "x": 440,
           "z": 520
         }
       ],
-      "anchorsCount": 7,
-      "pathLength": 1588.7
+      "anchorsCount": 10,
+      "pathLength": 2080
     },
     "falseDeadEnds": {
       "count": 0,
@@ -4735,7 +4772,7 @@
       "dividesPlate": true
     },
     "determinism": {
-      "generatorVersion": "0.84.0",
+      "generatorVersion": "0.85.0",
       "seed": 16,
       "deterministic": true
     },
@@ -4752,6 +4789,20 @@
     "violations": [
       {
         "severity": "warn",
+        "code": "junction_type_mismatch_class",
+        "stage": "rules",
+        "message": "junction 'j_tr_n_spawn' type 'signalized' does not match adjacent classes (expected 'uncontrolled')",
+        "index": 29,
+        "id": "j_tr_n_spawn",
+        "declared": "signalized",
+        "expected": "uncontrolled",
+        "classes": [
+          "local"
+        ],
+        "incidentCount": 6
+      },
+      {
+        "severity": "warn",
         "code": "relief_ceiling_advisory",
         "stage": "rules",
         "message": "terrain analysis maxSlope exceeds engine field capability (CONFIG.jsonMap.relief.maxSlope / CONFIG.relief.maxSlope) — advisory only (hills legal); autoring cap for a single capsule is relief.hillMaxSlope",
@@ -4765,7 +4816,7 @@
         "code": "road_slope_over_class_policy",
         "stage": "rules",
         "message": "road segments exceed class slope policy (see policies.slopeLimitPct)",
-        "segments": 67,
+        "segments": 66,
         "maxSlope": 0.3
       },
       {
@@ -4778,7 +4829,7 @@
     ],
     "summary": {
       "errors": 0,
-      "warnings": 2,
+      "warnings": 3,
       "infos": 1
     }
   }

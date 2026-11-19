@@ -9,6 +9,53 @@ import { info, warn } from '../diagnostics.mjs';
 import { makeTerrainSampler } from './stage-2-transport.mjs';
 import { createSpatialIndex } from '../spatial.mjs';
 import { makeRng, mix } from '../rng.mjs';
+import { spawnExitRoute } from '../rules.mjs';
+
+const CADENCE_ROAD_CLASSES = ['local', 'collector'];
+const CADENCE_SPEED_LIMIT = { highway: 90, arterial: 60, collector: 40, local: 30, ramp: 40, merge: 40, split: 40, connector: 30 };
+
+function enforceImpressionCadenceOnRoute(ctx, stageId) {
+  const gp = ctx?.input?.gameplay ?? ctx?.engine?.gameplay ?? ctx?.gameplay ?? null;
+  const roads = ctx?.networks?.roads?.segments;
+  const nodes = ctx?.networks?.roads?.nodes;
+  if (!gp || !Array.isArray(roads) || !Array.isArray(nodes) || roads.length === 0) return;
+  const route = spawnExitRoute(nodes, roads, gp);
+  if (!route || !Array.isArray(route.edges) || route.edges.length === 0) return;
+
+  const spacing = 200;
+  const seen = new Set();
+  let traveled = 0;
+  let changed = 0;
+  for (const edge of route.edges) {
+    const seg = edge?.seg;
+    const len = Number(edge?.len) || 0;
+    if (!seg || !(len > 0)) { traveled += Math.max(0, len); continue; }
+    const mid = traveled + len * 0.5;
+    const band = Math.floor(mid / spacing);
+    const desired = CADENCE_ROAD_CLASSES[((band % CADENCE_ROAD_CLASSES.length) + CADENCE_ROAD_CLASSES.length) % CADENCE_ROAD_CLASSES.length];
+    // Avoid mutating special/structural segments; only retag ordinary ground roads on the route.
+    const t = String(seg.type || 'local');
+    const isSpecial = t === 'ramp' || t === 'merge' || t === 'split' || t === 'connector' || seg.interchange || seg.layer === 'elevated' || seg.layer === 'bridge';
+    if (!isSpecial && seen.add(seg)) {
+      if (seg.type !== desired) {
+        seg.type = desired;
+        seg.speedLimit = CADENCE_SPEED_LIMIT[desired] ?? seg.speedLimit;
+        changed += 1;
+      }
+    }
+    traveled += len;
+  }
+  if (changed > 0) {
+    ctx.report.diagnostics.push(info('impression_cadence_route_enforced', stageId,
+      `retagged ${changed} route road segment(s) into ${CADENCE_ROAD_CLASSES.length} cadence bands`, {
+        changedSegments: changed,
+        routeEdges: route.edges.length,
+        pathLength: +Number(route.pathLength ?? traveled).toFixed(1),
+        bandSpacingMeters: spacing,
+        classes: [...CADENCE_ROAD_CLASSES],
+      }));
+  }
+}
 
 function distXZ(ax, az, bx, bz) { return Math.hypot(ax - bx, az - bz); }
 
@@ -98,6 +145,8 @@ export function makeStage6() {
     id: '6_finalize_emit',
     validate(ctx) {
       const stageId = '6_finalize_emit';
+      // T23.1-b: enforce impression cadence along spawn→exit route before final summaries/repairs.
+      enforceImpressionCadenceOnRoute(ctx, stageId);
       const roads = ctx.networks?.roads?.segments ?? [];
       const nodes = ctx.networks?.roads?.nodes ?? [];
       const districts = Array.isArray(ctx.districts) ? ctx.districts : [];
