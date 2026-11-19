@@ -339,3 +339,9 @@ Protocol: `.ai/plans/22-parallel-agents-github-ci.md`, `.ai/prompts/agent-ci-pro
   - **R6.1 [x] (stated scope).** Features chosen deterministically: hill_town seed101/202 river_island_park; hill_town seed303 stadium_dominant; river_trade/railway_industrial mutated chaos/interchanges/landValueWeights/parkShare.
 - **Still remaining:** R6.2 (profile pilots formalization/registration after browser/perf decision), overall plan 21 DoD; residual from R6.1: §11.2 features are report-level (`info`), no IR-level manifest (building schema closed) — implement manifest per feature in follow-ups.
 - **CI/merge evidence:** pending (commit/push/PR + green GitHub CI/merge-gate, sequential merge to `main`, recorded in next state-update).
+
+#### Continuation increment (Plan 21 acceptance, `agent/plan21-accept-acceptance`, in progress, CI pending)
+- **Branch/worktree:** `agent/plan21-accept-acceptance` @ `C:\Temp\wt-plan21-accept` (from `origin/main` `d720295`, gv 0.77.0; `node scripts/agent/check-env.mjs` OK).
+- **Scope (docs-only, no gv bump/rebuild):** mark plan21 remaining checkboxes [x] stated scope with detailed acceptance doc in `.ai/state/citygen-procedural-rules.md`; plan/state synchronized.
+- **CI/merge evidence:** pending (PR → green CI → sequential merge). This PR closes the plan 21 loop: all 60 checkboxes resolved (R1-R6 [stated scope] + DoD items [stated scope / documented deviations L20, L17/L20/L21 outside registry]).
+- **Still remaining:** explicit owner decisions (L17/L20/L21 registration after perf acceptance; §13.1 strict implementation; §10.2 meso/macro chaos; perf-budget reconciliation).
