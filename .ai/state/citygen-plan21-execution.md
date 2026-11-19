@@ -389,7 +389,7 @@ Protocol: `.ai/plans/22-parallel-agents-github-ci.md`, `.ai/prompts/agent-ci-pro
 - **Branch/worktree:** `agent/plan23-t231-anchors` @ `C:\Temp\wt-plan23-t231` (from `origin/main` `e097978`, gv `0.83.0 -> 0.84.0`; `node scripts/agent/check-env.mjs` OK).
 - **Scope (output-affecting, gv bump, report-only):** `tools/citygen/rules.mjs` — refactor: Dijkstra shortest spawn→exit route extracted to shared `spawnExitLegs(nodes, segments, gp)`; `impressionAnchorsMetric` added (`report.metrics.impressionAnchors = { method, spacingMeters, anchors[], anchorsCount, pathLength }`); anchors deterministic every 200 m; `impressionCadenceMetric` reuses the helper (output unchanged for cadence). NO generator generation changes yet (this unblocks cadence anchors in stage-5/6 for the next slice). Bump DEFAULT_GENERATOR_VERSION `0.83.0 -> 0.84.0`; rebuild L16-22 (0 warnings); baselines/etalons refreshed (summary gv 0.84.0); `citygen.test` **65/65**; `chunk.test` **20/20**; `etalon-check` **16/16**. Probes: L16 8 anchors, L17 7, L20 7, L21 8, L22 2.
 - **Honest residual:** T23.1 generation-layer (alternating anchor class/changes inside transport/buildings) NOT implemented; `impressionCadence.ok` target unaffected by this slice (already `ok:false` on L16/L17/L20/L22).
-- **CI/merge evidence:** pending (PR → green CI → sequential merge по merge-gate).
+- **CI/merge evidence:** PR #55 merged `40c9474` (push 44575400945 SUCCESS, PR CI 44575441790 SUCCESS).
 
 #### Continuation increment (Plan 23 drafted, `agent/plan23-doc`, in progress, CI pending)
 - **Branch/worktree:** `agent/plan23-doc` @ `C:\Temp\wt-plan23` (from `origin/main` `1506b2d`; `node scripts/agent/check-env.mjs` OK; docs-only, no gv bump).
