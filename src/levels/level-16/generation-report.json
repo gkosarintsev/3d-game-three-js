@@ -1,7 +1,7 @@
 {
   "version": 1,
   "generator": {
-    "generatorVersion": "0.77.0",
+    "generatorVersion": "0.78.0",
     "seed": 16,
     "deterministic": true
   },
@@ -3085,15 +3085,15 @@
     },
     "impressionCadence": {
       "partial": true,
-      "method": "spawn_exit_shortest_path_25m",
+      "method": "spawn_exit_shortest_path_25m_district_roadclass",
       "samples": 67,
-      "changes": 6,
+      "changes": 16,
       "pathLength": 1717.5,
-      "avgSpacingMeters": 245.4,
-      "minSpacingMeters": 75,
+      "avgSpacingMeters": 101,
+      "minSpacingMeters": 25,
       "targetMin": 150,
       "targetMax": 300,
-      "ok": true
+      "ok": false
     },
     "falseDeadEnds": {
       "count": 0,
@@ -3124,7 +3124,7 @@
       "dividesPlate": true
     },
     "determinism": {
-      "generatorVersion": "0.77.0",
+      "generatorVersion": "0.78.0",
       "seed": 16,
       "deterministic": true
     },

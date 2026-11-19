@@ -35,6 +35,24 @@ function minRoadDist(x, z, segments = []) {
   return Number.isFinite(best) ? best : null;
 }
 
+// Возвращает класс ближайшей дороги в пределах ~25 м от точки; вне 25 м — 'offroad'.
+// Используется §10.4 «impression cadence»: смена класса дороги тоже считается
+// впечатлением, иначе длинная монотонная магистраль давала бы ложные нули.
+function nearestRoadClassAt(x, z, segments = []) {
+  let best = Infinity;
+  let cls = null;
+  for (const s of segments) {
+    const pts = Array.isArray(s?.path) ? s.path : [];
+    for (let i = 0; i + 1 < pts.length; i++) {
+      const a = pts[i], b = pts[i + 1];
+      if (!a || !b) continue;
+      const d = pointSegDistXZ(x, z, a[0], a[2], b[0], b[2]);
+      if (d < best) { best = d; cls = String(s?.type || 'local'); }
+    }
+  }
+  return (Number.isFinite(best) && best <= 25) ? cls : 'offroad';
+}
+
 function segLengthXZ(seg) {
   if (Number.isFinite(seg?.length)) return Number(seg.length);
   const pts = Array.isArray(seg?.path) ? seg.path : [];
@@ -203,8 +221,14 @@ function impressionCadenceMetric(districts, nodes, segments, gp) {
   if (!legs.length) return null;
 
   const sampleStep = 25;
+  const signatureOf = (x, z) => {
+    const dT = districtTypeAt(districts, x, z);
+    const rC = nearestRoadClassAt(x, z, segments);
+    return dT + '|' + rC;
+  };
   let traveled = 0;
-  let prevType = districtTypeAt(districts, legs[0][0].x, legs[0][0].z);
+  const firstPos = { x: legs[0][0].x, z: legs[0][0].z };
+  let prevType = signatureOf(firstPos.x, firstPos.z);
   let changes = 0;
   let lastChangeAt = 0;
   let minGap = null;
@@ -215,22 +239,24 @@ function impressionCadenceMetric(districts, nodes, segments, gp) {
       const x = a.x + (b.x - a.x) * t;
       const z = a.z + (b.z - a.z) * t;
       samples += 1;
-      const type = districtTypeAt(districts, x, z);
-      if (type !== prevType) {
+      const sig = signatureOf(x, z);
+      if (sig !== prevType) {
         changes += 1;
         const gap = d - lastChangeAt;
         if (minGap == null || gap < minGap) minGap = gap;
         lastChangeAt = d;
-        prevType = type;
+        prevType = sig;
       }
     }
     traveled += legLen;
   }
   const total = traveled;
   const avg = changes > 0 ? round(total / (changes + 1), 1) : total;
+  // §10.4: «смена впечатлений каждые 150–300 м» — теперь считаем впечатление как
+  // (класс района + класс дороги). Pure-district-метрика не детектировала смену остаточного коридора.
   return {
     partial: true,
-    method: 'spawn_exit_shortest_path_25m',
+    method: 'spawn_exit_shortest_path_25m_district_roadclass',
     samples,
     changes,
     pathLength: round(total, 1),
