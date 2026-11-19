@@ -1,8 +1,8 @@
 {
   "profile": "river_trade",
   "seed": 303,
-  "generatorVersion": "0.69.0",
-  "reportHash": "3c63b6d7bd7efad7b1b9667ff4eeccfb72b4a318e61957f7cdd158482bd283c2",
+  "generatorVersion": "0.70.0",
+  "reportHash": "d96008c428f8018deebc8ac1e38e475aaebb83910575bd35a77bb7b56fc8b802",
   "summary": {
     "errors": 0,
     "warnings": 9,
@@ -167,12 +167,17 @@
     },
     "landmarkVisibility": {
       "partial": true,
-      "method": "stub_count_proxy",
+      "method": "terrain_los_sample",
       "landmarks": 5,
       "crossings": 6,
       "cores": 0,
       "total": 11,
-      "visibleApprox": 11
+      "observers": 11,
+      "totalPairs": 110,
+      "visiblePairs": 108,
+      "visibleApprox": 11,
+      "visibleFraction": 0.981818,
+      "visibleTargets": 11
     },
     "blockDensityCorrelation": {
       "rho": 0.865052,

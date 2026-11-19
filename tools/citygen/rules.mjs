@@ -7,6 +7,7 @@
  * extended in later phases as IR becomes richer.
  */
 import { byId } from './ids.mjs';
+import { terrainHeightAt } from './terrain-height.mjs';
 
 function round(v, n = 6) {
   if (!Number.isFinite(v)) return null;
@@ -265,7 +266,11 @@ function blockDensityCorrelation(districts = []) {
 }
 
 function landmarkVisibilityMetric(ctx, terrainAnalysis) {
-  // R0.3 §12.2: видимость ориентиров (заглушка/приближение) — count/coverage proxy, no LOS raycast.
+  // R5.2 §12.2/§10.4: приближённая проверка видимости ориентиров — детерминированный
+  // 1-D raycast по аналитическому полю высот (mountain/valley smooth ease).
+  // Обозреватели: отмеченные viewpoint-ориентиры (landmarks c kind==='viewpoint'),
+  // пересечения и spawn/exit якоря геймплея (eye level 1.7 м).
+  // Здания/растительность не учитываются — метрика partial, но уже не заглушка.
   const landmarks = Array.isArray(terrainAnalysis?.landmarks) ? terrainAnalysis.landmarks
     : (Array.isArray(ctx?.masks?.terrain?.landmarks) ? ctx.masks.terrain.landmarks : []);
   const crossings = Array.isArray(terrainAnalysis?.crossings) ? terrainAnalysis.crossings
@@ -273,14 +278,74 @@ function landmarkVisibilityMetric(ctx, terrainAnalysis) {
   const cores = Array.isArray(terrainAnalysis?.cores) ? terrainAnalysis.cores
     : (Array.isArray(ctx?.terrain?.analysis?.cores) ? ctx.terrain.analysis.cores : []);
   const total = landmarks.length + crossings.length;
+
+  const input = ctx?.input ?? {};
+  const baseY = Number(input?.ground?.y ?? 0) || 0;
+  const modifiers = ctx?.terrain?.modifiers ?? input?.cityforge?.terrain?.modifiers ?? [];
+  const gp = input?.gameplay ?? {};
+
+  const observers = [];
+  const addObs = (id, x, z) => {
+    const nx = Number(x), nz = Number(z);
+    if (!Number.isFinite(nx) || !Number.isFinite(nz)) return;
+    observers.push({ id: String(id), x: +nx.toFixed(3), z: +nz.toFixed(3), y: +(terrainHeightAt(nx, nz, baseY, modifiers) + 1.7).toFixed(3) });
+  };
+  let vo = 0;
+  for (const lm of landmarks) {
+    if (lm?.kind === 'viewpoint') { addObs('obs_' + (lm.id ?? ('v' + vo)), lm.x, lm.z); vo += 1; }
+  }
+  for (const cr of crossings) addObs('obs_crossing_' + (cr?.riverId ?? 'i'), cr?.x, cr?.z);
+  if (gp?.spawn) addObs('obs_spawn', gp.spawn.x, gp.spawn.z);
+  if (gp?.exit) addObs('obs_exit', gp.exit.x, gp.exit.z);
+
+  const losClear = (a, b) => {
+    const dx = b.x - a.x, dz = b.z - a.z;
+    const dist = Math.hypot(dx, dz);
+    if (!(dist > 1e-6)) return false;
+    const steps = Math.max(6, Math.min(32, Math.ceil(dist / 8)));
+    for (let i = 1; i < steps; i++) {
+      const t = i / steps;
+      const x = a.x + dx * t, z = a.z + dz * t;
+      const yLine = a.y + (b.y - a.y) * t;
+      const th = terrainHeightAt(x, z, baseY, modifiers);
+      if (th >= yLine) return false; // рельеф закрывает луч
+    }
+    return true;
+  };
+
+  const targets = [];
+  for (const lm of landmarks) targets.push({ id: lm?.id ?? 'lm', x: lm?.x, z: lm?.z, y: Number.isFinite(Number(lm?.elevation)) ? Number(lm.elevation) + 1.7 : undefined });
+  for (const cr of crossings) targets.push({ id: 'cross_' + (cr?.riverId ?? 'i'), x: cr?.x, z: cr?.z });
+
+  let visibleTargets = 0, visiblePairs = 0, totalPairs = 0;
+  for (const tg of targets) {
+    const tx = Number(tg.x), tz = Number(tg.z);
+    if (!Number.isFinite(tx) || !Number.isFinite(tz)) continue;
+    const ty = Number.isFinite(Number(tg.y)) ? Number(tg.y)
+      : terrainHeightAt(tx, tz, baseY, modifiers) + 1.7;
+    const tv = { x: tx, z: tz, y: ty };
+    let seen = false;
+    for (const obs of observers) {
+      if (Math.hypot(obs.x - tx, obs.z - tz) < 1) continue;
+      totalPairs += 1;
+      if (losClear(obs, tv)) { visiblePairs += 1; seen = true; }
+    }
+    if (seen) visibleTargets += 1;
+  }
+
   return {
     partial: true,
-    method: 'stub_count_proxy',
+    method: 'terrain_los_sample',
     landmarks: landmarks.length,
     crossings: crossings.length,
     cores: cores.length,
     total,
-    visibleApprox: total, // placeholder approximation: assume marked candidates are intended-visible
+    observers: observers.length,
+    totalPairs,
+    visiblePairs,
+    visibleApprox: visibleTargets, // сколько ориентиров видно хотя бы из одной точки
+    visibleFraction: totalPairs > 0 ? round(visiblePairs / totalPairs, 6) : null,
+    visibleTargets,
   };
 }
 

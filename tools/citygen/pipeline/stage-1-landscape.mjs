@@ -11,6 +11,7 @@ import { warn, info } from '../diagnostics.mjs';
 import { makeRng, mix } from '../rng.mjs';
 import { createSpatialIndex } from '../spatial.mjs';
 
+import { terrainHeightAt } from '../terrain-height.mjs';
 const clamp = (v, lo, hi) => Math.max(lo, Math.min(hi, v));
 const lerp = (a, b, t) => a + (b - a) * t;
 const EPS = 1e-9;
@@ -68,29 +69,6 @@ function riverMinDistToPoint(river, x, z) {
     best = Math.min(best, distPointSegXZ(x, z, a[0], a[2], b[0], b[2]));
   }
   return best;
-}
-
-function hillContribution(mod, x, z) {
-  const type = mod?.type;
-  if (type !== 'mountain' && type !== 'valley') return 0;
-  const h = Number(mod.height) || 0;
-  const r = Number(mod.radius) || 0;
-  if (!(r > EPS) || !Number.isFinite(h)) return 0;
-  const c = Array.isArray(mod.center) ? mod.center : [Number(mod.center?.x) || 0, Number(mod.center?.z) || 0];
-  const dx = x - (Number(c[0]) || 0);
-  const dz = z - (Number(c[1]) || 0);
-  const d = Math.hypot(dx, dz);
-  if (d >= r) return 0;
-  const t = 1 - d / r;
-  const e = t * t * (3 - 2 * t); // smooth ease
-  const signed = (mod.operation === 'subtract') ? -h : h;
-  return signed * e;
-}
-
-function terrainHeightAt(x, z, baseY, modifiers = []) {
-  let y = Number.isFinite(baseY) ? baseY : 0;
-  for (const m of modifiers) y += hillContribution(m, x, z);
-  return y;
 }
 
 function classifySlope(s) {

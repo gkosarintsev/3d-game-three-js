@@ -1,7 +1,7 @@
 {
   "version": 1,
   "generator": {
-    "generatorVersion": "0.69.0",
+    "generatorVersion": "0.70.0",
     "seed": 22,
     "deterministic": true
   },
@@ -2338,12 +2338,17 @@
     },
     "landmarkVisibility": {
       "partial": true,
-      "method": "stub_count_proxy",
+      "method": "terrain_los_sample",
       "landmarks": 2,
       "crossings": 0,
       "cores": 0,
       "total": 2,
-      "visibleApprox": 2
+      "observers": 3,
+      "totalPairs": 5,
+      "visiblePairs": 5,
+      "visibleApprox": 2,
+      "visibleFraction": 1,
+      "visibleTargets": 2
     },
     "blockDensityCorrelation": {
       "rho": 0.752622,
@@ -2365,7 +2370,7 @@
       "dividesPlate": true
     },
     "determinism": {
-      "generatorVersion": "0.69.0",
+      "generatorVersion": "0.70.0",
       "seed": 22,
       "deterministic": true
     },
