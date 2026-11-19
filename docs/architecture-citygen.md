@@ -76,9 +76,52 @@
 
 Детали кодов диагностик/repair и покрытие тестами — `tools/citygen.test.mjs`, `tools/citygen/pipeline/*.mjs`.
 
+## Генераторные профили и политики (`generator.profiles` / `generator.policies`)
+
+- Источник истины конфига — `tools/citygen/config.mjs`: `DEFAULT_GENERATOR_VERSION`, `DEFAULT_CITY_POLICIES`, `DEFAULT_CITY_PROFILES`.
+- `generator.policies` трактуется относительно документированных значений по умолчанию (§11/§13.2): `roadDensity.bMin/bMax` (пределы плотности дорожной сети, `gamma`), `slopeLimitPct` (6/8/10/12 по классам highway/arterial/collector/local, **проценты**; `J.maxSlope` остаётся абсолютным пределом в м/м), `enterableShare` (целевая доля доступных зданий), `chaos.global` (0..1) и `chaos.seamsMax` (число швов), `interchanges.min/max`, `parkShare.min/max`.
+- Нормализация — `normalizePolicies`/`normalizeCityProfiles` (детерминированные defaults + `mergeDeep` + clamp известных числовых диапазонов); `resolveGeneratorConfig(input)` возвращает `{ policies, cityProfiles, activeProfileId, activeProfile }`.
+- Стадии читают конфиг через `ctx.meta.policies` / `ctx.meta.cityProfiles` / `ctx.meta.activeCityProfile*` (см. `tools/citygen/context.mjs`), без догадок про отсутствующие поля. Явный выбор профиля — `generator.profile`/`profileId`/`cityProfile`; отсутствие выбирает дефолтные значения по `DEFAULT_CITY_PROFILES`.
+- Три профиля-прототипа (§11):
+  - `river_trade` — «Речной торговый»: relief `plain`, 1 река + 1 приток, interchanges 2–3, `parkShare` 0.08–0.15, `chaos` 0.4;
+  - `hill_town` — «Город на холме»: relief `hills`, без рек, interchanges 0–1, `parkShare` 0.10–0.18, `chaos` 0.55;
+  - `railway_industrial` — «Железнодорожный индустриальный»: relief `plain`, 1 река (0–1 приток), interchanges 3–4, `parkShare` 0.05–0.08, `chaos` 0.4.
+- `level-17` (`river_trade`), `level-20` (`hill_town`), `level-21` (`railway_industrial`) — воспроизводимые profile-driven source pilots (seed/`generator.generatorVersion`/хэши в `generation-report.json`); `level-20/21` вне `src/levels/index.js` до подтверждения browser/perf.
+
+## report.metrics (v2) и мягкие метрики §12.2
+
+- Прикрепляет `tools/citygen/rules.mjs` (`evaluateRules`/`attachRulesToReport`); `report.metrics.version = 2` (детерминированно, partial/scaffold где нужно).
+- Поля: `counts` (дороги/узлы/районы/участки/здания/огни/реки/озёра), `graph` (компоненты, тупики/dead-end ratio, γ, avg degree), `roads` (доли классов по длине, slope share/policy по классам), `gameplay` (spawn/exit-to-road, `enterableShare`/target), `districts` (площади/доли по типам, `parkShare`), `terrain` (уклон по 8-классовой сетке 16 м), `parcels` (reservedShare по причинам: water/road_corridor/anchor/reservation/crossing/steep_slope/remote_access), `landmarkVisibility` (stub/count proxy), `blockDensityCorrelation` (Spearman D vs 1/area при наличии D/площади), `chunkBuild` (scaffold, `buildTimeMs: null`), `stream` (метаданные стриминга).
+- Повторная запись метрик — только через детерминированный прогон (`runCitygen`), руками snapshots не правят.
+
+## Эталоны и регрессия (R0.4/R6.4)
+
+- Synthetic etalons (3 профиля × seeds 101/202/303): `.ai/state/citygen-etalons/{river_trade,hill_town,railway_industrial}-seed{101,202,303}.json` + `summary.json` (hash/summary/rules/metrics, `generatorVersion` из `tools/citygen/config.mjs`).
+- Pilot baselines: `.ai/state/citygen-baselines/level-16..22.citygen-baseline.json`.
+- Проверка: `node tools/citygen-etalon-check.mjs` (CI job `node / etalon regression` в `.github/workflows/ci.yml`); при зелёном статусе — 16/16.
+- Контролируемое обновление после осознанного изменения поведения:
+  1. Внести изменение стадии/правила.
+  2. Пересобрать затронутые derived: `node tools/build-level.mjs src/levels/level-NN.json` (и `--check` для паритета, 0 warnings).
+  3. Обновить baselines: `node tools/citygen-baseline.mjs --out .ai/state/citygen-baselines src/levels/level-16.json ...` (нужный scope).
+  4. Обновить synthetic etalons: `node tools/citygen-etalon-check.mjs --update` (при намеренном bump версии: `--generatorVersion <v>`).
+  5. Зафиксировать `git add` derived-артефактов **вместе** с источниками/инструментами/снапшотами.
+  6. Гейты: `node tools/check-levels.mjs <scope>`, `node --test tools/citygen.test.mjs`, browser/seed-series по scope.
+
+## Серийная валидация (R6.3)
+
+- `node tools/citygen-seed-series.mjs --profiles <p> --count 100 [--transport] [--out <dir>]` — детерминизм (двойной прогон на seed), hard failures (errors/non-determinism → exit 1), агрегированные мягкие метрики; `--single-run`/`--fail-fast`/`--concurrency` по необходимости.
+- CI (`.github/workflows/ci.yml`, job `seed-series`): матрица plain/transport × 3 профиля × 100 seeds исполняется на PR merge-gate и на push/dispatch профиля (fast push в `agent/**` пропускает серии); агрегация — artifact `aggregate / report`.
+- Регрессионный отчёт из CI хранится как artifact (retention 14 дней); в репозиторий коммитятся только etalons/baselines (см. выше).
+
+## Процедура bump `DEFAULT_GENERATOR_VERSION`
+
+- Повышать при намеренном изменении раскладки/IR/отчёта/derived, влияющем на воспроизводимый результат (геометрия, распределения, ID/порядок, диагностики/метрики, влияющие на report hash) для версий seed+generatorVersion.
+- Не повышать при чисто нефункциональных правках, не меняющих детерминированный вывод.
+- При bump: обновить `generator.generatorVersion` в затронутых source-уровнях/эталонных сценариях, пересобрать derived (0 warnings), обновить baselines/etalons (`--update` / `--generatorVersion <v>`), обновить ожидания тестов при необходимости, закоммитить source+tools+derived+snapshots **одним изменением**, зафиксировать причину в `.ai/state/citygen-plan21-execution.md` (или эквиваленте) и проверить GitHub CI как источник истины.
+
 ## Тесты и артефакты
 
-- Node: `node --test tools/citygen.test.mjs` (детерминизм, repair/валидация стадий, отчёт, RNG/ids/spatial, e2e compile, пилот гл.16 и его baseline-инварианты), `node tools/check-levels.mjs`, `node tools/build-level.mjs src/levels/level-16.json --check`.
+- Node: `node --test tools/citygen.test.mjs` (детерминизм, repair/валидация стадий, отчёт, RNG/ids/spatial, e2e compile, пилот гл.16 и его baseline-инварианты), `node tools/check-levels.mjs`, `node tools/build-level.mjs src/levels/level-16.json --check`, `node tools/citygen-etalon-check.mjs` (эталоны/baselines, 16/16), `node tools/citygen-seed-series.mjs` (100×3 determinism/hard-failure gate в CI).
 - Browser (engine/open-world): `tests/open-world.test.js` (`testEngineChapter`, `--level`, `--details`) сообщает worst-frame/picture/wall-clock и (инструментировано) `renderer.info.memory`, `scene.children` и дельту start→rest для TASK-001/008; запуск через `tools/ci-browser.mjs`.
 - Для пилота коммитятся источник, каталог и детерминированный `generation-report.json` (см. ADR-001).
 - Ограничения MVP и открытые задачи (IR/маски/spatial глубже, семантика стадий 2–6, бюджеты/emit, новые примитивы/GLB/поведение, формальный p95/CI-метод метрик) — в плане и `.ai/state/city-generator-districts.md`.

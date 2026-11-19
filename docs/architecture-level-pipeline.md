@@ -85,7 +85,12 @@ v4 (`kind: 'cityforge'`, `schemaVersion: 4`, манифест `generator`) пр�
 `tools/citygen` (детерминированные стадии 0–6, IR/отчёт/repair) → компиляция
 в open-каталог общим пайплайном, с коммитируемым `generation-report.json` для
 пилота. Текущее устройство и ограничения: [architecture-citygen.md](architecture-citygen.md),
-решения — [ADR-001](architecture/adr/ADR-001-v4-citygen-districts.md).
+решения — [ADR-001](architecture/adr/ADR-001-v4-citygen-districts.md). Профили/политики
+(`generator.profiles/policies`), метрики `report.metrics` v2, эталоны/регрессия
+(`.ai/state/citygen-etalons/`, `.ai/state/citygen-baselines/`, `node tools/citygen-etalon-check.mjs`),
+серийная валидация (`tools/citygen-seed-series.mjs`, CI `seed-series`) и процедура bump
+`DEFAULT_GENERATOR_VERSION` описаны в [architecture-citygen.md](architecture-citygen.md)
+(разделы «Генераторные профили и политики», «Серийная валидация», «Процедура bump …»).
 
 `expandCityforgeSource` (кнопка «Expand generated» редактора и первый шаг
 сборки) гоняет стадии по **копии** брифа: стадии пишут в `ctx.input`, и без
