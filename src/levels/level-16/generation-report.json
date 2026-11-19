@@ -1,7 +1,7 @@
 {
   "version": 1,
   "generator": {
-    "generatorVersion": "0.87.0",
+    "generatorVersion": "0.88.0",
     "seed": 16,
     "deterministic": true
   },
@@ -51,9 +51,9 @@
     {
       "id": "6_finalize_emit",
       "status": "ok",
-      "diagnostics": 15,
-      "repairs": 1,
-      "drops": 11
+      "diagnostics": 16,
+      "repairs": 2,
+      "drops": 31
     }
   ],
   "districts": [
@@ -1136,6 +1136,13 @@
     },
     {
       "severity": "warn",
+      "code": "finalize_prop_in_floodplain",
+      "stage": "6_finalize_emit",
+      "message": "dropped 20 prop(s) inside floodplain zone (finalize repair)",
+      "count": 20
+    },
+    {
+      "severity": "warn",
       "code": "road_graph_disconnected_final",
       "stage": "6_finalize_emit",
       "message": "road graph has 7 connected components at finalize",
@@ -2190,27 +2197,10 @@
     },
     {
       "severity": "info",
-      "code": "props_generated",
+      "code": "props_passthrough",
       "stage": "5_infrastructure_props",
-      "message": "generated district props",
-      "count": 360,
-      "budget": 360,
-      "attempts": 970,
-      "byDistrictType": {
-        "slums": 58,
-        "residential": 80,
-        "old_town": 45,
-        "sports": 4,
-        "market": 31,
-        "luxury": 46,
-        "parking": 7,
-        "commercial": 19,
-        "campus": 7,
-        "office": 18,
-        "park": 15,
-        "forest": 13,
-        "industrial": 9
-      }
+      "message": "using declared props",
+      "props": 360
     },
     {
       "severity": "info",
@@ -2222,26 +2212,26 @@
       "severity": "info",
       "code": "features_manifest",
       "stage": "6_finalize_emit",
-      "message": "feature manifest: 0 applied, 0 degraded, 1 skipped, 0 planned",
+      "message": "feature manifest: 1 applied, 0 degraded, 0 skipped, 0 planned",
       "selected": [
         "citadel_hill"
       ],
-      "applied": 0,
+      "applied": 1,
       "degraded": 0,
-      "skipped": 1,
+      "skipped": 0,
       "planned": 0
     },
     {
       "severity": "info",
       "code": "features_manifest",
       "stage": "6_finalize_emit",
-      "message": "feature manifest: 0 applied, 0 degraded, 1 skipped, 0 planned",
+      "message": "feature manifest: 1 applied, 0 degraded, 0 skipped, 0 planned",
       "selected": [
         "citadel_hill"
       ],
-      "applied": 0,
+      "applied": 1,
       "degraded": 0,
-      "skipped": 1,
+      "skipped": 0,
       "planned": 0
     },
     {
@@ -2377,29 +2367,14 @@
         "forest": 1
       },
       "lights": 8,
-      "props": 360,
-      "propsByDistrictType": {
-        "slums": 58,
-        "residential": 80,
-        "old_town": 45,
-        "sports": 4,
-        "market": 31,
-        "luxury": 46,
-        "parking": 7,
-        "commercial": 19,
-        "campus": 7,
-        "office": 18,
-        "park": 15,
-        "forest": 13,
-        "industrial": 9
-      },
+      "props": 372,
       "chunkLoad": {
         "nonEmptyChunks": 25,
         "maxBuildings": 30,
-        "maxProps": 43,
+        "maxProps": 41,
         "maxLights": 1,
         "avgBuildings": 14.44,
-        "avgProps": 14.4
+        "avgProps": 14.88
       }
     },
     {
@@ -2423,7 +2398,7 @@
         "buildingsInWaterBuffer": 0,
         "buildingsInFloodplain": 0,
         "propsInWaterBuffer": 0,
-        "propsInFloodplain": 0
+        "propsInFloodplain": 20
       }
     },
     {
@@ -2788,6 +2763,11 @@
   "repairs": [
     {
       "stage": "6_finalize_emit",
+      "code": "finalize_drop_props_floodplain",
+      "count": 20
+    },
+    {
+      "stage": "6_finalize_emit",
       "code": "resolve_road_crossing",
       "node": "tr_x",
       "segments": [
@@ -3056,32 +3036,136 @@
       "stage": "6_finalize_emit",
       "id": "b_district_3_3_185",
       "reason": "finish_chaos_macro_void"
+    },
+    {
+      "stage": "6_finalize_emit",
+      "id": "prop_110",
+      "reason": "finalize_prop_in_floodplain"
+    },
+    {
+      "stage": "6_finalize_emit",
+      "id": "prop_143",
+      "reason": "finalize_prop_in_floodplain"
+    },
+    {
+      "stage": "6_finalize_emit",
+      "id": "prop_147",
+      "reason": "finalize_prop_in_floodplain"
+    },
+    {
+      "stage": "6_finalize_emit",
+      "id": "prop_148",
+      "reason": "finalize_prop_in_floodplain"
+    },
+    {
+      "stage": "6_finalize_emit",
+      "id": "prop_149",
+      "reason": "finalize_prop_in_floodplain"
+    },
+    {
+      "stage": "6_finalize_emit",
+      "id": "prop_150",
+      "reason": "finalize_prop_in_floodplain"
+    },
+    {
+      "stage": "6_finalize_emit",
+      "id": "prop_174",
+      "reason": "finalize_prop_in_floodplain"
+    },
+    {
+      "stage": "6_finalize_emit",
+      "id": "prop_175",
+      "reason": "finalize_prop_in_floodplain"
+    },
+    {
+      "stage": "6_finalize_emit",
+      "id": "prop_190",
+      "reason": "finalize_prop_in_floodplain"
+    },
+    {
+      "stage": "6_finalize_emit",
+      "id": "prop_191",
+      "reason": "finalize_prop_in_floodplain"
+    },
+    {
+      "stage": "6_finalize_emit",
+      "id": "prop_204",
+      "reason": "finalize_prop_in_floodplain"
+    },
+    {
+      "stage": "6_finalize_emit",
+      "id": "prop_237",
+      "reason": "finalize_prop_in_floodplain"
+    },
+    {
+      "stage": "6_finalize_emit",
+      "id": "prop_24",
+      "reason": "finalize_prop_in_floodplain"
+    },
+    {
+      "stage": "6_finalize_emit",
+      "id": "prop_25",
+      "reason": "finalize_prop_in_floodplain"
+    },
+    {
+      "stage": "6_finalize_emit",
+      "id": "prop_307",
+      "reason": "finalize_prop_in_floodplain"
+    },
+    {
+      "stage": "6_finalize_emit",
+      "id": "prop_308",
+      "reason": "finalize_prop_in_floodplain"
+    },
+    {
+      "stage": "6_finalize_emit",
+      "id": "prop_342",
+      "reason": "finalize_prop_in_floodplain"
+    },
+    {
+      "stage": "6_finalize_emit",
+      "id": "prop_58",
+      "reason": "finalize_prop_in_floodplain"
+    },
+    {
+      "stage": "6_finalize_emit",
+      "id": "prop_64",
+      "reason": "finalize_prop_in_floodplain"
+    },
+    {
+      "stage": "6_finalize_emit",
+      "id": "prop_65",
+      "reason": "finalize_prop_in_floodplain"
     }
   ],
   "summary": {
     "errors": 0,
-    "warnings": 13,
-    "repairs": 1,
-    "drops": 52
+    "warnings": 14,
+    "repairs": 2,
+    "drops": 72
   },
   "features": {
     "selected": [
       "citadel_hill"
     ],
     "count": 1,
-    "applied": 0,
+    "applied": 1,
     "degraded": 0,
-    "skipped": 1,
+    "skipped": 0,
     "planned": 0,
     "items": [
       {
         "id": "feature_1_citadel_hill",
         "type": "citadel_hill",
-        "status": "skipped",
-        "reason": "handler_not_implemented",
-        "anchor": null,
+        "status": "applied",
+        "reason": null,
+        "anchor": {
+          "districtId": "district_1_3_0",
+          "x": -240,
+          "z": 480
+        },
         "emitted": {
-          "props": 0,
+          "props": 12,
           "landscapeObjects": 0,
           "buildings": 0,
           "districts": 0
@@ -3100,7 +3184,7 @@
       "reservedParcels": 541,
       "buildings": 350,
       "enterableBuildings": 72,
-      "props": 360,
+      "props": 352,
       "lights": 8,
       "rivers": 1,
       "lakes": 0
@@ -3423,15 +3507,15 @@
       "dividesPlate": true
     },
     "determinism": {
-      "generatorVersion": "0.87.0",
+      "generatorVersion": "0.88.0",
       "seed": 16,
       "deterministic": true
     },
     "report": {
       "diagnosticsErrors": 0,
-      "diagnosticsWarnings": 13,
-      "repairs": 1,
-      "drops": 52
+      "diagnosticsWarnings": 14,
+      "repairs": 2,
+      "drops": 72
     }
   },
   "rules": {

@@ -133,15 +133,15 @@ test('integration: level 19 counts/dedupe/split matching', async () => {
 
   assert.equal(model.entities.buildings.size, 24);
   assert.equal(model.entities.roads.size, 135);
-  assert.equal(model.entities.props.size, 2902);
-  assert.equal(model.stats.duplicates, 56);
+  assert.equal(model.entities.props.size, 2911);
+  assert.equal(model.stats.duplicates, 63);
   assert.equal(model.skeleton.nodes.length, 2027);
   assert.equal(model.skeleton.edges.length, 1909);
 
   // instances
   assert.equal(model.stats.instances.buildings, 26);
   assert.equal(model.stats.instances.roads, 185);
-  assert.equal(model.stats.instances.props, 2906);
+  assert.equal(model.stats.instances.props, 2922);
 
   // split matching
   const srcRoads = new Set((source.cityforge.networks.roads.segments || []).map(s => s.id));
@@ -165,7 +165,7 @@ test('integration: level 19 counts/dedupe/split matching', async () => {
   assert.equal(roadOrigins.authored, 133); // 133 exact сплиты теперь и в source
   assert.equal(roadOrigins.derived, 2);
   for (const b of model.entities.buildings.values()) assert.equal(b.origin, 'authored');
-  for (const p of model.entities.props.values()) assert.equal(p.origin, 'derived');
+  for (const p of model.entities.props.values()) assert.ok(p.origin === 'derived' || p.origin === 'generated', `${p.id}:${p.origin}`);
 });
 
 test('integration: level 18 counts/matching', async () => {
@@ -197,7 +197,7 @@ test('integration: level 16 counts and auto-districts', async () => {
   const model = buildModel({ level: n, mode: 'compiled', source, compiledIndex: levelDef.map, decodedCells, report });
   assert.equal(model.entities.buildings.size, 354);
   assert.equal(model.entities.roads.size, 193);
-  assert.equal(model.entities.props.size, 562);
+  assert.equal(model.entities.props.size, 554);
   assert.equal((model.entities.lights || new Map()).size, 8);
   assert.equal((model.entities.channels || new Map()).size, 1);
   assert.equal(model.skeleton.nodes.length, 4862);

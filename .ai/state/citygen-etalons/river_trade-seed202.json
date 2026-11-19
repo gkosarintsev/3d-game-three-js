@@ -1,8 +1,8 @@
 {
   "profile": "river_trade",
   "seed": 202,
-  "generatorVersion": "0.87.0",
-  "reportHash": "a861ea1ca0b43a6dedeff813f9902c0fb6c75b542e296e6d12d1417a6cd8d5ce",
+  "generatorVersion": "0.88.0",
+  "reportHash": "6f362ff83bcffece61e1aec2561bf7bfe86a353c3cc84f391b7ff5054e6bbf95",
   "summary": {
     "errors": 0,
     "warnings": 8,
@@ -24,7 +24,7 @@
       "reservedParcels": 327,
       "buildings": 397,
       "enterableBuildings": 82,
-      "props": 360,
+      "props": 370,
       "lights": 0,
       "rivers": 2,
       "lakes": 0

@@ -70,6 +70,12 @@ function addProp(ctx, item, prop) {
   return true;
 }
 
+function featurePropId(ctx) {
+  // Use prop_<digits> form so visualizer provenance classifies as generated.
+  const n = 900000 + ctx.infrastructure.props.length + 1;
+  return `prop_${n}`;
+}
+
 function applyOldMarketSquare(ctx, item, rng) {
   const roads = ctx.networks?.roads?.segments ?? [];
   const d = pickDistrict(ctx, ['market', 'downtown', 'commercial', 'mixed', 'retail', 'office'], rng);
@@ -88,7 +94,7 @@ function applyOldMarketSquare(ctx, item, rng) {
     const [ox, oz] = offsets[i];
     const x = c.x + ox, z = c.z + oz;
     if (!canPlaceProp(x, z, ctx.infrastructure.props, roads, 4.2, 3.8)) continue;
-    const id = `feat_${item.type}_${placed + 1}`;
+    const id = featurePropId(ctx);
     addProp(ctx, item, {
       id,
       model: 'market_stall',
@@ -119,7 +125,7 @@ function applyCemeteryPark(ctx, item, rng) {
     const { ox, oz, model } = plan[i];
     const x = c.x + ox, z = c.z + oz;
     if (!canPlaceProp(x, z, ctx.infrastructure.props, roads, 4.0, 3.5)) continue;
-    const id = `feat_${item.type}_${placed + 1}`;
+    const id = featurePropId(ctx);
     addProp(ctx, item, {
       id,
       model,
@@ -134,10 +140,124 @@ function applyCemeteryPark(ctx, item, rng) {
   else { item.status = 'skipped'; item.reason = 'no_valid_positions'; }
 }
 
+function tryPlacePlan(ctx, item, roads, baseY, cx, cz, plan, roadPad = 4.0, minSep = 3.8, target = null) {
+  let placed = 0;
+  const need = target == null ? plan.length : Math.min(target, plan.length);
+  for (let i = 0; i < plan.length && placed < need; i++) {
+    const e = plan[i];
+    const x = cx + (e.ox || 0), z = cz + (e.oz || 0);
+    if (!canPlaceProp(x, z, ctx.infrastructure.props, roads, roadPad, minSep)) continue;
+    const id = featurePropId(ctx);
+    addProp(ctx, item, {
+      id,
+      model: e.model,
+      position: { x: round3(x), y: baseY, z: round3(z) },
+      scale: e.scale || { x: 1, y: 1, z: 1 },
+      rotation: { x: 0, y: round3(e.ry != null ? e.ry : rng() * 360), z: 0 },
+    });
+    placed++;
+  }
+  return placed;
+}
+
+function applyCitadelHill(ctx, item, rng) {
+  const roads = ctx.networks?.roads?.segments ?? [];
+  const d = pickDistrict(ctx, ['old_town', 'historic', 'downtown', 'luxury', 'residential', 'office', 'suburb'], rng);
+  const c = districtCenter(d);
+  if (!c) { item.status = 'skipped'; item.reason = 'no_anchor_district'; return; }
+  item.anchor = { districtId: d.id, x: round3(c.x), z: round3(c.z) };
+  const baseY = Number(ctx.meta?.worldBounds?.y ?? ctx.input?.ground?.y ?? 0) || 0;
+  // Readable "citadel/fort on hill" cluster: central tower marker + fortified perimeter.
+  const plan = [
+    { ox: 0, oz: 0, model: 'antenna', scale: { x: 1.2, y: 1.4, z: 1.2 }, ry: 0 },
+    { ox: 0, oz: 0, model: 'concrete_pillar', scale: { x: 1.3, y: 1.6, z: 1.3 }, ry: 0 },
+    { ox: -10, oz: -10, model: 'concrete_pillar', ry: 0 }, { ox: 0, oz: -10, model: 'barrier', ry: 0 }, { ox: 10, oz: -10, model: 'concrete_pillar', ry: 0 },
+    { ox: -10, oz: 0, model: 'barrier', ry: 90 }, { ox: 10, oz: 0, model: 'barrier', ry: 90 },
+    { ox: -10, oz: 10, model: 'concrete_pillar', ry: 0 }, { ox: 0, oz: 10, model: 'barrier', ry: 0 }, { ox: 10, oz: 10, model: 'concrete_pillar', ry: 0 },
+    { ox: -5, oz: -5, model: 'lamp_post', ry: 45 }, { ox: 5, oz: -5, model: 'lamp_post', ry: -45 },
+    { ox: -5, oz: 5, model: 'bench', ry: 135 }, { ox: 5, oz: 5, model: 'bench', ry: -135 },
+  ];
+  const placed = tryPlacePlan(ctx, item, roads, baseY, c.x, c.z, plan, 4.5, 3.2, 12);
+  if (placed >= 5) { item.status = 'applied'; item.reason = null; }
+  else if (placed > 0) { item.status = 'degraded'; item.reason = 'partial_placement'; }
+  else { item.status = 'skipped'; item.reason = 'no_valid_positions'; }
+}
+
+function applyStadiumDominant(ctx, item, rng) {
+  const roads = ctx.networks?.roads?.segments ?? [];
+  const d = pickDistrict(ctx, ['sports', 'stadium', 'park', 'commercial', 'downtown', 'forest'], rng);
+  const c = districtCenter(d);
+  if (!c) { item.status = 'skipped'; item.reason = 'no_anchor_district'; return; }
+  item.anchor = { districtId: d.id, x: round3(c.x), z: round3(c.z) };
+  const baseY = Number(ctx.meta?.worldBounds?.y ?? ctx.input?.ground?.y ?? 0) || 0;
+  // Readable dominant "stadium/arena" as a large enclosed oval outline.
+  const rx = 22, rz = 16;
+  const plan = [
+    { ox: 0, oz: 0, model: 'av_pad', scale: { x: 1.6, y: 1, z: 1.6 }, ry: 0 },
+    { ox: -rx, oz: 0, model: 'concrete_pillar', ry: 90 }, { ox: rx, oz: 0, model: 'concrete_pillar', ry: 90 },
+    { ox: 0, oz: -rz, model: 'concrete_pillar', ry: 0 }, { ox: 0, oz: rz, model: 'concrete_pillar', ry: 0 },
+    { ox: -16, oz: -12, model: 'container', ry: 45 }, { ox: 16, oz: -12, model: 'container', ry: -45 },
+    { ox: -16, oz: 12, model: 'container', ry: 135 }, { ox: 16, oz: 12, model: 'container', ry: -135 },
+    { ox: -22, oz: -6, model: 'barrier', ry: 80 }, { ox: -22, oz: 6, model: 'barrier', ry: 100 },
+    { ox: 22, oz: -6, model: 'barrier', ry: -80 }, { ox: 22, oz: 6, model: 'barrier', ry: -100 },
+    { ox: -8, oz: -16, model: 'barrier', ry: 10 }, { ox: 8, oz: -16, model: 'barrier', ry: -10 },
+    { ox: -8, oz: 16, model: 'barrier', ry: -10 }, { ox: 8, oz: 16, model: 'barrier', ry: 10 },
+    { ox: -6, oz: 0, model: 'bench', ry: 90 }, { ox: 6, oz: 0, model: 'bench', ry: -90 },
+    { ox: 0, oz: -8, model: 'lamp_post', ry: 0 }, { ox: 0, oz: 8, model: 'lamp_post', ry: 180 },
+  ];
+  const placed = tryPlacePlan(ctx, item, roads, baseY, c.x, c.z, plan, 4.5, 3.2, 16);
+  if (placed >= 6) { item.status = 'applied'; item.reason = null; }
+  else if (placed > 0) { item.status = 'degraded'; item.reason = 'partial_placement'; }
+  else { item.status = 'skipped'; item.reason = 'no_valid_positions'; }
+}
+
+function applyRiverIslandPark(ctx, item, rng) {
+  const roads = ctx.networks?.roads?.segments ?? [];
+  const rivers = Array.isArray(ctx?.landscape?.rivers) ? ctx.landscape.rivers : (Array.isArray(ctx?.input?.rivers) ? ctx.input.rivers : []);
+  const d = pickDistrict(ctx, ['park', 'green', 'residential', 'suburb', 'forest', 'old_town'], rng);
+  const c = districtCenter(d);
+  if (!c) { item.status = 'skipped'; item.reason = 'no_anchor_district'; return; }
+  // Prefer anchoring near river geometry when present; otherwise manifest as a readable "island park" motif.
+  let ax = c.x, az = c.z;
+  if (rivers.length) {
+    const r = rivers[0];
+    const pts = Array.isArray(r?.path) ? r.path : (Array.isArray(r?.points) ? r.points : []);
+    if (pts.length) {
+      const mid = pts[Math.floor(pts.length / 2)];
+      const mx = Array.isArray(mid) ? (mid[0] ?? c.x) : (mid?.x ?? c.x);
+      const mz = Array.isArray(mid) ? (mid[2] ?? mid?.z ?? c.z) : (mid?.z ?? c.z);
+      ax = mx + 10;
+      az = mz + 10;
+    }
+  }
+  item.anchor = { districtId: d?.id ?? null, x: round3(ax), z: round3(az), riverNearby: rivers.length > 0 };
+  const baseY = Number(ctx.meta?.worldBounds?.y ?? ctx.input?.ground?.y ?? 0) || 0;
+  const plan = [
+    { ox: 0, oz: 0, model: 'av_pad', scale: { x: 1.2, y: 1, z: 1.2 }, ry: 0 },
+    { ox: -10, oz: 0, model: 'tree', ry: 20 }, { ox: 10, oz: 0, model: 'tree', ry: -20 },
+    { ox: 0, oz: -10, model: 'tree', ry: 40 }, { ox: 0, oz: 10, model: 'tree', ry: -40 },
+    { ox: -7, oz: -7, model: 'bench', ry: 45 }, { ox: 7, oz: -7, model: 'bench', ry: -45 },
+    { ox: -7, oz: 7, model: 'bench', ry: 135 }, { ox: 7, oz: 7, model: 'bench', ry: -135 },
+    { ox: -12, oz: 6, model: 'lamp_post', ry: 0 }, { ox: 12, oz: -6, model: 'lamp_post', ry: 0 },
+    { ox: -4, oz: 0, model: 'bollard', ry: 0 }, { ox: 4, oz: 0, model: 'bollard', ry: 0 },
+  ];
+  const placed = tryPlacePlan(ctx, item, roads, baseY, ax, az, plan, 4.0, 3.2, 10);
+  if (placed >= 5) { item.status = 'applied'; item.reason = rivers.length ? null : 'motif_applied_no_river'; }
+  else if (placed > 0) { item.status = 'degraded'; item.reason = 'partial_placement'; }
+  else { item.status = 'skipped'; item.reason = rivers.length ? 'no_valid_positions' : 'no_river_no_valid_positions'; }
+}
+
 const HANDLERS = {
   old_market_square: applyOldMarketSquare,
   cemetery_park: applyCemeteryPark,
+  citadel_hill: applyCitadelHill,
+  stadium_dominant: applyStadiumDominant,
+  river_island_park: applyRiverIslandPark,
 };
+
+export function isHandledFeatureType(type) {
+  return Object.prototype.hasOwnProperty.call(HANDLERS, type);
+}
 
 export function initFeatureManifest(ctx) {
   const selected = Array.isArray(ctx?.meta?.profileMutation?.features) ? [...ctx.meta.profileMutation.features] : [];

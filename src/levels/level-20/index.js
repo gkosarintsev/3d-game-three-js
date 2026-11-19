@@ -106,7 +106,7 @@ export const LEVEL_20 = {
         "objects": {
           "buildings": 184,
           "lights": 2,
-          "props": 153,
+          "props": 165,
           "roads": 12
         },
         "rect": {

@@ -98,7 +98,7 @@ export const LEVEL_22 = {
         "objects": {
           "buildings": 24,
           "lights": 1,
-          "props": 59,
+          "props": 65,
           "roads": 1
         },
         "rect": {
@@ -114,7 +114,7 @@ export const LEVEL_22 = {
         "objects": {
           "buildings": 9,
           "lights": 2,
-          "props": 37,
+          "props": 43,
           "roads": 68
         },
         "rect": {

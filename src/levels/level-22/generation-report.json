@@ -1,7 +1,7 @@
 {
   "version": 1,
   "generator": {
-    "generatorVersion": "0.87.0",
+    "generatorVersion": "0.88.0",
     "seed": 22,
     "deterministic": true
   },
@@ -1962,26 +1962,26 @@
       "severity": "info",
       "code": "features_manifest",
       "stage": "6_finalize_emit",
-      "message": "feature manifest: 0 applied, 0 degraded, 1 skipped, 0 planned",
+      "message": "feature manifest: 1 applied, 0 degraded, 0 skipped, 0 planned",
       "selected": [
         "river_island_park"
       ],
-      "applied": 0,
+      "applied": 1,
       "degraded": 0,
-      "skipped": 1,
+      "skipped": 0,
       "planned": 0
     },
     {
       "severity": "info",
       "code": "features_manifest",
       "stage": "6_finalize_emit",
-      "message": "feature manifest: 0 applied, 0 degraded, 1 skipped, 0 planned",
+      "message": "feature manifest: 1 applied, 0 degraded, 0 skipped, 0 planned",
       "selected": [
         "river_island_park"
       ],
-      "applied": 0,
+      "applied": 1,
       "degraded": 0,
-      "skipped": 1,
+      "skipped": 0,
       "planned": 0
     },
     {
@@ -2092,7 +2092,7 @@
         "slums": 2
       },
       "lights": 8,
-      "props": 183,
+      "props": 193,
       "propsByDistrictType": {
         "residential": 58,
         "parking": 6,
@@ -2106,10 +2106,10 @@
       "chunkLoad": {
         "nonEmptyChunks": 4,
         "maxBuildings": 24,
-        "maxProps": 59,
+        "maxProps": 63,
         "maxLights": 3,
         "avgBuildings": 19.25,
-        "avgProps": 45.75
+        "avgProps": 48.25
       }
     },
     {
@@ -2550,19 +2550,24 @@
       "river_island_park"
     ],
     "count": 1,
-    "applied": 0,
+    "applied": 1,
     "degraded": 0,
-    "skipped": 1,
+    "skipped": 0,
     "planned": 0,
     "items": [
       {
         "id": "feature_1_river_island_park",
         "type": "river_island_park",
-        "status": "skipped",
-        "reason": "handler_not_implemented",
-        "anchor": null,
+        "status": "applied",
+        "reason": "motif_applied_no_river",
+        "anchor": {
+          "districtId": "district_2_1",
+          "x": 170.667,
+          "z": 0,
+          "riverNearby": false
+        },
         "emitted": {
-          "props": 0,
+          "props": 10,
           "landscapeObjects": 0,
           "buildings": 0,
           "districts": 0
@@ -2581,7 +2586,7 @@
       "reservedParcels": 70,
       "buildings": 75,
       "enterableBuildings": 15,
-      "props": 183,
+      "props": 193,
       "lights": 8,
       "rivers": 0,
       "lakes": 0
@@ -2814,7 +2819,7 @@
       "dividesPlate": true
     },
     "determinism": {
-      "generatorVersion": "0.87.0",
+      "generatorVersion": "0.88.0",
       "seed": 22,
       "deterministic": true
     },

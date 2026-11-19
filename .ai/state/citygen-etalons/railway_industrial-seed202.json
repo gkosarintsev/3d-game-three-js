@@ -1,8 +1,8 @@
 {
   "profile": "railway_industrial",
   "seed": 202,
-  "generatorVersion": "0.87.0",
-  "reportHash": "7c873d3a6c3798257529ef79969de235d8bb23febf822da179f5a9a945f8181f",
+  "generatorVersion": "0.88.0",
+  "reportHash": "23011e40710df79fcc9b7911b22378e7e0a879a9f4d7413377b241ee7dddbcbb",
   "summary": {
     "errors": 0,
     "warnings": 8,
@@ -24,7 +24,7 @@
       "reservedParcels": 314,
       "buildings": 395,
       "enterableBuildings": 81,
-      "props": 360,
+      "props": 370,
       "lights": 0,
       "rivers": 2,
       "lakes": 0
