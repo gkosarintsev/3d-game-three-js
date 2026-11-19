@@ -1,7 +1,7 @@
 {
   "version": 1,
   "generator": {
-    "generatorVersion": "0.74.0",
+    "generatorVersion": "0.75.0",
     "seed": 22,
     "deterministic": true
   },
@@ -51,7 +51,7 @@
     {
       "id": "6_finalize_emit",
       "status": "ok",
-      "diagnostics": 11,
+      "diagnostics": 13,
       "repairs": 3,
       "drops": 0
     }
@@ -2101,6 +2101,204 @@
     },
     {
       "severity": "info",
+      "code": "finish_chaos_applied",
+      "stage": "6_finalize_emit",
+      "message": "chaos applied at finish stage",
+      "applied": 77,
+      "skipped": 0,
+      "lockedSkipped": 0,
+      "seams": 3,
+      "changes": [
+        {
+          "id": "b_district_0_0_00_1",
+          "dXZ": [
+            -0.11,
+            -0.413
+          ]
+        },
+        {
+          "id": "b_district_0_0_00_2",
+          "dXZ": [
+            0.005,
+            0.504
+          ]
+        },
+        {
+          "id": "b_district_0_0_00_26",
+          "dXZ": [
+            0.042,
+            -0.41
+          ]
+        },
+        {
+          "id": "b_district_0_0_00_29",
+          "dXZ": [
+            -0.198,
+            0.423
+          ]
+        },
+        {
+          "id": "b_district_0_0_00_46",
+          "dXZ": [
+            0.394,
+            0.094
+          ]
+        },
+        {
+          "id": "b_district_0_0_01_30",
+          "dXZ": [
+            -0.207,
+            0.147
+          ]
+        },
+        {
+          "id": "b_district_0_0_01_31",
+          "dXZ": [
+            0.4,
+            -0.396
+          ]
+        },
+        {
+          "id": "b_district_0_0_01_64",
+          "dXZ": [
+            -0.302,
+            -0.336
+          ]
+        },
+        {
+          "id": "b_district_0_0_1_3",
+          "dXZ": [
+            0.209,
+            0.131
+          ]
+        },
+        {
+          "id": "b_district_0_0_1_33",
+          "dXZ": [
+            0.305,
+            -0.494
+          ]
+        },
+        {
+          "id": "b_district_0_0_1_45",
+          "dXZ": [
+            0.022,
+            -0.065
+          ]
+        },
+        {
+          "id": "b_district_0_0_1_66",
+          "dXZ": [
+            -0.444,
+            0.554
+          ]
+        },
+        {
+          "id": "b_district_0_1_27",
+          "dXZ": [
+            0.161,
+            -0.164
+          ]
+        },
+        {
+          "id": "b_district_0_1_32",
+          "dXZ": [
+            -0.616,
+            0.308
+          ]
+        },
+        {
+          "id": "b_district_0_1_42",
+          "dXZ": [
+            0.517,
+            -0.158
+          ]
+        },
+        {
+          "id": "b_district_0_1_58",
+          "dXZ": [
+            -0.2,
+            0.628
+          ]
+        },
+        {
+          "id": "b_district_0_2_00_43",
+          "dXZ": [
+            -0.36,
+            -0.188
+          ]
+        },
+        {
+          "id": "b_district_0_2_00_57",
+          "dXZ": [
+            0.076,
+            0.035
+          ]
+        },
+        {
+          "id": "b_district_0_2_00_75",
+          "dXZ": [
+            0.385,
+            -0.385
+          ]
+        },
+        {
+          "id": "b_district_0_2_01_13",
+          "dXZ": [
+            -0.532,
+            0.451
+          ]
+        },
+        {
+          "id": "b_district_0_2_01_38",
+          "dXZ": [
+            0.122,
+            0.536
+          ]
+        },
+        {
+          "id": "b_district_0_2_01_41",
+          "dXZ": [
+            -0.35,
+            -0.511
+          ]
+        },
+        {
+          "id": "b_district_0_2_01_44",
+          "dXZ": [
+            -0.262,
+            -0.24
+          ]
+        },
+        {
+          "id": "b_district_0_2_01_49",
+          "dXZ": [
+            -0.521,
+            0.495
+          ]
+        }
+      ]
+    },
+    {
+      "severity": "info",
+      "code": "finish_chaos_seams",
+      "stage": "6_finalize_emit",
+      "message": "seam districts selected for chaos boost",
+      "seams": [
+        {
+          "a": "district_0_0_1",
+          "b": "district_0_1",
+          "delta": 0.20609999999999995
+        },
+        {
+          "a": "district_0_1",
+          "b": "district_0_2_1",
+          "delta": 0.20440000000000003
+        }
+      ]
+    },
+    {
+      "severity": "info",
       "code": "interchange_junction_candidates",
       "stage": "6_finalize_emit",
       "message": "identified junction nodes as grade-separation candidates",
@@ -2411,7 +2609,7 @@
       "dividesPlate": true
     },
     "determinism": {
-      "generatorVersion": "0.74.0",
+      "generatorVersion": "0.75.0",
       "seed": 22,
       "deterministic": true
     },

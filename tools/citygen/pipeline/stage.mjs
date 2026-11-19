@@ -1,5 +1,6 @@
 /**
- * Stage contract: prepare(ctx) → generate(ctx) → validate(ctx) → repair(ctx)
+ * Stage contract: prepare(ctx) → generate(ctx) → validate(ctx) → repair(ctx) → finish(ctx) → emit(ctx)
+ * `finish` — optional zero-emission final pass (e.g. plan 21 §10 chaos conventions) after repairs, before emit.
  */
 import { info } from '../diagnostics.mjs';
 
@@ -18,6 +19,7 @@ export function runStage(stage, ctx) {
     if (typeof stage.generate === 'function') stage.generate(ctx);
     if (typeof stage.validate === 'function') stage.validate(ctx);
     if (typeof stage.repair === 'function') stage.repair(ctx);
+    if (typeof stage.finish === 'function') stage.finish(ctx);
     if (typeof stage.emit === 'function') stage.emit(ctx);
     ctx.report.diagnostics.push(info('stage_ok', id, `stage ${id} completed`));
   } catch (e) {
