@@ -1,8 +1,8 @@
 {
   "profile": "hill_town",
   "seed": 303,
-  "generatorVersion": "0.69.0",
-  "reportHash": "a7f66287fadc878aef3e649be40190f5312937ef5f56154ae4363453fed302cb",
+  "generatorVersion": "0.70.0",
+  "reportHash": "2a6c4c988736d29160854f09966a9bb49a2bd72ebb0066a866b65456f113bd75",
   "summary": {
     "errors": 0,
     "warnings": 12,
@@ -171,12 +171,17 @@
     },
     "landmarkVisibility": {
       "partial": true,
-      "method": "stub_count_proxy",
+      "method": "terrain_los_sample",
       "landmarks": 4,
       "crossings": 0,
       "cores": 0,
       "total": 4,
-      "visibleApprox": 4
+      "observers": 5,
+      "totalPairs": 17,
+      "visiblePairs": 4,
+      "visibleApprox": 3,
+      "visibleFraction": 0.235294,
+      "visibleTargets": 3
     },
     "blockDensityCorrelation": {
       "rho": 0.913832,

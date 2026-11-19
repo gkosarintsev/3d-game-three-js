@@ -1,8 +1,8 @@
 {
   "profile": "railway_industrial",
   "seed": 303,
-  "generatorVersion": "0.69.0",
-  "reportHash": "0d8ca9ecc14e2185789953c70b9a05871f06463b1b19c8e7a7391cb4978cf421",
+  "generatorVersion": "0.70.0",
+  "reportHash": "00dc18d854de27365b987f2edc9cc664906d099522f1e9aa1e053ef2e80f7c1e",
   "summary": {
     "errors": 0,
     "warnings": 9,
@@ -171,12 +171,17 @@
     },
     "landmarkVisibility": {
       "partial": true,
-      "method": "stub_count_proxy",
+      "method": "terrain_los_sample",
       "landmarks": 6,
       "crossings": 3,
       "cores": 0,
       "total": 9,
-      "visibleApprox": 9
+      "observers": 8,
+      "totalPairs": 64,
+      "visiblePairs": 64,
+      "visibleApprox": 9,
+      "visibleFraction": 1,
+      "visibleTargets": 9
     },
     "blockDensityCorrelation": {
       "rho": 0.856166,
