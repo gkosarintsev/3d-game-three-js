@@ -75,7 +75,7 @@ export const LEVEL_21 = {
           "buildings": 62,
           "channels": 2,
           "lights": 2,
-          "props": 60,
+          "props": 68,
           "roads": 20
         },
         "rect": {

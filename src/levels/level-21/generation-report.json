@@ -1,7 +1,7 @@
 {
   "version": 1,
   "generator": {
-    "generatorVersion": "0.86.0",
+    "generatorVersion": "0.87.0",
     "seed": 21,
     "deterministic": true
   },
@@ -3477,6 +3477,32 @@
     },
     {
       "severity": "info",
+      "code": "features_manifest",
+      "stage": "6_finalize_emit",
+      "message": "feature manifest: 1 applied, 0 degraded, 0 skipped, 0 planned",
+      "selected": [
+        "cemetery_park"
+      ],
+      "applied": 1,
+      "degraded": 0,
+      "skipped": 0,
+      "planned": 0
+    },
+    {
+      "severity": "info",
+      "code": "features_manifest",
+      "stage": "6_finalize_emit",
+      "message": "feature manifest: 1 applied, 0 degraded, 0 skipped, 0 planned",
+      "selected": [
+        "cemetery_park"
+      ],
+      "applied": 1,
+      "degraded": 0,
+      "skipped": 0,
+      "planned": 0
+    },
+    {
+      "severity": "info",
       "code": "finalize_counts",
       "stage": "6_finalize_emit",
       "message": "generation summary",
@@ -3613,7 +3639,7 @@
         "sports": 2
       },
       "lights": 8,
-      "props": 360,
+      "props": 368,
       "propsByDistrictType": {
         "old_town": 46,
         "luxury": 7,
@@ -3635,7 +3661,7 @@
         "maxProps": 153,
         "maxLights": 3,
         "avgBuildings": 102.5,
-        "avgProps": 90
+        "avgProps": 92
       }
     },
     {
@@ -4215,6 +4241,35 @@
     "repairs": 12,
     "drops": 13
   },
+  "features": {
+    "selected": [
+      "cemetery_park"
+    ],
+    "count": 1,
+    "applied": 1,
+    "degraded": 0,
+    "skipped": 0,
+    "planned": 0,
+    "items": [
+      {
+        "id": "feature_1_cemetery_park",
+        "type": "cemetery_park",
+        "status": "applied",
+        "reason": null,
+        "anchor": {
+          "districtId": "district_1_0_0",
+          "x": -240,
+          "z": -480
+        },
+        "emitted": {
+          "props": 8,
+          "landscapeObjects": 0,
+          "buildings": 0,
+          "districts": 0
+        }
+      }
+    ]
+  },
   "metrics": {
     "version": 2,
     "partial": true,
@@ -4226,7 +4281,7 @@
       "reservedParcels": 489,
       "buildings": 397,
       "enterableBuildings": 82,
-      "props": 360,
+      "props": 368,
       "lights": 8,
       "rivers": 2,
       "lakes": 0
@@ -4536,7 +4591,7 @@
       "dividesPlate": true
     },
     "determinism": {
-      "generatorVersion": "0.86.0",
+      "generatorVersion": "0.87.0",
       "seed": 21,
       "deterministic": true
     },

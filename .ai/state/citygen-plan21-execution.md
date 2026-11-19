@@ -413,3 +413,9 @@ Protocol: `.ai/plans/22-parallel-agents-github-ci.md`, `.ai/prompts/agent-ci-pro
 - **Branch/worktree:** `agent/plan23-t237-cleanup` @ `C:\Temp\wt-t237` (from `origin/main` `3794d36`, docs-only; `node scripts/agent/check-env.mjs` OK; no gv/rebuild/etalons changes).
 - **Scope (docs-only):** `.ai/plans/21-citygen-procedural-rules.md` — stated-scope closure formalized with explicit reference to Plan 23; DoD/S1-cadence/R4.3 notes updated; added section "Выведено из scope плана 21 → перенесено/закрыто в Плане 23" mapping T23.1–T23.8 and R4.3 deferred backlog with reasons/evidence. `.ai/plans/23-plan21-literal-closure.md` marked T23.7 [x] (CI pending). State files updated with T23.7 increment.
 - **CI/merge evidence:** PR #61 merged `db4bb5a` (push 44603084347 SUCCESS, PR CI 44603141296 SUCCESS).
+
+#### Continuation increment (T23.3 feature manifest + handlers, `agent/plan23-t233-features-impl`, in progress, CI pending)
+- **Branch/worktree:** `agent/plan23-t233-features-impl` @ `C:\Temp\wt-t233-impl` (from `origin/main` `6134473` incl. PR #64 evidence; `node scripts/agent/check-env.mjs` OK).
+- **Scope (output-affecting, gv 0.86.0 → 0.87.0):** `tools/citygen/features.mjs` (ADR-003 manifest/report + prop-based handlers `old_market_square`, `cemetery_park`), wired in `context.mjs` / `pipeline/stage-5-props.mjs` (apply even when props disabled) / `diagnostics.mjs` (finalize + report). Selected §11.2 features traced; applied where selected/applicable (L18 `cemetery_park` 6 props), others `skipped (handler_not_implemented)`. Rebuilt L16–22 (0 warnings), gv bumped, baselines/etalons refreshed (16/16, 13 updated), `build-level --check` L16–22 OK.
+- **Local hints (not CI gates):** `node --test tools/citygen.test.mjs` 65/65, `node tools/chunk.test.mjs` 20/20, `node tools/citygen-etalon-check.mjs` 16/16 passed during prep.
+- **CI/merge evidence:** pending (PR → green CI merge-gate → sequential merge, then evidence back-fill).

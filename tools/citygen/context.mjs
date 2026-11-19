@@ -4,6 +4,7 @@
 import { createReport, info } from './diagnostics.mjs';
 import { makeRng } from './rng.mjs';
 import { resolveGeneratorConfig, DEFAULT_GENERATOR_VERSION } from './config.mjs';
+import { initFeatureManifest } from './features.mjs';
 
 export function createContext(input) {
   const gen = input?.generator ?? {};
@@ -47,5 +48,7 @@ export function createContext(input) {
       delta: m.delta, enabled: m.enabled, features: m.features,
     }));
   }
+  // T23.3 (ADR-003): initialize feature manifest (selection already resolved in config).
+  initFeatureManifest(ctx);
   return ctx;
 }
