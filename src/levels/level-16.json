@@ -12720,7 +12720,7 @@
     "chunks": []
   },
   "generator": {
-    "generatorVersion": "0.66.0",
+    "generatorVersion": "0.67.0",
     "seed": 16,
     "deterministic": true,
     "stages": [],
