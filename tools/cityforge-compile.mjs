@@ -244,6 +244,8 @@ function compileRoads(cf, groundY, terrainHeightAt = null) {
     return base;
   };
   for (const s of segments) {
+    // T23.4 diagonal street cuts are at-grade fabric roads, not bridges/overpasses.
+    const forceGround = s?.layer === 'ground' && /^tr_diag_/.test(String(s.id ?? ''));
     if (Array.isArray(s.elements) && s.elements.length > 0) {
       let top = -Infinity;
       for (const el of s.elements) {
@@ -252,7 +254,7 @@ function compileRoads(cf, groundY, terrainHeightAt = null) {
       }
       roads.push({
         id: s.id,
-        type: roadType(s.id, top, null, s.elements),
+        type: forceGround ? 'ground' : roadType(s.id, top, null, s.elements),
         width: s.lanes?.[0]?.width ?? 8,
         elements: s.elements,
       });
@@ -269,7 +271,7 @@ function compileRoads(cf, groundY, terrainHeightAt = null) {
     const top = Math.max(...points.map(p => p.y));
     const roadOut = {
       id: s.id,
-      type: roadType(s.id, top, points, null),
+      type: forceGround ? 'ground' : roadType(s.id, top, points, null),
       width: s.lanes?.[0]?.width ?? 8,
       points,
     };

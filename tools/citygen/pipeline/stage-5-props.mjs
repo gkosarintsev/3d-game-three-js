@@ -574,6 +574,22 @@ export function makeStage5() {
       // T23.3: deterministic manifestation of selected §11.2 features (prop-based, best-effort).
       // Run even when random prop generation is disabled so selected features can still appear.
       applyFeatureProps(ctx, stageId);
+      // T23.4: plaza-valve prop clusters planned in stage-2 (macro residue) — merge after
+      // procedural/feature prop generation so they remain readable IR objects.
+      if (Array.isArray(ctx.t23_4PlazaProps) && ctx.t23_4PlazaProps.length) {
+        if (!Array.isArray(ctx.infrastructure?.props)) ctx.infrastructure.props = [];
+        const existingIds = new Set(ctx.infrastructure.props.map(p => p?.id).filter(Boolean));
+        let added = 0;
+        for (const p of ctx.t23_4PlazaProps) {
+          if (!p || existingIds.has(p.id)) continue;
+          ctx.infrastructure.props.push(structuredClone(p));
+          existingIds.add(p.id);
+          added++;
+        }
+        if (added > 0) {
+          ctx.report.diagnostics.push(info('t23_4_plaza_valve_emitted', stageId, 'merged T23.4 plaza-valve props into infrastructure', { count: added }));
+        }
+      }
     },
     validate(ctx) {
       const stageId = '5_infrastructure_props';

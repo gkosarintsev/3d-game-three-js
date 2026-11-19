@@ -1,7 +1,7 @@
 {
   "version": 1,
   "generator": {
-    "generatorVersion": "0.88.0",
+    "generatorVersion": "0.89.0",
     "seed": 18,
     "deterministic": true
   },
@@ -23,7 +23,7 @@
     {
       "id": "2_transport",
       "status": "ok",
-      "diagnostics": 6,
+      "diagnostics": 9,
       "repairs": 0,
       "drops": 0
     },
@@ -44,14 +44,14 @@
     {
       "id": "5_infrastructure_props",
       "status": "ok",
-      "diagnostics": 2,
+      "diagnostics": 3,
       "repairs": 0,
       "drops": 0
     },
     {
       "id": "6_finalize_emit",
       "status": "ok",
-      "diagnostics": 11,
+      "diagnostics": 12,
       "repairs": 0,
       "drops": 0
     }
@@ -97,8 +97,8 @@
       "code": "road_slope_over_class_policy",
       "stage": "2_transport",
       "message": "road segments exceed class slope policy (policies.slopeLimitPct)",
-      "segments": 1,
-      "maxSlope": 0.169765,
+      "segments": 2,
+      "maxSlope": 0.278746,
       "policy": {
         "highway": 6,
         "arterial": 8,
@@ -186,7 +186,7 @@
       "stage": "2_transport",
       "message": "road graph summary",
       "nodes": 11,
-      "segments": 10,
+      "segments": 13,
       "components": 1
     },
     {
@@ -197,11 +197,46 @@
     },
     {
       "severity": "info",
+      "code": "t23_4_chamfer_excluded",
+      "stage": "2_transport",
+      "message": "chamfered corners excluded: no honest axis-aligned IR realization (ADR-004, replacement: косые районы)",
+      "adr": "docs/architecture/adr/ADR-004-t234-macro-residue-chamfer-exclusion.md",
+      "replacement": "косые районы"
+    },
+    {
+      "severity": "info",
+      "code": "t23_4_diagonal_cut",
+      "stage": "2_transport",
+      "message": "applied diagonal street cut through fabric (stable intersections)",
+      "candidate": 1,
+      "splitSegments": 0,
+      "intersections": 5,
+      "diagonalSegments": 3,
+      "fabricConnections": 5
+    },
+    {
+      "severity": "info",
+      "code": "t23_4_plaza_valve",
+      "stage": "2_transport",
+      "message": "planned plaza-valve(s) at high-degree junction nodes (emitted via stage-5)",
+      "count": 1,
+      "nodes": [
+        {
+          "id": "n_decel_e",
+          "degree": 5,
+          "x": 60,
+          "z": 0
+        }
+      ],
+      "props": 9
+    },
+    {
+      "severity": "info",
       "code": "transport_passthrough",
       "stage": "2_transport",
       "message": "stage 2 using provided road network (procedural generation pending)",
       "nodes": 11,
-      "segments": 10
+      "segments": 13
     },
     {
       "severity": "info",
@@ -524,6 +559,13 @@
     },
     {
       "severity": "info",
+      "code": "t23_4_plaza_valve_emitted",
+      "stage": "5_infrastructure_props",
+      "message": "merged T23.4 plaza-valve props into infrastructure",
+      "count": 9
+    },
+    {
+      "severity": "info",
       "code": "anchors_connected_network",
       "stage": "6_finalize_emit",
       "message": "spawn and exit are near a single connected road graph component",
@@ -575,7 +617,7 @@
         "total": 4
       },
       "roadNodes": 11,
-      "roadSegments": 10,
+      "roadSegments": 13,
       "roadComponents": 1,
       "roadGraphNodes": 11,
       "districts": 1,
@@ -595,14 +637,14 @@
         "forest": 12
       },
       "lights": 0,
-      "props": 6,
+      "props": 15,
       "chunkLoad": {
         "nonEmptyChunks": 4,
         "maxBuildings": 4,
-        "maxProps": 2,
+        "maxProps": 8,
         "maxLights": 0,
         "avgBuildings": 3,
-        "avgProps": 1.5
+        "avgProps": 3.75
       }
     },
     {
@@ -781,15 +823,22 @@
       "severity": "info",
       "code": "impression_cadence_route_enforced",
       "stage": "6_finalize_emit",
-      "message": "retagged 4 route road segment(s) into 2 cadence bands",
-      "changedSegments": 4,
-      "routeEdges": 7,
+      "message": "retagged 2 route road segment(s) into 2 cadence bands",
+      "changedSegments": 2,
+      "routeEdges": 5,
       "pathLength": 687.4,
       "bandSpacingMeters": 200,
       "classes": [
         "local",
         "collector"
       ]
+    },
+    {
+      "severity": "info",
+      "code": "interchange_junction_candidates",
+      "stage": "6_finalize_emit",
+      "message": "identified junction nodes as grade-separation candidates",
+      "count": 2
     },
     {
       "severity": "info",
@@ -845,48 +894,48 @@
     "version": 2,
     "partial": true,
     "counts": {
-      "roads": 10,
+      "roads": 13,
       "roadNodes": 11,
       "districts": 1,
       "parcels": 121,
       "reservedParcels": 16,
       "buildings": 12,
       "enterableBuildings": 2,
-      "props": 6,
+      "props": 15,
       "lights": 0,
       "rivers": 0,
       "lakes": 0
     },
     "graph": {
       "nodes": 11,
-      "edges": 10,
+      "edges": 13,
       "components": 1,
       "largestComponent": 11,
       "deadEnds": 3,
       "deadEndRatio": 0.272727,
-      "avgDegree": 1.818182,
-      "gamma": 0.37037
+      "avgDegree": 2,
+      "gamma": 0.481481
     },
     "roads": {
-      "totalLength": 1112.426,
+      "totalLength": 1952.426,
       "lengthByType": {
-        "collector": 330,
-        "highway": 280,
-        "local": 180,
+        "collector": 470,
+        "highway": 700,
+        "local": 460,
         "ramp": 322.426
       },
       "shareByType": {
-        "collector": 0.296649,
-        "highway": 0.251702,
-        "local": 0.161808,
-        "ramp": 0.289841
+        "collector": 0.240726,
+        "highway": 0.358528,
+        "local": 0.235604,
+        "ramp": 0.165141
       },
-      "maxSlope": 0.188562,
+      "maxSlope": 0.278746,
       "slopeByClass": {
         "local": {
           "count": 4,
-          "maxSlope": 0,
-          "overPolicy": 0,
+          "maxSlope": 0.278746,
+          "overPolicy": 1,
           "overAbsolute": 0
         },
         "ramp": {
@@ -895,14 +944,14 @@
           "overPolicy": 1,
           "overAbsolute": 0
         },
-        "collector": {
-          "count": 2,
+        "highway": {
+          "count": 4,
           "maxSlope": 0,
           "overPolicy": 0,
           "overAbsolute": 0
         },
-        "highway": {
-          "count": 1,
+        "collector": {
+          "count": 2,
           "maxSlope": 0,
           "overPolicy": 0,
           "overAbsolute": 0
@@ -914,8 +963,8 @@
         "collector": 10,
         "local": 12
       },
-      "classPolicyViolations": 1,
-      "classPolicyOk": 9,
+      "classPolicyViolations": 2,
+      "classPolicyOk": 11,
       "overAbsolute": 0,
       "version": 2
     },
@@ -1013,13 +1062,13 @@
       "partial": true,
       "method": "spawn_exit_path_geometry_25m_district_roadclass",
       "samples": 27,
-      "changes": 3,
+      "changes": 7,
       "pathLength": 687.4,
-      "avgSpacingMeters": 171.9,
+      "avgSpacingMeters": 85.9,
       "minSpacingMeters": 25,
       "targetMin": 150,
       "targetMax": 300,
-      "ok": true
+      "ok": false
     },
     "impressionAnchors": {
       "method": "spawn_exit_anchors_spacing_path",
@@ -1073,7 +1122,7 @@
       "dividesPlate": true
     },
     "determinism": {
-      "generatorVersion": "0.88.0",
+      "generatorVersion": "0.89.0",
       "seed": 18,
       "deterministic": true
     },
@@ -1093,13 +1142,27 @@
         "code": "road_slope_over_class_policy",
         "stage": "rules",
         "message": "road segments exceed class slope policy (see policies.slopeLimitPct)",
-        "segments": 1,
-        "maxSlope": 0.188562
+        "segments": 2,
+        "maxSlope": 0.278746
+      },
+      {
+        "severity": "warn",
+        "code": "soft_target_out_range",
+        "stage": "rules",
+        "message": "impression cadence outside target range [150,300]m (soft target, informational)",
+        "metric": "impressionCadence",
+        "avgSpacingMeters": 85.9,
+        "target": [
+          150,
+          300
+        ],
+        "pathLength": 687.4,
+        "changes": 7
       }
     ],
     "summary": {
       "errors": 0,
-      "warnings": 1,
+      "warnings": 2,
       "infos": 0
     }
   }

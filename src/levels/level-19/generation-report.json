@@ -1,7 +1,7 @@
 {
   "version": 1,
   "generator": {
-    "generatorVersion": "0.88.0",
+    "generatorVersion": "0.89.0",
     "seed": 19,
     "deterministic": true
   },
@@ -23,7 +23,7 @@
     {
       "id": "2_transport",
       "status": "ok",
-      "diagnostics": 7,
+      "diagnostics": 10,
       "repairs": 0,
       "drops": 0
     },
@@ -44,15 +44,15 @@
     {
       "id": "5_infrastructure_props",
       "status": "ok",
-      "diagnostics": 2,
+      "diagnostics": 3,
       "repairs": 0,
       "drops": 0
     },
     {
       "id": "6_finalize_emit",
       "status": "ok",
-      "diagnostics": 12,
-      "repairs": 0,
+      "diagnostics": 15,
+      "repairs": 2,
       "drops": 0
     }
   ],
@@ -74,7 +74,7 @@
       "frame": null,
       "cells": 0,
       "parcels": 441,
-      "reservedParcels": 9
+      "reservedParcels": 13
     }
   ],
   "diagnostics": [
@@ -127,6 +127,13 @@
       "stage": "6_finalize_emit",
       "message": "road graph has 14 connected components at finalize",
       "components": 14
+    },
+    {
+      "severity": "warn",
+      "code": "road_same_level_conflict",
+      "stage": "6_finalize_emit",
+      "message": "detected 3 same-layer road crossing conflict(s) without shared junction",
+      "count": 3
     },
     {
       "severity": "info",
@@ -208,7 +215,7 @@
       "stage": "2_transport",
       "message": "road graph summary",
       "nodes": 124,
-      "segments": 133,
+      "segments": 137,
       "components": 14
     },
     {
@@ -219,11 +226,52 @@
     },
     {
       "severity": "info",
+      "code": "t23_4_chamfer_excluded",
+      "stage": "2_transport",
+      "message": "chamfered corners excluded: no honest axis-aligned IR realization (ADR-004, replacement: косые районы)",
+      "adr": "docs/architecture/adr/ADR-004-t234-macro-residue-chamfer-exclusion.md",
+      "replacement": "косые районы"
+    },
+    {
+      "severity": "info",
+      "code": "t23_4_diagonal_cut",
+      "stage": "2_transport",
+      "message": "applied diagonal street cut through fabric (stable intersections)",
+      "candidate": 1,
+      "splitSegments": 0,
+      "intersections": 5,
+      "diagonalSegments": 4,
+      "fabricConnections": 5
+    },
+    {
+      "severity": "info",
+      "code": "t23_4_plaza_valve",
+      "stage": "2_transport",
+      "message": "planned plaza-valve(s) at high-degree junction nodes (emitted via stage-5)",
+      "count": 2,
+      "nodes": [
+        {
+          "id": "tr_x_2",
+          "degree": 6,
+          "x": -12,
+          "z": -12
+        },
+        {
+          "id": "eb_m210",
+          "degree": 5,
+          "x": -210,
+          "z": -12
+        }
+      ],
+      "props": 18
+    },
+    {
+      "severity": "info",
       "code": "transport_passthrough",
       "stage": "2_transport",
       "message": "stage 2 using provided road network (procedural generation pending)",
       "nodes": 124,
-      "segments": 133
+      "segments": 137
     },
     {
       "severity": "info",
@@ -396,13 +444,13 @@
       "code": "parcels_reserved_by_reason",
       "stage": "3_districts_parcels",
       "message": "parcel reservations by terrain/hydrology/infrastructure constraints",
-      "reserved": 9,
+      "reserved": 13,
       "total": 441,
       "byReason": {
         "water": 0,
-        "road_corridor": 0,
+        "road_corridor": 6,
         "anchor": 2,
-        "reservation": 7,
+        "reservation": 5,
         "crossing": 0,
         "steep_slope": 0,
         "remote_access": 0,
@@ -551,14 +599,21 @@
     },
     {
       "severity": "info",
+      "code": "t23_4_plaza_valve_emitted",
+      "stage": "5_infrastructure_props",
+      "message": "merged T23.4 plaza-valve props into infrastructure",
+      "count": 18
+    },
+    {
+      "severity": "info",
       "code": "features_manifest",
       "stage": "6_finalize_emit",
-      "message": "feature manifest: 1 applied, 0 degraded, 0 skipped, 0 planned",
+      "message": "feature manifest: 0 applied, 1 degraded, 0 skipped, 0 planned",
       "selected": [
         "stadium_dominant"
       ],
-      "applied": 1,
-      "degraded": 0,
+      "applied": 0,
+      "degraded": 1,
       "skipped": 0,
       "planned": 0
     },
@@ -566,12 +621,12 @@
       "severity": "info",
       "code": "features_manifest",
       "stage": "6_finalize_emit",
-      "message": "feature manifest: 1 applied, 0 degraded, 0 skipped, 0 planned",
+      "message": "feature manifest: 0 applied, 1 degraded, 0 skipped, 0 planned",
       "selected": [
         "stadium_dominant"
       ],
-      "applied": 1,
-      "degraded": 0,
+      "applied": 0,
+      "degraded": 1,
       "skipped": 0,
       "planned": 0
     },
@@ -592,16 +647,16 @@
         "grid": 4,
         "total": 16
       },
-      "roadNodes": 124,
-      "roadSegments": 133,
+      "roadNodes": 126,
+      "roadSegments": 141,
       "roadComponents": 14,
-      "roadGraphNodes": 124,
+      "roadGraphNodes": 126,
       "districts": 1,
       "districtTypes": [
         "forest"
       ],
       "parcels": 441,
-      "reservedParcels": 9,
+      "reservedParcels": 13,
       "parcelAccess": {
         "near": 79,
         "mid": 107,
@@ -613,14 +668,14 @@
         "forest": 24
       },
       "lights": 0,
-      "props": 9,
+      "props": 22,
       "chunkLoad": {
         "nonEmptyChunks": 14,
         "maxBuildings": 4,
-        "maxProps": 4,
+        "maxProps": 19,
         "maxLights": 0,
         "avgBuildings": 1.5,
-        "avgProps": 0.56
+        "avgProps": 1.38
       }
     },
     {
@@ -884,13 +939,36 @@
       "code": "interchange_junction_candidates",
       "stage": "6_finalize_emit",
       "message": "identified junction nodes as grade-separation candidates",
-      "count": 20
+      "count": 22
     },
     {
       "severity": "info",
-      "code": "road_conflicts_none",
+      "code": "road_conflicts_resolved",
       "stage": "6_finalize_emit",
-      "message": "no same-layer road crossing conflicts detected"
+      "message": "resolved detected same-layer road crossing conflicts",
+      "repairs": 2
+    },
+    {
+      "severity": "info",
+      "code": "road_crossing_repaired",
+      "stage": "6_finalize_emit",
+      "message": "repaired same-layer crossing by inserting junction 'tr_x_19'",
+      "node": "tr_x_19",
+      "segments": [
+        "sb_br_a_b",
+        "tr_diag_3"
+      ]
+    },
+    {
+      "severity": "info",
+      "code": "road_crossing_repaired",
+      "stage": "6_finalize_emit",
+      "message": "repaired same-layer crossing by inserting junction 'tr_x_20'",
+      "node": "tr_x_20",
+      "segments": [
+        "lt3_s3_a_b",
+        "tr_diag_1"
+      ]
     },
     {
       "severity": "info",
@@ -899,12 +977,31 @@
       "message": "stage 6_finalize_emit completed"
     }
   ],
-  "repairs": [],
+  "repairs": [
+    {
+      "stage": "6_finalize_emit",
+      "code": "resolve_road_crossing",
+      "node": "tr_x_19",
+      "segments": [
+        "sb_br_a_b",
+        "tr_diag_3"
+      ]
+    },
+    {
+      "stage": "6_finalize_emit",
+      "code": "resolve_road_crossing",
+      "node": "tr_x_20",
+      "segments": [
+        "lt3_s3_a_b",
+        "tr_diag_1"
+      ]
+    }
+  ],
   "drops": [],
   "summary": {
     "errors": 0,
-    "warnings": 6,
-    "repairs": 0,
+    "warnings": 7,
+    "repairs": 2,
     "drops": 0
   },
   "features": {
@@ -912,23 +1009,23 @@
       "stadium_dominant"
     ],
     "count": 1,
-    "applied": 1,
-    "degraded": 0,
+    "applied": 0,
+    "degraded": 1,
     "skipped": 0,
     "planned": 0,
     "items": [
       {
         "id": "feature_1_stadium_dominant",
         "type": "stadium_dominant",
-        "status": "applied",
-        "reason": null,
+        "status": "degraded",
+        "reason": "partial_placement",
         "anchor": {
           "districtId": "d0",
           "x": 0,
           "z": 0
         },
         "emitted": {
-          "props": 9,
+          "props": 4,
           "landscapeObjects": 0,
           "buildings": 0,
           "districts": 0
@@ -940,56 +1037,56 @@
     "version": 2,
     "partial": true,
     "counts": {
-      "roads": 133,
-      "roadNodes": 124,
+      "roads": 141,
+      "roadNodes": 126,
       "districts": 1,
       "parcels": 441,
-      "reservedParcels": 9,
+      "reservedParcels": 13,
       "buildings": 24,
       "enterableBuildings": 5,
-      "props": 9,
+      "props": 22,
       "lights": 0,
       "rivers": 0,
       "lakes": 0
     },
     "graph": {
-      "nodes": 124,
-      "edges": 133,
+      "nodes": 126,
+      "edges": 141,
       "components": 14,
-      "largestComponent": 96,
-      "deadEnds": 22,
-      "deadEndRatio": 0.177419,
-      "avgDegree": 2.145161,
-      "gamma": 0.363388
+      "largestComponent": 98,
+      "deadEnds": 21,
+      "deadEndRatio": 0.166667,
+      "avgDegree": 2.222222,
+      "gamma": 0.379032
     },
     "roads": {
-      "totalLength": 22090.548,
+      "totalLength": 22960.35,
       "lengthByType": {
         "highway": 4470.012,
-        "local": 4500,
+        "local": 5369.802,
         "ramp": 13120.536
       },
       "shareByType": {
-        "highway": 0.20235,
-        "local": 0.203707,
-        "ramp": 0.593943
+        "highway": 0.194684,
+        "local": 0.233873,
+        "ramp": 0.571443
       },
       "maxSlope": 0.275,
       "slopeByClass": {
         "highway": {
-          "count": 60,
+          "count": 61,
           "maxSlope": 0.08733,
           "overPolicy": 1,
           "overAbsolute": 0
         },
         "local": {
-          "count": 6,
-          "maxSlope": 0,
+          "count": 12,
+          "maxSlope": 0.052499,
           "overPolicy": 0,
           "overAbsolute": 0
         },
         "ramp": {
-          "count": 67,
+          "count": 68,
           "maxSlope": 0.275,
           "overPolicy": 13,
           "overAbsolute": 0
@@ -1002,7 +1099,7 @@
         "local": 12
       },
       "classPolicyViolations": 14,
-      "classPolicyOk": 119,
+      "classPolicyOk": 127,
       "overAbsolute": 0,
       "version": 2
     },
@@ -1044,7 +1141,7 @@
       "parkShare": 1
     },
     "parcels": {
-      "reservedShare": 0.020408,
+      "reservedShare": 0.029478,
       "byDistrictCount": {
         "d0": 441
       }
@@ -1127,14 +1224,14 @@
       "dividesPlate": true
     },
     "determinism": {
-      "generatorVersion": "0.88.0",
+      "generatorVersion": "0.89.0",
       "seed": 19,
       "deterministic": true
     },
     "report": {
       "diagnosticsErrors": 0,
-      "diagnosticsWarnings": 6,
-      "repairs": 0,
+      "diagnosticsWarnings": 7,
+      "repairs": 2,
       "drops": 0
     }
   },
@@ -1148,7 +1245,7 @@
         "stage": "rules",
         "message": "road graph has 14 connected components",
         "components": 14,
-        "nodes": 124
+        "nodes": 126
       },
       {
         "severity": "warn",

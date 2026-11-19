@@ -1,7 +1,7 @@
 {
   "version": 1,
   "generator": {
-    "generatorVersion": "0.88.0",
+    "generatorVersion": "0.89.0",
     "seed": 21,
     "deterministic": true
   },
@@ -23,7 +23,7 @@
     {
       "id": "2_transport",
       "status": "ok",
-      "diagnostics": 123,
+      "diagnostics": 126,
       "repairs": 0,
       "drops": 0
     },
@@ -37,14 +37,14 @@
     {
       "id": "4_buildings_structures",
       "status": "ok",
-      "diagnostics": 9,
+      "diagnostics": 10,
       "repairs": 10,
       "drops": 0
     },
     {
       "id": "5_infrastructure_props",
       "status": "ok",
-      "diagnostics": 3,
+      "diagnostics": 4,
       "repairs": 0,
       "drops": 0
     },
@@ -397,7 +397,7 @@
       "frame": null,
       "cells": 0,
       "parcels": 105,
-      "reservedParcels": 6
+      "reservedParcels": 7
     },
     {
       "id": "district_2_1_0",
@@ -435,7 +435,7 @@
       "frame": null,
       "cells": 0,
       "parcels": 49,
-      "reservedParcels": 4
+      "reservedParcels": 6
     },
     {
       "id": "district_2_1_11",
@@ -1058,8 +1058,8 @@
       "severity": "warn",
       "code": "chunk_buildings_heavy",
       "stage": "6_finalize_emit",
-      "message": "high building count in a single chunk (166)",
-      "maxBuildings": 166,
+      "message": "high building count in a single chunk (169)",
+      "maxBuildings": 169,
       "chunk": 640,
       "grid": 2
     },
@@ -1067,8 +1067,8 @@
       "severity": "warn",
       "code": "chunk_props_heavy",
       "stage": "6_finalize_emit",
-      "message": "high prop count in a single chunk (153)",
-      "maxProps": 153,
+      "message": "high prop count in a single chunk (148)",
+      "maxProps": 148,
       "chunk": 640,
       "grid": 2
     },
@@ -1187,16 +1187,16 @@
       "severity": "info",
       "code": "junctions_derived",
       "stage": "2_transport",
-      "message": "derived 37 junction(s) per §8.1 rules",
-      "total": 37,
+      "message": "derived 38 junction(s) per §8.1 rules",
+      "total": 38,
       "byType": {
-        "uncontrolled": 35,
+        "uncontrolled": 36,
         "signalized": 2
       },
       "movements": {
-        "right": 238,
-        "left": 238,
-        "straight": 410
+        "right": 246,
+        "left": 246,
+        "straight": 412
       },
       "uturn": 0
     },
@@ -1206,7 +1206,7 @@
       "stage": "2_transport",
       "message": "road graph summary",
       "nodes": 106,
-      "segments": 133,
+      "segments": 135,
       "components": 1
     },
     {
@@ -1214,6 +1214,47 @@
       "code": "stage_ok",
       "stage": "2_transport",
       "message": "stage 2_transport completed"
+    },
+    {
+      "severity": "info",
+      "code": "t23_4_chamfer_excluded",
+      "stage": "2_transport",
+      "message": "chamfered corners excluded: no honest axis-aligned IR realization (ADR-004, replacement: косые районы)",
+      "adr": "docs/architecture/adr/ADR-004-t234-macro-residue-chamfer-exclusion.md",
+      "replacement": "косые районы"
+    },
+    {
+      "severity": "info",
+      "code": "t23_4_diagonal_cut",
+      "stage": "2_transport",
+      "message": "applied diagonal street cut through fabric (stable intersections)",
+      "candidate": 108,
+      "splitSegments": 0,
+      "intersections": 3,
+      "diagonalSegments": 2,
+      "fabricConnections": 3
+    },
+    {
+      "severity": "info",
+      "code": "t23_4_plaza_valve",
+      "stage": "2_transport",
+      "message": "planned plaza-valve(s) at high-degree junction nodes (emitted via stage-5)",
+      "count": 2,
+      "nodes": [
+        {
+          "id": "tr_n_exit",
+          "degree": 23,
+          "x": 520,
+          "z": 520
+        },
+        {
+          "id": "tr_n_spawn",
+          "degree": 7,
+          "x": -520,
+          "z": -520
+        }
+      ],
+      "props": 18
     },
     {
       "severity": "info",
@@ -2413,7 +2454,7 @@
       "stage": "2_transport",
       "message": "stage 2 generated road network",
       "nodes": 106,
-      "segments": 133,
+      "segments": 135,
       "seed": 2027986675,
       "branches": 114,
       "profiled": true
@@ -2918,11 +2959,11 @@
       "code": "parcels_reserved_by_reason",
       "stage": "3_districts_parcels",
       "message": "parcel reservations by terrain/hydrology/infrastructure constraints",
-      "reserved": 489,
+      "reserved": 492,
       "total": 2407,
       "byReason": {
         "water": 341,
-        "road_corridor": 126,
+        "road_corridor": 129,
         "anchor": 4,
         "reservation": 7,
         "crossing": 0,
@@ -3315,7 +3356,7 @@
       "message": "generated buildings from parcels",
       "count": 410,
       "budget": 420,
-      "skippedConflict": 473
+      "skippedConflict": 371
     },
     {
       "severity": "info",
@@ -3416,10 +3457,18 @@
       "code": "floors_contrast_built",
       "stage": "4_buildings_structures",
       "message": "building floors distribution (section 9.4): L-modulation, adjacency contrast <= 2.5x, 5-8 dominants per city (one per high-L district, capped/filled 2026-11-19)",
-      "clamped": 81,
+      "clamped": 136,
       "dominants": 8,
       "districts": 47,
       "adjacencyPairs": 89
+    },
+    {
+      "severity": "info",
+      "code": "post_buildings_local_connectors",
+      "stage": "4_buildings_structures",
+      "message": "added local connector segments after building placement (R3.5)",
+      "added": 1,
+      "candidates": 1
     },
     {
       "severity": "info",
@@ -3434,21 +3483,21 @@
       "message": "generated district props",
       "count": 360,
       "budget": 360,
-      "attempts": 1077,
+      "attempts": 997,
       "byDistrictType": {
-        "old_town": 46,
-        "luxury": 7,
-        "residential": 90,
-        "parking": 9,
-        "slums": 58,
-        "industrial": 8,
-        "market": 30,
-        "commercial": 45,
-        "sports": 4,
-        "office": 16,
-        "suburb": 22,
-        "forest": 14,
-        "campus": 9
+        "residential": 95,
+        "slums": 57,
+        "campus": 10,
+        "commercial": 40,
+        "luxury": 20,
+        "forest": 9,
+        "old_town": 43,
+        "market": 26,
+        "suburb": 21,
+        "parking": 8,
+        "office": 15,
+        "sports": 9,
+        "industrial": 4
       }
     },
     {
@@ -3465,6 +3514,13 @@
       "count": 8,
       "budget": 8,
       "skipped": 0
+    },
+    {
+      "severity": "info",
+      "code": "t23_4_plaza_valve_emitted",
+      "stage": "5_infrastructure_props",
+      "message": "merged T23.4 plaza-valve props into infrastructure",
+      "count": 18
     },
     {
       "severity": "info",
@@ -3518,10 +3574,10 @@
         "grid": 2,
         "total": 4
       },
-      "roadNodes": 127,
-      "roadSegments": 156,
+      "roadNodes": 129,
+      "roadSegments": 160,
       "roadComponents": 1,
-      "roadGraphNodes": 127,
+      "roadGraphNodes": 129,
       "interchanges": {
         "segments": 8,
         "junctions": 4,
@@ -3544,10 +3600,10 @@
         "suburb"
       ],
       "parcels": 2407,
-      "reservedParcels": 489,
+      "reservedParcels": 492,
       "parcelAccess": {
-        "near": 1163,
-        "mid": 910,
+        "near": 1183,
+        "mid": 890,
         "far": 334
       },
       "roadAccessByType": {
@@ -3593,19 +3649,19 @@
         },
         "residential": {
           "parcels": 630,
-          "unreserved": 530,
+          "unreserved": 529,
           "good": 289,
-          "mid": 197,
+          "mid": 196,
           "far": 44,
-          "reserved": 100,
-          "goodOrMid": 486,
+          "reserved": 101,
+          "goodOrMid": 485,
           "accessibleRatio": 0.917
         },
         "slums": {
           "parcels": 400,
           "unreserved": 382,
-          "good": 183,
-          "mid": 199,
+          "good": 193,
+          "mid": 189,
           "far": 0,
           "reserved": 18,
           "goodOrMid": 382,
@@ -3624,44 +3680,44 @@
       },
       "buildings": 410,
       "buildingsByDistrictType": {
-        "residential": 131,
-        "slums": 73,
+        "market": 23,
+        "residential": 116,
+        "slums": 79,
         "luxury": 20,
-        "old_town": 36,
-        "market": 22,
-        "office": 30,
-        "commercial": 47,
-        "suburb": 17,
-        "industrial": 18,
-        "campus": 10,
-        "parking": 3,
+        "old_town": 35,
+        "office": 34,
+        "commercial": 52,
+        "industrial": 20,
+        "parking": 6,
+        "suburb": 11,
+        "campus": 11,
         "forest": 1,
         "sports": 2
       },
       "lights": 8,
-      "props": 368,
+      "props": 386,
       "propsByDistrictType": {
-        "old_town": 46,
-        "luxury": 7,
-        "residential": 90,
-        "parking": 9,
-        "slums": 58,
-        "industrial": 8,
-        "market": 30,
-        "commercial": 45,
-        "sports": 4,
-        "office": 16,
-        "suburb": 22,
-        "forest": 14,
-        "campus": 9
+        "residential": 95,
+        "slums": 57,
+        "campus": 10,
+        "commercial": 40,
+        "luxury": 20,
+        "forest": 9,
+        "old_town": 43,
+        "market": 26,
+        "suburb": 21,
+        "parking": 8,
+        "office": 15,
+        "sports": 9,
+        "industrial": 4
       },
       "chunkLoad": {
         "nonEmptyChunks": 4,
-        "maxBuildings": 166,
-        "maxProps": 153,
+        "maxBuildings": 169,
+        "maxProps": 148,
         "maxLights": 3,
         "avgBuildings": 102.5,
-        "avgProps": 92
+        "avgProps": 96.5
       }
     },
     {
@@ -3699,168 +3755,168 @@
       "seams": 4,
       "changes": [
         {
-          "id": "b_district_0_0_00_156",
+          "id": "b_district_0_0_00_150",
           "dXZ": [
             -0.36,
             0.195
           ]
         },
         {
-          "id": "b_district_0_0_00_157",
+          "id": "b_district_0_0_00_151",
           "dXZ": [
             0.225,
             0.175
           ]
         },
         {
-          "id": "b_district_0_0_00_239",
+          "id": "b_district_0_0_00_238",
           "dXZ": [
             -0.249,
             0.294
           ]
         },
         {
-          "id": "b_district_0_0_00_240",
+          "id": "b_district_0_0_00_239",
           "dXZ": [
             -0.521,
             -0.001
           ]
         },
         {
-          "id": "b_district_0_0_00_241",
+          "id": "b_district_0_0_00_240",
           "dXZ": [
             0.311,
             0.147
           ]
         },
         {
-          "id": "b_district_0_0_00_258",
+          "id": "b_district_0_0_00_26",
           "dXZ": [
             0.046,
             0.086
           ]
         },
         {
-          "id": "b_district_0_0_00_259",
+          "id": "b_district_0_0_00_260",
           "dXZ": [
             -0.517,
             -0.386
           ]
         },
         {
-          "id": "b_district_0_0_00_31",
+          "id": "b_district_0_0_00_261",
           "dXZ": [
-            -0.098,
-            0.294
+            0.368,
+            -0.098
           ]
         },
         {
-          "id": "b_district_0_0_00_32",
+          "id": "b_district_0_0_00_27",
           "dXZ": [
             0.499,
             -0.407
           ]
         },
         {
-          "id": "b_district_0_0_00_334",
+          "id": "b_district_0_0_00_339",
           "dXZ": [
             0.107,
             0.455
           ]
         },
         {
-          "id": "b_district_0_0_00_335",
+          "id": "b_district_0_0_00_345",
           "dXZ": [
-            0.132,
-            -0.343
+            -0.343,
+            0.376
           ]
         },
         {
-          "id": "b_district_0_0_01_242",
+          "id": "b_district_0_0_00_346",
           "dXZ": [
             -0.046,
             -0.483
           ]
         },
         {
-          "id": "b_district_0_0_01_243",
+          "id": "b_district_0_0_00_394",
           "dXZ": [
             0.053,
             -0.229
           ]
         },
         {
-          "id": "b_district_0_0_01_244",
+          "id": "b_district_0_0_01_241",
           "dXZ": [
-            -0.544,
-            0.363
+            -0.458,
+            -0.544
           ]
         },
         {
-          "id": "b_district_0_0_01_245",
+          "id": "b_district_0_0_01_242",
           "dXZ": [
-            -0.182,
-            -0.39
+            -0.142,
+            -0.182
           ]
         },
         {
-          "id": "b_district_0_0_01_325",
+          "id": "b_district_0_0_01_243",
           "dXZ": [
             0.048,
             0.315
           ]
         },
         {
-          "id": "b_district_0_0_01_326",
+          "id": "b_district_0_0_01_244",
           "dXZ": [
             -0.435,
             -0.006
           ]
         },
         {
-          "id": "b_district_0_0_01_327",
+          "id": "b_district_0_0_01_245",
           "dXZ": [
             0.284,
             -0.342
           ]
         },
         {
-          "id": "b_district_0_0_01_377",
+          "id": "b_district_0_0_01_246",
           "dXZ": [
-            0.407,
-            0.383
+            0.383,
+            0.088
           ]
         },
         {
-          "id": "b_district_0_0_10_246",
+          "id": "b_district_0_0_01_340",
           "dXZ": [
-            0.088,
-            0.036
+            0.036,
+            -0.088
+          ]
+        },
+        {
+          "id": "b_district_0_0_01_390",
+          "dXZ": [
+            -0.229,
+            -0.057
+          ]
+        },
+        {
+          "id": "b_district_0_0_01_391",
+          "dXZ": [
+            0.532,
+            -0.122
           ]
         },
         {
           "id": "b_district_0_0_10_247",
           "dXZ": [
-            -0.088,
-            -0.458
+            0.064,
+            -0.316
           ]
         },
         {
           "id": "b_district_0_0_10_248",
-          "dXZ": [
-            -0.057,
-            0.353
-          ]
-        },
-        {
-          "id": "b_district_0_0_10_249",
-          "dXZ": [
-            -0.122,
-            0.064
-          ]
-        },
-        {
-          "id": "b_district_0_0_10_250",
           "dXZ": [
             -0.473,
             0.055
@@ -3878,20 +3934,24 @@
       "target": 13,
       "changes": [
         {
-          "id": "b_district_3_2_0_78",
-          "districtId": "district_3_2_0"
+          "id": "b_district_2_1_10_148",
+          "districtId": "district_2_1_10"
         },
         {
-          "id": "b_district_0_1_0_141",
-          "districtId": "district_0_1_0"
-        },
-        {
-          "id": "b_district_2_3_010_178",
+          "id": "b_district_2_3_010_171",
           "districtId": "district_2_3_010"
         },
         {
-          "id": "b_district_2_0_1_188",
-          "districtId": "district_2_0_1"
+          "id": "b_district_2_1_10_178",
+          "districtId": "district_2_1_10"
+        },
+        {
+          "id": "b_district_3_1_0_201",
+          "districtId": "district_3_1_0"
+        },
+        {
+          "id": "b_district_3_2_0_231",
+          "districtId": "district_3_2_0"
         },
         {
           "id": "b_district_0_0_00_240",
@@ -3906,28 +3966,24 @@
           "districtId": "district_0_0_01"
         },
         {
-          "id": "b_district_3_2_1_266",
+          "id": "b_district_0_3_0_253",
+          "districtId": "district_0_3_0"
+        },
+        {
+          "id": "b_district_3_2_1_265",
           "districtId": "district_3_2_1"
         },
         {
-          "id": "b_district_3_0_0_300",
-          "districtId": "district_3_0_0"
-        },
-        {
-          "id": "b_district_1_3_1_322",
+          "id": "b_district_1_3_1_269",
           "districtId": "district_1_3_1"
         },
         {
-          "id": "b_district_0_0_01_325",
-          "districtId": "district_0_0_01"
+          "id": "b_district_3_2_1_290",
+          "districtId": "district_3_2_1"
         },
         {
-          "id": "b_district_1_3_1_355",
-          "districtId": "district_1_3_1"
-        },
-        {
-          "id": "b_district_0_1_0_363",
-          "districtId": "district_0_1_0"
+          "id": "b_district_3_1_1_360",
+          "districtId": "district_3_1_1"
         }
       ]
     },
@@ -3938,22 +3994,22 @@
       "message": "macro chaos (epoch enclave in the lowest-land-value district) applied at finish stage",
       "district": "district_3_0_1",
       "landValue": 0.2829,
-      "eligible": 17,
+      "eligible": 15,
       "target": "modern",
       "converted": 12,
       "buildings": [
-        "b_district_3_0_1_128",
-        "b_district_3_0_1_129",
-        "b_district_3_0_1_131",
-        "b_district_3_0_1_192",
-        "b_district_3_0_1_193",
-        "b_district_3_0_1_194",
-        "b_district_3_0_1_221",
-        "b_district_3_0_1_222",
-        "b_district_3_0_1_227",
-        "b_district_3_0_1_25",
-        "b_district_3_0_1_26",
-        "b_district_3_0_1_27"
+        "b_district_3_0_1_121",
+        "b_district_3_0_1_122",
+        "b_district_3_0_1_124",
+        "b_district_3_0_1_143",
+        "b_district_3_0_1_185",
+        "b_district_3_0_1_20",
+        "b_district_3_0_1_21",
+        "b_district_3_0_1_219",
+        "b_district_3_0_1_22",
+        "b_district_3_0_1_23",
+        "b_district_3_0_1_282",
+        "b_district_3_0_1_322"
       ]
     },
     {
@@ -3968,22 +4024,22 @@
       "shifted": 4,
       "changes": [
         {
-          "id": "b_district_2_0_0_146",
+          "id": "b_district_2_0_0_114",
           "tangent": "x",
           "d": 0.675
         },
         {
-          "id": "b_district_2_0_0_147",
+          "id": "b_district_2_0_0_137",
           "tangent": "x",
           "d": 0.675
         },
         {
-          "id": "b_district_2_0_0_169",
+          "id": "b_district_2_0_0_166",
           "tangent": "x",
           "d": 0.675
         },
         {
-          "id": "b_district_2_0_0_279",
+          "id": "b_district_2_0_0_183",
           "tangent": "x",
           "d": 0.675
         }
@@ -3997,11 +4053,11 @@
       "applied": 2,
       "changes": [
         {
-          "id": "b_district_2_0_0_146",
+          "id": "b_district_2_0_0_114",
           "era": "historic_insert"
         },
         {
-          "id": "b_district_2_0_0_147",
+          "id": "b_district_2_0_0_137",
           "era": "historic_insert"
         }
       ]
@@ -4043,7 +4099,7 @@
       "code": "interchange_junction_candidates",
       "stage": "6_finalize_emit",
       "message": "identified junction nodes as grade-separation candidates",
-      "count": 5
+      "count": 7
     },
     {
       "severity": "info",
@@ -4186,52 +4242,52 @@
     },
     {
       "stage": "6_finalize_emit",
-      "id": "b_district_0_0_01_325",
+      "id": "b_district_0_3_0_253",
       "reason": "finish_chaos_macro_void"
     },
     {
       "stage": "6_finalize_emit",
-      "id": "b_district_0_1_0_141",
+      "id": "b_district_1_3_1_269",
       "reason": "finish_chaos_macro_void"
     },
     {
       "stage": "6_finalize_emit",
-      "id": "b_district_0_1_0_363",
+      "id": "b_district_2_1_10_148",
       "reason": "finish_chaos_macro_void"
     },
     {
       "stage": "6_finalize_emit",
-      "id": "b_district_1_3_1_322",
+      "id": "b_district_2_1_10_178",
       "reason": "finish_chaos_macro_void"
     },
     {
       "stage": "6_finalize_emit",
-      "id": "b_district_1_3_1_355",
+      "id": "b_district_2_3_010_171",
       "reason": "finish_chaos_macro_void"
     },
     {
       "stage": "6_finalize_emit",
-      "id": "b_district_2_0_1_188",
+      "id": "b_district_3_1_0_201",
       "reason": "finish_chaos_macro_void"
     },
     {
       "stage": "6_finalize_emit",
-      "id": "b_district_2_3_010_178",
+      "id": "b_district_3_1_1_360",
       "reason": "finish_chaos_macro_void"
     },
     {
       "stage": "6_finalize_emit",
-      "id": "b_district_3_0_0_300",
+      "id": "b_district_3_2_0_231",
       "reason": "finish_chaos_macro_void"
     },
     {
       "stage": "6_finalize_emit",
-      "id": "b_district_3_2_0_78",
+      "id": "b_district_3_2_1_265",
       "reason": "finish_chaos_macro_void"
     },
     {
       "stage": "6_finalize_emit",
-      "id": "b_district_3_2_1_266",
+      "id": "b_district_3_2_1_290",
       "reason": "finish_chaos_macro_void"
     }
   ],
@@ -4274,42 +4330,42 @@
     "version": 2,
     "partial": true,
     "counts": {
-      "roads": 156,
-      "roadNodes": 127,
+      "roads": 160,
+      "roadNodes": 129,
       "districts": 47,
       "parcels": 2407,
-      "reservedParcels": 489,
+      "reservedParcels": 492,
       "buildings": 397,
       "enterableBuildings": 82,
-      "props": 368,
+      "props": 386,
       "lights": 8,
       "rivers": 2,
       "lakes": 0
     },
     "graph": {
-      "nodes": 127,
-      "edges": 156,
+      "nodes": 129,
+      "edges": 160,
       "components": 1,
-      "largestComponent": 127,
-      "deadEnds": 36,
-      "deadEndRatio": 0.283465,
-      "avgDegree": 2.456693,
-      "gamma": 0.416
+      "largestComponent": 129,
+      "deadEnds": 37,
+      "deadEndRatio": 0.286822,
+      "avgDegree": 2.465116,
+      "gamma": 0.419948
     },
     "roads": {
-      "totalLength": 13268.146,
+      "totalLength": 13668.297,
       "lengthByType": {
         "arterial": 360.83,
-        "local": 12907.316
+        "local": 13307.467
       },
       "shareByType": {
-        "arterial": 0.027195,
-        "local": 0.972805
+        "arterial": 0.026399,
+        "local": 0.973601
       },
       "maxSlope": 0.297561,
       "slopeByClass": {
         "local": {
-          "count": 154,
+          "count": 158,
           "maxSlope": 0.1,
           "overPolicy": 0,
           "overAbsolute": 0
@@ -4328,7 +4384,7 @@
         "local": 12
       },
       "classPolicyViolations": 1,
-      "classPolicyOk": 155,
+      "classPolicyOk": 159,
       "overAbsolute": 0,
       "version": 2
     },
@@ -4394,7 +4450,7 @@
       "parkShare": 0.0625
     },
     "parcels": {
-      "reservedShare": 0.203157,
+      "reservedShare": 0.204404,
       "byDistrictCount": {
         "district_0_0_00": 25,
         "district_0_0_01": 25,
@@ -4591,7 +4647,7 @@
       "dividesPlate": true
     },
     "determinism": {
-      "generatorVersion": "0.88.0",
+      "generatorVersion": "0.89.0",
       "seed": 21,
       "deterministic": true
     },
@@ -4618,7 +4674,7 @@
         "code": "junction_type_mismatch_class",
         "stage": "rules",
         "message": "junction 'j_tr_n_spawn' type 'signalized' does not match adjacent classes (expected 'uncontrolled')",
-        "index": 35,
+        "index": 36,
         "id": "j_tr_n_spawn",
         "declared": "signalized",
         "expected": "uncontrolled",
