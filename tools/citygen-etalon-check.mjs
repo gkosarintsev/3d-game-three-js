@@ -1,4 +1,4 @@
-#!/usr/bin/env node
+﻿#!/usr/bin/env node
 /**
  * R0.4/R6.4: regression check (and controlled update) for stored citygen etalons/baselines.
  *
@@ -329,3 +329,4 @@ if (!skipBaselines) {
 
 console.log(`\nEtalon check: ${checks - failures}/${checks} passed, ${failures} failed${updated ? `, ${updated} updated` : ''}`);
 if (failures > 0) process.exit(1);
+

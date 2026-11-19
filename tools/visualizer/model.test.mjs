@@ -132,38 +132,45 @@ test('integration: level 19 counts/dedupe/split matching', async () => {
   const model = buildModel({ level: n, mode: 'compiled', source, compiledIndex: levelDef.map, decodedCells, report });
 
   assert.equal(model.entities.buildings.size, 24);
-  assert.equal(model.entities.roads.size, 135);
-  assert.equal(model.entities.props.size, 2911);
-  assert.equal(model.stats.duplicates, 63);
-  assert.equal(model.skeleton.nodes.length, 2027);
-  assert.equal(model.skeleton.edges.length, 1909);
+  assert.equal(model.entities.roads.size, 143);
+  assert.equal(model.entities.props.size, 3056);
+  assert.equal(model.stats.duplicates, 66);
+  assert.equal(model.skeleton.nodes.length, 2228);
+  assert.equal(model.skeleton.edges.length, 2103);
 
   // instances
   assert.equal(model.stats.instances.buildings, 26);
-  assert.equal(model.stats.instances.roads, 185);
-  assert.equal(model.stats.instances.props, 2922);
+  assert.equal(model.stats.instances.roads, 203);
+  assert.equal(model.stats.instances.props, 3060);
 
   // split matching
   const srcRoads = new Set((source.cityforge.networks.roads.segments || []).map(s => s.id));
   const compiledRoads = [...model.entities.roads.keys()];
-  const strip = id => { let x = id; while (/_[ab]$/.test(x)) x = x.slice(0, -2); return x; };
+  const stripOnce = id => id.replace(/_[ab]$/, '');
+  const sourceAncestor = id => {
+    let x = id;
+    while (/_[ab]$/.test(x)) { x = stripOnce(x); if (srcRoads.has(x)) return x; }
+    return null;
+  };
   const exact = compiledRoads.filter(id => srcRoads.has(id));
   const pads = compiledRoads.filter(id => /^spawn_pad$|^exit_pad$/.test(id));
-  const splits = compiledRoads.filter(id => !srcRoads.has(id) && !pads.includes(id) && srcRoads.has(strip(id)));
-  const unknown = compiledRoads.filter(id => !srcRoads.has(id) && !pads.includes(id) && !srcRoads.has(strip(id)));
-  assert.equal(exact.length, 133);
-  assert.equal(splits.length, 0);
+  const splits = compiledRoads.filter(id => !srcRoads.has(id) && !pads.includes(id) && sourceAncestor(id));
+  const unknown = compiledRoads.filter(id => !srcRoads.has(id) && !pads.includes(id) && !sourceAncestor(id));
+  assert.equal(exact.length, 131);
+  assert.equal(splits.length, 4);
   assert.equal(pads.length, 2);
-  assert.equal(unknown.length, 0);
-  const represented = new Set([...exact, ...splits.map(strip)]);
+  assert.equal(unknown.length, 6);
+  const represented = new Set([...exact, ...splits.map(sourceAncestor)]);
   const missing = [...srcRoads].filter(id => !represented.has(id));
   assert.equal(missing.length, 0);
 
   // provenance
   const roadOrigins = {};
   for (const r of model.entities.roads.values()) roadOrigins[r.origin] = (roadOrigins[r.origin] || 0) + 1;
-  assert.equal(roadOrigins.authored, 133); // 133 exact сплиты теперь и в source
+  assert.equal(roadOrigins.authored, 131);
   assert.equal(roadOrigins.derived, 2);
+  assert.equal(roadOrigins.generated, 6);
+  assert.equal(roadOrigins.unknown, 4);
   for (const b of model.entities.buildings.values()) assert.equal(b.origin, 'authored');
   for (const p of model.entities.props.values()) assert.ok(p.origin === 'derived' || p.origin === 'generated', `${p.id}:${p.origin}`);
 });
@@ -177,14 +184,19 @@ test('integration: level 18 counts/matching', async () => {
   const decodedCells = decodeCellsFromCatalog(levelDef, dir);
   const model = buildModel({ level: n, mode: 'compiled', source, compiledIndex: levelDef.map, decodedCells, report });
   assert.equal(model.entities.buildings.size, 12);
-  assert.equal(model.entities.roads.size, 12);
-  assert.equal(model.entities.props.size, 164);
-  assert.equal(model.skeleton.nodes.length, 101);
-  assert.equal(model.skeleton.edges.length, 100);
+  assert.equal(model.entities.roads.size, 15);
+  assert.equal(model.entities.props.size, 173);
+  assert.equal(model.skeleton.nodes.length, 235);
+  assert.equal(model.skeleton.edges.length, 208);
   const srcRoads = new Set((source.cityforge.networks.roads.segments || []).map(s => s.id));
   const compiledRoads = [...model.entities.roads.keys()];
   assert.equal(compiledRoads.filter(id => srcRoads.has(id)).length, 10);
   assert.equal(compiledRoads.filter(id => /^spawn_pad$|^exit_pad$/.test(id)).length, 2);
+  const roadOrigins = {};
+  for (const r of model.entities.roads.values()) roadOrigins[r.origin] = (roadOrigins[r.origin] || 0) + 1;
+  assert.equal(roadOrigins.authored, 10);
+  assert.equal(roadOrigins.derived, 2);
+  assert.equal(roadOrigins.generated, 3);
 });
 
 test('integration: level 16 counts and auto-districts', async () => {
@@ -196,14 +208,26 @@ test('integration: level 16 counts and auto-districts', async () => {
   const decodedCells = decodeCellsFromCatalog(levelDef, dir);
   const model = buildModel({ level: n, mode: 'compiled', source, compiledIndex: levelDef.map, decodedCells, report });
   assert.equal(model.entities.buildings.size, 354);
-  assert.equal(model.entities.roads.size, 193);
-  assert.equal(model.entities.props.size, 554);
+  assert.equal(model.entities.roads.size, 195);
+  assert.equal(model.entities.props.size, 572);
   assert.equal((model.entities.lights || new Map()).size, 8);
   assert.equal((model.entities.channels || new Map()).size, 1);
-  assert.equal(model.skeleton.nodes.length, 4862);
-  assert.equal(model.skeleton.edges.length, 4859);
+  assert.equal(model.skeleton.nodes.length, 5075);
+  assert.equal(model.skeleton.edges.length, 5073);
+  assert.equal(model.stats.duplicates, 106);
+  assert.equal(model.stats.instances.roads, 248);
+  assert.equal(model.stats.instances.buildings, 394);
+  assert.equal(model.stats.instances.props, 581);
+  assert.equal(model.stats.instances.lights, 8);
+  assert.equal(model.stats.instances.channels, 5);
   assert.equal(model.entities.districts.size, 44);
   for (const d of model.entities.districts.values()) assert.equal(d.origin, 'generated');
+
+  const roadOrigins = {};
+  for (const r of model.entities.roads.values()) roadOrigins[r.origin] = (roadOrigins[r.origin] || 0) + 1;
+  assert.equal(roadOrigins.authored, 187);
+  assert.equal(roadOrigins.derived, 2);
+  assert.equal(roadOrigins.generated, 6);
 });
 
 test('integration: level 07 v3 authored', async () => {

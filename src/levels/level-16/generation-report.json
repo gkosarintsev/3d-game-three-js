@@ -1,7 +1,7 @@
 {
   "version": 1,
   "generator": {
-    "generatorVersion": "0.88.0",
+    "generatorVersion": "0.89.0",
     "seed": 16,
     "deterministic": true
   },
@@ -23,7 +23,7 @@
     {
       "id": "2_transport",
       "status": "ok",
-      "diagnostics": 13,
+      "diagnostics": 16,
       "repairs": 0,
       "drops": 0
     },
@@ -44,7 +44,7 @@
     {
       "id": "5_infrastructure_props",
       "status": "ok",
-      "diagnostics": 3,
+      "diagnostics": 4,
       "repairs": 0,
       "drops": 0
     },
@@ -156,8 +156,8 @@
       "id": "district_0_1_1",
       "type": "industrial",
       "profileId": "industrial",
-      "era": "modern",
-      "style": "era_modern",
+      "era": "industrial",
+      "style": "era_industrial",
       "landValue": 0.5826,
       "buildingDensity": 0.3,
       "heightRange": [
@@ -242,8 +242,8 @@
       "id": "district_1_0",
       "type": "park",
       "profileId": "park",
-      "era": "suburb",
-      "style": "era_suburb",
+      "era": "modern",
+      "style": "era_modern",
       "landValue": 0.2128,
       "buildingDensity": 0.03,
       "heightRange": [
@@ -266,8 +266,8 @@
       "id": "district_1_1_0",
       "type": "forest",
       "profileId": "forest",
-      "era": "modern",
-      "style": "era_modern",
+      "era": "xix",
+      "style": "era_xix",
       "landValue": 0.4506,
       "buildingDensity": 0.03,
       "heightRange": [
@@ -290,8 +290,8 @@
       "id": "district_1_1_1",
       "type": "forest",
       "profileId": "forest",
-      "era": "modern",
-      "style": "era_modern",
+      "era": "xix",
+      "style": "era_xix",
       "landValue": 0.3866,
       "buildingDensity": 0.03,
       "heightRange": [
@@ -308,14 +308,14 @@
       },
       "cells": 0,
       "parcels": 18,
-      "reservedParcels": 8
+      "reservedParcels": 12
     },
     {
       "id": "district_1_2_00",
       "type": "sports",
       "profileId": "sports",
-      "era": "xix",
-      "style": "era_xix",
+      "era": "medieval",
+      "style": "era_medieval",
       "landValue": 0.4996,
       "buildingDensity": 0.2,
       "heightRange": [
@@ -410,8 +410,8 @@
       "id": "district_1_3_0",
       "type": "residential",
       "profileId": "residential",
-      "era": "modern",
-      "style": "era_modern",
+      "era": "xix",
+      "style": "era_xix",
       "landValue": 0.6244,
       "buildingDensity": 0.45,
       "heightRange": [
@@ -429,8 +429,8 @@
       "id": "district_1_3_1",
       "type": "residential",
       "profileId": "residential",
-      "era": "industrial",
-      "style": "era_industrial",
+      "era": "xix",
+      "style": "era_xix",
       "landValue": 0.6658,
       "buildingDensity": 0.45,
       "heightRange": [
@@ -442,7 +442,7 @@
       "frame": null,
       "cells": 0,
       "parcels": 105,
-      "reservedParcels": 61
+      "reservedParcels": 66
     },
     {
       "id": "district_2_0_0",
@@ -932,8 +932,8 @@
       "id": "district_3_3_011",
       "type": "commercial",
       "profileId": "commercial",
-      "era": "modern",
-      "style": "era_modern",
+      "era": "suburb",
+      "style": "era_suburb",
       "landValue": 0.4064,
       "buildingDensity": 0.65,
       "heightRange": [
@@ -1054,8 +1054,8 @@
       "severity": "warn",
       "code": "road_graph_disconnected",
       "stage": "2_transport",
-      "message": "road graph has 7 connected components",
-      "components": 7
+      "message": "road graph has 6 connected components",
+      "components": 6
     },
     {
       "severity": "warn",
@@ -1145,8 +1145,8 @@
       "severity": "warn",
       "code": "road_graph_disconnected_final",
       "stage": "6_finalize_emit",
-      "message": "road graph has 7 connected components at finalize",
-      "components": 7
+      "message": "road graph has 6 connected components at finalize",
+      "components": 6
     },
     {
       "severity": "warn",
@@ -1247,16 +1247,16 @@
       "severity": "info",
       "code": "junctions_derived",
       "stage": "2_transport",
-      "message": "derived 34 junction(s) per §8.1 rules",
-      "total": 34,
+      "message": "derived 35 junction(s) per §8.1 rules",
+      "total": 35,
       "byType": {
-        "uncontrolled": 31,
+        "uncontrolled": 32,
         "signalized": 3
       },
       "movements": {
-        "right": 226,
-        "straight": 358,
-        "left": 226
+        "right": 234,
+        "straight": 360,
+        "left": 234
       },
       "uturn": 0
     },
@@ -1266,8 +1266,8 @@
       "stage": "2_transport",
       "message": "road graph summary",
       "nodes": 161,
-      "segments": 185,
-      "components": 7
+      "segments": 187,
+      "components": 6
     },
     {
       "severity": "info",
@@ -1277,11 +1277,52 @@
     },
     {
       "severity": "info",
+      "code": "t23_4_chamfer_excluded",
+      "stage": "2_transport",
+      "message": "chamfered corners excluded: no honest axis-aligned IR realization (ADR-004, replacement: косые районы)",
+      "adr": "docs/architecture/adr/ADR-004-t234-macro-residue-chamfer-exclusion.md",
+      "replacement": "косые районы"
+    },
+    {
+      "severity": "info",
+      "code": "t23_4_diagonal_cut",
+      "stage": "2_transport",
+      "message": "applied diagonal street cut through fabric (stable intersections)",
+      "candidate": 64,
+      "splitSegments": 0,
+      "intersections": 3,
+      "diagonalSegments": 2,
+      "fabricConnections": 3
+    },
+    {
+      "severity": "info",
+      "code": "t23_4_plaza_valve",
+      "stage": "2_transport",
+      "message": "planned plaza-valve(s) at high-degree junction nodes (emitted via stage-5)",
+      "count": 2,
+      "nodes": [
+        {
+          "id": "tr_n_exit",
+          "degree": 24,
+          "x": 520,
+          "z": 520
+        },
+        {
+          "id": "tr_gn_72",
+          "degree": 5,
+          "x": -156.56,
+          "z": 360
+        }
+      ],
+      "props": 18
+    },
+    {
+      "severity": "info",
       "code": "transport_passthrough",
       "stage": "2_transport",
       "message": "stage 2 using provided road network (procedural generation pending)",
       "nodes": 161,
-      "segments": 185
+      "segments": 187
     },
     {
       "severity": "info",
@@ -1559,13 +1600,13 @@
       "stage": "3_districts_parcels",
       "message": "assigned eras to districts by access-cost isolines from 3 core(s)",
       "counts": {
-        "medieval": 6,
-        "xix": 4,
+        "medieval": 7,
+        "xix": 7,
         "industrial": 3,
-        "modern": 26,
+        "modern": 22,
         "suburb": 5
       },
-      "maxCost": 1004.21
+      "maxCost": 993.57
     },
     {
       "severity": "info",
@@ -1687,11 +1728,11 @@
       "code": "parcels_reserved_by_reason",
       "stage": "3_districts_parcels",
       "message": "parcel reservations by terrain/hydrology/infrastructure constraints",
-      "reserved": 541,
+      "reserved": 550,
       "total": 2325,
       "byReason": {
         "water": 283,
-        "road_corridor": 178,
+        "road_corridor": 187,
         "anchor": 4,
         "reservation": 10,
         "crossing": 0,
@@ -2210,6 +2251,13 @@
     },
     {
       "severity": "info",
+      "code": "t23_4_plaza_valve_emitted",
+      "stage": "5_infrastructure_props",
+      "message": "merged T23.4 plaza-valve props into infrastructure",
+      "count": 18
+    },
+    {
+      "severity": "info",
       "code": "features_manifest",
       "stage": "6_finalize_emit",
       "message": "feature manifest: 1 applied, 0 degraded, 0 skipped, 0 planned",
@@ -2252,8 +2300,8 @@
         "total": 25
       },
       "roadNodes": 166,
-      "roadSegments": 191,
-      "roadComponents": 7,
+      "roadSegments": 193,
+      "roadComponents": 6,
       "roadGraphNodes": 166,
       "districts": 44,
       "districtTypes": [
@@ -2272,11 +2320,11 @@
         "sports"
       ],
       "parcels": 2325,
-      "reservedParcels": 541,
+      "reservedParcels": 550,
       "parcelAccess": {
-        "near": 1158,
-        "mid": 1054,
-        "far": 113
+        "near": 1194,
+        "mid": 1037,
+        "far": 94
       },
       "roadAccessByType": {
         "industrial": {
@@ -2321,12 +2369,12 @@
         },
         "residential": {
           "parcels": 630,
-          "unreserved": 429,
-          "good": 216,
+          "unreserved": 424,
+          "good": 211,
           "mid": 207,
           "far": 6,
-          "reserved": 201,
-          "goodOrMid": 423,
+          "reserved": 206,
+          "goodOrMid": 418,
           "accessibleRatio": 0.986
         },
         "slums": {
@@ -2342,8 +2390,8 @@
         "sports": {
           "parcels": 64,
           "unreserved": 23,
-          "good": 7,
-          "mid": 16,
+          "good": 10,
+          "mid": 13,
           "far": 0,
           "reserved": 41,
           "goodOrMid": 23,
@@ -2367,14 +2415,14 @@
         "forest": 1
       },
       "lights": 8,
-      "props": 372,
+      "props": 390,
       "chunkLoad": {
         "nonEmptyChunks": 25,
         "maxBuildings": 30,
         "maxProps": 41,
         "maxLights": 1,
         "avgBuildings": 14.44,
-        "avgProps": 14.88
+        "avgProps": 15.6
       }
     },
     {
@@ -2733,7 +2781,7 @@
       "code": "interchange_junction_candidates",
       "stage": "6_finalize_emit",
       "message": "identified junction nodes as grade-separation candidates",
-      "count": 7
+      "count": 8
     },
     {
       "severity": "info",
@@ -3177,41 +3225,41 @@
     "version": 2,
     "partial": true,
     "counts": {
-      "roads": 191,
+      "roads": 193,
       "roadNodes": 166,
       "districts": 44,
       "parcels": 2325,
-      "reservedParcels": 541,
+      "reservedParcels": 550,
       "buildings": 350,
       "enterableBuildings": 72,
-      "props": 352,
+      "props": 370,
       "lights": 8,
       "rivers": 1,
       "lakes": 0
     },
     "graph": {
       "nodes": 166,
-      "edges": 191,
-      "components": 7,
-      "largestComponent": 145,
-      "deadEnds": 38,
-      "deadEndRatio": 0.228916,
-      "avgDegree": 2.301205,
-      "gamma": 0.388211
+      "edges": 193,
+      "components": 6,
+      "largestComponent": 154,
+      "deadEnds": 37,
+      "deadEndRatio": 0.222892,
+      "avgDegree": 2.313253,
+      "gamma": 0.392276
     },
     "roads": {
-      "totalLength": 16722.763,
+      "totalLength": 17543.789,
       "lengthByType": {
         "collector": 2080,
         "highway": 202.321,
-        "local": 13263.718,
+        "local": 14084.744,
         "ramp": 1176.725
       },
       "shareByType": {
-        "collector": 0.124381,
-        "highway": 0.012099,
-        "local": 0.793153,
-        "ramp": 0.070367
+        "collector": 0.11856,
+        "highway": 0.011532,
+        "local": 0.802834,
+        "ramp": 0.067074
       },
       "maxSlope": 0.3,
       "slopeByClass": {
@@ -3222,7 +3270,7 @@
           "overAbsolute": 0
         },
         "local": {
-          "count": 183,
+          "count": 185,
           "maxSlope": 0.3,
           "overPolicy": 82,
           "overAbsolute": 0
@@ -3247,7 +3295,7 @@
         "local": 12
       },
       "classPolicyViolations": 85,
-      "classPolicyOk": 106,
+      "classPolicyOk": 108,
       "overAbsolute": 0,
       "version": 2
     },
@@ -3313,7 +3361,7 @@
       "parkShare": 0.125
     },
     "parcels": {
-      "reservedShare": 0.232688,
+      "reservedShare": 0.236559,
       "byDistrictCount": {
         "district_0_0_00": 25,
         "district_0_0_01": 25,
@@ -3507,7 +3555,7 @@
       "dividesPlate": true
     },
     "determinism": {
-      "generatorVersion": "0.88.0",
+      "generatorVersion": "0.89.0",
       "seed": 16,
       "deterministic": true
     },
@@ -3527,7 +3575,7 @@
         "code": "junction_type_mismatch_class",
         "stage": "rules",
         "message": "junction 'j_tr_n_m1' type 'signalized' does not match adjacent classes (expected 'roundabout')",
-        "index": 28,
+        "index": 29,
         "id": "j_tr_n_m1",
         "declared": "signalized",
         "expected": "roundabout",
@@ -3551,8 +3599,8 @@
         "severity": "warn",
         "code": "road_graph_not_single_component",
         "stage": "rules",
-        "message": "road graph has 7 connected components",
-        "components": 7,
+        "message": "road graph has 6 connected components",
+        "components": 6,
         "nodes": 166
       },
       {

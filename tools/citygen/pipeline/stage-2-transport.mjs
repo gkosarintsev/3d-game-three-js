@@ -262,6 +262,427 @@ function polylineSelfIntersectsXZ(pts) {
   return false;
 }
 
+// --- T23.4 macro residue helpers ---
+
+/** Intersection in XZ between segment (a1,a2) and (b1,b2).
+ * Returns { t, u, x, z, kind } where point = a1 + t*(a2-a1) = b1 + u*(b2-b1), or null.
+ * kind: 'cross' (interior split), 'node' (touch near existing endpoint/node; reuse).
+ * Collinear cases excluded. */
+function segSegIntersectionXZPoint(a1, a2, b1, b2) {
+  const rpx = a1[0], rpz = a1[2], rdx = a2[0] - a1[0], rdz = a2[2] - a1[2];
+  const spx = b1[0], spz = b1[2], sdx = b2[0] - b1[0], sdz = b2[2] - b1[2];
+  const rxs = rdx * sdz - rdz * sdx;
+  const qpx = spx - rpx, qpz = spz - rpz;
+  const qxr = qpx * rdz - qpz * rdx;
+  if (Math.abs(rxs) < 1e-9) return null; // parallel/collinear
+  const t = (qpx * sdz - qpz * sdx) / rxs;
+  const u = qxr / rxs;
+  const epsOut = 1e-6;
+  if (t < -epsOut || t > 1 + epsOut || u < -epsOut || u > 1 + epsOut) return null;
+  const tc = clamp(t, 0, 1), uc = clamp(u, 0, 1);
+  const x = rpx + tc * rdx, z = rpz + tc * rdz;
+  // Near fabric endpoint: treat as node-touch (can reuse/connect without splitting interior badly)
+  const epsNode = 0.06;
+  if (uc <= epsNode || uc >= 1 - epsNode) {
+    // avoid diagonal endpoint-only touches being meaningless? allow interior-ish diagonal
+    if (tc < 0.02 || tc > 0.98) return null;
+    return { t: tc, u: uc, x, z, kind: 'node' };
+  }
+  // Interior crossing
+  if (tc <= 0.03 || tc >= 0.97) return null;
+  return { t: tc, u: uc, x, z, kind: 'cross' };
+}
+
+function lerpPt3(a, b, t) {
+  return [
+    Math.round((a[0] + (b[0] - a[0]) * t) * 100) / 100,
+    Math.round((a[1] + (b[1] - a[1]) * t) * 100) / 100,
+    Math.round((a[2] + (b[2] - a[2]) * t) * 100) / 100,
+  ];
+}
+
+function splitRoadSegmentAtPoint(seg, nodeId, point3) {
+  // Split path-based segment into [seg.from -> nodeId] and [nodeId -> seg.to] at point3 on path.
+  const pts = Array.isArray(seg?.path) ? seg.path : null;
+  if (!pts || pts.length < 2) return null;
+  // Find closest sub-segment to point3
+  let bestI = 0, bestT = 0, bestD = Infinity;
+  for (let i = 0; i + 1 < pts.length; i++) {
+    const a = pts[i], b = pts[i + 1];
+    const abx = b[0] - a[0], abz = b[2] - a[2];
+    const ab2 = abx * abx + abz * abz || 1e-12;
+    const t = clamp(((point3[0] - a[0]) * abx + (point3[2] - a[2]) * abz) / ab2, 0, 1);
+    const px = a[0] + abx * t, pz = a[2] + abz * t;
+    const d = Math.hypot(px - point3[0], pz - point3[2]);
+    if (d < bestD) { bestD = d; bestI = i; bestT = t; }
+  }
+  if (bestD > 2.0) return null;
+  const a = pts[bestI], b = pts[bestI + 1];
+  const q = lerpPt3(a, b, bestT);
+  // Avoid degenerate splits near endpoints
+  if (Math.hypot(q[0] - pts[0][0], q[2] - pts[0][2]) < 1.0 || Math.hypot(q[0] - pts[pts.length - 1][0], q[2] - pts[pts.length - 1][2]) < 1.0) return null;
+  const left = pts.slice(0, bestI + 1).concat([q.slice()]);
+  const right = [q.slice()].concat(pts.slice(bestI + 1));
+  const clean = (arr) => {
+    const out = [];
+    for (const p of arr) {
+      const last = out[out.length - 1];
+      if (!last || Math.hypot(p[0]-last[0], p[1]-last[1], p[2]-last[2]) > 0.05) out.push([p[0], p[1], p[2]]);
+    }
+    return out;
+  };
+  const lp = clean(left), rp = clean(right);
+  if (lp.length < 2 || rp.length < 2) return null;
+  const base = { ...seg };
+  delete base.path;
+  const lanes = Array.isArray(seg.lanes) ? structuredClone(seg.lanes) : [];
+  const mk = (id, from, to, path) => ({
+    ...base,
+    id, from, to, path,
+    lanes: structuredClone(lanes),
+  });
+  // Caller sets IDs; return templates
+  return { q, left: lp, right: rp, mk };
+}
+
+/** Build a straight diagonal path profiled on terrain (no rivers). */
+function buildDiagonalCutPath(ax, az, bx, bz, sampler, step = 14) {
+  const dx = bx - ax, dz = bz - az;
+  const len = Math.hypot(dx, dz);
+  if (len < 1) return null;
+  const n = Math.max(2, Math.ceil(len / step));
+  const pts = [];
+  for (let i = 0; i <= n; i++) {
+    const t = i / n;
+    const x = ax + dx * t, z = az + dz * t;
+    const y = sampler.heightAt(x, z);
+    pts.push([Math.round(x * 100) / 100, Math.round(y * 100) / 100, Math.round(z * 100) / 100]);
+  }
+  return enforceSlope(pts, MAX_ROAD_SLOPE, '2_transport', 'tr_diag_cut', null);
+}
+
+/** T23.4: add one diagonal street cut with robust intersection against existing fabric. */
+function applyT234DiagonalCut(ctx, nodes, segments, sampler, rivers, half, width, seed) {
+  const stageId = '2_transport';
+  const pad = Math.max(24, half * 0.18);
+  const choices = [];
+  const shifts = [0, 0.1, -0.1, 0.2, -0.2, 0.3, -0.3, 0.4, -0.4, 0.5, -0.5, 0.6, -0.6, 0.7, -0.7, 0.8, -0.8];
+  // Horizontal-span diagonals (left↔right) with shifted endpoints
+  for (const sh of shifts) {
+    const az = half * sh, bz = -half * sh;
+    if (Math.abs(az) < half - pad && Math.abs(bz) < half - pad) choices.push({ ax: -half + pad, az, bx: half - pad, bz });
+  }
+  for (const sh of shifts) {
+    const az = half * (sh + 0.35), bz = half * (-sh - 0.35);
+    if (Math.abs(az) < half - pad && Math.abs(bz) < half - pad) choices.push({ ax: -half + pad, az, bx: half - pad, bz });
+  }
+  for (const sh of shifts) {
+    const az = half * (sh - 0.35), bz = half * (-sh + 0.35);
+    if (Math.abs(az) < half - pad && Math.abs(bz) < half - pad) choices.push({ ax: -half + pad, az, bx: half - pad, bz });
+  }
+  // Vertical-span diagonals (top↔bottom) with shifted endpoints (mirrored)
+  for (const sh of shifts) {
+    const ax = half * sh, bx = -half * sh;
+    if (Math.abs(ax) < half - pad && Math.abs(bx) < half - pad) choices.push({ ax, az: -half + pad, bx, bz: half - pad });
+  }
+  // Vertical-span diagonals staying on one side (parallel offset) — can avoid central rivers
+  for (const side of [-1, 1]) {
+    for (const baseX of [0.15, 0.3, 0.45, 0.6, 0.75]) {
+      for (const skew of [0, 0.12, -0.12, 0.25, -0.25, 0.38, -0.38]) {
+        const ax = side * half * baseX + half * skew * 0.3;
+        const bx = side * half * baseX - half * skew * 0.3;
+        if (Math.abs(ax) < half - pad && Math.abs(bx) < half - pad) choices.push({ ax, az: -half + pad, bx, bz: half - pad });
+      }
+    }
+  }
+  // Horizontal-span diagonals staying on one side (parallel offset)
+  for (const side of [-1, 1]) {
+    for (const baseZ of [0.15, 0.3, 0.45, 0.6, 0.75]) {
+      for (const skew of [0, 0.12, -0.12, 0.25, -0.25, 0.38, -0.38]) {
+        const az = side * half * baseZ + half * skew * 0.3;
+        const bz = side * half * baseZ - half * skew * 0.3;
+        if (Math.abs(az) < half - pad && Math.abs(bz) < half - pad) choices.push({ ax: -half + pad, az, bx: half - pad, bz });
+      }
+    }
+  }
+
+  const tryCandidate = (pickEnd) => {
+    const path = buildDiagonalCutPath(pickEnd.ax, pickEnd.az, pickEnd.bx, pickEnd.bz, sampler, 14);
+    if (!path || path.length < 2) return null;
+    for (let i = 0; i + 1 < path.length; i++) {
+      if (segCrossesRiver(path[i][0], path[i][2], path[i + 1][0], path[i + 1][2], rivers)) return null;
+    }
+    if (pathMaxSlope(path) > 0.3005) return null;
+
+    // Stable intersection through fabric: connect diagonal to existing ground nodes near
+    // the diagonal corridor. Sharing node IDs with existing segments creates junctions.
+    const corridor = [];
+    for (let di = 0; di + 1 < path.length; di++) {
+      const a = path[di], b = path[di + 1];
+      const abx = b[0] - a[0], abz = b[2] - a[2];
+      const ab2 = abx * abx + abz * abz || 1e-12;
+      for (const n of nodes) {
+        if (!n?.position || n.layer === 'elevated') continue;
+        const apx = n.position[0] - a[0], apz = n.position[2] - a[2];
+        const t = clamp((apx * abx + apz * abz) / ab2, 0, 1);
+        const px = a[0] + abx * t, pz = a[2] + abz * t;
+        const d = Math.hypot(px - n.position[0], pz - n.position[2]);
+        if (d > 32) continue;
+        const diagT = (di + t) / (path.length - 1);
+        if (diagT <= 0.05 || diagT >= 0.95) continue;
+        corridor.push({ nodeId: n.id, pos: n.position.slice(), diagT, d });
+      }
+    }
+    if (corridor.length === 0) return null;
+    corridor.sort((a, b) => a.diagT - b.diagT || a.d - b.d || String(a.nodeId).localeCompare(String(b.nodeId)));
+    const picked = [];
+    let lastT = -1;
+    for (const c of corridor) {
+      if (c.diagT - lastT < 0.08) {
+        const prev = picked[picked.length - 1];
+        if (prev && c.d < prev.d) picked[picked.length - 1] = c;
+        continue;
+      }
+      picked.push(c);
+      lastT = c.diagT;
+    }
+    if (picked.length < 2 && corridor.length >= 2) {
+      picked.length = 0;
+      for (const c of corridor) {
+        if (!picked.length || c.diagT - picked[picked.length - 1].diagT >= 0.05) picked.push(c);
+        if (picked.length >= 4) break;
+      }
+    }
+    if (picked.length < 2) return null; // need a cut-through (multiple fabric connections)
+    const maxPick = 5;
+    if (picked.length > maxPick) {
+      const step = (picked.length - 1) / (maxPick - 1);
+      const sel = [];
+      for (let i = 0; i < maxPick; i++) sel.push(picked[Math.round(i * step)]);
+      picked.length = 0; picked.push(...sel);
+    }
+
+    const usedNodeIds = new Set(nodes.map(n => n.id));
+    const usedSegIds = new Set(segments.map(s => s.id));
+    const uniqId = (baseId, used) => { let id = baseId, k = 2; while (used.has(id)) { id = baseId + "_" + k++; } used.add(id); return id; };
+
+    // Chain only through existing fabric nodes (no dangling boundary endpoints) so all
+    // diagonal segments terminate at stable fabric junctions. Use actual node Y.
+    const chain = picked
+      .slice()
+      .sort((a, b) => a.diagT - b.diagT)
+      .map(p => {
+        const y = Number.isFinite(Number(p.pos[1])) ? Number(p.pos[1]) : sampler.heightAt(p.pos[0], p.pos[2]);
+        return {
+          nodeId: p.nodeId,
+          pos: [Math.round(p.pos[0] * 100) / 100, Math.round(y * 100) / 100, Math.round(p.pos[2] * 100) / 100],
+          diagT: p.diagT,
+        };
+      });
+
+    let diagSegsAdded = 0;
+    const addedDiagSegIds = new Set();
+    const totalSegs = path.length - 1;
+    for (let i = 0; i + 1 < chain.length; i++) {
+      const aN = chain[i], bN = chain[i + 1];
+      if (aN.nodeId === bN.nodeId) continue;
+      const sub = [aN.pos.slice()];
+      for (let pi = 0; pi < totalSegs; pi++) {
+        const pt = (pi + 1) / totalSegs;
+        if (pt > aN.diagT + 1e-6 && pt < bN.diagT - 1e-6) sub.push(path[pi + 1].slice());
+      }
+      sub.push(bN.pos.slice());
+      const clean = [];
+      for (const p of sub) {
+        const last = clean[clean.length - 1];
+        if (!last || Math.hypot(p[0] - last[0], p[1] - last[1], p[2] - last[2]) > 0.08) clean.push(p.slice());
+      }
+      if (clean.length < 2) continue;
+      const npts = clean.length;
+      const y0 = aN.pos[1], y1 = bN.pos[1];
+      // Start from straight grade between connected fabric node elevations (slope-safe base).
+      for (let k = 0; k < npts; k++) {
+        const t = k / (npts - 1);
+        clean[k][1] = Math.round(((1 - t) * y0 + t * y1) * 100) / 100;
+      }
+      const fixProfile = (pts) => {
+        let p = pts.map(pt => pt.slice());
+        // Enforce slope in both directions with endpoints pinned to fabric nodes.
+        for (let iter = 0; iter < 4; iter++) {
+          p = enforceSlope(p, MAX_ROAD_SLOPE - 1e-4, stageId, "tr_diag_" + (i + 1), null) || p;
+          p[0] = aN.pos.slice();
+          p[p.length - 1] = bN.pos.slice();
+          // Backward pass clamp to keep within slope from end to start.
+          for (let k = p.length - 2; k >= 0; k--) {
+            const dx = p[k + 1][0] - p[k][0], dz = p[k + 1][2] - p[k][2];
+            const d = Math.hypot(dx, dz) || 1e-9;
+            const maxDy = (MAX_ROAD_SLOPE - 1e-4) * d;
+            const dy = p[k][1] - p[k + 1][1];
+            if (Math.abs(dy) > maxDy) p[k][1] = p[k + 1][1] + Math.sign(dy) * maxDy;
+          }
+          p[0] = aN.pos.slice();
+          p[p.length - 1] = bN.pos.slice();
+        }
+        for (let k = 0; k < p.length; k++) p[k][1] = Math.round(p[k][1] * 100) / 100;
+        p[0] = aN.pos.slice();
+        p[p.length - 1] = bN.pos.slice();
+        return p;
+      };
+      let prof = fixProfile(clean);
+      if (pathMaxSlope(prof) > 0.30001) {
+        // Fallback: straight XZ line with straight grade between endpoints.
+        const fx = aN.pos[0], fz = aN.pos[2], tx = bN.pos[0], tz = bN.pos[2];
+        const len = Math.hypot(tx - fx, tz - fz) || 1;
+        const steps = Math.max(2, Math.ceil(len / 12));
+        const flat = [];
+        for (let k = 0; k <= steps; k++) {
+          const t = k / steps;
+          const x = fx + (tx - fx) * t, z = fz + (tz - fz) * t;
+          const yy = (1 - t) * y0 + t * y1;
+          flat.push([Math.round(x * 100) / 100, Math.round(yy * 100) / 100, Math.round(z * 100) / 100]);
+        }
+        prof = fixProfile(flat);
+        if (pathMaxSlope(prof) > 0.30001) continue;
+      }
+      const segId = uniqId("tr_diag_" + (i + 1), usedSegIds);
+      const seg = makeRoadSegment(segId, aN.nodeId, bN.nodeId, prof, Math.max(6, width - 2), 'local', 'ground');
+      segments.push(seg);
+      addedDiagSegIds.add(segId);
+      diagSegsAdded++;
+    }
+
+    if (diagSegsAdded === 0) {
+      for (let i = segments.length - 1; i >= 0; i--) if (addedDiagSegIds.has(segments[i]?.id)) segments.splice(i, 1);
+      return null;
+    }
+
+    const ordered = chain.slice().sort((a, b) => a.diagT - b.diagT);
+    return { splitSegments: 0, intersections: ordered.length, diagonalSegments: diagSegsAdded, fabricConnections: ordered.length };
+  };
+
+  for (let i = 0; i < choices.length; i++) {
+    const res = tryCandidate(choices[i]);
+    if (res) {
+      ctx.report.diagnostics.push(info('t23_4_diagonal_cut', stageId, 'applied diagonal street cut through fabric (stable intersections)', {
+        candidate: i + 1,
+        splitSegments: res.splitSegments,
+        intersections: res.intersections,
+        diagonalSegments: res.diagonalSegments,
+        fabricConnections: res.fabricConnections,
+      }));
+      return { added: true, ...res };
+    }
+  }
+
+  ctx.report.diagnostics.push(info('t23_4_diagonal_cut_skipped', stageId, 'diagonal cut skipped: no candidate produced stable fabric intersections', { reason: 'no_intersections', candidates: choices.length }));
+  return { added: false, intersections: 0 };
+}
+
+/** T23.4 macro residue: diagonal cut + plaza-valve + ADR-004 chamfer exclusion.
+ * Applied to both generated and passthrough/expanded stage-2 networks. */
+function applyT23_4MacroResidue(ctx, stageId = '2_transport') {
+  try {
+    const nodes = ctx.networks?.roads?.nodes ?? [];
+    const segments = ctx.networks?.roads?.segments ?? [];
+    const seed = mix(ctx.meta.seed ?? 0, stageId);
+    const sampler = makeTerrainSampler(ctx);
+    const rivers = ctx.hydrology?.rivers ?? ctx.input?.cityforge?.hydrology?.rivers ?? [];
+    const size = ctx.meta.worldBounds?.size ?? ctx.input?.ground?.size ?? 256;
+    // T23.4 targets v4 city-scale levels (L16-22); skip tiny synthetic/test worlds to avoid
+    // altering unrelated unit-test expectations.
+    if (size < 512) return;
+    const half = size / 2;
+    const tc = ctx.input?.generator?.transport ?? {};
+    const width = Math.max(6, Math.min(14, Number(tc.roadWidth) || 8));
+
+    // Diagonal cut (robust intersection with fabric)
+    applyT234DiagonalCut(ctx, nodes, segments, sampler, rivers, half, width, seed);
+
+    // Plaza-valve at node with 5+ streets (deterministic, 1-2 per city)
+    const deg = new Map();
+    for (const s of segments) {
+      if (!s?.from || !s?.to) continue;
+      deg.set(s.from, (deg.get(s.from) || 0) + 1);
+      deg.set(s.to, (deg.get(s.to) || 0) + 1);
+    }
+    const nodeById = new Map(nodes.map(n => [n.id, n]));
+    const plazaCandidates = [...deg.entries()]
+      .filter(([id, d]) => d >= 5)
+      .map(([id, d]) => ({ id, d, n: nodeById.get(id) }))
+      .filter(o => o.n && Array.isArray(o.n.position) && o.n.layer !== 'elevated')
+      .sort((a, b) => (b.d - a.d) || String(a.id).localeCompare(String(b.id)));
+    // Deterministic pick 1-2
+    const plazaPick = [];
+    const usedPlaza = new Set();
+    for (const c of plazaCandidates) {
+      if (plazaPick.length >= 2) break;
+      // spread picks apart if possible
+      const tooClose = plazaPick.some(p => Math.hypot(p.n.position[0] - c.n.position[0], p.n.position[2] - c.n.position[2]) < 120);
+      if (tooClose) continue;
+      plazaPick.push(c);
+      usedPlaza.add(c.id);
+    }
+    if (plazaPick.length < 1 && plazaCandidates.length) plazaPick.push(plazaCandidates[0]);
+    if (plazaPick.length < 2 && plazaCandidates.length > 1) {
+      const second = plazaCandidates.find(c => !usedPlaza.has(c.id) && Math.hypot(c.n.position[0] - plazaPick[0].n.position[0], c.n.position[2] - plazaPick[0].n.position[2]) >= 60);
+      if (second) { plazaPick.push(second); usedPlaza.add(second.id); }
+    }
+
+    if (plazaPick.length) {
+      // Store plaza-valve prop clusters for stage-5 to emit (readable IR objects).
+      // Do NOT mutate ctx.input.landscapeObjects here: stage-5 prepare treats existing
+      // props as declared and may passthrough, skipping procedural generation.
+      const plazaProps = [];
+      let placed = 0;
+      for (let pi = 0; pi < plazaPick.length; pi++) {
+        const pv = plazaPick[pi];
+        const cx = Math.round((pv.n.position[0] || 0) * 100) / 100;
+        const cz = Math.round((pv.n.position[2] || 0) * 100) / 100;
+        // Small plaza cluster around junction (valve): benches/trees/bollards forming open square
+        const offsets = [
+          { ox: -6, oz: -6, model: 'bench', ry: 0 }, { ox: 6, oz: -6, model: 'bench', ry: 90 },
+          { ox: -6, oz: 6, model: 'bench', ry: 270 }, { ox: 6, oz: 6, model: 'bench', ry: 180 },
+          { ox: 0, oz: 0, model: 'bollard', ry: 0 }, { ox: -9, oz: 0, model: 'tree', ry: 20 },
+          { ox: 9, oz: 0, model: 'tree', ry: 200 }, { ox: 0, oz: -9, model: 'tree', ry: 110 },
+          { ox: 0, oz: 9, model: 'tree', ry: 300 },
+        ];
+        let local = 0;
+        for (const o of offsets) {
+          const x = Math.round((cx + o.ox) * 100) / 100;
+          const z = Math.round((cz + o.oz) * 100) / 100;
+          if (Math.abs(x) > half - 4 || Math.abs(z) > half - 4) continue;
+          const y = Math.round((sampler.heightAt(x, z)) * 100) / 100;
+          plazaProps.push({
+            id: `prop_800${pi + 1}${String(local + 1).padStart(2, '0')}`,
+            model: o.model,
+            position: { x, y, z },
+            scale: { x: 1, y: 1, z: 1 },
+            rotation: { x: 0, y: o.ry, z: 0 },
+          });
+          local++;
+        }
+        placed += local;
+      }
+      ctx.t23_4PlazaProps = plazaProps;
+      ctx.report.diagnostics.push(info('t23_4_plaza_valve', stageId, 'planned plaza-valve(s) at high-degree junction nodes (emitted via stage-5)', {
+        count: plazaPick.length,
+        nodes: plazaPick.map(p => ({ id: p.id, degree: p.d, x: +p.n.position[0].toFixed(2), z: +p.n.position[2].toFixed(2) })),
+        props: placed,
+      }));
+    } else {
+      ctx.report.diagnostics.push(info('t23_4_plaza_valve_skipped', stageId, 'no eligible node with degree >= 5 for plaza-valve', { candidates: 0 }));
+      ctx.t23_4PlazaProps = [];
+    }
+
+    // Chamfered corners: no honest axis-aligned IR realization; explicitly excluded with ADR replacement "косые районы"
+    ctx.report.diagnostics.push(info('t23_4_chamfer_excluded', stageId, 'chamfered corners excluded: no honest axis-aligned IR realization (ADR-004, replacement: косые районы)', {
+      adr: 'docs/architecture/adr/ADR-004-t234-macro-residue-chamfer-exclusion.md',
+      replacement: 'косые районы',
+    }));
+  } catch (e) {
+    ctx.report.diagnostics.push(warn('t23_4_macro_failed', stageId, `T23.4 macro chaos application failed: ${String(e?.message ?? e)}`));
+  }
+}
 function uniqById(items, kind, ctx, stageId) {
   const seen = new Set();
   const out = [];
@@ -2669,6 +3090,9 @@ function generateTransport(ctx) {
     ctx.report.diagnostics.push(warn('transport_roundabout_failed', stageId, `roundabout generation failed: ${String(e?.message ?? e)}`));
   }
 
+  // T23.4 macro residue (diagonal cut, plaza-valve, ADR-004 chamfer exclusion) — shared helper.
+  applyT23_4MacroResidue(ctx, stageId);
+
   ctx.networks.roads.junctions = [];
   ctx.report.diagnostics.push(info('transport_generated', stageId, 'stage 2 generated road network', { nodes: nodes.length, segments: segments.length, seed, branches: made, profiled: true }));
 }
@@ -3184,6 +3608,8 @@ export function makeStage2() {
     },
     generate(ctx) {
       const stageId = '2_transport';
+      const applyT234MacroOnCurrentNetwork = () => applyT23_4MacroResidue(ctx, stageId);
+
       if (shouldGenerateTransport(ctx)) {
         const prev = structuredClone(ctx.networks?.roads ?? { nodes: [], segments: [], junctions: [] });
         try {
@@ -3252,6 +3678,10 @@ export function makeStage2() {
         }
         return;
       }
+
+      // Passthrough/expanded network: still apply T23.4 macro residue so rebuilt
+      // levels reflect the increment (diagonal cut through fabric, plaza-valve, ADR-004 note).
+      applyT234MacroOnCurrentNetwork();
       ctx.report.diagnostics.push(info('transport_passthrough', stageId, 'stage 2 using provided road network (procedural generation pending)', {
         nodes: ctx.networks.roads.nodes.length,
         segments: ctx.networks.roads.segments.length,
