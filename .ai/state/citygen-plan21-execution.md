@@ -7,7 +7,7 @@ Protocol: `.ai/plans/22-parallel-agents-github-ci.md`, `.ai/prompts/agent-ci-pro
 
 ## Current position (summary)
 
-- **Generator:** `DEFAULT_GENERATOR_VERSION = 0.74.0` on `origin/main` `9c922ef` (PR #30 merged 2026-11-19T05:55:48Z, R5.3 gameplay placement validator; green CI 44467865746 push / 44467893430 incl. 100×3). Active increment: `agent/plan21-r30-evidence` @ `C:\Temp\wt-plan21-evidence6` from `9c922ef` (record PR #30 merge evidence, docs/state-only; CI pending). Staged v4 pipeline (`tools/citygen/index.mjs`, `pipeline/stage-1..6-*`), profiles/policies/validation/metrics/etalons/seed-series tooling developed incrementally.
+- **Generator:** current section `R1 relief wave` (agent/plan21-r1-relief @ `C:\Temp\wt-plan21-r1-relief` from `origin/main` `fa84695`, docs/tests-only — no gv bump, no rebuild). `origin/main` at `fa84695` after PR #33/#34 (dev-loop acceleration merged). Staged v4 pipeline (`tools/citygen/index.mjs`, `pipeline/stage-1..6-*`), profiles/policies/validation/metrics/etalons/seed-series tooling developed incrementally.
 - **Gates/artifacts:** `tools/citygen.test.mjs`, `tools/citygen-etalon-check.mjs`, `tools/citygen-seed-series.mjs`, `tools/check-levels.mjs`, `tools/build-level.mjs --check`, browser suites by scope/CI; committed derived outputs and etalon/baseline snapshots are part of determinism/regression.
 - **Constraint:** any IR/report/derived level output changes require deterministic rebuild of committed artifacts and baseline/etalon updates per version policy, verified in GitHub CI.
 
@@ -16,7 +16,7 @@ Protocol: `.ai/plans/22-parallel-agents-github-ci.md`, `.ai/prompts/agent-ci-pro
 | Area | Status (indicative) | Note / risk |
 | --- | --- | --- |
 | R0 (validator/metrics/etalons/procedures) | **R0.1,R0.2,R0.3,R0.4(stated scope),R0.5 [x]**; full R0/R6 DoD partial/open | merged: R0.1 PR#15/PR#18 gv0.69, R0.2 PR#17, R0.3 PR#18, R0.4 PR#19 (merge 7b7af39), R0.5 PR#17; CI node-etalon + seed-series gate 100×3 in merge-gate. Remaining: R6 full regression/automation, broader §12 coverage. |
-| R1 (relief/water) | mostly implemented | Further changes output-affecting. |
+| R1 (relief/water) | **done (stated scope)**, covered by tests | R1.2 slope grid + R1.1/R1.3/R1.4/R1.5 implemented; R1.6 tests added (63/63). `src/config.js#relief` limits documented; stage-1 does not cross-wire hillMaxSlope/maxSlope as a separate policy hash (tracked in plan). |
 | R2 (network/intersections/bridges/tunnels/interchanges/repair) | partial | High coupling, perf/navigation risks. |
 | R3 (settlement/districts/D,B(D)) | mostly implemented | Metrics/series sensitive. |
 | R4.1,R4.2,R4.5,R4.6 | done (per plan/history) | Possible follow-ups within R4.3/R4.4. |
@@ -303,3 +303,10 @@ Protocol: `.ai/plans/22-parallel-agents-github-ci.md`, `.ai/prompts/agent-ci-pro
 - **Branch/worktree:** `agent/plan21-r30-evidence` @ `C:\Temp\wt-plan21-evidence6` (from `origin/main` `9c922ef`, gv `0.74.0`; `node scripts/agent/check-env.mjs` OK).
 - **Scope (docs/state-only):** records merge/CI evidence for PR #30 (R5.3 gameplay placement validator): merge commit `9c922efa57df2a1c5219e434c5f5b947c56aca01`, head `129dbd53d4af812966d9b2090af4e4615215f995`, push CI `44467865746` **success**, PR CI `44467893430` **success** (full merge-gate incl. 100×3 seed-series).
 - **Still remaining:** R5.1/R5.5, unresolved R1/R2 DoD items, R2.6–R2.8, R6.1/R6.2, overall plan 21 DoD.
+
+#### Continuation increment (R1 relief wave, `agent/plan21-r1-relief`, in progress, CI pending)
+- **Branch/worktree:** `agent/plan21-r1-relief` @ `C:\Temp\wt-plan21-r1-relief` (from `origin/main` `fa84695`, GV unchanged (docs/tests-only).)
+- **Scope (docs/tests-only, no gv bump/rebuild):** `tools/citygen.test.mjs` — six new R1 tests: `R1.2` slope grid classification (step 8–16 m, 5 classes, counts/sumShares/determinism), `R1.3`reservations/core candidates (x/z finite, count bounds, deterministic), `R1.1` ordered procedural terrain (modifiers>0, deterministic order), `R1.4` procedural river (deterministic, carveTerrain:true), `R1.4` floodplain/buffer reservations deterministic, `R1.5/R1.1` crossings/landmarks deterministic. **`node --test tools/citygen.test.mjs` → 63/63 pass** (was 57). No IR changes; etalons/baselines unchanged; no rebuild.
+- **R1.1–R1.6 [x] (stated scope)** in `.ai/plans/21-citygen-procedural-rules.md`; known residual: `relief.maxSlope`/`hillMaxSlope` (`src/config.js#relief`) не клемпятся отдельной политикой в генераторе (вынесено в follow-up; §4.7 трактуется как частный случай площадок).
+- **CI/merge evidence:** pending (PR → green GitHub CI → sequential merge).
+- **Still remaining:** R2.1–R2.4, R2.6–R2.8 (validator-first), R5.1, R5.5, R6.1/R6.2, overall plan 21 DoD.
