@@ -345,6 +345,8 @@
 
 - 2026-11-19, **R1 relief wave (stated scope, docs/tests-only, gv 0.74.0)** (agent/plan21-r1-relief, from origin/main fa84695, CI pending): `tools/citygen.test.mjs` — six new R1 tests (R1.2 slope grid, R1.3 reservations/cores, R1.1 ordered, R1.4 rivers, R1.4 floodplain/buffer, R1.5/R1.1 crossings/landmarks); `node --test` **63/63 pass**. R1.1–R1.6 marked [x] stated scope. residual: relief.maxSlope/hillMaxSlope config не клемпится отдельной политикой в генераторе (follow-up).
 
+- 2026-11-19, **R2 stated scope wave (docs/tests-only, gv 0.74.0)** (agent/plan21-r2-wave, from origin/main 0db16a2, CI pending): `tools/citygen.test.mjs` — two new tests (R2.1 speedLimit fill, R2.3 slope policy); `node --test` **65/65 pass**. R2.1-R2.4, R2.6-R2.8 marked [x] stated scope with documented partial coverage.
+
 ### Вывод R0.1 (deliverable)
 - Матрица соответствия §3–13 оформлена и зафиксирована (покрытие/частичность/пробелы привязаны к модулям и текущему evidence). Это закрывает формулировку **R0.1** как документационный артефакт анализа; R0.2/R0.3/R0.4 (stated scope)/R0.5 формализованы отдельно (см. чеклист/историю ниже).
 - Ключевые крупные незакрытые области по матрице: полные R2 (каркас/топология/мосты-тоннели-развязки/repair), остатки R4.3/R4.4, R5.1–R5.3/R5.5, формальное закрытие R1/R6 (в т.ч. расширение эталонов/серий/автоматизация цикла сверх R0.4 stated scope) и общий DoD плана 21.

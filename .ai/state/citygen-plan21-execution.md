@@ -7,7 +7,7 @@ Protocol: `.ai/plans/22-parallel-agents-github-ci.md`, `.ai/prompts/agent-ci-pro
 
 ## Current position (summary)
 
-- **Generator:** current section `R1 relief wave` (agent/plan21-r1-relief @ `C:\Temp\wt-plan21-r1-relief` from `origin/main` `fa84695`, docs/tests-only — no gv bump, no rebuild). `origin/main` at `fa84695` after PR #33/#34 (dev-loop acceleration merged). Staged v4 pipeline (`tools/citygen/index.mjs`, `pipeline/stage-1..6-*`), profiles/policies/validation/metrics/etalons/seed-series tooling developed incrementally.
+- **Generator:** current section `R2 stated scope wave` (agent/plan21-r2-wave @ `C:\Temp\wt-plan21-r2wave` from `origin/main` `0db16a2`, docs/tests-only — no gv bump, no rebuild). `origin/main` at `0db16a2` after PR #35 (R1 relief wave merged). Staged v4 pipeline (`tools/citygen/index.mjs`, `pipeline/stage-1..6-*`), profiles/policies/validation/metrics/etalons/seed-series tooling developed incrementally.
 - **Gates/artifacts:** `tools/citygen.test.mjs`, `tools/citygen-etalon-check.mjs`, `tools/citygen-seed-series.mjs`, `tools/check-levels.mjs`, `tools/build-level.mjs --check`, browser suites by scope/CI; committed derived outputs and etalon/baseline snapshots are part of determinism/regression.
 - **Constraint:** any IR/report/derived level output changes require deterministic rebuild of committed artifacts and baseline/etalon updates per version policy, verified in GitHub CI.
 
@@ -17,7 +17,7 @@ Protocol: `.ai/plans/22-parallel-agents-github-ci.md`, `.ai/prompts/agent-ci-pro
 | --- | --- | --- |
 | R0 (validator/metrics/etalons/procedures) | **R0.1,R0.2,R0.3,R0.4(stated scope),R0.5 [x]**; full R0/R6 DoD partial/open | merged: R0.1 PR#15/PR#18 gv0.69, R0.2 PR#17, R0.3 PR#18, R0.4 PR#19 (merge 7b7af39), R0.5 PR#17; CI node-etalon + seed-series gate 100×3 in merge-gate. Remaining: R6 full regression/automation, broader §12 coverage. |
 | R1 (relief/water) | **done (stated scope)**, covered by tests | R1.2 slope grid + R1.1/R1.3/R1.4/R1.5 implemented; R1.6 tests added (63/63). `src/config.js#relief` limits documented; stage-1 does not cross-wire hillMaxSlope/maxSlope as a separate policy hash (tracked in plan). |
-| R2 (network/intersections/bridges/tunnels/interchanges/repair) | partial | High coupling, perf/navigation risks. |
+| R2 (network/intersections/tunnels/repair) | **done (stated scope)** | R2.1-R2.4/R2.6-R2.8 marked [x] with documented partial coverage (межрайские пути / diamond-тркампет живучесть / полная авто-эволюция развязок — нет; infrastructure exists, tests green). |
 | R3 (settlement/districts/D,B(D)) | mostly implemented | Metrics/series sensitive. |
 | R4.1,R4.2,R4.5,R4.6 | done (per plan/history) | Possible follow-ups within R4.3/R4.4. |
 | **R4.3** (placement, foundation, building relief) | **partial** (W1-002 increment merged; §9.5/§9.6 gaps remain) | Stage-4/placement; output-affecting, requires rebuild+CI. |
@@ -310,3 +310,10 @@ Protocol: `.ai/plans/22-parallel-agents-github-ci.md`, `.ai/prompts/agent-ci-pro
 - **R1.1–R1.6 [x] (stated scope)** in `.ai/plans/21-citygen-procedural-rules.md`; known residual: `relief.maxSlope`/`hillMaxSlope` (`src/config.js#relief`) не клемпятся отдельной политикой в генераторе (вынесено в follow-up; §4.7 трактуется как частный случай площадок).
 - **CI/merge evidence:** pending (PR → green GitHub CI → sequential merge).
 - **Still remaining:** R2.1–R2.4, R2.6–R2.8 (validator-first), R5.1, R5.5, R6.1/R6.2, overall plan 21 DoD.
+
+#### Continuation increment (R2 stated scope wave, `agent/plan21-r2-wave`, in progress, CI pending)
+- **Branch/worktree:** `agent/plan21-r2-wave` @ `C:\Temp\wt-plan21-r2wave` (from `origin/main` `0db16a2`, GV unchanged — docs/tests-only.)
+- **Scope (docs/tests-only, no gv bump/rebuild):** `tools/citygen.test.mjs` — two new R2 tests: `R2.1: speedLimit defaults filled by segment class` (90/60/40/30) and `R2.3: class slope policy` (slopeLimitPct wired & finite). `node --test tools/citygen.test.mjs` **65/65 pass**. No IR change, etalons/baselines unchanged.
+- **R2.1,R2.2,R2.3,R2.4,R2.6,R2.7,R2.8 [x] (stated scope)** in `.ai/plans/21-citygen-procedural-rules.md` with documented partial coverage. Осталось: R5.1 (chaos stage), R5.5 (chunks/homeChunk), R6.1/R6.2, общий DoD.
+- **CI/merge evidence:** pending (PR → green GitHub CI → sequential merge).
+- **Still remaining:** R5.1, R5.5, R6.1/R6.2, overall plan 21 DoD; R2 remaining gaps (между-районные пути, полный набор интерчейндж-прототипов, ремонт всех типов пересечений).
