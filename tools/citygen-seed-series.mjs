@@ -80,6 +80,11 @@ function executeTask(task) {
   const m = r1.report.metrics ?? {};
   const rhoDiag = (r1.report.diagnostics || []).find(d => d?.code === 'pressure_area_spearman');
   const rho = Number.isFinite(Number(rhoDiag?.rho)) ? Number(rhoDiag.rho) : null;
+  const softTargetViolations = (r1.report.rules?.violations || []).filter(v => v?.code === 'soft_target_out_range');
+  const softTargets = {
+    count: softTargetViolations.length,
+    metrics: Array.from(new Set(softTargetViolations.map(v => String(v?.metric ?? v?.extra?.metric ?? 'unknown')).filter(Boolean))).sort(),
+  };
   return {
     profile: profileId,
     seed,
@@ -91,6 +96,7 @@ function executeTask(task) {
     rhoOk: rho != null ? rho >= 0.6 : null,
     summary: r1.report.summary ?? null,
     rules: r1.report.rules?.summary ?? null,
+    softTargets,
     metrics: {
       partial: m.partial ?? true,
       counts: m.counts ?? null,
@@ -311,6 +317,21 @@ for (const p of profiles) {
       const vals = rs.map(r => r.rho).filter(n => Number.isFinite(n));
       const a = agg(vals);
       return a ? { ...a, okCount: vals.filter(v => v >= 0.6).length, missing: rs.length - vals.length } : null;
+    })(),
+    softTargets: (() => {
+      const counts = rs.map(r => r.softTargets?.count ?? 0);
+      const runsWith = rs.filter(r => (r.softTargets?.count ?? 0) > 0).length;
+      const byMetric = {};
+      for (const r of rs) {
+        for (const m of (r.softTargets?.metrics ?? [])) byMetric[m] = (byMetric[m] || 0) + 1;
+      }
+      return {
+        total: counts.reduce((a, b) => a + b, 0),
+        runsWith,
+        runsTotal: rs.length,
+        byMetric,
+        informational: true,
+      };
     })(),
     taskDurationMs: agg(profTimed.map(r => r.durationMs ?? NaN)),
   };
