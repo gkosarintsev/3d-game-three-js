@@ -397,6 +397,12 @@ Protocol: `.ai/plans/22-parallel-agents-github-ci.md`, `.ai/prompts/agent-ci-pro
 - **Owner confirmations recorded (2026-11-19):** T23.2 — L17/L20/L21 remain out of `src/levels/index.js` until perf-gate green. T23.3 — IR extension for §11.2 features permitted (ADR/design required at implementation). S0/S1 unchanged.
 - **CI/merge evidence:** PR #57 merged `d22358e` (push 44589867608 SUCCESS, PR CI 44589934871 SUCCESS).
 
+#### Continuation increment (T23.6 §12.2 soft gate, `agent/plan23-t236-softgate`, in progress, CI pending)
+- **Branch/worktree:** `agent/plan23-t236-softgate` @ `C:\Temp\wt-t236` (from `origin/main` `ff0abd3`, gv `0.85.0 -> 0.86.0`; `node scripts/agent/check-env.mjs` OK).
+- **Scope (output/report-affecting, gv bump):** `tools/citygen/rules.mjs` — emits `soft_target_out_range` warn (informational, never §12.1) for out-of-range/available §12.2 soft targets: `impressionCadence.ok===false`, `blockDensityCorrelation.ok===false` (computed), `landmarkVisibility.ok===false` (available); normalized functional road types in cadence classing (`ramp/merge/split/connector→collector`, `highway→arterial`) for stable character measurement (L18 cadence becomes ok). `tools/citygen-seed-series.mjs` — per-run/per-profile `softTargets` reporting (informational, no hard-fail). Bump DEFAULT_GENERATOR_VERSION `0.85.0 -> 0.86.0`; rebuild L16-22 (0 warnings); baselines/etalons refreshed (summary gv 0.86.0); `citygen.test` **65/65**; `chunk.test` **20/20**; `etalon-check` **16/16**.
+- **T23.1 status:** etalon/baseline levels with routes have `impressionCadence.ok == true` (L16/L17/L18/L20/L21/L22); series visibility covered by T23.6 informational gate.
+- **CI/merge evidence:** pending (PR → green CI → sequential merge).
+
 #### Continuation increment (Plan 23 drafted, `agent/plan23-doc`, in progress, CI pending)
 - **Branch/worktree:** `agent/plan23-doc` @ `C:\Temp\wt-plan23` (from `origin/main` `1506b2d`; `node scripts/agent/check-env.mjs` OK; docs-only, no gv bump).
 - **Scope (docs-only):** NEW `.ai/plans/23-plan21-literal-closure.md` — full literal-closure plan with acceptance criteria, risk register, next-step order (T23.1 first), CI/parallelization section. `.ai/state/citygen-procedural-rules.md` — forward pointer to Plan 23 added in «Решения владельца» section.

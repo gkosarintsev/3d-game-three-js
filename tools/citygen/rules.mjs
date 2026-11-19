@@ -38,7 +38,14 @@ function minRoadDist(x, z, segments = []) {
 
 // Возвращает класс ближайшей дороги в пределах ~25 м от точки; вне 25 м — 'offroad'.
 // Используется §10.4 «impression cadence»: смена класса дороги тоже считается
-// впечатлением, иначе длинная монотонная магистраль давала бы ложные нули.
+// впечатлением. Функциональные типы (ramp/merge/split/connector) нормализуются к
+// базовому классу, чтобы связки развязок не создавали ложных «смен характера».
+function normalizeRoadClassForCadence(type) {
+  const t = String(type || 'local');
+  if (t === 'ramp' || t === 'merge' || t === 'split' || t === 'connector') return 'collector';
+  if (t === 'highway') return 'arterial';
+  return t;
+}
 function nearestRoadClassAt(x, z, segments = []) {
   let best = Infinity;
   let cls = null;
@@ -48,7 +55,7 @@ function nearestRoadClassAt(x, z, segments = []) {
       const a = pts[i], b = pts[i + 1];
       if (!a || !b) continue;
       const d = pointSegDistXZ(x, z, a[0], a[2], b[0], b[2]);
-      if (d < best) { best = d; cls = String(s?.type || 'local'); }
+      if (d < best) { best = d; cls = normalizeRoadClassForCadence(s?.type); }
     }
   }
   return (Number.isFinite(best) && best <= 25) ? cls : 'offroad';
@@ -940,6 +947,33 @@ export function evaluateRules(ctx) {
     if (Math.abs(enterableShare - targetEnterable) > 0.15) {
       v('info', 'enterable_share_far_from_target', 'enterable building share differs from policy target (informational)', { share: enterableShare, target: targetEnterable });
     }
+  }
+
+  // T23.6 §12.2: soft target warnings (informational gate, never §12.1)
+  if (impressionCadence && impressionCadence.ok === false) {
+    v('warn', 'soft_target_out_range', 'impression cadence outside target range [150,300]m (soft target, informational)', {
+      metric: 'impressionCadence',
+      avgSpacingMeters: impressionCadence.avgSpacingMeters,
+      target: [impressionCadence.targetMin, impressionCadence.targetMax],
+      pathLength: impressionCadence.pathLength,
+      changes: impressionCadence.changes,
+    });
+  }
+  if (blockDensityCorr && blockDensityCorr.ok === false && blockDensityCorr.partial !== true) {
+    v('warn', 'soft_target_out_range', 'block density correlation below target (soft target, informational)', {
+      metric: 'blockDensityCorrelation',
+      rho: blockDensityCorr.rho,
+      target: blockDensityCorr.target,
+      n: blockDensityCorr.n,
+    });
+  }
+  if (landmarkVisibility && landmarkVisibility.ok === false && landmarkVisibility.partial !== true) {
+    v('warn', 'soft_target_out_range', 'landmark visibility outside target range (soft target, informational)', {
+      metric: 'landmarkVisibility',
+      visibleFraction: landmarkVisibility.visibleFraction,
+      visibleTargets: landmarkVisibility.visibleTargets,
+      total: landmarkVisibility.total,
+    });
   }
 
   const diagErrors = (report.diagnostics ?? []).filter(d => d?.severity === 'error').length;
