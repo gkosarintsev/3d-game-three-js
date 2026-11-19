@@ -1,8 +1,8 @@
 {
   "profile": "river_trade",
   "seed": 101,
-  "generatorVersion": "0.73.0",
-  "reportHash": "5d24ab6f31cbcbf7b96713d7b7a005414c7372adca60b42e940f6593ef2846a6",
+  "generatorVersion": "0.74.0",
+  "reportHash": "75f32a2e1c9f03e4f8cd063760d152e9307081ac84c15030261cfe535d9d68b8",
   "summary": {
     "errors": 0,
     "warnings": 10,
@@ -60,7 +60,27 @@
       "spawnToRoad": null,
       "exitToRoad": null,
       "enterableShare": 0.2,
-      "enterableTarget": 0.2
+      "enterableTarget": 0.2,
+      "spawnDistrictType": "market",
+      "exitDistrictType": "luxury",
+      "straightMeters": 141.4,
+      "routeMeters": null,
+      "routeRatio": null,
+      "districtsPassed": null,
+      "exitRadius": null,
+      "cars": {
+        "declared": null,
+        "spots": 0,
+        "onRoad": 0,
+        "misaligned": 0,
+        "nearJunction": 0
+      },
+      "enemies": {
+        "count": null,
+        "alienCount": null,
+        "available": false,
+        "note": "runtime placement via nav graph; D-scaling/spawn-distance enforced by engine constraints (not implemented in generator)"
+      }
     },
     "districts": {
       "plateArea": 1638400,

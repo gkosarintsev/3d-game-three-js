@@ -1,7 +1,7 @@
 {
   "version": 1,
   "generator": {
-    "generatorVersion": "0.73.0",
+    "generatorVersion": "0.74.0",
     "seed": 18,
     "deterministic": true
   },
@@ -687,7 +687,27 @@
       "spawnToRoad": 0,
       "exitToRoad": 0,
       "enterableShare": 0.166667,
-      "enterableTarget": 0.2
+      "enterableTarget": 0.2,
+      "spawnDistrictType": "forest",
+      "exitDistrictType": "forest",
+      "straightMeters": 606.7,
+      "routeMeters": 672.4,
+      "routeRatio": 1.108,
+      "districtsPassed": 1,
+      "exitRadius": 4,
+      "cars": {
+        "declared": 0,
+        "spots": 0,
+        "onRoad": 0,
+        "misaligned": 0,
+        "nearJunction": 0
+      },
+      "enemies": {
+        "count": 0,
+        "alienCount": 0,
+        "available": false,
+        "note": "runtime placement via nav graph; D-scaling/spawn-distance enforced by engine constraints (not implemented in generator)"
+      }
     },
     "districts": {
       "plateArea": 1638400,
@@ -788,7 +808,7 @@
       "dividesPlate": true
     },
     "determinism": {
-      "generatorVersion": "0.73.0",
+      "generatorVersion": "0.74.0",
       "seed": 18,
       "deterministic": true
     },

@@ -1,8 +1,8 @@
 {
   "profile": "railway_industrial",
   "seed": 101,
-  "generatorVersion": "0.73.0",
-  "reportHash": "2ca96a26f7388cca444cf83bd71f9053bd0231fca591a17a6534e0fd8e5328be",
+  "generatorVersion": "0.74.0",
+  "reportHash": "979c844c247536f489029f7cd361793f62b206531f2d5c06c5321428c14ec616",
   "summary": {
     "errors": 0,
     "warnings": 10,
@@ -60,7 +60,27 @@
       "spawnToRoad": null,
       "exitToRoad": null,
       "enterableShare": 0.2,
-      "enterableTarget": 0.2
+      "enterableTarget": 0.2,
+      "spawnDistrictType": "market",
+      "exitDistrictType": "luxury",
+      "straightMeters": 141.4,
+      "routeMeters": null,
+      "routeRatio": null,
+      "districtsPassed": null,
+      "exitRadius": null,
+      "cars": {
+        "declared": null,
+        "spots": 0,
+        "onRoad": 0,
+        "misaligned": 0,
+        "nearJunction": 0
+      },
+      "enemies": {
+        "count": null,
+        "alienCount": null,
+        "available": false,
+        "note": "runtime placement via nav graph; D-scaling/spawn-distance enforced by engine constraints (not implemented in generator)"
+      }
     },
     "districts": {
       "plateArea": 1638400,

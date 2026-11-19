@@ -40,7 +40,7 @@
         {
           "x": -560,
           "z": -520,
-          "yaw": 90
+          "yaw": 0
         }
       ]
     }
@@ -12720,7 +12720,7 @@
     "chunks": []
   },
   "generator": {
-    "generatorVersion": "0.73.0",
+    "generatorVersion": "0.74.0",
     "seed": 16,
     "deterministic": true,
     "stages": [],
