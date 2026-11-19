@@ -1,7 +1,7 @@
 {
   "version": 1,
   "generator": {
-    "generatorVersion": "0.65.0",
+    "generatorVersion": "0.66.0",
     "seed": 16,
     "deterministic": true
   },
@@ -2078,7 +2078,7 @@
       "code": "facade_no_three_consecutive_same",
       "stage": "4_buildings_structures",
       "message": "three consecutive identical facades remediated (section 9.7)",
-      "swapped": 2
+      "swapped": 0
     },
     {
       "severity": "info",
@@ -2820,7 +2820,7 @@
       "dividesPlate": true
     },
     "determinism": {
-      "generatorVersion": "0.65.0",
+      "generatorVersion": "0.66.0",
       "seed": 16,
       "deterministic": true
     },
