@@ -1,5 +1,5 @@
 {
-  "generatorVersion": "0.64.0",
+  "generatorVersion": "0.65.0",
   "profiles": [
     "hill_town",
     "railway_industrial",
@@ -16,9 +16,9 @@
     "hill_town": {
       "runs": 3,
       "hashes": [
-        "731350e235c271614bdbeced07f556196e91781dbb419a0509a25f2120f0e406",
-        "35d361f5b57d0358f493ea28f906368103ad5b5122b784efd1c1fb7276484d48",
-        "c86eae7b9b289152c5c7f63060ccd5ba26ab940daa53d974a6c7c60a3cbba567"
+        "d3f67700baf622618302d96173e8476a71b55b7d177c519db484b4b43a89f39f",
+        "9c8e5ed9bb574d5c9f81f20744bd596f3661b09a3f7295634304db8f7401b905",
+        "6d9faf2efa1528bef2a1a96558459cc557e081046bcca6974c530eedde2507f2"
       ],
       "errors": {
         "count": 3,
@@ -29,8 +29,8 @@
       "warnings": {
         "count": 3,
         "min": 8,
-        "max": 13,
-        "mean": 10.666667
+        "max": 12,
+        "mean": 10
       },
       "roads": {
         "count": 3,
@@ -46,17 +46,17 @@
       },
       "buildings": {
         "count": 3,
-        "min": 406,
-        "max": 409,
-        "mean": 408
+        "min": 409,
+        "max": 412,
+        "mean": 411
       }
     },
     "railway_industrial": {
       "runs": 3,
       "hashes": [
-        "922c8d874293090aba30eee256169a30ef4fcd41b8292d179b0ffaf08dfcaa97",
-        "6e98c05aea77d9d4a05636486d51605b50676d5b990ca12e2cf857136ed607f0",
-        "71c266a0561f5a55b9c2ae9ec9ddef7565a00dc0d5051fa3b60cdc9935298375"
+        "cf4e4589045dc3896587472dae0cbb7be5d339688267b2c22e948523a085881b",
+        "bb3c486916fac91a0206da7d7b565330f5eecf0f22683269c793136343085875",
+        "ed878b5d9c088246a0da03f7d9b2d3015c86335d40425fec6d93e76ac09bed21"
       ],
       "errors": {
         "count": 3,
@@ -84,17 +84,17 @@
       },
       "buildings": {
         "count": 3,
-        "min": 406,
-        "max": 410,
-        "mean": 407.666667
+        "min": 405,
+        "max": 409,
+        "mean": 407.333333
       }
     },
     "river_trade": {
       "runs": 3,
       "hashes": [
-        "1c2f4f92fda3dcabcf181978b7a54205a9080eab50503ba54123cf7fe6e62b2d",
-        "3d7dab950bab10d99d9314f136f0e4f8ecbd75b10708819b470125e7be8f263c",
-        "d8ce62fbb07b8750779468e5086aff093432271eb347dfa6e56c638e1281679c"
+        "72c54ef94158ca459cad4c8a75e3efbdf6828e7c01ebf5218537b49639b83438",
+        "739ef8d55c83bbc38c62d00f73d7306e5967c40e6b28115cad1bc5e64ebe32ce",
+        "e6450e89a01d290f45e3e704eefb8035846ced7428a261d7f2a58327b7e0b5eb"
       ],
       "errors": {
         "count": 3,
@@ -122,9 +122,9 @@
       },
       "buildings": {
         "count": 3,
-        "min": 405,
-        "max": 413,
-        "mean": 407.666667
+        "min": 406,
+        "max": 411,
+        "mean": 408
       }
     }
   }

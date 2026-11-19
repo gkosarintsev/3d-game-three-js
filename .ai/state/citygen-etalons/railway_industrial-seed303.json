@@ -1,8 +1,8 @@
 {
   "profile": "railway_industrial",
   "seed": 303,
-  "generatorVersion": "0.64.0",
-  "reportHash": "71c266a0561f5a55b9c2ae9ec9ddef7565a00dc0d5051fa3b60cdc9935298375",
+  "generatorVersion": "0.65.0",
+  "reportHash": "ed878b5d9c088246a0da03f7d9b2d3015c86335d40425fec6d93e76ac09bed21",
   "summary": {
     "errors": 0,
     "warnings": 9,
@@ -22,7 +22,7 @@
       "districts": 40,
       "parcels": 2332,
       "reservedParcels": 283,
-      "buildings": 410,
+      "buildings": 409,
       "enterableBuildings": 82,
       "props": 360,
       "lights": 0,
@@ -59,7 +59,7 @@
     "gameplay": {
       "spawnToRoad": null,
       "exitToRoad": null,
-      "enterableShare": 0.2,
+      "enterableShare": 0.200489,
       "enterableTarget": 0.2
     },
     "terrain": {

@@ -72,10 +72,10 @@ export const LEVEL_17 = {
         "file": "chunk-0-0.l14b",
         "id": "0_0",
         "objects": {
-          "buildings": 67,
+          "buildings": 63,
           "channels": 1,
-          "lights": 3,
-          "props": 64,
+          "lights": 4,
+          "props": 69,
           "roads": 36
         },
         "rect": {
@@ -89,9 +89,9 @@ export const LEVEL_17 = {
         "file": "chunk-0-1.l14b",
         "id": "0_1",
         "objects": {
-          "buildings": 49,
+          "buildings": 45,
           "lights": 1,
-          "props": 99,
+          "props": 94,
           "roads": 16
         },
         "rect": {
@@ -105,11 +105,11 @@ export const LEVEL_17 = {
         "file": "chunk-1-0.l14b",
         "id": "1_0",
         "objects": {
-          "buildings": 162,
+          "buildings": 168,
           "channels": 2,
           "lights": 1,
-          "props": 115,
-          "roads": 35
+          "props": 119,
+          "roads": 28
         },
         "rect": {
           "maxX": 640,
@@ -122,10 +122,10 @@ export const LEVEL_17 = {
         "file": "chunk-1-1.l14b",
         "id": "1_1",
         "objects": {
-          "buildings": 119,
+          "buildings": 112,
           "channels": 2,
-          "lights": 3,
-          "props": 109,
+          "lights": 2,
+          "props": 105,
           "roads": 108
         },
         "rect": {
@@ -8624,234 +8624,6 @@ export const LEVEL_17 = {
               "x": 590,
               "y": 0,
               "z": -93.33
-            }
-          ],
-          "shoulder": 1,
-          "width": 6
-        },
-        {
-          "blend": 5,
-          "crossLevel": true,
-          "id": "tr_postb_3",
-          "points": [
-            {
-              "x": 520,
-              "y": 1.19,
-              "z": -251.98
-            },
-            {
-              "x": 531.67,
-              "y": 0.56,
-              "z": -251.98
-            },
-            {
-              "x": 543.33,
-              "y": 0.16,
-              "z": -251.98
-            },
-            {
-              "x": 555,
-              "y": 0,
-              "z": -251.98
-            },
-            {
-              "x": 566.67,
-              "y": 0,
-              "z": -251.98
-            },
-            {
-              "x": 578.33,
-              "y": 0,
-              "z": -251.98
-            },
-            {
-              "x": 590,
-              "y": 0,
-              "z": -251.98
-            }
-          ],
-          "shoulder": 1,
-          "width": 6
-        },
-        {
-          "blend": 5,
-          "crossLevel": true,
-          "id": "tr_postb_3_2",
-          "points": [
-            {
-              "x": 590,
-              "y": 0,
-              "z": -251.98
-            },
-            {
-              "x": 590,
-              "y": 0,
-              "z": -261.32
-            },
-            {
-              "x": 590,
-              "y": 0,
-              "z": -270.66
-            },
-            {
-              "x": 590,
-              "y": 0,
-              "z": -280
-            }
-          ],
-          "shoulder": 1,
-          "width": 6
-        },
-        {
-          "blend": 5,
-          "crossLevel": true,
-          "id": "tr_postb_4",
-          "points": [
-            {
-              "x": 590,
-              "y": 0,
-              "z": -93.33
-            },
-            {
-              "x": 590,
-              "y": 0,
-              "z": -104.67
-            },
-            {
-              "x": 590,
-              "y": 0,
-              "z": -116.01
-            },
-            {
-              "x": 590,
-              "y": 0,
-              "z": -127.35
-            },
-            {
-              "x": 590,
-              "y": 0,
-              "z": -138.69
-            }
-          ],
-          "shoulder": 1,
-          "width": 6
-        },
-        {
-          "blend": 5,
-          "crossLevel": true,
-          "id": "tr_postb_4_2",
-          "points": [
-            {
-              "x": 590,
-              "y": 0,
-              "z": -138.69
-            },
-            {
-              "x": 599.33,
-              "y": 0,
-              "z": -138.69
-            },
-            {
-              "x": 608.67,
-              "y": 0,
-              "z": -138.69
-            },
-            {
-              "x": 618,
-              "y": 0,
-              "z": -138.69
-            },
-            {
-              "x": 627.33,
-              "y": 0,
-              "z": -138.69
-            }
-          ],
-          "shoulder": 1,
-          "width": 6
-        },
-        {
-          "blend": 5,
-          "crossLevel": true,
-          "id": "tr_postb_5_2",
-          "points": [
-            {
-              "x": 627.33,
-              "y": 0,
-              "z": -138.69
-            },
-            {
-              "x": 627.33,
-              "y": 0,
-              "z": -149.02
-            },
-            {
-              "x": 627.33,
-              "y": 0,
-              "z": -159.34
-            },
-            {
-              "x": 627.33,
-              "y": 0,
-              "z": -169.67
-            },
-            {
-              "x": 627.33,
-              "y": 0,
-              "z": -180
-            }
-          ],
-          "shoulder": 1,
-          "width": 6
-        },
-        {
-          "blend": 5,
-          "crossLevel": true,
-          "id": "tr_postb_6",
-          "points": [
-            {
-              "x": 590,
-              "y": 0,
-              "z": -72
-            },
-            {
-              "x": 590,
-              "y": 0,
-              "z": -61.33
-            },
-            {
-              "x": 590,
-              "y": 0,
-              "z": -50.67
-            },
-            {
-              "x": 590,
-              "y": 0,
-              "z": -40
-            }
-          ],
-          "shoulder": 1,
-          "width": 6
-        },
-        {
-          "blend": 5,
-          "crossLevel": true,
-          "id": "tr_postb_6_2",
-          "points": [
-            {
-              "x": 590,
-              "y": 0,
-              "z": -40
-            },
-            {
-              "x": 597.24,
-              "y": 0,
-              "z": -40
-            },
-            {
-              "x": 604.47,
-              "y": 0,
-              "z": -40
             }
           ],
           "shoulder": 1,
