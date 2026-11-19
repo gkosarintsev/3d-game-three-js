@@ -1,7 +1,7 @@
 {
   "version": 1,
   "generator": {
-    "generatorVersion": "0.68.0",
+    "generatorVersion": "0.69.0",
     "seed": 21,
     "deterministic": true
   },
@@ -3797,7 +3797,7 @@
     "drops": 0
   },
   "metrics": {
-    "version": 1,
+    "version": 2,
     "partial": true,
     "counts": {
       "roads": 158,
@@ -3866,9 +3866,38 @@
     },
     "districts": {
       "plateArea": 1638400,
-      "knownArea": 0,
-      "areaByType": {},
-      "shareByType": {}
+      "knownArea": 1638400,
+      "areaByType": {
+        "campus": 102400,
+        "commercial": 204800,
+        "forest": 102400,
+        "industrial": 102400,
+        "luxury": 102400,
+        "market": 102400,
+        "office": 102400,
+        "old_town": 102400,
+        "parking": 102400,
+        "residential": 307200,
+        "slums": 102400,
+        "sports": 102400,
+        "suburb": 102400
+      },
+      "shareByType": {
+        "campus": 0.0625,
+        "commercial": 0.125,
+        "forest": 0.0625,
+        "industrial": 0.0625,
+        "luxury": 0.0625,
+        "market": 0.0625,
+        "office": 0.0625,
+        "old_town": 0.0625,
+        "parking": 0.0625,
+        "residential": 0.1875,
+        "slums": 0.0625,
+        "sports": 0.0625,
+        "suburb": 0.0625
+      },
+      "parkShare": 0.0625
     },
     "parcels": {
       "reservedShare": 0.202742,
@@ -3949,6 +3978,26 @@
       "waterBuffers": 2,
       "floodplains": 2
     },
+    "landmarkVisibility": {
+      "partial": true,
+      "method": "stub_count_proxy",
+      "landmarks": 5,
+      "crossings": 6,
+      "cores": 0,
+      "total": 11,
+      "visibleApprox": 11
+    },
+    "blockDensityCorrelation": {
+      "rho": 0.917379,
+      "n": 47,
+      "target": 0.6,
+      "ok": true,
+      "partial": false
+    },
+    "chunkBuild": {
+      "partial": true,
+      "buildTimeMs": null
+    },
     "stream": {
       "chunk": 640,
       "keep": 1,
@@ -3958,7 +4007,7 @@
       "dividesPlate": true
     },
     "determinism": {
-      "generatorVersion": "0.68.0",
+      "generatorVersion": "0.69.0",
       "seed": 21,
       "deterministic": true
     },

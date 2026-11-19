@@ -1,8 +1,8 @@
 {
   "profile": "river_trade",
   "seed": 202,
-  "generatorVersion": "0.68.0",
-  "reportHash": "ae6add1995aa13d9638b3601e9ea61e82d87212c27a3fe4c887c90b39a459475",
+  "generatorVersion": "0.69.0",
+  "reportHash": "6bcf61f58be0e7a81d7b739cb44d8792348ce0ed72e40ebf4a70134853c5a5f1",
   "summary": {
     "errors": 0,
     "warnings": 8,
@@ -61,6 +61,43 @@
       "exitToRoad": null,
       "enterableShare": 0.199017,
       "enterableTarget": 0.2
+    },
+    "districts": {
+      "plateArea": 1638400,
+      "knownArea": 1638400,
+      "areaByType": {
+        "campus": 102400,
+        "commercial": 102400,
+        "forest": 17920,
+        "industrial": 102400,
+        "luxury": 102400,
+        "market": 102400,
+        "office": 102400,
+        "old_town": 102400,
+        "park": 186880,
+        "parking": 204800,
+        "residential": 102400,
+        "slums": 102400,
+        "sports": 102400,
+        "suburb": 204800
+      },
+      "shareByType": {
+        "campus": 0.0625,
+        "commercial": 0.0625,
+        "forest": 0.010938,
+        "industrial": 0.0625,
+        "luxury": 0.0625,
+        "market": 0.0625,
+        "office": 0.0625,
+        "old_town": 0.0625,
+        "park": 0.114063,
+        "parking": 0.125,
+        "residential": 0.0625,
+        "slums": 0.0625,
+        "sports": 0.0625,
+        "suburb": 0.125
+      },
+      "parkShare": 0.125
     },
     "terrain": {
       "slope": {
@@ -136,6 +173,26 @@
         "district_3_3_1": 66,
         "district_1_0_b0": 6
       }
+    },
+    "landmarkVisibility": {
+      "partial": true,
+      "method": "stub_count_proxy",
+      "landmarks": 5,
+      "crossings": 6,
+      "cores": 0,
+      "total": 11,
+      "visibleApprox": 11
+    },
+    "blockDensityCorrelation": {
+      "rho": 0.813236,
+      "n": 43,
+      "target": 0.6,
+      "ok": true,
+      "partial": false
+    },
+    "chunkBuild": {
+      "partial": true,
+      "buildTimeMs": null
     }
   }
 }

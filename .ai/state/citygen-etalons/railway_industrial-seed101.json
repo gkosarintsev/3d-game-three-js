@@ -1,8 +1,8 @@
 {
   "profile": "railway_industrial",
   "seed": 101,
-  "generatorVersion": "0.68.0",
-  "reportHash": "075d29682ed98f6dce3c644ff18bd14de30c2532b23e2e9152bef2f2fd546851",
+  "generatorVersion": "0.69.0",
+  "reportHash": "a8f28aa251b799690dcb005bc3eddb1a35b37b1f66e335e420a5d4c73b308813",
   "summary": {
     "errors": 0,
     "warnings": 10,
@@ -61,6 +61,41 @@
       "exitToRoad": null,
       "enterableShare": 0.2,
       "enterableTarget": 0.2
+    },
+    "districts": {
+      "plateArea": 1638400,
+      "knownArea": 1638400,
+      "areaByType": {
+        "campus": 102400,
+        "commercial": 102400,
+        "forest": 120320,
+        "industrial": 102400,
+        "luxury": 204800,
+        "market": 102400,
+        "office": 102400,
+        "old_town": 102400,
+        "parking": 102400,
+        "residential": 307200,
+        "slums": 102400,
+        "sports": 102400,
+        "suburb": 84480
+      },
+      "shareByType": {
+        "campus": 0.0625,
+        "commercial": 0.0625,
+        "forest": 0.073438,
+        "industrial": 0.0625,
+        "luxury": 0.125,
+        "market": 0.0625,
+        "office": 0.0625,
+        "old_town": 0.0625,
+        "parking": 0.0625,
+        "residential": 0.1875,
+        "slums": 0.0625,
+        "sports": 0.0625,
+        "suburb": 0.051563
+      },
+      "parkShare": 0.073438
     },
     "terrain": {
       "slope": {
@@ -134,6 +169,26 @@
         "district_3_3_1": 105,
         "district_1_0_1_b0": 6
       }
+    },
+    "landmarkVisibility": {
+      "partial": true,
+      "method": "stub_count_proxy",
+      "landmarks": 6,
+      "crossings": 3,
+      "cores": 0,
+      "total": 9,
+      "visibleApprox": 9
+    },
+    "blockDensityCorrelation": {
+      "rho": 0.857472,
+      "n": 41,
+      "target": 0.6,
+      "ok": true,
+      "partial": false
+    },
+    "chunkBuild": {
+      "partial": true,
+      "buildTimeMs": null
     }
   }
 }

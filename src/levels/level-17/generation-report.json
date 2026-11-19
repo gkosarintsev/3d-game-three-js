@@ -1,7 +1,7 @@
 {
   "version": 1,
   "generator": {
-    "generatorVersion": "0.68.0",
+    "generatorVersion": "0.69.0",
     "seed": 16,
     "deterministic": true
   },
@@ -4015,7 +4015,7 @@
     "drops": 0
   },
   "metrics": {
-    "version": 1,
+    "version": 2,
     "partial": true,
     "counts": {
       "roads": 176,
@@ -4084,9 +4084,38 @@
     },
     "districts": {
       "plateArea": 1638400,
-      "knownArea": 0,
-      "areaByType": {},
-      "shareByType": {}
+      "knownArea": 1638400,
+      "areaByType": {
+        "campus": 102400,
+        "commercial": 93440,
+        "forest": 50624,
+        "industrial": 102400,
+        "luxury": 102400,
+        "office": 102400,
+        "old_town": 78656,
+        "park": 192704,
+        "parking": 231680,
+        "residential": 204800,
+        "slums": 69696,
+        "sports": 102400,
+        "suburb": 204800
+      },
+      "shareByType": {
+        "campus": 0.0625,
+        "commercial": 0.057031,
+        "forest": 0.030898,
+        "industrial": 0.0625,
+        "luxury": 0.0625,
+        "office": 0.0625,
+        "old_town": 0.048008,
+        "park": 0.117617,
+        "parking": 0.141406,
+        "residential": 0.125,
+        "slums": 0.042539,
+        "sports": 0.0625,
+        "suburb": 0.125
+      },
+      "parkShare": 0.148516
     },
     "parcels": {
       "reservedShare": 0.255243,
@@ -4172,6 +4201,26 @@
       "waterBuffers": 2,
       "floodplains": 2
     },
+    "landmarkVisibility": {
+      "partial": true,
+      "method": "stub_count_proxy",
+      "landmarks": 6,
+      "crossings": 6,
+      "cores": 0,
+      "total": 12,
+      "visibleApprox": 12
+    },
+    "blockDensityCorrelation": {
+      "rho": 0.790363,
+      "n": 52,
+      "target": 0.6,
+      "ok": true,
+      "partial": false
+    },
+    "chunkBuild": {
+      "partial": true,
+      "buildTimeMs": null
+    },
     "stream": {
       "chunk": 640,
       "keep": 1,
@@ -4181,7 +4230,7 @@
       "dividesPlate": true
     },
     "determinism": {
-      "generatorVersion": "0.68.0",
+      "generatorVersion": "0.69.0",
       "seed": 16,
       "deterministic": true
     },

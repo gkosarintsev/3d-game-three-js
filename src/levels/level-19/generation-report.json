@@ -1,7 +1,7 @@
 {
   "version": 1,
   "generator": {
-    "generatorVersion": "0.68.0",
+    "generatorVersion": "0.69.0",
     "seed": 19,
     "deterministic": true
   },
@@ -639,7 +639,7 @@
     "drops": 0
   },
   "metrics": {
-    "version": 1,
+    "version": 2,
     "partial": true,
     "counts": {
       "roads": 133,
@@ -716,9 +716,14 @@
     },
     "districts": {
       "plateArea": 6553600,
-      "knownArea": 0,
-      "areaByType": {},
-      "shareByType": {}
+      "knownArea": 6553600,
+      "areaByType": {
+        "forest": 6553600
+      },
+      "shareByType": {
+        "forest": 1
+      },
+      "parkShare": 1
     },
     "parcels": {
       "reservedShare": 0.020408,
@@ -753,6 +758,26 @@
       "waterBuffers": 0,
       "floodplains": 0
     },
+    "landmarkVisibility": {
+      "partial": true,
+      "method": "stub_count_proxy",
+      "landmarks": 1,
+      "crossings": 0,
+      "cores": 0,
+      "total": 1,
+      "visibleApprox": 1
+    },
+    "blockDensityCorrelation": {
+      "rho": null,
+      "n": 1,
+      "target": 0.6,
+      "ok": null,
+      "partial": true
+    },
+    "chunkBuild": {
+      "partial": true,
+      "buildTimeMs": null
+    },
     "stream": {
       "chunk": 640,
       "keep": 1,
@@ -762,7 +787,7 @@
       "dividesPlate": true
     },
     "determinism": {
-      "generatorVersion": "0.68.0",
+      "generatorVersion": "0.69.0",
       "seed": 19,
       "deterministic": true
     },

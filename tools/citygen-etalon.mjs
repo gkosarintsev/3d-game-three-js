@@ -98,8 +98,12 @@ for (const profileId of profiles) {
         graph: m.graph ?? null,
         roads: m.roads ?? null,
         gameplay: m.gameplay ?? null,
+        districts: m.districts ?? null,
         terrain: m.terrain ?? null,
         parcels: m.parcels ?? null,
+        landmarkVisibility: m.landmarkVisibility ?? null,
+        blockDensityCorrelation: m.blockDensityCorrelation ?? null,
+        chunkBuild: m.chunkBuild ?? null,
       },
     };
     runs.push(run);
