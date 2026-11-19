@@ -806,6 +806,55 @@ for (const n of notes) console.log(`  · ${n}`);
   console.log(`  · рельеф (${Math.round(reliefBytes)} Б) — один раз в index.js (гейт «мировые секции» выше);`
     + ` в местных осях он удорожал бы каталог на ${Math.round(reliefBytes * full.meta.cells / 1024)} КБ`);
 }
+// § 13.1 — строгая приёмка стриминга: метаданные членства и капы.
+// Кеп ≤4 чанков применяется только к зданиям: длинные дороги/каналы/рельсы легитимно
+// покрывают больше клеток (их «крупные объекты» допустимы), а развязка >4 чанков — дефект.
+t('стриминг strict: у каждого здания homeChunk + законные coverageChunks (≤4) и все чанки существуют', () => {
+  const errors = [];
+  const chunkIds = new Set(full.chunks.map(cc => cc.id));
+  for (const cell of full.chunks) {
+    for (const o of cell.map.buildings ?? []) {
+      if (typeof o.homeChunk !== 'string' || o.homeChunk.length === 0) { errors.push(`building:${o.id ?? '?'} в чанке ${cell.id}: homeChunk пуст или отсутствует`); continue; }
+      if (!chunkIds.has(o.homeChunk)) { errors.push(`building:${o.id}: homeChunk '${o.homeChunk}' нет среди чанков каталога`); continue; }
+      const cov = o.coverageChunks;
+      if (!Array.isArray(cov) || cov.length < 1 || cov.length > 4) { errors.push(`building:${o.id}: coverageChunks не массив/1..4 (длина ${cov?.length ?? '—'})`); continue; }
+      if (!cov.includes(o.homeChunk)) { errors.push(`building:${o.id}: homeChunk '${o.homeChunk}' не входит в coverageChunks [${cov.join(',')}]`); continue; }
+      for (const cid of cov) if (!chunkIds.has(cid)) errors.push(`building:${o.id}: coverageChunks ссылается на несуществующий '${cid}'`);
+    }
+  }
+  assert(errors.length === 0, errors.slice(0, 6).join(' | '));
+});
+
+t('стриминг strict: копии одной сущности в разных чанках побайтова одинаковы без учёта владельческих полей', () => {
+  const byObj = new Map();
+  let first = 0;
+  const errors = [];
+  const strip = (o) => { const { owner, homeChunk, coverageChunks, ...rest } = o; return rest; };
+  for (const cell of full.chunks) {
+    for (const coll of CHUNK_COLLECTIONS) {
+      for (const o of cell.map[coll] ?? []) {
+        const k = `${coll}:${o.id}`;
+        const row = stringifyStable(strip(o));
+        const prior = byObj.get(k);
+        if (!prior) { byObj.set(k, row); first++; continue; }
+        if (row !== prior) errors.push(`${coll}:${o.id}: копия в чанке ${cell.id} расходится по значимым полям`);
+      }
+    }
+  }
+  eq(first, full.meta.owners ?? first, 'уникальных объектов в чанках против разрезки');
+  assert(errors.length === 0, errors.slice(0, 6).join(' | '));
+});
+
+t('стриминг strict: дорога не режется вне узлов — концы сегментов = узлы графа', () => {
+  const graph = new Set((worldMap.roads?.nodes ?? []).map(n => String(n?.id ?? '')).filter(Boolean));
+  const errors = [];
+  for (const r of worldMap.roads?.segments ?? []) {
+    if (r.from != null && r.from !== '' && !graph.has(String(r.from))) errors.push(`road ${r.id}: from '${r.from}' не узел`);
+    if (r.to != null && r.to !== '' && !graph.has(String(r.to))) errors.push(`road ${r.id}: to '${r.to}' не узел`);
+  }
+  assert(errors.length === 0, errors.slice(0, 6).join(' | '));
+});
+
 console.log(`\n${passed}/${passed + failures.length} проверок зелёные`);
 if (failures.length) {
   console.error(`провалено: ${failures.join(', ')}`);
