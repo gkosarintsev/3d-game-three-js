@@ -1,7 +1,7 @@
 {
   "version": 1,
   "generator": {
-    "generatorVersion": "0.84.0",
+    "generatorVersion": "0.85.0",
     "seed": 22,
     "deterministic": true
   },
@@ -51,7 +51,7 @@
     {
       "id": "6_finalize_emit",
       "status": "ok",
-      "diagnostics": 17,
+      "diagnostics": 18,
       "repairs": 3,
       "drops": 2
     }
@@ -2399,6 +2399,20 @@
     },
     {
       "severity": "info",
+      "code": "impression_cadence_route_enforced",
+      "stage": "6_finalize_emit",
+      "message": "retagged 1 route road segment(s) into 2 cadence bands",
+      "changedSegments": 1,
+      "routeEdges": 1,
+      "pathLength": 800,
+      "bandSpacingMeters": 200,
+      "classes": [
+        "local",
+        "collector"
+      ]
+    },
+    {
+      "severity": "info",
       "code": "interchange_junction_candidates",
       "stage": "6_finalize_emit",
       "message": "identified junction nodes as grade-separation candidates",
@@ -2534,16 +2548,16 @@
     "roads": {
       "totalLength": 7349.48,
       "lengthByType": {
-        "arterial": 800,
+        "collector": 800,
         "local": 6549.48
       },
       "shareByType": {
-        "arterial": 0.108851,
+        "collector": 0.108851,
         "local": 0.891149
       },
       "maxSlope": 0.193246,
       "slopeByClass": {
-        "arterial": {
+        "collector": {
           "count": 1,
           "maxSlope": 0,
           "overPolicy": 0,
@@ -2687,33 +2701,38 @@
     },
     "impressionCadence": {
       "partial": true,
-      "method": "spawn_exit_shortest_path_25m_district_roadclass",
-      "samples": 22,
-      "changes": 7,
-      "pathLength": 565.7,
-      "avgSpacingMeters": 70.7,
-      "minSpacingMeters": 25,
+      "method": "spawn_exit_path_geometry_25m_district_roadclass",
+      "samples": 31,
+      "changes": 3,
+      "pathLength": 800,
+      "avgSpacingMeters": 200,
+      "minSpacingMeters": 125,
       "targetMin": 150,
       "targetMax": 300,
-      "ok": false
+      "ok": true
     },
     "impressionAnchors": {
-      "method": "spawn_exit_anchors_spacing",
+      "method": "spawn_exit_anchors_spacing_path",
       "spacingMeters": 200,
       "anchors": [
         {
           "d": 200,
-          "x": -58.6,
-          "z": -58.6
+          "x": 0,
+          "z": -200
         },
         {
           "d": 400,
-          "x": 82.8,
-          "z": 82.8
+          "x": 200,
+          "z": -200
+        },
+        {
+          "d": 600,
+          "x": 200,
+          "z": 0
         }
       ],
-      "anchorsCount": 2,
-      "pathLength": 565.7
+      "anchorsCount": 3,
+      "pathLength": 800
     },
     "falseDeadEnds": {
       "count": 0,
@@ -2744,7 +2763,7 @@
       "dividesPlate": true
     },
     "determinism": {
-      "generatorVersion": "0.84.0",
+      "generatorVersion": "0.85.0",
       "seed": 22,
       "deterministic": true
     },

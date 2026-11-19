@@ -1,7 +1,7 @@
 {
   "version": 1,
   "generator": {
-    "generatorVersion": "0.84.0",
+    "generatorVersion": "0.85.0",
     "seed": 18,
     "deterministic": true
   },
@@ -51,7 +51,7 @@
     {
       "id": "6_finalize_emit",
       "status": "ok",
-      "diagnostics": 10,
+      "diagnostics": 11,
       "repairs": 0,
       "drops": 0
     }
@@ -753,6 +753,20 @@
     },
     {
       "severity": "info",
+      "code": "impression_cadence_route_enforced",
+      "stage": "6_finalize_emit",
+      "message": "retagged 4 route road segment(s) into 2 cadence bands",
+      "changedSegments": 4,
+      "routeEdges": 7,
+      "pathLength": 687.4,
+      "bandSpacingMeters": 200,
+      "classes": [
+        "local",
+        "collector"
+      ]
+    },
+    {
+      "severity": "info",
       "code": "road_conflicts_none",
       "stage": "6_finalize_emit",
       "message": "no same-layer road crossing conflicts detected"
@@ -801,19 +815,21 @@
     "roads": {
       "totalLength": 1112.426,
       "lengthByType": {
-        "highway": 700,
-        "local": 90,
+        "collector": 330,
+        "highway": 280,
+        "local": 180,
         "ramp": 322.426
       },
       "shareByType": {
-        "highway": 0.629255,
-        "local": 0.080904,
+        "collector": 0.296649,
+        "highway": 0.251702,
+        "local": 0.161808,
         "ramp": 0.289841
       },
       "maxSlope": 0.188562,
       "slopeByClass": {
         "local": {
-          "count": 3,
+          "count": 4,
           "maxSlope": 0,
           "overPolicy": 0,
           "overAbsolute": 0
@@ -824,8 +840,14 @@
           "overPolicy": 1,
           "overAbsolute": 0
         },
+        "collector": {
+          "count": 2,
+          "maxSlope": 0,
+          "overPolicy": 0,
+          "overAbsolute": 0
+        },
         "highway": {
-          "count": 4,
+          "count": 1,
           "maxSlope": 0,
           "overPolicy": 0,
           "overAbsolute": 0
@@ -934,18 +956,18 @@
     },
     "impressionCadence": {
       "partial": true,
-      "method": "spawn_exit_shortest_path_25m_district_roadclass",
-      "samples": 25,
-      "changes": 4,
-      "pathLength": 684.1,
-      "avgSpacingMeters": 136.8,
-      "minSpacingMeters": 45,
+      "method": "spawn_exit_path_geometry_25m_district_roadclass",
+      "samples": 27,
+      "changes": 5,
+      "pathLength": 687.4,
+      "avgSpacingMeters": 114.6,
+      "minSpacingMeters": 25,
       "targetMin": 150,
       "targetMax": 300,
       "ok": false
     },
     "impressionAnchors": {
-      "method": "spawn_exit_anchors_spacing",
+      "method": "spawn_exit_anchors_spacing_path",
       "spacingMeters": 200,
       "anchors": [
         {
@@ -960,12 +982,12 @@
         },
         {
           "d": 600,
-          "x": 71.1,
-          "z": 16.6
+          "x": 63.5,
+          "z": 18.5
         }
       ],
       "anchorsCount": 3,
-      "pathLength": 684.1
+      "pathLength": 687.4
     },
     "falseDeadEnds": {
       "count": 0,
@@ -996,7 +1018,7 @@
       "dividesPlate": true
     },
     "determinism": {
-      "generatorVersion": "0.84.0",
+      "generatorVersion": "0.85.0",
       "seed": 18,
       "deterministic": true
     },

@@ -1,7 +1,7 @@
 {
   "version": 1,
   "generator": {
-    "generatorVersion": "0.84.0",
+    "generatorVersion": "0.85.0",
     "seed": 20,
     "deterministic": true
   },
@@ -51,7 +51,7 @@
     {
       "id": "6_finalize_emit",
       "status": "ok",
-      "diagnostics": 17,
+      "diagnostics": 18,
       "repairs": 1,
       "drops": 13
     }
@@ -3878,6 +3878,20 @@
     },
     {
       "severity": "info",
+      "code": "impression_cadence_route_enforced",
+      "stage": "6_finalize_emit",
+      "message": "retagged 1 route road segment(s) into 2 cadence bands",
+      "changedSegments": 1,
+      "routeEdges": 1,
+      "pathLength": 2080,
+      "bandSpacingMeters": 200,
+      "classes": [
+        "local",
+        "collector"
+      ]
+    },
+    {
+      "severity": "info",
       "code": "interchange_junction_candidates",
       "stage": "6_finalize_emit",
       "message": "identified junction nodes as grade-separation candidates",
@@ -4082,19 +4096,19 @@
     "roads": {
       "totalLength": 13844.333,
       "lengthByType": {
-        "arterial": 2080,
+        "collector": 2080,
         "local": 11764.333
       },
       "shareByType": {
-        "arterial": 0.150242,
+        "collector": 0.150242,
         "local": 0.849758
       },
       "maxSlope": 0.3,
       "slopeByClass": {
-        "arterial": {
+        "collector": {
           "count": 1,
           "maxSlope": 0.097826,
-          "overPolicy": 1,
+          "overPolicy": 0,
           "overAbsolute": 0
         },
         "local": {
@@ -4110,8 +4124,8 @@
         "collector": 10,
         "local": 12
       },
-      "classPolicyViolations": 17,
-      "classPolicyOk": 143,
+      "classPolicyViolations": 16,
+      "classPolicyOk": 144,
       "overAbsolute": 0,
       "version": 2
     },
@@ -4270,58 +4284,73 @@
     },
     "impressionCadence": {
       "partial": true,
-      "method": "spawn_exit_shortest_path_25m_district_roadclass",
-      "samples": 58,
-      "changes": 9,
-      "pathLength": 1470.8,
-      "avgSpacingMeters": 147.1,
-      "minSpacingMeters": 50,
+      "method": "spawn_exit_path_geometry_25m_district_roadclass",
+      "samples": 83,
+      "changes": 6,
+      "pathLength": 2080,
+      "avgSpacingMeters": 297.1,
+      "minSpacingMeters": 225,
       "targetMin": 150,
       "targetMax": 300,
-      "ok": false
+      "ok": true
     },
     "impressionAnchors": {
-      "method": "spawn_exit_anchors_spacing",
+      "method": "spawn_exit_anchors_spacing_path",
       "spacingMeters": 200,
       "anchors": [
         {
           "d": 200,
-          "x": -378.6,
-          "z": -378.6
+          "x": -320,
+          "z": -520
         },
         {
           "d": 400,
-          "x": -237.2,
-          "z": -237.2
+          "x": -120,
+          "z": -520
         },
         {
           "d": 600,
-          "x": -95.7,
-          "z": -95.7
+          "x": 80,
+          "z": -520
         },
         {
           "d": 800,
-          "x": 45.7,
-          "z": 45.7
+          "x": 280,
+          "z": -520
         },
         {
           "d": 1000,
-          "x": 187.1,
-          "z": 187.1
+          "x": 480,
+          "z": -520
         },
         {
           "d": 1200,
-          "x": 328.5,
-          "z": 328.5
+          "x": 520,
+          "z": -360
         },
         {
           "d": 1400,
-          "x": 469.9,
-          "z": 469.9
+          "x": 520,
+          "z": -160
+        },
+        {
+          "d": 1600,
+          "x": 520,
+          "z": 40
+        },
+        {
+          "d": 1800,
+          "x": 520,
+          "z": 240
+        },
+        {
+          "d": 2000,
+          "x": 520,
+          "z": 440
         }
       ],
-      "anchorsCount": 7,
-      "pathLength": 1470.8
+      "anchorsCount": 10,
+      "pathLength": 2080
     },
     "falseDeadEnds": {
       "count": 0,
@@ -4352,7 +4381,7 @@
       "dividesPlate": true
     },
     "determinism": {
-      "generatorVersion": "0.84.0",
+      "generatorVersion": "0.85.0",
       "seed": 20,
       "deterministic": true
     },
@@ -4389,7 +4418,7 @@
         "code": "road_slope_over_class_policy",
         "stage": "rules",
         "message": "road segments exceed class slope policy (see policies.slopeLimitPct)",
-        "segments": 17,
+        "segments": 16,
         "maxSlope": 0.3
       },
       {

@@ -132,8 +132,50 @@ function districtTypeAt(districts, x, z) {
   return best?.type ?? 'unknown';
 }
 
-/** Shared: spawn→exit shortest path by road graph (Dijkstra); returns legs [ {x,z}, {x,z}, len ] or null. */
-function spawnExitLegs(nodes, segments, gp) {
+function segPathPoints(seg, fromId) {
+  const pts = Array.isArray(seg?.path) ? seg.path.filter(p => Array.isArray(p) && p.length >= 3).map(p => [Number(p[0]), Number(p[1] ?? 0), Number(p[2])]) : [];
+  if (pts.length < 2) return null;
+  if (String(seg?.to) === String(fromId) && String(seg?.from) !== String(fromId)) return pts.slice().reverse();
+  return pts;
+}
+
+function buildPolylineFromRoute(nodePath, edgeInfos, byId) {
+  const poly = [];
+  let total = 0;
+  const cum = [0];
+  const pushPt = (pt) => {
+    if (poly.length === 0) {
+      poly.push(pt);
+      return;
+    }
+    const last = poly[poly.length - 1];
+    const dx = (pt[0] - last[0]), dz = (pt[2] - last[2]);
+    const d = Math.hypot(dx, dz);
+    if (d < 1e-6) return;
+    poly.push(pt);
+    total += d;
+    cum.push(total);
+  };
+  for (let i = 1; i < nodePath.length; i++) {
+    const from = nodePath[i - 1], to = nodePath[i];
+    const info = edgeInfos.get(to);
+    const seg = info?.seg;
+    const pts = seg ? segPathPoints(seg, from) : null;
+    if (pts && pts.length >= 2) {
+      for (const p of pts) pushPt(p);
+    } else {
+      const a = byId.get(from), b = byId.get(to);
+      if (!a || !b) continue;
+      pushPt([a.x, 0, a.z]);
+      pushPt([b.x, 0, b.z]);
+    }
+  }
+  if (poly.length < 2 || total <= 0) return null;
+  return { poly, cum, total };
+}
+
+/** Shared: spawn→exit shortest path by road graph (Dijkstra). */
+export function spawnExitRoute(nodes, segments, gp) {
   if (!gp?.spawn || !gp?.exit || !Array.isArray(nodes) || !Array.isArray(segments) || !segments.length) return null;
   if (!Number.isFinite(Number(gp.spawn.x)) || !Number.isFinite(Number(gp.spawn.z))) return null;
   if (!Number.isFinite(Number(gp.exit.x)) || !Number.isFinite(Number(gp.exit.z))) return null;
@@ -155,19 +197,14 @@ function spawnExitLegs(nodes, segments, gp) {
   if (byId.size < 2) return null;
 
   const adj = new Map();
-  const add = (a, b, len) => {
-    const arr = adj.get(a) ?? [];
-    arr.push({ to: b, len });
-    adj.set(a, arr);
-  };
   for (const s of segments) {
     const a = String(s?.from ?? ''), b = String(s?.to ?? '');
     if (!a || !b || a === b) continue;
     if (!byId.has(a) || !byId.has(b)) continue;
     const len = segLengthXZ(s);
     if (!Number.isFinite(len) || len <= 0) continue;
-    add(a, b, len);
-    add(b, a, len);
+    const arrA = adj.get(a) ?? []; arrA.push({ to: b, len, seg: s }); adj.set(a, arrA);
+    const arrB = adj.get(b) ?? []; arrB.push({ to: a, len, seg: s }); adj.set(b, arrB);
   }
 
   const nearestNode = (x, z) => {
@@ -184,6 +221,7 @@ function spawnExitLegs(nodes, segments, gp) {
 
   const dist = new Map([[sN.id, 0]]);
   const prev = new Map();
+  const edgeInfos = new Map(); // nodeId -> { seg, from, len } used to reach it
   const remaining = new Set(byId.keys());
   while (remaining.size) {
     let cur = null, bd = Infinity;
@@ -195,54 +233,81 @@ function spawnExitLegs(nodes, segments, gp) {
     remaining.delete(cur);
     if (cur === eN.id) break;
     const cd = dist.get(cur) ?? Infinity;
-    for (const { to, len } of adj.get(cur) || []) {
+    for (const { to, len, seg } of adj.get(cur) || []) {
       if (!remaining.has(to)) continue;
       const nd = cd + len;
-      if (dist.get(to) == null || nd < dist.get(to)) { dist.set(to, nd); prev.set(to, cur); }
+      if (dist.get(to) == null || nd < dist.get(to)) {
+        dist.set(to, nd); prev.set(to, cur); edgeInfos.set(to, { seg, from: cur, len });
+      }
     }
   }
   if (!dist.has(eN.id)) return null;
 
-  const path = [];
+  const nodePath = [];
   let cur = eN.id;
-  path.push(cur);
-  while (prev.has(cur)) { cur = prev.get(cur); path.push(cur); }
-  path.reverse();
+  nodePath.push(cur);
+  while (prev.has(cur)) { cur = prev.get(cur); nodePath.push(cur); }
+  nodePath.reverse();
+
+  const edges = [];
   const legs = [];
-  for (let i = 1; i < path.length; i++) {
-    const a = byId.get(path[i - 1]), b = byId.get(path[i]);
+  for (let i = 1; i < nodePath.length; i++) {
+    const from = nodePath[i - 1], to = nodePath[i];
+    const info = edgeInfos.get(to);
+    const a = byId.get(from), b = byId.get(to);
     if (!a || !b) continue;
-    const legLen = Math.hypot(b.x - a.x, b.z - a.z);
+    const legLen = info?.len ?? Math.hypot(b.x - a.x, b.z - a.z);
     if (legLen <= 0) continue;
     legs.push([a, b, legLen]);
+    edges.push({ seg: info?.seg ?? null, from, to, len: legLen });
   }
   if (!legs.length) return null;
-  return { legs };
+
+  const poly = buildPolylineFromRoute(nodePath, edgeInfos, byId);
+  return { legs, edges, nodePath, polyline: poly?.poly ?? null, cum: poly?.cum ?? null, pathLength: poly?.total ?? legs.reduce((s, l) => s + l[2], 0) };
+}
+
+function spawnExitLegs(nodes, segments, gp) {
+  const r = spawnExitRoute(nodes, segments, gp);
+  if (!r) return null;
+  return { legs: r.legs };
+}
+
+function pointAtRouteDistance(route, d) {
+  const poly = route?.polyline;
+  const cum = route?.cum;
+  const total = route?.pathLength ?? 0;
+  if (!poly || !cum || !(total > 0) || !Number.isFinite(d) || d < 0) return null;
+  if (d >= total) {
+    const p = poly[poly.length - 1];
+    return { x: p[0], z: p[2], y: p[1] };
+  }
+  let lo = 0, hi = cum.length - 1;
+  while (lo < hi) {
+    const mid = (lo + hi) >> 1;
+    if (cum[mid] < d) lo = mid + 1; else hi = mid;
+  }
+  const i = Math.max(1, lo);
+  const segLen = (cum[i] - cum[i - 1]) || 1e-9;
+  const t = (d - cum[i - 1]) / segLen;
+  const a = poly[i - 1], b = poly[i];
+  return { x: a[0] + (b[0] - a[0]) * t, z: a[2] + (b[2] - a[2]) * t, y: (a[1] ?? 0) + ((b[1] ?? 0) - (a[1] ?? 0)) * t };
 }
 
 /** §10.4: якоря «живой» смены — детерминированные точки вдоль маршрута каждые `spacingMeters`. */
 function impressionAnchorsMetric(nodes, segments, gp, spacingMeters = 200) {
-  const legsInfo = spawnExitLegs(nodes, segments, gp);
-  const legs = legsInfo?.legs;
-  if (!legs) return null;
+  const route = spawnExitRoute(nodes, segments, gp);
+  if (!route) return null;
   const spacing = Math.max(150, Math.min(300, Math.floor(Number(spacingMeters) || 200)));
+  const total = route.pathLength ?? 0;
   const anchors = [];
-  let traveled = 0;
-  let next = spacing;
-  let total = 0;
-  for (const [a, b, legLen] of legs) {
-    total += legLen;
-    while (next <= traveled + legLen) {
-      const t = (next - traveled) / legLen;
-      const x = a.x + (b.x - a.x) * t;
-      const z = a.z + (b.z - a.z) * t;
-      anchors.push({ d: round(next, 1), x: round(x, 1), z: round(z, 1) });
-      next += spacing;
-    }
-    traveled += legLen;
+  for (let d = spacing; d <= total; d += spacing) {
+    const p = pointAtRouteDistance(route, d);
+    if (!p) continue;
+    anchors.push({ d: round(d, 1), x: round(p.x, 1), z: round(p.z, 1) });
   }
   return {
-    method: 'spawn_exit_anchors_spacing',
+    method: 'spawn_exit_anchors_spacing_path',
     spacingMeters: spacing,
     anchors,
     anchorsCount: anchors.length,
@@ -251,13 +316,13 @@ function impressionAnchorsMetric(nodes, segments, gp, spacingMeters = 200) {
 }
 
 function impressionCadenceMetric(districts, nodes, segments, gp) {
-  // R5.2 §10.4: «смена впечатлений каждые 150–300 м пути» — приближённая метрика.
-  // Детерминированно: shortest path spawn→exit по графу дорог (Dijkstra), дискретизация
-  // каждые 25 м, наблюдение смены типа района. Ритм — чисто исследовательская метрика,
-  // не требование инварианта; целевые 150–300 м фиксируются, ок=false допустимо.
-  const legsInfo = spawnExitLegs(nodes, segments, gp);
-  const legs = legsInfo?.legs;
-  if (!legs) return null;
+  // R5.2 §10.4 / T23.1-b: «смена впечатлений каждые 150–300 м пути».
+  // Детерминированно: shortest path spawn→exit по графу дорог (Dijkstra), выборка вдоль
+  // фактической геометрии сегментов маршрута каждые 25 м. Сигнатура = (тип района | класс дороги).
+  const route = spawnExitRoute(nodes, segments, gp);
+  if (!route) return null;
+  const total = route.pathLength ?? 0;
+  if (!(total > 0)) return null;
 
   const sampleStep = 25;
   const signatureOf = (x, z) => {
@@ -265,37 +330,31 @@ function impressionCadenceMetric(districts, nodes, segments, gp) {
     const rC = nearestRoadClassAt(x, z, segments);
     return dT + '|' + rC;
   };
-  let traveled = 0;
-  const firstPos = { x: legs[0][0].x, z: legs[0][0].z };
-  let prevType = signatureOf(firstPos.x, firstPos.z);
+
+  const start = pointAtRouteDistance(route, 0);
+  if (!start) return null;
+  let prevType = signatureOf(start.x, start.z);
   let changes = 0;
   let lastChangeAt = 0;
   let minGap = null;
   let samples = 0;
-  for (const [a, b, legLen] of legs) {
-    for (let d = traveled + sampleStep; d <= traveled + legLen; d += sampleStep) {
-      const t = (d - traveled) / legLen;
-      const x = a.x + (b.x - a.x) * t;
-      const z = a.z + (b.z - a.z) * t;
-      samples += 1;
-      const sig = signatureOf(x, z);
-      if (sig !== prevType) {
-        changes += 1;
-        const gap = d - lastChangeAt;
-        if (minGap == null || gap < minGap) minGap = gap;
-        lastChangeAt = d;
-        prevType = sig;
-      }
+  for (let d = sampleStep; d <= total; d += sampleStep) {
+    const p = pointAtRouteDistance(route, d);
+    if (!p) continue;
+    samples += 1;
+    const sig = signatureOf(p.x, p.z);
+    if (sig !== prevType) {
+      changes += 1;
+      const gap = d - lastChangeAt;
+      if (minGap == null || gap < minGap) minGap = gap;
+      lastChangeAt = d;
+      prevType = sig;
     }
-    traveled += legLen;
   }
-  const total = traveled;
-  const avg = changes > 0 ? round(total / (changes + 1), 1) : total;
-  // §10.4: «смена впечатлений каждые 150–300 м» — теперь считаем впечатление как
-  // (класс района + класс дороги). Pure-district-метрика не детектировала смену остаточного коридора.
+  const avg = changes > 0 ? round(total / (changes + 1), 1) : round(total, 1);
   return {
     partial: true,
-    method: 'spawn_exit_shortest_path_25m_district_roadclass',
+    method: 'spawn_exit_path_geometry_25m_district_roadclass',
     samples,
     changes,
     pathLength: round(total, 1),

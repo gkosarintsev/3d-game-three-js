@@ -1,7 +1,7 @@
 {
   "version": 1,
   "generator": {
-    "generatorVersion": "0.84.0",
+    "generatorVersion": "0.85.0",
     "seed": 21,
     "deterministic": true
   },
@@ -51,7 +51,7 @@
     {
       "id": "6_finalize_emit",
       "status": "ok",
-      "diagnostics": 20,
+      "diagnostics": 21,
       "repairs": 2,
       "drops": 13
     }
@@ -4000,6 +4000,20 @@
     },
     {
       "severity": "info",
+      "code": "impression_cadence_route_enforced",
+      "stage": "6_finalize_emit",
+      "message": "retagged 1 route road segment(s) into 2 cadence bands",
+      "changedSegments": 1,
+      "routeEdges": 3,
+      "pathLength": 2080,
+      "bandSpacingMeters": 200,
+      "classes": [
+        "local",
+        "collector"
+      ]
+    },
+    {
+      "severity": "info",
       "code": "interchange_junction_candidates",
       "stage": "6_finalize_emit",
       "message": "identified junction nodes as grade-separation candidates",
@@ -4230,25 +4244,25 @@
     "roads": {
       "totalLength": 13268.146,
       "lengthByType": {
-        "arterial": 2080,
-        "local": 11188.146
+        "arterial": 360.83,
+        "local": 12907.316
       },
       "shareByType": {
-        "arterial": 0.156766,
-        "local": 0.843234
+        "arterial": 0.027195,
+        "local": 0.972805
       },
       "maxSlope": 0.297561,
       "slopeByClass": {
-        "arterial": {
-          "count": 3,
-          "maxSlope": 0.297561,
-          "overPolicy": 1,
-          "overAbsolute": 0
-        },
         "local": {
-          "count": 153,
+          "count": 154,
           "maxSlope": 0.1,
           "overPolicy": 0,
+          "overAbsolute": 0
+        },
+        "arterial": {
+          "count": 2,
+          "maxSlope": 0.297561,
+          "overPolicy": 1,
           "overAbsolute": 0
         }
       },
@@ -4425,63 +4439,73 @@
     },
     "impressionCadence": {
       "partial": true,
-      "method": "spawn_exit_shortest_path_25m_district_roadclass",
-      "samples": 62,
-      "changes": 8,
-      "pathLength": 1603,
-      "avgSpacingMeters": 178.1,
-      "minSpacingMeters": 50,
+      "method": "spawn_exit_path_geometry_25m_district_roadclass",
+      "samples": 83,
+      "changes": 6,
+      "pathLength": 2080,
+      "avgSpacingMeters": 297.1,
+      "minSpacingMeters": 150,
       "targetMin": 150,
       "targetMax": 300,
       "ok": true
     },
     "impressionAnchors": {
-      "method": "spawn_exit_anchors_spacing",
+      "method": "spawn_exit_anchors_spacing_path",
       "spacingMeters": 200,
       "anchors": [
         {
           "d": 200,
-          "x": -410.6,
-          "z": -352.5
+          "x": -520,
+          "z": -320
         },
         {
           "d": 400,
-          "x": -301.3,
-          "z": -185.1
+          "x": -520,
+          "z": -120
         },
         {
           "d": 600,
-          "x": -191.9,
-          "z": -17.6
+          "x": -520,
+          "z": 80
         },
         {
           "d": 800,
-          "x": -82.6,
-          "z": 149.8
+          "x": -520,
+          "z": 280
         },
         {
           "d": 1000,
-          "x": 26.8,
-          "z": 317.3
+          "x": -520,
+          "z": 480
         },
         {
           "d": 1200,
-          "x": 136.1,
-          "z": 484.7
+          "x": -360,
+          "z": 520
         },
         {
           "d": 1400,
-          "x": 317,
+          "x": -160,
           "z": 520
         },
         {
           "d": 1600,
-          "x": 517,
+          "x": 40,
+          "z": 520
+        },
+        {
+          "d": 1800,
+          "x": 240,
+          "z": 520
+        },
+        {
+          "d": 2000,
+          "x": 440,
           "z": 520
         }
       ],
-      "anchorsCount": 8,
-      "pathLength": 1603
+      "anchorsCount": 10,
+      "pathLength": 2080
     },
     "falseDeadEnds": {
       "count": 0,
@@ -4512,7 +4536,7 @@
       "dividesPlate": true
     },
     "determinism": {
-      "generatorVersion": "0.84.0",
+      "generatorVersion": "0.85.0",
       "seed": 21,
       "deterministic": true
     },
@@ -4536,6 +4560,20 @@
       },
       {
         "severity": "warn",
+        "code": "junction_type_mismatch_class",
+        "stage": "rules",
+        "message": "junction 'j_tr_n_spawn' type 'signalized' does not match adjacent classes (expected 'uncontrolled')",
+        "index": 35,
+        "id": "j_tr_n_spawn",
+        "declared": "signalized",
+        "expected": "uncontrolled",
+        "classes": [
+          "local"
+        ],
+        "incidentCount": 7
+      },
+      {
+        "severity": "warn",
         "code": "road_slope_over_class_policy",
         "stage": "rules",
         "message": "road segments exceed class slope policy (see policies.slopeLimitPct)",
@@ -4552,7 +4590,7 @@
     ],
     "summary": {
       "errors": 0,
-      "warnings": 2,
+      "warnings": 3,
       "infos": 1
     }
   }
