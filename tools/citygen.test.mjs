@@ -1527,3 +1527,35 @@ test('citygen R1.5/R1.1: crossing candidates and landmarks deterministic; terrai
   assert.ok(Array.isArray(a.ctx.terrain.analysis.landmarks));
   assert.ok(a.engine.cityforge.terrain.modifiers.length >= 1);
 });
+
+test('citygen R2.1: speedLimit defaults filled by segment class (km/h, deterministic)', () => {
+  const raw = v4Base();
+  raw.cityforge.networks.roads = {
+    nodes: [],
+    segments: [
+      { id: 's_highway', type: 'highway', layer: 'ground', path: [[-128,0,0],[128,0,0]], from: null, to: null },
+      { id: 's_arterial', type: 'arterial', layer: 'ground', path: [[-128,0,10],[128,0,10]], from: null, to: null },
+      { id: 's_collector', type: 'collector', layer: 'ground', path: [[-128,0,20],[128,0,20]], from: null, to: null },
+      { id: 's_local', type: 'local', layer: 'ground', path: [[-128,0,30],[128,0,30]], from: null, to: null },
+    ],
+    junctions: [],
+  };
+  raw.generator.seed = 42;
+  const out = runCitygen(raw);
+  const speeds = new Map((out.engine?.cityforge?.networks?.roads?.segments ?? []).map(s => [s.id, s.speedLimit]));
+  assert.equal(speeds.get('s_highway'), 90);
+  assert.equal(speeds.get('s_arterial'), 60);
+  assert.equal(speeds.get('s_collector'), 40);
+  assert.equal(speeds.get('s_local'), 30);
+});
+
+test('citygen R2.3: class slope policy is wired (policies from generator.policies and defaults)', () => {
+  const raw = v4Base();
+  raw.generator.seed = 42;
+  raw.generator.policies = { slopeLimitPct: { highway: 6, arterial: 8, collector: 10, local: 12 } };
+  const out = runCitygen(raw);
+  assert.ok(Number.isFinite(out.ctx?.meta?.policies?.slopeLimitPct?.local));
+  const metrics = out.ctx?.report?.metrics ?? out.report?.metrics;
+  assert.ok(metrics && metrics.roads && metrics.roads.slopePolicy);
+  assert.ok(Number.isFinite(Number(metrics.roads.slopePolicy.local)));
+});
