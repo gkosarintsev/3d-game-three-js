@@ -1328,10 +1328,14 @@ export function makeStage4() {
         if (rebalanced > 0) ctx.report.diagnostics.push(info('buildings_rebalanced_to_empty_split_districts', stageId, 'moved buildings to split child districts with parcels but no buildings', { count: rebalanced }));
       }
 
-      // R4.4 §9.7: два одинаковых соседа не используются в брилинтенских секторах — устраняем три подряд одинаковых фасада.
-      // Replacement the wallColor of every third building with a deterministic palette color.
+      // R4.4 §9.7: запрет трёх подряд одинаковых фасадов/внешнего облика (детерминированная ремедиация, schema-supported).
       {
-        const PALETTE = ['#b8c2cc', '#8899ab', '#c8ab89', '#d9dde2', '#c9bfae', '#a95842', '#d5cbb8', '#adb5bd', '#5f6770', '#4b5563', '#4b4e54', '#8d949b', '#b0b7bd'];
+        const WALL_PALETTE = ['#b8c2cc', '#8899ab', '#c8ab89', '#d9dde2', '#c9bfae', '#a95842', '#d5cbb8', '#adb5bd', '#5f6770', '#4b5563', '#4b4e54', '#8d949b', '#b0b7bd'];
+        const ROOF_MAT = ['concrete_slab', 'bitumen', 'metal_sheet', 'tile', 'shingles', 'corrugated_metal'];
+        const ROOF_COL = ['#5f6770', '#4b5563', '#6b7280', '#8d949b', '#7a6a58', '#6b4a3a', '#4f5d4a', '#77808a'];
+        const W_DENS = [1, 2, 3];
+        const appKey = (x) => `${x?.houseKind ?? ''}|${x?.facadeMaterial ?? ''}|${x?.wallColor ?? ''}|${x?.roofMaterial ?? ''}|${x?.roofColor ?? ''}|${x?.windowDensity ?? ''}`;
+        const pickAlt = (arr, cur, avoidA, avoidB) => arr.find(x => x !== cur && x !== avoidA && x !== avoidB) ?? arr.find(x => x !== cur) ?? arr[0] ?? cur;
         const byDistrict = new Map();
         for (const b of filtered) {
           const k = b?.districtType || b?.type || 'x';
@@ -1342,11 +1346,14 @@ export function makeStage4() {
         for (const arr of byDistrict.values()) {
           for (let j = 0; j + 2 < arr.length; j++) {
             const a = arr[j], b = arr[j + 1], c = arr[j + 2];
-            if (a?.houseKind === b?.houseKind && b?.houseKind === c?.houseKind
-              && a?.facadeMaterial === b?.facadeMaterial && b?.facadeMaterial === c?.facadeMaterial
-              && a?.wallColor === b?.wallColor && b?.wallColor === c?.wallColor) {
-              const alt = PALETTE.find(x => x !== a?.wallColor && x !== b?.wallColor && x !== c?.wallColor) ?? PALETTE[0];
-              c.wallColor = alt;
+            if (appKey(a) === appKey(b) && appKey(b) === appKey(c)) {
+              // Vary multiple appearance attributes deterministically to break the triple.
+              c.wallColor = pickAlt(WALL_PALETTE, c.wallColor, a?.wallColor, b?.wallColor);
+              c.roofMaterial = pickAlt(ROOF_MAT, c.roofMaterial, a?.roofMaterial, b?.roofMaterial);
+              c.roofColor = pickAlt(ROOF_COL, c.roofColor, a?.roofColor, b?.roofColor);
+              c.windowDensity = pickAlt(W_DENS, c.windowDensity, a?.windowDensity, b?.windowDensity);
+              // keep roof object consistent if present
+              if (!c.roof || typeof c.roof !== 'object') c.roof = { walkable: false, parapet: 0 };
               swapped += 1;
             }
           }
