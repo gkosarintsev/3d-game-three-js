@@ -66,3 +66,12 @@
 - Rebuild/check: <commands or N/A>
 - Merge target: integration/<wave> | main (PR)
 ```
+
+
+## Ускорение цикла (ретро план 21, 2026-11-19)
+
+- **Standalone evidence-PR запрещены.** После merge план21-инкремента не открывать отдельную PR «evidence». Записывать merge/CI evidence в следующий substantive-инкремент (как раньше блок «Continuation increment») либо — в один консолидированный PR в конце секции/волны.
+- **Один PR на зону.** Одна PR-единица = одна зона изменения (например, «R1 relief» или «R5.2 surface/metric»), а не один чекбокс; gv bump + rebuild + CI выполняются один раз на зону.
+- **Автоматизация цикла.** Для механического цикла (branch → worktree → slug → bump `DEFAULT_GENERATOR_VERSION` → `tools/build-level.mjs --parallel N` → baselines → etalons → `node tools/citygen-etalon-check.mjs` → `node --test tools/citygen.test.mjs` → commit → push → PR → `gh run watch --exit-status` → `gh pr merge --merge --delete-branch` → `git fetch` → обновление `.ai/state`) используйте `scripts/agent/pr21.mjs`; ручной цикл `git push → Start-Sleep → gh run list → gh pr view → gh pr merge` без watcher — не использовать.
+- **Дифф-ориентированный rebuild.** `tools/build-level.mjs` пропускает byte-identical производные (`без изменений: N файл(ов) пропущено`); `--parallel N` допустим для уровней (процессы независимы); отчёты/хэши пересобираются по существу, а не по расписанию.
+- **Документационный PR.** PR с `docs/**|/.ai/state/**|/.ai/plans/**` проходит быстрый профиль (`detect/docs-only` в CI: пропускаются `browser`, `seed-series`, `rebuild`, `node-citygen`, `node-etalon`).
