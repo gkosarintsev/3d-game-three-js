@@ -1,13 +1,13 @@
 {
   "profile": "railway_industrial",
   "seed": 101,
-  "generatorVersion": "0.79.0",
-  "reportHash": "c076be2932c469c22e77d111dc7a495134ad00b5b08c7ba33dd782e70ab1f405",
+  "generatorVersion": "0.80.0",
+  "reportHash": "76271453fe4960a3ee8253c39ebdcf21f73573dc5f047ef766b73205b103448d",
   "summary": {
     "errors": 0,
     "warnings": 10,
     "repairs": 0,
-    "drops": 0
+    "drops": 12
   },
   "rules": {
     "errors": 0,
@@ -22,7 +22,7 @@
       "districts": 41,
       "parcels": 2384,
       "reservedParcels": 349,
-      "buildings": 405,
+      "buildings": 393,
       "enterableBuildings": 81,
       "props": 360,
       "lights": 0,
@@ -59,7 +59,7 @@
     "gameplay": {
       "spawnToRoad": null,
       "exitToRoad": null,
-      "enterableShare": 0.2,
+      "enterableShare": 0.206107,
       "enterableTarget": 0.2,
       "spawnDistrictType": "market",
       "exitDistrictType": "luxury",

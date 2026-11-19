@@ -1,7 +1,7 @@
 {
   "version": 1,
   "generator": {
-    "generatorVersion": "0.79.0",
+    "generatorVersion": "0.80.0",
     "seed": 16,
     "deterministic": true
   },
@@ -51,9 +51,9 @@
     {
       "id": "6_finalize_emit",
       "status": "ok",
-      "diagnostics": 11,
+      "diagnostics": 12,
       "repairs": 1,
-      "drops": 0
+      "drops": 11
     }
   ],
   "districts": [
@@ -2582,6 +2582,61 @@
     },
     {
       "severity": "info",
+      "code": "finish_chaos_macro",
+      "stage": "6_finalize_emit",
+      "message": "macro chaos (void parcel instead of building, 3-5%) applied at finish stage",
+      "eligible": 289,
+      "dropped": 11,
+      "target": 11,
+      "changes": [
+        {
+          "id": "b_district_3_0_135",
+          "districtId": "district_3_0_0"
+        },
+        {
+          "id": "b_district_3_0_140",
+          "districtId": "district_3_0_0"
+        },
+        {
+          "id": "b_district_1_3_169",
+          "districtId": "district_1_3_1"
+        },
+        {
+          "id": "b_district_3_3_185",
+          "districtId": "district_3_3_110"
+        },
+        {
+          "id": "b_district_3_1_213",
+          "districtId": "district_3_1_1"
+        },
+        {
+          "id": "b_district_2_3_248",
+          "districtId": "district_2_3_0"
+        },
+        {
+          "id": "b_district_3_1_285",
+          "districtId": "district_3_1_0"
+        },
+        {
+          "id": "b_district_3_1_317",
+          "districtId": "district_3_1_1"
+        },
+        {
+          "id": "b_district_0_0_338",
+          "districtId": "district_0_0_01"
+        },
+        {
+          "id": "b_district_3_0_342",
+          "districtId": "district_3_0_0"
+        },
+        {
+          "id": "b_district_1_1_401",
+          "districtId": "district_1_1_0"
+        }
+      ]
+    },
+    {
+      "severity": "info",
       "code": "finish_chaos_meso",
       "stage": "6_finalize_emit",
       "message": "meso chaos (epoch insert) applied at finish stage",
@@ -2863,13 +2918,68 @@
       "stage": "4_buildings_structures",
       "id": "b_district_3_3_93",
       "reason": "building_on_steep_slope"
+    },
+    {
+      "stage": "6_finalize_emit",
+      "id": "b_district_0_0_338",
+      "reason": "finish_chaos_macro_void"
+    },
+    {
+      "stage": "6_finalize_emit",
+      "id": "b_district_1_1_401",
+      "reason": "finish_chaos_macro_void"
+    },
+    {
+      "stage": "6_finalize_emit",
+      "id": "b_district_1_3_169",
+      "reason": "finish_chaos_macro_void"
+    },
+    {
+      "stage": "6_finalize_emit",
+      "id": "b_district_2_3_248",
+      "reason": "finish_chaos_macro_void"
+    },
+    {
+      "stage": "6_finalize_emit",
+      "id": "b_district_3_0_135",
+      "reason": "finish_chaos_macro_void"
+    },
+    {
+      "stage": "6_finalize_emit",
+      "id": "b_district_3_0_140",
+      "reason": "finish_chaos_macro_void"
+    },
+    {
+      "stage": "6_finalize_emit",
+      "id": "b_district_3_0_342",
+      "reason": "finish_chaos_macro_void"
+    },
+    {
+      "stage": "6_finalize_emit",
+      "id": "b_district_3_1_213",
+      "reason": "finish_chaos_macro_void"
+    },
+    {
+      "stage": "6_finalize_emit",
+      "id": "b_district_3_1_285",
+      "reason": "finish_chaos_macro_void"
+    },
+    {
+      "stage": "6_finalize_emit",
+      "id": "b_district_3_1_317",
+      "reason": "finish_chaos_macro_void"
+    },
+    {
+      "stage": "6_finalize_emit",
+      "id": "b_district_3_3_185",
+      "reason": "finish_chaos_macro_void"
     }
   ],
   "summary": {
     "errors": 0,
     "warnings": 13,
     "repairs": 1,
-    "drops": 41
+    "drops": 52
   },
   "metrics": {
     "version": 2,
@@ -2880,7 +2990,7 @@
       "districts": 44,
       "parcels": 2325,
       "reservedParcels": 541,
-      "buildings": 361,
+      "buildings": 350,
       "enterableBuildings": 72,
       "props": 360,
       "lights": 8,
@@ -2952,7 +3062,7 @@
     "gameplay": {
       "spawnToRoad": 0,
       "exitToRoad": 0,
-      "enterableShare": 0.199446,
+      "enterableShare": 0.205714,
       "enterableTarget": 0.2,
       "spawnDistrictType": "office",
       "exitDistrictType": "commercial",
@@ -3141,7 +3251,7 @@
       "dividesPlate": true
     },
     "determinism": {
-      "generatorVersion": "0.79.0",
+      "generatorVersion": "0.80.0",
       "seed": 16,
       "deterministic": true
     },
@@ -3149,7 +3259,7 @@
       "diagnosticsErrors": 0,
       "diagnosticsWarnings": 13,
       "repairs": 1,
-      "drops": 41
+      "drops": 52
     }
   },
   "rules": {

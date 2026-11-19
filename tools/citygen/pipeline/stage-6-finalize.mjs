@@ -799,6 +799,53 @@ export function makeStage6() {
         }
       }
       ctx.report.diagnostics.push(info('finish_chaos_meso', stageId, 'meso chaos (epoch insert) applied at finish stage', { applied: mesoApplied, changes: mesoChanges }));
+
+      // Macro v1 (§10.1 macro: «пустырь/руина вместо участка (3–5%)»):
+      // пустырь моделируем детерминированным снятием части не-locked зданий из IR
+      // (руина/пустырь не имеет IR-представления при закрытой схеме IR — см. drops).
+      // Выбор — по хэшу (seed, id), независимо от порядка обхода ⇒ детерминизм;
+      // 4% от eligible (не-locked, <15 этажей, districtId есть, центр валиден,
+      // не enterable, не ближе 30 м к spawn/exit); минимум 20 eligible для срабатывания.
+      const gameplayMacro = ctx.input?.gameplay ?? ctx.engine?.gameplay ?? {};
+      const spawnP = gameplayMacro?.spawn ?? null, exitP = gameplayMacro?.exit ?? null;
+      const eligibleMacro = [];
+      for (const b of sorted) {
+        if (b?.locked === true) continue;
+        if (Number(b?.floorsCount ?? 1) >= 15) continue;
+        if (b?.isEnterable === true) continue;
+        const did = b?.districtId ?? null; if (!did) continue;
+        const c = buildingCenter(b); if (!c) continue;
+        const nearSpawn = spawnP && Number.isFinite(Number(spawnP.x)) && Number.isFinite(Number(spawnP.z)) && Math.hypot(c.x - Number(spawnP.x), c.z - Number(spawnP.z)) < 30;
+        const nearExit = exitP && Number.isFinite(Number(exitP.x)) && Number.isFinite(Number(exitP.z)) && Math.hypot(c.x - Number(exitP.x), c.z - Number(exitP.z)) < 30;
+        if (nearSpawn || nearExit) continue;
+        eligibleMacro.push(b);
+      }
+      const macroCount = eligibleMacro.length >= 20 ? Math.max(1, Math.floor(eligibleMacro.length * 0.04)) : 0;
+      const macroKeyed = eligibleMacro.map(b => ({ b, k: mix(ctx.meta?.seed ?? 0, 'finish_chaos_macro', String(b?.id ?? '')) }))
+        .sort((x, y) => (x.k - y.k) || String(x.b?.id ?? '').localeCompare(String(y.b?.id ?? '')));
+      const dropIds = new Set();
+      for (let i = 0; i < macroKeyed.length && dropIds.size < macroCount; i++) dropIds.add(macroKeyed[i].b?.id ?? null);
+      let macroApplied = 0;
+      const macroDropped = [];
+      if (dropIds.size > 0) {
+        const keptB = [];
+        const droppedList = [];
+        for (const b of buildings) {
+          const id = b?.id ?? null;
+          if (id != null && dropIds.has(id)) { droppedList.push(b); continue; }
+          keptB.push(b);
+        }
+        // Удаляем по идентичности массива для потребителей, уже захвативших ссылку.
+        if (Array.isArray(ctx.buildings)) { ctx.buildings.length = 0; ctx.buildings.push(...keptB); }
+        ctx.buildings = keptB;
+        buildings.length = 0; buildings.push(...keptB);
+        for (const b of droppedList) {
+          ctx.report.drops.push({ stage: stageId, id: b?.id ?? null, reason: 'finish_chaos_macro_void' });
+          macroDropped.push({ id: b?.id ?? null, districtId: b?.districtId ?? null });
+        }
+        macroApplied = droppedList.length;
+      }
+      ctx.report.diagnostics.push(info('finish_chaos_macro', stageId, 'macro chaos (void parcel instead of building, 3-5%) applied at finish stage', { eligible: eligibleMacro.length, dropped: macroApplied, target: macroCount, changes: macroDropped }));
     },
         repair(ctx) {
       const stageId = '6_finalize_emit';

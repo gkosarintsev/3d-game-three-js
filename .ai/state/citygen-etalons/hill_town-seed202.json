@@ -1,13 +1,13 @@
 {
   "profile": "hill_town",
   "seed": 202,
-  "generatorVersion": "0.79.0",
-  "reportHash": "0986c928f80c00f86361164072f112f5164fdf76ce763b2d958c956dbc8dd91d",
+  "generatorVersion": "0.80.0",
+  "reportHash": "ef11719addabfe106c191618ad85b39d36b2f293f626b90f82f35f0199948ec1",
   "summary": {
     "errors": 0,
     "warnings": 8,
     "repairs": 0,
-    "drops": 0
+    "drops": 13
   },
   "rules": {
     "errors": 0,
@@ -22,7 +22,7 @@
       "districts": 42,
       "parcels": 2246,
       "reservedParcels": 43,
-      "buildings": 413,
+      "buildings": 400,
       "enterableBuildings": 83,
       "props": 360,
       "lights": 0,
@@ -59,7 +59,7 @@
     "gameplay": {
       "spawnToRoad": null,
       "exitToRoad": null,
-      "enterableShare": 0.200969,
+      "enterableShare": 0.2075,
       "enterableTarget": 0.2,
       "spawnDistrictType": "forest",
       "exitDistrictType": "luxury",
