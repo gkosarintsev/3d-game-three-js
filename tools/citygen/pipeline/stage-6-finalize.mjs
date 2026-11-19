@@ -887,6 +887,59 @@ export function makeStage6() {
         }
       }
       ctx.report.diagnostics.push(info('finish_chaos_macro_seam', stageId, 'macro chaos (out-of-axis joint at the highest-delta seam) applied at finish stage', { seam: seamPick ? [seamPick.a, seamPick.b] : null, shifted: seamShifted, changes: seamChanges }));
+
+      // Macro v3 (§10.1 macro: «остров другой эпохи (старая слобода среди микрорайонов)»):
+      // эпоха-бит может возникать не только на шве, но и как изолированное ядро. Выбирается район
+      // с МИНИМАЛЬНЫМ landValue и ≥3 eligible-зданиями; целевая эпоха — противоположная большинству
+      // кластера (>50% historic → modern insert, иначе historic insert), все ячейки принимают
+      // единый facadeMaterial/wallColor/windowDensity/windowScale. Геометрия/высотность/комнаты
+      // не меняются (эпоха-бит §10.1 macro-only). Только не-locked, <15 этажей; cap ISLAND_MAX.
+      const ISLAND_MAX = 12;
+      let islandApplied = 0;
+      const islandChanges = [];
+      {
+        const historicSet = ['painted_brick', 'stone_base'];
+        const modernSet = ['glass_and_concrete', 'glass_steel', 'panel_block', 'concrete'];
+        const byDistrict = new Map();
+        for (const b of buildings) {
+          const did = b?.districtId ?? null;
+          if (!did) continue;
+          if (b?.locked === true) continue;
+          if (Number(b?.floorsCount ?? 1) >= 15) continue;
+          const arr = byDistrict.get(did) ?? [];
+          arr.push(b); byDistrict.set(did, arr);
+        }
+        const islandCandidates = districts
+          .filter(d => byDistrict.get(d?.id)?.length >= 3)
+          .sort((a, b) => ((Number(a?.landValue ?? 0) - Number(b?.landValue ?? 0)) || String(a?.id ?? '').localeCompare(String(b?.id ?? ''))));
+        const island = islandCandidates.length > 0 ? islandCandidates[0] : null;
+        if (island) {
+          const group = (byDistrict.get(island.id) ?? [])
+            .slice()
+            .sort((a, b) => String(a?.id ?? '').localeCompare(String(b?.id ?? '')))
+            .slice(0, ISLAND_MAX);
+          const historicCount = group.filter(b => historicSet.includes(String(b?.facadeMaterial ?? ''))).length;
+          const toModern = historicCount * 2 >= group.length;
+          for (const b of group) {
+            if (toModern) {
+              b.facadeMaterial = 'glass_and_concrete';
+              b.wallColor = '#c9bfae';
+              b.windowDensity = 3;
+              b.windowScale = 1.05;
+            } else {
+              b.facadeMaterial = 'painted_brick';
+              b.wallColor = '#7b493b';
+              b.windowDensity = 1;
+              b.windowScale = 0.91;
+            }
+            islandApplied += 1;
+            islandChanges.push(b.id ?? null);
+          }
+          ctx.report.diagnostics.push(info('finish_chaos_macro_island', stageId, 'macro chaos (epoch enclave in the lowest-land-value district) applied at finish stage', { district: island.id, landValue: Number(island?.landValue ?? 0), eligible: byDistrict.get(island.id)?.length ?? 0, target: toModern ? 'modern' : 'historic', converted: islandApplied, buildings: islandChanges.slice(0, 16) }));
+        } else {
+          ctx.report.diagnostics.push(info('finish_chaos_macro_island', stageId, 'macro chaos (epoch enclave) skipped: no district with >=3 eligible buildings', { district: null, converted: 0 }));
+        }
+      }
     },
         repair(ctx) {
       const stageId = '6_finalize_emit';

@@ -143,7 +143,7 @@
     "chunks": []
   },
   "generator": {
-    "generatorVersion": "0.82.0",
+    "generatorVersion": "0.83.0",
     "seed": 20,
     "deterministic": true,
     "profile": "hill_town",
