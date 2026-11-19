@@ -1,8 +1,8 @@
 {
   "profile": "river_trade",
   "seed": 101,
-  "generatorVersion": "0.76.0",
-  "reportHash": "15e70c626cf88492a73d949c511db6ecc58234cb9518706c51e1c6510bb67c4e",
+  "generatorVersion": "0.77.0",
+  "reportHash": "4c3b686f09fc3304d899aa1f078835ac14e52aa4ee1c30b88f01dd0912af46bb",
   "summary": {
     "errors": 0,
     "warnings": 10,
@@ -19,10 +19,10 @@
     "counts": {
       "roads": 0,
       "roadNodes": 0,
-      "districts": 39,
+      "districts": 40,
       "parcels": 2183,
-      "reservedParcels": 352,
-      "buildings": 405,
+      "reservedParcels": 218,
+      "buildings": 406,
       "enterableBuildings": 81,
       "props": 360,
       "lights": 0,
@@ -59,7 +59,7 @@
     "gameplay": {
       "spawnToRoad": null,
       "exitToRoad": null,
-      "enterableShare": 0.2,
+      "enterableShare": 0.199507,
       "enterableTarget": 0.2,
       "spawnDistrictType": "market",
       "exitDistrictType": "luxury",
@@ -145,13 +145,14 @@
       "floodplains": 2
     },
     "parcels": {
-      "reservedShare": 0.161246,
+      "reservedShare": 0.099863,
       "byDistrictCount": {
         "district_0_0_00": 25,
         "district_0_0_01": 25,
         "district_0_0_10": 25,
         "district_0_0_11": 25,
-        "district_1_0": 42,
+        "district_1_0_0": 28,
+        "district_1_0_1": 14,
         "district_2_0_0": 200,
         "district_2_0_1": 200,
         "district_3_0_0": 136,
@@ -185,7 +186,7 @@
         "district_2_3_1": 66,
         "district_3_3_0": 28,
         "district_3_3_1": 28,
-        "district_1_0_b0": 6
+        "district_1_0_1_b0": 6
       }
     },
     "landmarkVisibility": {
@@ -197,14 +198,14 @@
       "total": 12,
       "observers": 12,
       "totalPairs": 132,
-      "visiblePairs": 106,
+      "visiblePairs": 113,
       "visibleApprox": 12,
-      "visibleFraction": 0.80303,
+      "visibleFraction": 0.856061,
       "visibleTargets": 12
     },
     "blockDensityCorrelation": {
-      "rho": 0.847815,
-      "n": 39,
+      "rho": 0.804637,
+      "n": 40,
       "target": 0.6,
       "ok": true,
       "partial": false

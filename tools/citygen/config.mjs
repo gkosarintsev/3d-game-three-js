@@ -1,3 +1,5 @@
+import { makeRng, mix } from './rng.mjs';
+
 /**
  * R0.5: generator profiles/policies config with defaults (docs/level_generation_rules_claude.md §11, §13.2).
  * Open schema fields (`generator.profiles`, `generator.policies`) are normalized here with fallbacks;
@@ -5,10 +7,11 @@
  */
 
 const clamp01 = (v) => Math.max(0, Math.min(1, v));
+const clampParam = (v, lo, hi) => Math.max(lo, Math.min(hi, Number(v) || lo));
 
 // R0.4: canonical generator version for deterministic behavior/regression snapshots.
 // Bump on intentional layout/IR/report-affecting changes (see .ai/state/citygen-procedural-rules.md).
-export const DEFAULT_GENERATOR_VERSION = '0.76.0';
+export const DEFAULT_GENERATOR_VERSION = '0.77.0';
 
 export const DEFAULT_CITY_POLICIES = Object.freeze({
   roadDensity: { bMin: 60, bMax: 260, gamma: 0.8 },
@@ -77,6 +80,57 @@ function mergeDeep(base, over) {
   return out;
 }
 
+// R6.1: каталог особенностей (§11.2) — детерминированная выборка; 1–2 на город.
+const FEATURE_CATALOG = Object.freeze([
+  'old_market_square',
+  'citadel_hill',
+  'river_island_park',
+  'ravine_bridge',
+  'industrial_waterfront',
+  'maze_block',
+  'stadium_dominant',
+  'cemetery_park',
+  'burnt_quarter',
+]);
+
+function scaleNumericNode(node, rng) {
+  if (Array.isArray(node)) return node.map(v => scaleNumericNode(v, rng));
+  if (node && typeof node === 'object') {
+    const out = {};
+    for (const [k, v] of Object.entries(node)) out[k] = scaleNumericNode(v, rng);
+    return out;
+  }
+  if (typeof node === 'number' && Number.isFinite(node) && node !== 0) {
+    const span = 0.2; // ±20%
+    const factor = 1 + (rng() * 2 - 1) * span;
+    const val = node * factor;
+    return Number.isInteger(node) ? Math.max(0, Math.round(val)) : Math.round(val * 1e6) / 1e6;
+  }
+  return node;
+}
+
+/** Детерминированная ±20% мутация параметров профиля (§11): идентичность и структура сохраняются. */
+export function mutateProfile(profile, seed = 0, delta = 0.2) {
+  if (!profile) return profile;
+  const clampDelta = Math.max(0, Math.min(0.25, Number(delta) || 0.2));
+  const src = JSON.parse(JSON.stringify(profile));
+  const rng = makeRng(mix(seed >>> 0, 'profile_mutation', profile.id ?? 'profile', Math.floor(clampDelta * 1e3)));
+  return scaleNumericNode(src, rng);
+}
+
+/** Детерминированная выборка 1–2 особенностей из каталога §11.2 (для отчёта и будущих стадий). */
+export function selectProfileFeatures(seed = 0, count = 1) {
+  const n = Math.max(1, Math.min(2, Number(count) || 1));
+  const rng = makeRng(mix(seed >>> 0, 'profile_features'));
+  const picked = new Set();
+  const pool = [...FEATURE_CATALOG];
+  while (picked.size < n) {
+    const idx = Math.floor(rng() * pool.length) % pool.length;
+    picked.add(pool.splice(idx, 1)[0]);
+  }
+  return [...picked];
+}
+
 export function normalizePolicies(rawPolicies) {
   const p = mergeDeep(DEFAULT_CITY_POLICIES, isObj(rawPolicies) ? rawPolicies : {});
   // clamp/sanitize a few known numeric ranges deterministically
@@ -122,7 +176,23 @@ export function resolveGeneratorConfig(input) {
     : typeof gen.profileId === 'string' ? gen.profileId
     : typeof gen.cityProfile === 'string' ? gen.cityProfile
     : null;
-  const activeProfile = activeProfileId && cityProfiles[activeProfileId] ? cityProfiles[activeProfileId] : null;
-  return { policies, cityProfiles, activeProfileId, activeProfile };
+  const activeProfileRaw = activeProfileId && cityProfiles[activeProfileId] ? cityProfiles[activeProfileId] : null;
+  // R6.1: транспорт-маршрутизация чувствительна к изменению геометрии реки/перекрёстка;
+  // мутация применяется для profile-driven не-транспортных сценариев (pilots/§11).
+  // Для transport-scenes профиль остаётся эталонным (см. R2.2 follow-ups).
+  const transportGenerate = isObj(gen.transport) ? gen.transport.generate === true : false;
+  const mutationIn = isObj(gen.profileMutation) ? gen.profileMutation : null;
+  const mutationEnabled = !!activeProfileRaw && mutationIn?.enabled !== false && !transportGenerate;
+  const mutationDelta = clampParam(Number(mutationIn?.delta) || 0.2, 0, 0.25);
+  const mutationSeed = Number.isFinite(Number(gen.seed)) ? Number(gen.seed) : 0;
+  const activeProfile = mutationEnabled ? mutateProfile(activeProfileRaw, mutationSeed, mutationDelta) : activeProfileRaw;
+  const features = selectProfileFeatures(mutationSeed, Number(mutationIn?.features ?? 1));
+  return {
+    policies,
+    cityProfiles,
+    activeProfileId,
+    activeProfile,
+    profileMutation: { enabled: mutationEnabled, delta: mutationDelta, features },
+  };
 }
 

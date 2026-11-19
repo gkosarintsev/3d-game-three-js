@@ -1,7 +1,7 @@
 {
   "version": 1,
   "generator": {
-    "generatorVersion": "0.76.0",
+    "generatorVersion": "0.77.0",
     "seed": 16,
     "deterministic": true
   },
@@ -1255,6 +1255,17 @@
       "maxProps": 112,
       "chunk": 640,
       "grid": 2
+    },
+    {
+      "severity": "info",
+      "code": "profile_mutation",
+      "stage": "0_input_space",
+      "message": "profile mutation applied (+-20%, deterministic)",
+      "delta": 0.2,
+      "enabled": false,
+      "features": [
+        "citadel_hill"
+      ]
     },
     {
       "severity": "info",
@@ -4487,7 +4498,7 @@
       "dividesPlate": true
     },
     "determinism": {
-      "generatorVersion": "0.76.0",
+      "generatorVersion": "0.77.0",
       "seed": 16,
       "deterministic": true
     },

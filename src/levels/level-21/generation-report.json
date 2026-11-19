@@ -1,7 +1,7 @@
 {
   "version": 1,
   "generator": {
-    "generatorVersion": "0.76.0",
+    "generatorVersion": "0.77.0",
     "seed": 21,
     "deterministic": true
   },
@@ -1094,6 +1094,17 @@
       "stage": "6_finalize_emit",
       "message": "detected 2 same-layer road crossing conflict(s) without shared junction",
       "count": 2
+    },
+    {
+      "severity": "info",
+      "code": "profile_mutation",
+      "stage": "0_input_space",
+      "message": "profile mutation applied (+-20%, deterministic)",
+      "delta": 0.2,
+      "enabled": false,
+      "features": [
+        "cemetery_park"
+      ]
     },
     {
       "severity": "info",
@@ -4243,7 +4254,7 @@
       "dividesPlate": true
     },
     "determinism": {
-      "generatorVersion": "0.76.0",
+      "generatorVersion": "0.77.0",
       "seed": 21,
       "deterministic": true
     },
