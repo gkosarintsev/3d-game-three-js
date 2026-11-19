@@ -1,7 +1,7 @@
 {
   "version": 1,
   "generator": {
-    "generatorVersion": "0.82.0",
+    "generatorVersion": "0.83.0",
     "seed": 16,
     "deterministic": true
   },
@@ -51,7 +51,7 @@
     {
       "id": "6_finalize_emit",
       "status": "ok",
-      "diagnostics": 13,
+      "diagnostics": 14,
       "repairs": 1,
       "drops": 11
     }
@@ -2637,6 +2637,31 @@
     },
     {
       "severity": "info",
+      "code": "finish_chaos_macro_island",
+      "stage": "6_finalize_emit",
+      "message": "macro chaos (epoch enclave in the lowest-land-value district) applied at finish stage",
+      "district": "district_3_0_0",
+      "landValue": 0.1299,
+      "eligible": 33,
+      "target": "modern",
+      "converted": 12,
+      "buildings": [
+        "b_district_3_0_1",
+        "b_district_3_0_134",
+        "b_district_3_0_136",
+        "b_district_3_0_137",
+        "b_district_3_0_175",
+        "b_district_3_0_198",
+        "b_district_3_0_199",
+        "b_district_3_0_2",
+        "b_district_3_0_217",
+        "b_district_3_0_221",
+        "b_district_3_0_222",
+        "b_district_3_0_223"
+      ]
+    },
+    {
+      "severity": "info",
       "code": "finish_chaos_macro_seam",
       "stage": "6_finalize_emit",
       "message": "macro chaos (out-of-axis joint at the highest-delta seam) applied at finish stage",
@@ -3275,7 +3300,7 @@
       "dividesPlate": true
     },
     "determinism": {
-      "generatorVersion": "0.82.0",
+      "generatorVersion": "0.83.0",
       "seed": 16,
       "deterministic": true
     },
