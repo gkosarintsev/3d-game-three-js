@@ -1,8 +1,8 @@
 {
   "profile": "river_trade",
   "seed": 101,
-  "generatorVersion": "0.75.0",
-  "reportHash": "faf378eb8e71ee1f6c432a7b3505aaa5996ad711a39cded660de7f8f9513438a",
+  "generatorVersion": "0.76.0",
+  "reportHash": "15e70c626cf88492a73d949c511db6ecc58234cb9518706c51e1c6510bb67c4e",
   "summary": {
     "errors": 0,
     "warnings": 10,

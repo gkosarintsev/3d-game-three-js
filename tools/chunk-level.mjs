@@ -267,10 +267,11 @@ export function splitLevel(map, stream, opts = {}) {
       if (!inside.length) continue;   // объект целиком за пределами плиты мира
       const owner = pickOwner(plan, inside);
       ownerOf.set(`${collection}:${id}`, owner.id);
+      const insideIds = inside.map((c) => c.id);
       for (const cell of inside) {
         const bucket = members.get(cell.id);
         if (!bucket.has(collection)) bucket.set(collection, []);
-        bucket.get(collection).push({ id, obj, owner: cell.id === owner.id });
+        bucket.get(collection).push({ id, obj, owner: cell.id === owner.id, homeChunk: owner.id, coverageChunks: insideIds });
         participants++;
       }
     }
@@ -343,7 +344,9 @@ function buildChunk(map, cell, bucket) {
     const items = (bucket.get(collection) ?? []).slice().sort((a, b) => (a.id < b.id ? -1 : a.id > b.id ? 1 : 0));
     if (!items.length) continue;
     counts[collection] = items.length;
-    chunkMap[collection] = items.map(({ obj, owner }) => (owner ? { ...obj, owner: true } : { ...obj }));
+    chunkMap[collection] = items.map(({ obj, owner, homeChunk, coverageChunks }) => (owner
+          ? { ...obj, owner: true, homeChunk, coverageChunks }
+          : { ...obj, homeChunk, coverageChunks }));
   }
   return { id: cell.id, file: cell.file, cell, map: chunkMap, counts };
 }
