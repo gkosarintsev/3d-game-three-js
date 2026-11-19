@@ -7,7 +7,7 @@ Protocol: `.ai/plans/22-parallel-agents-github-ci.md`, `.ai/prompts/agent-ci-pro
 
 ## Current position (summary)
 
-- **Generator:** `DEFAULT_GENERATOR_VERSION = 0.74.0` on branch `agent/plan21-r53-gameplay` @ `C:\Temp\wt-plan21-next7` from `origin/main` `4ce33da` (R5.3 gameplay placement validator increment, output-affecting; CI pending). `origin/main` remains at `4ce33da` (PRs #24/#25/#26/#27/#28/#29 merged; evidence recorded). Staged v4 pipeline (`tools/citygen/index.mjs`, `pipeline/stage-1..6-*`), profiles/policies/validation/metrics/etalons/seed-series tooling developed incrementally.
+- **Generator:** `DEFAULT_GENERATOR_VERSION = 0.74.0` on `origin/main` `9c922ef` (PR #30 merged 2026-11-19T05:55:48Z, R5.3 gameplay placement validator; green CI 44467865746 push / 44467893430 incl. 100×3). Active increment: `agent/plan21-r30-evidence` @ `C:\Temp\wt-plan21-evidence6` from `9c922ef` (record PR #30 merge evidence, docs/state-only; CI pending). Staged v4 pipeline (`tools/citygen/index.mjs`, `pipeline/stage-1..6-*`), profiles/policies/validation/metrics/etalons/seed-series tooling developed incrementally.
 - **Gates/artifacts:** `tools/citygen.test.mjs`, `tools/citygen-etalon-check.mjs`, `tools/citygen-seed-series.mjs`, `tools/check-levels.mjs`, `tools/build-level.mjs --check`, browser suites by scope/CI; committed derived outputs and etalon/baseline snapshots are part of determinism/regression.
 - **Constraint:** any IR/report/derived level output changes require deterministic rebuild of committed artifacts and baseline/etalon updates per version policy, verified in GitHub CI.
 
@@ -292,9 +292,14 @@ Protocol: `.ai/plans/22-parallel-agents-github-ci.md`, `.ai/prompts/agent-ci-pro
 - **Scope (docs/state-only):** records merge/CI evidence for PR #28 (R5.2 impressionCadence/falseDeadEnds metrics): merge commit `bd8c530d1d0c908b99f0feb939c2a6fa523ae933`, head `2a013d85d26580ef2299e24dc4e1f2924a260533`, push CI `44466041340` **success**, PR CI `44466063763` **success** (full merge-gate incl. 100×3 seed-series).
 - **Still remaining:** R5.1/R5.3/R5.5, unresolved R1/R2/R3 DoD items, R2.6–R2.8, R6.1/R6.2, overall plan 21 DoD.
 
-#### Continuation increment (R5.3 gameplay placement validator, `agent/plan21-r53-gameplay`, in progress, CI pending)
+#### Continuation increment (R5.3 gameplay placement validator, `agent/plan21-r53-gameplay`, integrated)
 - **Branch/worktree:** `agent/plan21-r53-gameplay` @ `C:\Temp\wt-plan21-next7` (from `origin/main` `4ce33da`, gv `0.73.0 -> 0.74.0`; `node scripts/agent/check-env.mjs` OK).
 - **Scope (output-affecting, gv bump):** `tools/citygen/rules.mjs` — read-only §10.5 validator/metrics: `nearestRoadGeometry`, `nearestRoadNodePoint`, `findRoadRoute`, `gameplayPlacementMetric`; diagnostics `spawn_district_unusual`, `cars_spot_off_road`, `cars_spot_misaligned`, `cars_spot_near_junction`; `metrics.gameplay` extended (spawn/exit district type, straight/route meters, routeRatio, districtsPassed, exitRadius, cars{declared,spots,onRoad,misaligned,nearJunction}, enemies). Pilots `src/levels/level-16.json` & `src/levels/level-17.json`: car `yaw` 90 → 0 (§10.5 «вдоль дороги»; was perpendicular to `tr_gb_71`). gv `0.73.0 → 0.74.0`; `src/levels/level-16..22.json` bumped; rebuild L16-22 (0 warnings); baselines L16-22 + etalons refreshed (10 updated); `node --test tools/citygen.test.mjs` **57/57**; etalon-check **16/16** (prep).
 - **R5.3 [x] (stated scope).** Remaining full-closure: runtime enemy placement (nav graph, engine-side) and generator-side spawn/exit relocation & route-alternatives enforcement — вне текущей архитектуры `tools/citygen`; документировано в `.ai/state/citygen-procedural-rules.md`.
-- **CI/merge evidence:** pending (commit/push/PR + green GitHub CI/merge-gate, sequential merge to `main`, finalize evidence with next state-update).
+- **CI/merge evidence:** PR [#30](https://github.com/gkosarintsev/3d-game-three-js/pull/30) merged to `main` at 2026-11-19T05:55:48Z (merge commit `9c922efa57df2a1c5219e434c5f5b947c56aca01`, head `129dbd53d4af812966d9b2090af4e4615215f995`). Push CI [44467865746](https://github.com/gkosarintsev/3d-game-three-js/actions/runs/44467865746) **success**; PR CI [44467893430](https://github.com/gkosarintsev/3d-game-three-js/actions/runs/44467893430) **success** (full merge-gate incl. 100×3 seed-series).
+- **Still remaining:** R5.1/R5.5, unresolved R1/R2 DoD items, R2.6–R2.8, R6.1/R6.2, overall plan 21 DoD.
+
+#### Continuation increment (PR #30 merge evidence, `agent/plan21-r30-evidence`, in progress, CI pending)
+- **Branch/worktree:** `agent/plan21-r30-evidence` @ `C:\Temp\wt-plan21-evidence6` (from `origin/main` `9c922ef`, gv `0.74.0`; `node scripts/agent/check-env.mjs` OK).
+- **Scope (docs/state-only):** records merge/CI evidence for PR #30 (R5.3 gameplay placement validator): merge commit `9c922efa57df2a1c5219e434c5f5b947c56aca01`, head `129dbd53d4af812966d9b2090af4e4615215f995`, push CI `44467865746` **success**, PR CI `44467893430` **success** (full merge-gate incl. 100×3 seed-series).
 - **Still remaining:** R5.1/R5.5, unresolved R1/R2 DoD items, R2.6–R2.8, R6.1/R6.2, overall plan 21 DoD.
