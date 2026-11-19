@@ -177,9 +177,12 @@ export function resolveGeneratorConfig(input) {
     : typeof gen.cityProfile === 'string' ? gen.cityProfile
     : null;
   const activeProfileRaw = activeProfileId && cityProfiles[activeProfileId] ? cityProfiles[activeProfileId] : null;
-  // R6.1 (stated scope): deterministic ±20% mutation for profile-driven generation (§11), opt-out via generator.profileMutation.enabled === false.
+  // R6.1: транспорт-маршрутизация чувствительна к изменению геометрии реки/перекрёстка;
+  // мутация применяется для profile-driven не-транспортных сценариев (pilots/§11).
+  // Для transport-scenes профиль остаётся эталонным (см. R2.2 follow-ups).
+  const transportGenerate = isObj(gen.transport) ? gen.transport.generate === true : false;
   const mutationIn = isObj(gen.profileMutation) ? gen.profileMutation : null;
-  const mutationEnabled = !!activeProfileRaw && mutationIn?.enabled !== false;
+  const mutationEnabled = !!activeProfileRaw && mutationIn?.enabled !== false && !transportGenerate;
   const mutationDelta = clampParam(Number(mutationIn?.delta) || 0.2, 0, 0.25);
   const mutationSeed = Number.isFinite(Number(gen.seed)) ? Number(gen.seed) : 0;
   const activeProfile = mutationEnabled ? mutateProfile(activeProfileRaw, mutationSeed, mutationDelta) : activeProfileRaw;

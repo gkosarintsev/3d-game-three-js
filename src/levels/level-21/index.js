@@ -218,7 +218,7 @@ export const LEVEL_21 = {
       "rivers": [
         {
           "bankY": 0,
-          "bedY": -3,
+          "bedY": -4,
           "halfW": 11,
           "ramp": 30,
           "segments": [
@@ -263,7 +263,7 @@ export const LEVEL_21 = {
         },
         {
           "bankY": 0,
-          "bedY": -1.773,
+          "bedY": -2.364,
           "halfW": 5.813,
           "ramp": 30,
           "segments": [
