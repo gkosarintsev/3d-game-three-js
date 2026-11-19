@@ -7,7 +7,7 @@ Protocol: `.ai/plans/22-parallel-agents-github-ci.md`, `.ai/prompts/agent-ci-pro
 
 ## Current position (summary)
 
-- **Generator:** `DEFAULT_GENERATOR_VERSION = 0.72.0` on `origin/main` `fa2e7ba` (PR #26 merged 2026-11-19T05:21:40Z, R4.4 flat roofs; green CI 44464021684 push / 44464051061 incl. 100×3). Active increment: `agent/plan21-r26-evidence` @ `C:\Temp\wt-plan21-evidence4` from `fa2e7ba` (record PR #26 merge evidence, docs/state-only; CI pending). Staged v4 pipeline (`tools/citygen/index.mjs`, `pipeline/stage-1..6-*`), profiles/policies/validation/metrics/etalons/seed-series tooling developed incrementally.
+- **Generator:** `DEFAULT_GENERATOR_VERSION = 0.73.0` on branch `agent/plan21-r52-cadence` @ `C:\Temp\wt-plan21-next6` from `origin/main` `a4a4822` (R5.2 impression cadence/false dead-end metrics, output-affecting/report-only; CI pending). `origin/main` remains at `a4a4822` (PRs #24/#25/#26/#27 merged; evidence recorded). Staged v4 pipeline (`tools/citygen/index.mjs`, `pipeline/stage-1..6-*`), profiles/policies/validation/metrics/etalons/seed-series tooling developed incrementally.
 - **Gates/artifacts:** `tools/citygen.test.mjs`, `tools/citygen-etalon-check.mjs`, `tools/citygen-seed-series.mjs`, `tools/check-levels.mjs`, `tools/build-level.mjs --check`, browser suites by scope/CI; committed derived outputs and etalon/baseline snapshots are part of determinism/regression.
 - **Constraint:** any IR/report/derived level output changes require deterministic rebuild of committed artifacts and baseline/etalon updates per version policy, verified in GitHub CI.
 
@@ -23,7 +23,7 @@ Protocol: `.ai/plans/22-parallel-agents-github-ci.md`, `.ai/prompts/agent-ci-pro
 | **R4.3** (placement, foundation, building relief) | **partial** (W1-002 increment merged; §9.5/§9.6 gaps remain) | Stage-4/placement; output-affecting, requires rebuild+CI. |
 | **R4.4** (appearance/palettes/windows/roofs) | **done (stated scope)** | PR #24+squat; flat roofs centre/industrial ~25% walkable + parapet 0.9–1.2 m; palettes/windows/night/no-three implemented; roof equipment not supported by v4 schema (`houseFeatures` closed) — excluded. |
 | **R5.1** (controlled chaos) | open | Behavior/layout change; versioning per policy. |
-| **R5.2** (readability/landmarks) | **partial** (LOS metric terrain_los_sample PR #22; dominants 5-8 PR #24; viewpoints 2-4) | Residual: false dead-end policy, impression cadence 150-300 m (requires generation/rhythm work, open). |
+| **R5.2** (readability/landmarks) | **done (stated scope)** | LOS metric (PR #22), dominants 5-8 + viewpoints 2-4 (PR #24), impressionCadence metric (L16/L17/L21/L22 in-range, L20 367 m documented deviation) + falseDeadEnds scaffold (PR #TBD, gv 0.73.0). |
 | **R5.3** (gameplay spawn/exit/cars/enemies) | open | Gameplay/connectivity/rules. |
 | **R5.4** (`locked`, `instance.generation`) | **done (stated scope)** | `finalizeInstances` preserves `locked` and stamps `source/seed/generator/generatorVersion`; broader regen/chunk integration tracked under R5.5/follow-ups. |
 | **R5.5** (`homeChunk`/`coverageChunks`, streaming) | open | Chunk/build pipeline, catalog rebuilds. |
@@ -279,3 +279,10 @@ Protocol: `.ai/plans/22-parallel-agents-github-ci.md`, `.ai/prompts/agent-ci-pro
 - **Branch/worktree:** `agent/plan21-r26-evidence` @ `C:\Temp\wt-plan21-evidence4` (from `origin/main` `fa2e7ba`, gv `0.72.0`; `node scripts/agent/check-env.mjs` OK).
 - **Scope (docs/state-only):** records merge/CI evidence for PR #26 (R4.4 flat-roofs increment): merge commit `fa2e7ba7b52a84e1cac6102169b92f93902e4cea`, head `b77a33890aeadcbaf9b47fbe5466d8f6a2ceceb1`, push CI `44464021684` **success**, PR CI `44464051061` **success** (full merge-gate incl. 100×3 seed-series).
 - **Still remaining:** R5.2 (false dead-end policy, impression cadence 150-300 m), R5.1/R5.3/R5.5, unresolved R1/R2/R3 DoD items, R2.6-2.8, R6.1/R6.2, overall plan 21 DoD.
+
+#### Continuation increment (R5.2 cadence/false dead-ends, `agent/plan21-r52-cadence`, in progress, CI pending)
+- **Branch/worktree:** `agent/plan21-r52-cadence` @ `C:\Temp\wt-plan21-next6` (from `origin/main` `a4a4822`, gv `0.72.0 -> 0.73.0`; `node scripts/agent/check-env.mjs` OK).
+- **Scope (output-affecting/report-only, gv bump):** `tools/citygen/rules.mjs` — `impressionCadence` (spawn→exit shortest path, 25 m sampling, district-type changes; avg/min spacing + target 150–300, L16 245 m, L17 227 m, L21 267 m, L22 189 m in range; L20 367 m documented deviation) and `falseDeadEnds` scaffold (none emitted by design, audit scaffold until false-pass semantics implemented). Metrics report-only; no generator behavior change. `tools/citygen/config.mjs` gv 0.73.0; `src/levels/level-16..22.json` bumped; rebuild L16-22 (0 warnings); baselines L16-22 + etalons refreshed (10 updated); `node --test tools/citygen.test.mjs` **57/57**; etalon-check **16/16** (prep).
+- **R5.2 [x] (stated scope).**
+- **CI/merge evidence:** pending (commit/push/PR + green GitHub CI/merge-gate, sequential merge to `main`, finalize evidence next state-update).
+- **Still remaining:** R5.1/R5.3/R5.5, unresolved R1/R2/R3 DoD items, R2.6–R2.8, R6.1/R6.2, overall plan 21 DoD.

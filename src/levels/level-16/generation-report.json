@@ -1,7 +1,7 @@
 {
   "version": 1,
   "generator": {
-    "generatorVersion": "0.72.0",
+    "generatorVersion": "0.73.0",
     "seed": 16,
     "deterministic": true
   },
@@ -2854,6 +2854,27 @@
       "visibleFraction": 0.305556,
       "visibleTargets": 9
     },
+    "impressionCadence": {
+      "partial": true,
+      "method": "spawn_exit_shortest_path_25m",
+      "samples": 67,
+      "changes": 6,
+      "pathLength": 1717.5,
+      "avgSpacingMeters": 245.4,
+      "minSpacingMeters": 75,
+      "targetMin": 150,
+      "targetMax": 300,
+      "ok": true
+    },
+    "falseDeadEnds": {
+      "count": 0,
+      "share": 0,
+      "deadEndRatio": null,
+      "target": 0.1,
+      "ok": true,
+      "partial": true,
+      "note": "no false dead-ends emitted by design; metric scaffold until false-pass semantics are implemented"
+    },
     "blockDensityCorrelation": {
       "rho": 0.931889,
       "n": 44,
@@ -2874,7 +2895,7 @@
       "dividesPlate": true
     },
     "determinism": {
-      "generatorVersion": "0.72.0",
+      "generatorVersion": "0.73.0",
       "seed": 16,
       "deterministic": true
     },
