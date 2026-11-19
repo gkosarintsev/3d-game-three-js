@@ -120,14 +120,86 @@ function clampFootprintToWorld(fp, worldHalf, rotation = 0, margin = 0.75) {
   return translateFootprint(fp, +dx.toFixed(3), +dz.toFixed(3));
 }
 
-function finalizeByAccess(fp, cx, cz, p, maxW, maxD, rng, worldHalf = Infinity) {
+function parcelStreetEdgeForAccess(parcelAabb, edge) {
+  if (!parcelAabb || !edge) return null;
+  if (edge === 'south') return parcelAabb.minZ;
+  if (edge === 'north') return parcelAabb.maxZ;
+  if (edge === 'west') return parcelAabb.minX;
+  if (edge === 'east') return parcelAabb.maxX;
+  return null;
+}
+
+function frontageBandInterval(parcelAabb, edge) {
+  if (!parcelAabb || !edge) return null;
+  if (edge === 'south' || edge === 'north') return { a: parcelAabb.minX, b: parcelAabb.maxX };
+  return { a: parcelAabb.minZ, b: parcelAabb.maxZ };
+}
+
+function computeFrontageGroupStreetEdges(parcels) {
+  // R4.3 §9.5: adjacency-aware continuous frontage line across parcel groups/blocks.
+  // Parcels on the same street-facing edge and approximately the same street-edge coordinate
+  // (tolerating block/grid inset differences) with touching/overlapping frontage projections
+  // share one canonical building-line datum (street-most boundary of the group).
+  const byEdge = { south: [], north: [], west: [], east: [] };
+  for (const p of parcels ?? []) {
+    if (p?.reserved) continue;
+    const edge = p?.access?.edge;
+    const aabb = p?.aabb;
+    if (!edge || !aabb || !byEdge[edge]) continue;
+    const streetEdge = parcelStreetEdgeForAccess(aabb, edge);
+    const band = frontageBandInterval(aabb, edge);
+    if (!Number.isFinite(streetEdge) || !band) continue;
+    byEdge[edge].push({ p, streetEdge, a0: Math.min(band.a, band.b), b0: Math.max(band.a, band.b) });
+  }
+  const out = new Map();
+  const edgeTol = 2.0;    // tolerate block/parcel inset differences across adjacent groups
+  const touchTol = 0.75;  // frontage adjacency/touch along the street
+  for (const edge of ['south', 'north', 'west', 'east']) {
+    const items = byEdge[edge];
+    const n = items.length;
+    if (!n) continue;
+    const parent = Array.from({ length: n }, (_, i) => i);
+    const find = (x) => { while (parent[x] !== x) { parent[x] = parent[parent[x]]; x = parent[x]; } return x; };
+    const union = (a, b) => { a = find(a); b = find(b); if (a !== b) parent[b] = a; };
+    const compat = (i, j) => {
+      const A = items[i], B = items[j];
+      if (Math.abs(A.streetEdge - B.streetEdge) > edgeTol) return false;
+      // overlap/touch along frontage axis
+      return !(A.b0 < B.a0 - touchTol || B.b0 < A.a0 - touchTol);
+    };
+    // O(n^2) is fine for parcel counts; deterministic by stable item order in source array.
+    for (let i = 0; i < n; i++) {
+      for (let j = i + 1; j < n; j++) {
+        if (compat(i, j)) union(i, j);
+      }
+    }
+    const groups = new Map();
+    for (let i = 0; i < n; i++) {
+      const r = find(i);
+      if (!groups.has(r)) groups.set(r, []);
+      groups.get(r).push(i);
+    }
+    for (const idxs of groups.values()) {
+      let groupStreetEdge = items[idxs[0]].streetEdge;
+      for (const k of idxs) {
+        const se = items[k].streetEdge;
+        if (edge === 'south' || edge === 'west') groupStreetEdge = Math.min(groupStreetEdge, se);
+        else groupStreetEdge = Math.max(groupStreetEdge, se);
+      }
+      for (const k of idxs) out.set(items[k].p, groupStreetEdge);
+    }
+  }
+  return out;
+}
+
+function finalizeByAccess(fp, cx, cz, p, maxW, maxD, rng, worldHalf = Infinity, frontageGroupStreetEdges = null) {
   const access = p?.access ?? null;
   if (!access || !access.edge) return { fp, rotation: 0 };
   const edge = access.edge;
   const yaw = streetYawFromEdge(edge, rng);
   const rot = rotateFootprint(fp, cx, cz, yaw);
 
-  // R4.3 §9.5: линия застройки — отступ от улицы (границы участка со стороны доступа) внутрь участка.
+  // R4.3 §9.5: линия застройки — отступ от улицы (границы участка/группы участков со стороны доступа) внутрь участка.
   // Выравниваем фасад к setback-линии, затем гарантируем, что footprint целиком внутри участка и мира.
   let aligned = rot;
   const parcel = p?.aabb ?? null;
@@ -138,32 +210,35 @@ function finalizeByAccess(fp, cx, cz, p, maxW, maxD, rng, worldHalf = Infinity) 
     const innerMinX = parcel.minX + margin, innerMaxX = parcel.maxX - margin;
     const innerMinZ = parcel.minZ + margin, innerMaxZ = parcel.maxZ - margin;
     const desiredSetback = SETBACK_BY_TYPE[p?.type] ?? 5.0;
-    // R4.3 §9.5: explicit continuous building-line/frontage target from parcel street boundary.
-    // Adjacent parcels on the same frontage band share the same street-edge coordinate, so aligning to
-    // street edge + desired setback yields a continuous facade line when parcel depth allows.
+    // R4.3 §9.5: explicit continuous building-line/frontage target from (group-aware) parcel street boundary.
+    // Adjacent parcels on the same frontage band/group share a canonical street-edge datum so aligning to
+    // street edge + desired setback yields a continuous facade line across parcel groups/blocks when depth allows.
+    const groupStreetEdge = frontageGroupStreetEdges?.get?.(p);
+    const streetEdge = Number.isFinite(groupStreetEdge) ? groupStreetEdge : parcelStreetEdgeForAccess(parcel, edge);
     const availDepth = (edge === 'north' || edge === 'south')
       ? Math.max(0, (innerMaxZ - innerMinZ) - spanZ)
       : Math.max(0, (innerMaxX - innerMinX) - spanX);
     const frontageSetback = Math.min(desiredSetback, availDepth);
     let dx = 0, dz = 0;
     if (edge === 'south') {
-      // улица у южной границы участка: фасад (minZ) на линию застройки внутрь
-      const wantMinZ = parcel.minZ + frontageSetback;
+      // улица у южной границы участка/группы: фасад (minZ) на линию застройки внутрь
+      const wantMinZ = streetEdge + frontageSetback;
       dz = wantMinZ - b.minZ;
     } else if (edge === 'north') {
-      // улица у северной границы участка: фасад (maxZ) на линию застройки внутрь
-      const wantMaxZ = parcel.maxZ - frontageSetback;
+      // улица у северной границы участка/группы: фасад (maxZ) на линию застройки внутрь
+      const wantMaxZ = streetEdge - frontageSetback;
       dz = wantMaxZ - b.maxZ;
     } else if (edge === 'west') {
-      const wantMinX = parcel.minX + frontageSetback;
+      const wantMinX = streetEdge + frontageSetback;
       dx = wantMinX - b.minX;
     } else if (edge === 'east') {
-      const wantMaxX = parcel.maxX - frontageSetback;
+      const wantMaxX = streetEdge - frontageSetback;
       dx = wantMaxX - b.maxX;
     }
     aligned = translateFootprint(rot, +dx.toFixed(3), +dz.toFixed(3));
     // R4.3 §9.5: угловой дом — соблюдаем линию застройки и на вторичной уличной грани (угол квартала),
     // смещая здание к пересечению фасадных линий без нарушения основной (primary) фасадной линии.
+    // Вторичная грань использует локальную границу участка (пересечение фасадных линий на углу).
     if (access?.corner && Array.isArray(access.cornerEdges) && access.cornerEdges.length > 1) {
       const b2 = aabbOfFootprint(aligned);
       const spanX2 = b2.maxX - b2.minX, spanZ2 = b2.maxZ - b2.minZ;
@@ -628,6 +703,8 @@ export function makeStage4() {
         const rd = Number.isFinite(p?.access?.roadDist) ? p.access.roadDist : minDistanceToRoadSegments(cx, cz, roadSegments);
         return { p, idx, rd: Number.isFinite(rd) ? rd : 1e9 };
       }).sort((a, b) => a.rd - b.rd || a.idx - b.idx).map(x => x.p);
+      // R4.3 §9.5: shared frontage building-line datums for adjacency-aware continuity across parcel groups/blocks.
+      const frontageGroupStreetEdges = computeFrontageGroupStreetEdges(parcels);
 
       const stream = ctx.meta?.stream ?? ctx.input?.stream ?? null;
       const chunkSize = Number(stream?.chunk) > 0 ? Number(stream.chunk) : null;
@@ -730,7 +807,7 @@ export function makeStage4() {
             const riverIndex = (rivers === (ctx.hydrology?.rivers ?? null) || rivers === (ctx.masks?.easement?.rivers ?? null)) ? (ctx.spatial?.riverSegments ?? null) : null;
             const lakes = ctx.masks?.easement?.lakes ?? [];
             // R4.3 §9.5/§9.6: orientation aligned to street + setback pushes away from street — for rotated footprint
-            const fin = finalizeByAccess(fp, cx, cz, p, maxW, maxD, rng, size / 2);
+            const fin = finalizeByAccess(fp, cx, cz, p, maxW, maxD, rng, size / 2, frontageGroupStreetEdges);
             const fpAligned = fin.fp;
             const fchk = isFootprintFoundationAllowed(fpAligned, Math.max(1, Number(profile.buildings?.maxFloors ?? 16)), terrainSampler);
             if (!fchk.ok) continue;
@@ -754,7 +831,7 @@ export function makeStage4() {
             const fp = footprintRect(cx, cz, w, d);
             const riverIndex = (rivers === (ctx.hydrology?.rivers ?? null) || rivers === (ctx.masks?.easement?.rivers ?? null)) ? (ctx.spatial?.riverSegments ?? null) : null;
             const lakes = ctx.masks?.easement?.lakes ?? [];
-            const fin = finalizeByAccess(fp, cx, cz, p, maxW, maxD, rng, size / 2);
+            const fin = finalizeByAccess(fp, cx, cz, p, maxW, maxD, rng, size / 2, frontageGroupStreetEdges);
             const fpAligned = fin.fp;
             const fchk = isFootprintFoundationAllowed(fpAligned, Math.max(1, Number(profile.buildings?.maxFloors ?? (arch ? arch.floors[1] : 4))), terrainSampler);
             if (!fchk.ok) continue;
