@@ -1,7 +1,7 @@
 {
   "version": 1,
   "generator": {
-    "generatorVersion": "0.70.0",
+    "generatorVersion": "0.71.0",
     "seed": 16,
     "deterministic": true
   },
@@ -706,7 +706,7 @@
       },
       "cells": 0,
       "parcels": 66,
-      "reservedParcels": 29
+      "reservedParcels": 30
     },
     {
       "id": "district_2_3_1",
@@ -1192,8 +1192,8 @@
       "severity": "info",
       "code": "terrain_landmarks_marked",
       "stage": "1_landscape_hydrology",
-      "message": "marked 5 landmark/orientation point(s)",
-      "count": 5
+      "message": "marked 6 landmark/orientation point(s)",
+      "count": 6
     },
     {
       "severity": "info",
@@ -1669,13 +1669,13 @@
       "code": "parcels_reserved_by_reason",
       "stage": "3_districts_parcels",
       "message": "parcel reservations by terrain/hydrology/infrastructure constraints",
-      "reserved": 540,
+      "reserved": 541,
       "total": 2325,
       "byReason": {
         "water": 283,
         "road_corridor": 178,
         "anchor": 4,
-        "reservation": 9,
+        "reservation": 10,
         "crossing": 0,
         "steep_slope": 66,
         "remote_access": 0,
@@ -2150,7 +2150,7 @@
       "severity": "info",
       "code": "floors_contrast_built",
       "stage": "4_buildings_structures",
-      "message": "building floors distribution (section 9.4): L-modulation, adjacency contrast <= 2.5x, one dominant per high-L district",
+      "message": "building floors distribution (section 9.4): L-modulation, adjacency contrast <= 2.5x, 5-8 dominants per city (one per high-L district, capped/filled 2026-11-19)",
       "clamped": 64,
       "dominants": 5,
       "districts": 44,
@@ -2245,7 +2245,7 @@
         "sports"
       ],
       "parcels": 2325,
-      "reservedParcels": 540,
+      "reservedParcels": 541,
       "parcelAccess": {
         "near": 1158,
         "mid": 1054,
@@ -2264,12 +2264,12 @@
         },
         "luxury": {
           "parcels": 264,
-          "unreserved": 199,
+          "unreserved": 198,
           "good": 100,
-          "mid": 94,
+          "mid": 93,
           "far": 5,
-          "reserved": 65,
-          "goodOrMid": 194,
+          "reserved": 66,
+          "goodOrMid": 193,
           "accessibleRatio": 0.975
         },
         "office": {
@@ -2373,8 +2373,8 @@
       "waterBuffers": 1,
       "floodplains": 1,
       "crossings": 3,
-      "landmarks": 5,
-      "reservations": 13,
+      "landmarks": 6,
+      "reservations": 14,
       "slopeShare": {
         "flat_lt3": 0.325625,
         "gentle_3_8": 0.1775,
@@ -2653,7 +2653,7 @@
       "roadNodes": 166,
       "districts": 44,
       "parcels": 2325,
-      "reservedParcels": 540,
+      "reservedParcels": 541,
       "buildings": 361,
       "enterableBuildings": 72,
       "props": 360,
@@ -2765,7 +2765,7 @@
       "parkShare": 0.125
     },
     "parcels": {
-      "reservedShare": 0.232258,
+      "reservedShare": 0.232688,
       "byDistrictCount": {
         "district_0_0_00": 25,
         "district_0_0_01": 25,
@@ -2835,24 +2835,24 @@
         }
       },
       "crossings": 3,
-      "reservations": 13,
-      "landmarks": 5,
+      "reservations": 14,
+      "landmarks": 6,
       "waterBuffers": 1,
       "floodplains": 1
     },
     "landmarkVisibility": {
       "partial": true,
       "method": "terrain_los_sample",
-      "landmarks": 5,
+      "landmarks": 6,
       "crossings": 3,
       "cores": 0,
-      "total": 8,
-      "observers": 8,
-      "totalPairs": 56,
-      "visiblePairs": 16,
-      "visibleApprox": 8,
-      "visibleFraction": 0.285714,
-      "visibleTargets": 8
+      "total": 9,
+      "observers": 9,
+      "totalPairs": 72,
+      "visiblePairs": 22,
+      "visibleApprox": 9,
+      "visibleFraction": 0.305556,
+      "visibleTargets": 9
     },
     "blockDensityCorrelation": {
       "rho": 0.931889,
@@ -2874,7 +2874,7 @@
       "dividesPlate": true
     },
     "determinism": {
-      "generatorVersion": "0.70.0",
+      "generatorVersion": "0.71.0",
       "seed": 16,
       "deterministic": true
     },

@@ -1,7 +1,7 @@
 {
   "version": 1,
   "generator": {
-    "generatorVersion": "0.70.0",
+    "generatorVersion": "0.71.0",
     "seed": 21,
     "deterministic": true
   },
@@ -321,7 +321,7 @@
       "frame": null,
       "cells": 0,
       "parcels": 28,
-      "reservedParcels": 11
+      "reservedParcels": 12
     },
     {
       "id": "district_1_3_0",
@@ -1079,7 +1079,7 @@
       "message": "road-needy type 'sports' has no parcels with road access < 140m",
       "type": "sports",
       "parcels": 56,
-      "unreserved": 39
+      "unreserved": 38
     },
     {
       "severity": "warn",
@@ -1139,8 +1139,8 @@
       "severity": "info",
       "code": "terrain_landmarks_marked",
       "stage": "1_landscape_hydrology",
-      "message": "marked 5 landmark/orientation point(s)",
-      "count": 5
+      "message": "marked 6 landmark/orientation point(s)",
+      "count": 6
     },
     {
       "severity": "info",
@@ -2907,13 +2907,13 @@
       "code": "parcels_reserved_by_reason",
       "stage": "3_districts_parcels",
       "message": "parcel reservations by terrain/hydrology/infrastructure constraints",
-      "reserved": 488,
+      "reserved": 489,
       "total": 2407,
       "byReason": {
         "water": 341,
         "road_corridor": 126,
         "anchor": 4,
-        "reservation": 6,
+        "reservation": 7,
         "crossing": 0,
         "steep_slope": 0,
         "remote_access": 11,
@@ -3404,7 +3404,7 @@
       "severity": "info",
       "code": "floors_contrast_built",
       "stage": "4_buildings_structures",
-      "message": "building floors distribution (section 9.4): L-modulation, adjacency contrast <= 2.5x, one dominant per high-L district",
+      "message": "building floors distribution (section 9.4): L-modulation, adjacency contrast <= 2.5x, 5-8 dominants per city (one per high-L district, capped/filled 2026-11-19)",
       "clamped": 124,
       "dominants": 8,
       "districts": 47,
@@ -3515,7 +3515,7 @@
         "suburb"
       ],
       "parcels": 2407,
-      "reservedParcels": 488,
+      "reservedParcels": 489,
       "parcelAccess": {
         "near": 1163,
         "mid": 910,
@@ -3584,11 +3584,11 @@
         },
         "sports": {
           "parcels": 56,
-          "unreserved": 39,
+          "unreserved": 38,
           "good": 0,
           "mid": 0,
-          "far": 39,
-          "reserved": 17,
+          "far": 38,
+          "reserved": 18,
           "goodOrMid": 0,
           "accessibleRatio": 0
         }
@@ -3643,8 +3643,8 @@
       "waterBuffers": 2,
       "floodplains": 2,
       "crossings": 6,
-      "landmarks": 5,
-      "reservations": 13,
+      "landmarks": 6,
+      "reservations": 14,
       "slopeShare": {
         "flat_lt3": 0.7675,
         "gentle_3_8": 0.22375,
@@ -3804,7 +3804,7 @@
       "roadNodes": 129,
       "districts": 47,
       "parcels": 2407,
-      "reservedParcels": 488,
+      "reservedParcels": 489,
       "buildings": 411,
       "enterableBuildings": 82,
       "props": 360,
@@ -3900,7 +3900,7 @@
       "parkShare": 0.0625
     },
     "parcels": {
-      "reservedShare": 0.202742,
+      "reservedShare": 0.203157,
       "byDistrictCount": {
         "district_0_0_00": 25,
         "district_0_0_01": 25,
@@ -3973,24 +3973,24 @@
         }
       },
       "crossings": 6,
-      "reservations": 13,
-      "landmarks": 5,
+      "reservations": 14,
+      "landmarks": 6,
       "waterBuffers": 2,
       "floodplains": 2
     },
     "landmarkVisibility": {
       "partial": true,
       "method": "terrain_los_sample",
-      "landmarks": 5,
+      "landmarks": 6,
       "crossings": 6,
       "cores": 0,
-      "total": 11,
-      "observers": 11,
-      "totalPairs": 110,
-      "visiblePairs": 95,
-      "visibleApprox": 11,
+      "total": 12,
+      "observers": 12,
+      "totalPairs": 132,
+      "visiblePairs": 114,
+      "visibleApprox": 12,
       "visibleFraction": 0.863636,
-      "visibleTargets": 11
+      "visibleTargets": 12
     },
     "blockDensityCorrelation": {
       "rho": 0.917379,
@@ -4012,7 +4012,7 @@
       "dividesPlate": true
     },
     "determinism": {
-      "generatorVersion": "0.70.0",
+      "generatorVersion": "0.71.0",
       "seed": 21,
       "deterministic": true
     },

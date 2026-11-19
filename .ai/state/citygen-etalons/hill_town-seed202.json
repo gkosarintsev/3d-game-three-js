@@ -1,8 +1,8 @@
 {
   "profile": "hill_town",
   "seed": 202,
-  "generatorVersion": "0.70.0",
-  "reportHash": "a9a71e47407e09f087eebba696f4f0e50b6dd8980db870cfba5eec87dc3a97de",
+  "generatorVersion": "0.71.0",
+  "reportHash": "5d8d72c856fccb66fb67d930dc4874ca6d8792d1c45cc34f941c305cd02ea405",
   "summary": {
     "errors": 0,
     "warnings": 8,
@@ -21,7 +21,7 @@
       "roadNodes": 0,
       "districts": 42,
       "parcels": 2246,
-      "reservedParcels": 42,
+      "reservedParcels": 43,
       "buildings": 412,
       "enterableBuildings": 82,
       "props": 360,
@@ -121,13 +121,13 @@
         }
       },
       "crossings": 0,
-      "reservations": 12,
-      "landmarks": 4,
+      "reservations": 13,
+      "landmarks": 5,
       "waterBuffers": 0,
       "floodplains": 0
     },
     "parcels": {
-      "reservedShare": 0.0187,
+      "reservedShare": 0.019145,
       "byDistrictCount": {
         "district_0_0_00": 25,
         "district_0_0_01": 25,
@@ -176,16 +176,16 @@
     "landmarkVisibility": {
       "partial": true,
       "method": "terrain_los_sample",
-      "landmarks": 4,
+      "landmarks": 5,
       "crossings": 0,
       "cores": 0,
-      "total": 4,
-      "observers": 5,
-      "totalPairs": 17,
-      "visiblePairs": 6,
-      "visibleApprox": 3,
-      "visibleFraction": 0.352941,
-      "visibleTargets": 3
+      "total": 5,
+      "observers": 6,
+      "totalPairs": 26,
+      "visiblePairs": 12,
+      "visibleApprox": 4,
+      "visibleFraction": 0.461538,
+      "visibleTargets": 4
     },
     "blockDensityCorrelation": {
       "rho": 0.872021,

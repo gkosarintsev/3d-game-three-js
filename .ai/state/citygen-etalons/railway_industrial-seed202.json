@@ -1,8 +1,8 @@
 {
   "profile": "railway_industrial",
   "seed": 202,
-  "generatorVersion": "0.70.0",
-  "reportHash": "a4463c3ed1e4e599cfc137a73a94161a99280bb55346d93e0dc2f10eced08dd0",
+  "generatorVersion": "0.71.0",
+  "reportHash": "fae0937ecf1d254fca78713a69572c1e0aaaafd1c7e06be873dcb120f63729f8",
   "summary": {
     "errors": 0,
     "warnings": 8,
@@ -21,7 +21,7 @@
       "roadNodes": 0,
       "districts": 43,
       "parcels": 2266,
-      "reservedParcels": 304,
+      "reservedParcels": 305,
       "buildings": 408,
       "enterableBuildings": 82,
       "props": 360,
@@ -121,13 +121,13 @@
         }
       },
       "crossings": 6,
-      "reservations": 13,
-      "landmarks": 5,
+      "reservations": 14,
+      "landmarks": 6,
       "waterBuffers": 2,
       "floodplains": 2
     },
     "parcels": {
-      "reservedShare": 0.134157,
+      "reservedShare": 0.134598,
       "byDistrictCount": {
         "district_0_0_00": 25,
         "district_0_0_01": 25,
@@ -177,16 +177,16 @@
     "landmarkVisibility": {
       "partial": true,
       "method": "terrain_los_sample",
-      "landmarks": 5,
+      "landmarks": 6,
       "crossings": 6,
       "cores": 0,
-      "total": 11,
-      "observers": 11,
-      "totalPairs": 110,
-      "visiblePairs": 95,
-      "visibleApprox": 11,
-      "visibleFraction": 0.863636,
-      "visibleTargets": 11
+      "total": 12,
+      "observers": 12,
+      "totalPairs": 132,
+      "visiblePairs": 117,
+      "visibleApprox": 12,
+      "visibleFraction": 0.886364,
+      "visibleTargets": 12
     },
     "blockDensityCorrelation": {
       "rho": 0.812897,

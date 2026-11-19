@@ -1,8 +1,8 @@
 {
   "profile": "river_trade",
   "seed": 202,
-  "generatorVersion": "0.70.0",
-  "reportHash": "63fabba29a9ca391b4124890715bfd36f56f6af8ab0252c04c49b2b730d11a86",
+  "generatorVersion": "0.71.0",
+  "reportHash": "3c701da09793e427185ec3040bf46c70ed19bb7b867b8223748fd8d648aae792",
   "summary": {
     "errors": 0,
     "warnings": 8,
@@ -21,7 +21,7 @@
       "roadNodes": 0,
       "districts": 43,
       "parcels": 2112,
-      "reservedParcels": 301,
+      "reservedParcels": 302,
       "buildings": 407,
       "enterableBuildings": 81,
       "props": 360,
@@ -121,13 +121,13 @@
         }
       },
       "crossings": 6,
-      "reservations": 13,
-      "landmarks": 5,
+      "reservations": 14,
+      "landmarks": 6,
       "waterBuffers": 2,
       "floodplains": 2
     },
     "parcels": {
-      "reservedShare": 0.142519,
+      "reservedShare": 0.142992,
       "byDistrictCount": {
         "district_0_0_00": 25,
         "district_0_0_01": 25,
@@ -177,16 +177,16 @@
     "landmarkVisibility": {
       "partial": true,
       "method": "terrain_los_sample",
-      "landmarks": 5,
+      "landmarks": 6,
       "crossings": 6,
       "cores": 0,
-      "total": 11,
-      "observers": 11,
-      "totalPairs": 110,
-      "visiblePairs": 95,
-      "visibleApprox": 11,
-      "visibleFraction": 0.863636,
-      "visibleTargets": 11
+      "total": 12,
+      "observers": 12,
+      "totalPairs": 132,
+      "visiblePairs": 117,
+      "visibleApprox": 12,
+      "visibleFraction": 0.886364,
+      "visibleTargets": 12
     },
     "blockDensityCorrelation": {
       "rho": 0.813236,

@@ -1,7 +1,7 @@
 {
   "version": 1,
   "generator": {
-    "generatorVersion": "0.70.0",
+    "generatorVersion": "0.71.0",
     "seed": 20,
     "deterministic": true
   },
@@ -318,7 +318,7 @@
       },
       "cells": 0,
       "parcels": 18,
-      "reservedParcels": 3
+      "reservedParcels": 4
     },
     {
       "id": "district_1_2_0",
@@ -1003,8 +1003,8 @@
       "severity": "warn",
       "code": "chunk_buildings_heavy",
       "stage": "6_finalize_emit",
-      "message": "high building count in a single chunk (168)",
-      "maxBuildings": 168,
+      "message": "high building count in a single chunk (179)",
+      "maxBuildings": 179,
       "chunk": 640,
       "grid": 2
     },
@@ -1012,8 +1012,8 @@
       "severity": "warn",
       "code": "chunk_props_heavy",
       "stage": "6_finalize_emit",
-      "message": "high prop count in a single chunk (171)",
-      "maxProps": 171,
+      "message": "high prop count in a single chunk (169)",
+      "maxProps": 169,
       "chunk": 640,
       "grid": 2
     },
@@ -1061,8 +1061,8 @@
       "severity": "info",
       "code": "terrain_landmarks_marked",
       "stage": "1_landscape_hydrology",
-      "message": "marked 4 landmark/orientation point(s)",
-      "count": 4
+      "message": "marked 5 landmark/orientation point(s)",
+      "count": 5
     },
     {
       "severity": "info",
@@ -2856,13 +2856,13 @@
       "code": "parcels_reserved_by_reason",
       "stage": "3_districts_parcels",
       "message": "parcel reservations by terrain/hydrology/infrastructure constraints",
-      "reserved": 179,
+      "reserved": 180,
       "total": 2381,
       "byReason": {
         "water": 0,
         "road_corridor": 141,
         "anchor": 4,
-        "reservation": 14,
+        "reservation": 15,
         "crossing": 0,
         "steep_slope": 20,
         "remote_access": 0,
@@ -3202,22 +3202,22 @@
       "code": "buildings_generated",
       "stage": "4_buildings_structures",
       "message": "generated buildings from parcels",
-      "count": 409,
+      "count": 418,
       "budget": 420,
-      "skippedConflict": 1445
+      "skippedConflict": 1444
     },
     {
       "severity": "info",
       "code": "enterable_share",
       "stage": "4_buildings_structures",
       "message": "enterable buildings share (section 9.8, target 15-25%)",
-      "total": 409,
-      "enterable": 82,
-      "share": 0.2,
+      "total": 418,
+      "enterable": 84,
+      "share": 0.201,
       "targetShare": 0.2,
       "required": {
-        "min": 62,
-        "max": 102
+        "min": 63,
+        "max": 104
       }
     },
     {
@@ -3297,9 +3297,9 @@
       "severity": "info",
       "code": "floors_contrast_built",
       "stage": "4_buildings_structures",
-      "message": "building floors distribution (section 9.4): L-modulation, adjacency contrast <= 2.5x, one dominant per high-L district",
-      "clamped": 154,
-      "dominants": 0,
+      "message": "building floors distribution (section 9.4): L-modulation, adjacency contrast <= 2.5x, 5-8 dominants per city (one per high-L district, capped/filled 2026-11-19)",
+      "clamped": 121,
+      "dominants": 5,
       "districts": 40,
       "adjacencyPairs": 74
     },
@@ -3324,20 +3324,20 @@
       "message": "generated district props",
       "count": 360,
       "budget": 360,
-      "attempts": 798,
+      "attempts": 842,
       "byDistrictType": {
-        "old_town": 46,
-        "slums": 52,
+        "old_town": 41,
+        "slums": 57,
         "residential": 84,
         "industrial": 8,
-        "luxury": 20,
-        "commercial": 24,
-        "sports": 10,
-        "park": 12,
-        "campus": 8,
-        "market": 65,
-        "office": 13,
-        "parking": 8,
+        "luxury": 21,
+        "commercial": 20,
+        "sports": 8,
+        "park": 17,
+        "campus": 7,
+        "market": 66,
+        "office": 14,
+        "parking": 7,
         "forest": 9
       }
     },
@@ -3382,10 +3382,10 @@
         "grid": 2,
         "total": 4
       },
-      "roadNodes": 129,
-      "roadSegments": 157,
+      "roadNodes": 130,
+      "roadSegments": 158,
       "roadComponents": 1,
-      "roadGraphNodes": 129,
+      "roadGraphNodes": 130,
       "interchanges": {
         "segments": 13,
         "junctions": 4,
@@ -3408,7 +3408,7 @@
         "sports"
       ],
       "parcels": 2381,
-      "reservedParcels": 179,
+      "reservedParcels": 180,
       "parcelAccess": {
         "near": 1103,
         "mid": 1078,
@@ -3486,18 +3486,18 @@
           "accessibleRatio": 1
         }
       },
-      "buildings": 409,
+      "buildings": 418,
       "buildingsByDistrictType": {
-        "old_town": 67,
+        "old_town": 71,
         "office": 25,
         "industrial": 16,
-        "slums": 71,
-        "residential": 104,
-        "commercial": 41,
-        "campus": 5,
-        "market": 64,
-        "parking": 5,
-        "park": 5,
+        "slums": 75,
+        "residential": 112,
+        "commercial": 39,
+        "campus": 4,
+        "market": 58,
+        "parking": 8,
+        "park": 4,
         "forest": 2,
         "sports": 2,
         "luxury": 2
@@ -3505,26 +3505,26 @@
       "lights": 8,
       "props": 360,
       "propsByDistrictType": {
-        "old_town": 46,
-        "slums": 52,
+        "old_town": 41,
+        "slums": 57,
         "residential": 84,
         "industrial": 8,
-        "luxury": 20,
-        "commercial": 24,
-        "sports": 10,
-        "park": 12,
-        "campus": 8,
-        "market": 65,
-        "office": 13,
-        "parking": 8,
+        "luxury": 21,
+        "commercial": 20,
+        "sports": 8,
+        "park": 17,
+        "campus": 7,
+        "market": 66,
+        "office": 14,
+        "parking": 7,
         "forest": 9
       },
       "chunkLoad": {
         "nonEmptyChunks": 4,
-        "maxBuildings": 168,
-        "maxProps": 171,
-        "maxLights": 3,
-        "avgBuildings": 102.25,
+        "maxBuildings": 179,
+        "maxProps": 169,
+        "maxLights": 4,
+        "avgBuildings": 104.5,
         "avgProps": 90
       }
     },
@@ -3536,8 +3536,8 @@
       "waterBuffers": 0,
       "floodplains": 0,
       "crossings": 0,
-      "landmarks": 4,
-      "reservations": 12,
+      "landmarks": 5,
+      "reservations": 13,
       "slopeShare": {
         "flat_lt3": 0.351094,
         "gentle_3_8": 0.237344,
@@ -3667,37 +3667,37 @@
     "version": 2,
     "partial": true,
     "counts": {
-      "roads": 157,
-      "roadNodes": 129,
+      "roads": 158,
+      "roadNodes": 130,
       "districts": 40,
       "parcels": 2381,
-      "reservedParcels": 179,
-      "buildings": 409,
-      "enterableBuildings": 82,
+      "reservedParcels": 180,
+      "buildings": 418,
+      "enterableBuildings": 84,
       "props": 360,
       "lights": 8,
       "rivers": 0,
       "lakes": 0
     },
     "graph": {
-      "nodes": 129,
-      "edges": 157,
+      "nodes": 130,
+      "edges": 158,
       "components": 1,
-      "largestComponent": 129,
-      "deadEnds": 34,
-      "deadEndRatio": 0.263566,
-      "avgDegree": 2.434109,
-      "gamma": 0.412073
+      "largestComponent": 130,
+      "deadEnds": 35,
+      "deadEndRatio": 0.269231,
+      "avgDegree": 2.430769,
+      "gamma": 0.411458
     },
     "roads": {
-      "totalLength": 13711.693,
+      "totalLength": 13701.543,
       "lengthByType": {
         "arterial": 2080,
-        "local": 11631.693
+        "local": 11621.543
       },
       "shareByType": {
-        "arterial": 0.151695,
-        "local": 0.848305
+        "arterial": 0.151808,
+        "local": 0.848192
       },
       "maxSlope": 0.3,
       "slopeByClass": {
@@ -3708,7 +3708,7 @@
           "overAbsolute": 0
         },
         "local": {
-          "count": 156,
+          "count": 157,
           "maxSlope": 0.3,
           "overPolicy": 16,
           "overAbsolute": 0
@@ -3721,14 +3721,14 @@
         "local": 12
       },
       "classPolicyViolations": 17,
-      "classPolicyOk": 140,
+      "classPolicyOk": 141,
       "overAbsolute": 0,
       "version": 2
     },
     "gameplay": {
       "spawnToRoad": 0,
       "exitToRoad": 0,
-      "enterableShare": 0.200489,
+      "enterableShare": 0.200957,
       "enterableTarget": 0.2
     },
     "districts": {
@@ -3767,7 +3767,7 @@
       "parkShare": 0.125
     },
     "parcels": {
-      "reservedShare": 0.075178,
+      "reservedShare": 0.075598,
       "byDistrictCount": {
         "district_0_0_00": 25,
         "district_0_0_01": 25,
@@ -3833,24 +3833,24 @@
         }
       },
       "crossings": 0,
-      "reservations": 12,
-      "landmarks": 4,
+      "reservations": 13,
+      "landmarks": 5,
       "waterBuffers": 0,
       "floodplains": 0
     },
     "landmarkVisibility": {
       "partial": true,
       "method": "terrain_los_sample",
-      "landmarks": 4,
+      "landmarks": 5,
       "crossings": 0,
       "cores": 0,
-      "total": 4,
-      "observers": 5,
-      "totalPairs": 17,
-      "visiblePairs": 6,
-      "visibleApprox": 3,
-      "visibleFraction": 0.352941,
-      "visibleTargets": 3
+      "total": 5,
+      "observers": 6,
+      "totalPairs": 26,
+      "visiblePairs": 8,
+      "visibleApprox": 4,
+      "visibleFraction": 0.307692,
+      "visibleTargets": 4
     },
     "blockDensityCorrelation": {
       "rho": 0.903217,
@@ -3872,7 +3872,7 @@
       "dividesPlate": true
     },
     "determinism": {
-      "generatorVersion": "0.70.0",
+      "generatorVersion": "0.71.0",
       "seed": 20,
       "deterministic": true
     },

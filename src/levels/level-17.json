@@ -144,7 +144,7 @@
     "chunks": []
   },
   "generator": {
-    "generatorVersion": "0.70.0",
+    "generatorVersion": "0.71.0",
     "seed": 16,
     "deterministic": true,
     "profile": "river_trade",

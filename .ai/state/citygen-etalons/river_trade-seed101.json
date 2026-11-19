@@ -1,8 +1,8 @@
 {
   "profile": "river_trade",
   "seed": 101,
-  "generatorVersion": "0.70.0",
-  "reportHash": "fa7be778a4fb5c85ffc8e80759736c47520e322704a06c52e67bb8284b3c6163",
+  "generatorVersion": "0.71.0",
+  "reportHash": "7c5b945e9479a8ff79c6593941303be3c286b53d8fe44c103d5cfd50db23b8a5",
   "summary": {
     "errors": 0,
     "warnings": 10,
@@ -21,7 +21,7 @@
       "roadNodes": 0,
       "districts": 39,
       "parcels": 2183,
-      "reservedParcels": 351,
+      "reservedParcels": 352,
       "buildings": 406,
       "enterableBuildings": 81,
       "props": 360,
@@ -125,7 +125,7 @@
       "floodplains": 2
     },
     "parcels": {
-      "reservedShare": 0.160788,
+      "reservedShare": 0.161246,
       "byDistrictCount": {
         "district_0_0_00": 25,
         "district_0_0_01": 25,
@@ -175,11 +175,11 @@
       "crossings": 6,
       "cores": 0,
       "total": 12,
-      "observers": 11,
-      "totalPairs": 121,
-      "visiblePairs": 113,
+      "observers": 12,
+      "totalPairs": 132,
+      "visiblePairs": 106,
       "visibleApprox": 12,
-      "visibleFraction": 0.933884,
+      "visibleFraction": 0.80303,
       "visibleTargets": 12
     },
     "blockDensityCorrelation": {
