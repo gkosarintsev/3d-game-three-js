@@ -1,7 +1,7 @@
 {
   "version": 1,
   "generator": {
-    "generatorVersion": "0.71.0",
+    "generatorVersion": "0.72.0",
     "seed": 22,
     "deterministic": true
   },
@@ -1789,7 +1789,7 @@
       "code": "buildings_generated",
       "stage": "4_buildings_structures",
       "message": "generated buildings from parcels",
-      "count": 81,
+      "count": 77,
       "budget": 87,
       "skippedConflict": 234
     },
@@ -1798,13 +1798,13 @@
       "code": "enterable_share",
       "stage": "4_buildings_structures",
       "message": "enterable buildings share (section 9.8, target 15-25%)",
-      "total": 81,
-      "enterable": 16,
-      "share": 0.198,
+      "total": 77,
+      "enterable": 15,
+      "share": 0.195,
       "targetShare": 0.2,
       "required": {
-        "min": 13,
-        "max": 20
+        "min": 12,
+        "max": 19
       }
     },
     {
@@ -1885,7 +1885,7 @@
       "code": "floors_contrast_built",
       "stage": "4_buildings_structures",
       "message": "building floors distribution (section 9.4): L-modulation, adjacency contrast <= 2.5x, 5-8 dominants per city (one per high-L district, capped/filled 2026-11-19)",
-      "clamped": 41,
+      "clamped": 23,
       "dominants": 5,
       "districts": 15,
       "adjacencyPairs": 24
@@ -1911,15 +1911,15 @@
       "message": "generated district props",
       "count": 183,
       "budget": 183,
-      "attempts": 519,
+      "attempts": 470,
       "byDistrictType": {
-        "residential": 52,
+        "residential": 58,
         "parking": 6,
         "slums": 47,
-        "market": 29,
+        "market": 28,
         "office": 13,
-        "commercial": 22,
-        "forest": 8,
+        "commercial": 19,
+        "forest": 6,
         "industrial": 6
       }
     },
@@ -2043,35 +2043,35 @@
           "accessibleRatio": 1
         }
       },
-      "buildings": 81,
+      "buildings": 77,
       "buildingsByDistrictType": {
-        "office": 11,
-        "market": 8,
-        "commercial": 16,
-        "residential": 37,
-        "forest": 2,
-        "parking": 1,
+        "office": 12,
+        "market": 11,
+        "commercial": 17,
+        "residential": 29,
         "industrial": 4,
+        "parking": 1,
+        "forest": 1,
         "slums": 2
       },
       "lights": 8,
       "props": 183,
       "propsByDistrictType": {
-        "residential": 52,
+        "residential": 58,
         "parking": 6,
         "slums": 47,
-        "market": 29,
+        "market": 28,
         "office": 13,
-        "commercial": 22,
-        "forest": 8,
+        "commercial": 19,
+        "forest": 6,
         "industrial": 6
       },
       "chunkLoad": {
         "nonEmptyChunks": 4,
-        "maxBuildings": 31,
-        "maxProps": 55,
+        "maxBuildings": 24,
+        "maxProps": 59,
         "maxLights": 3,
-        "avgBuildings": 20.25,
+        "avgBuildings": 19.25,
         "avgProps": 45.75
       }
     },
@@ -2205,8 +2205,8 @@
       "districts": 15,
       "parcels": 403,
       "reservedParcels": 70,
-      "buildings": 81,
-      "enterableBuildings": 16,
+      "buildings": 77,
+      "enterableBuildings": 15,
       "props": 183,
       "lights": 8,
       "rivers": 0,
@@ -2223,14 +2223,14 @@
       "gamma": 0.492754
     },
     "roads": {
-      "totalLength": 7333.33,
+      "totalLength": 7349.48,
       "lengthByType": {
         "arterial": 800,
-        "local": 6533.33
+        "local": 6549.48
       },
       "shareByType": {
-        "arterial": 0.109091,
-        "local": 0.890909
+        "arterial": 0.108851,
+        "local": 0.891149
       },
       "maxSlope": 0.193246,
       "slopeByClass": {
@@ -2261,7 +2261,7 @@
     "gameplay": {
       "spawnToRoad": 0,
       "exitToRoad": 0,
-      "enterableShare": 0.197531,
+      "enterableShare": 0.194805,
       "enterableTarget": 0.2
     },
     "districts": {
@@ -2370,7 +2370,7 @@
       "dividesPlate": true
     },
     "determinism": {
-      "generatorVersion": "0.71.0",
+      "generatorVersion": "0.72.0",
       "seed": 22,
       "deterministic": true
     },

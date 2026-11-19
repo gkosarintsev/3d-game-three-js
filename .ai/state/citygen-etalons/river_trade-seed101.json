@@ -1,8 +1,8 @@
 {
   "profile": "river_trade",
   "seed": 101,
-  "generatorVersion": "0.71.0",
-  "reportHash": "7c5b945e9479a8ff79c6593941303be3c286b53d8fe44c103d5cfd50db23b8a5",
+  "generatorVersion": "0.72.0",
+  "reportHash": "39ffd963ff981c7bd813d382511f88d6f712838389f95f3dba1d218925712154",
   "summary": {
     "errors": 0,
     "warnings": 10,
@@ -22,7 +22,7 @@
       "districts": 39,
       "parcels": 2183,
       "reservedParcels": 352,
-      "buildings": 406,
+      "buildings": 405,
       "enterableBuildings": 81,
       "props": 360,
       "lights": 0,
@@ -59,7 +59,7 @@
     "gameplay": {
       "spawnToRoad": null,
       "exitToRoad": null,
-      "enterableShare": 0.199507,
+      "enterableShare": 0.2,
       "enterableTarget": 0.2
     },
     "districts": {
