@@ -7,7 +7,7 @@ Protocol: `.ai/plans/22-parallel-agents-github-ci.md`, `.ai/prompts/agent-ci-pro
 
 ## Current position (summary)
 
-- **Generator:** `DEFAULT_GENERATOR_VERSION = 0.68.0` on `origin/main` after merge of PR #14 (`c2f18fe`, 2026-11-19, 0.68.0 partial R4.4 night/window-lit semantics). Active continuation: `agent/plan21-r55-chunk-meta` @ `C:\Temp\wt-plan21-r55` from `origin/main` `c2f18fe` (R0.1 correspondence matrix formalized in state; CI pending for docs/state increment). Staged v4 pipeline (`tools/citygen/index.mjs`, `pipeline/stage-1..6-*`), profiles/policies/validation/metrics/etalons/seed-series tooling developed incrementally.
+- **Generator:** `DEFAULT_GENERATOR_VERSION = 0.68.0` on `origin/main` after merge of PR #15 (`a9c30d9`, 2026-11-19, R0.1 correspondence matrix formalized; PR #14/0.68.0 partial R4.4 window-lit semantics integrated earlier). Active continuation: next schema/runtime-supported increment from `origin/main` `a9c30d9` in a new isolated worktree/branch (TBD). Staged v4 pipeline (`tools/citygen/index.mjs`, `pipeline/stage-1..6-*`), profiles/policies/validation/metrics/etalons/seed-series tooling developed incrementally.
 - **Gates/artifacts:** `tools/citygen.test.mjs`, `tools/citygen-etalon-check.mjs`, `tools/citygen-seed-series.mjs`, `tools/check-levels.mjs`, `tools/build-level.mjs --check`, browser suites by scope/CI; committed derived outputs and etalon/baseline snapshots are part of determinism/regression.
 - **Constraint:** any IR/report/derived level output changes require deterministic rebuild of committed artifacts and baseline/etalon updates per version policy, verified in GitHub CI.
 
@@ -184,14 +184,13 @@ Protocol: `.ai/plans/22-parallel-agents-github-ci.md`, `.ai/prompts/agent-ci-pro
 - **Versioning/artifacts:** bump `DEFAULT_GENERATOR_VERSION` `0.67.0 -> 0.68.0`, `src/levels/level-16..22.json` bumped, `src/levels/level-16..22/*` rebuilt (0 warnings), baselines/etalons refreshed (`--update --generatorVersion 0.68.0 --skip-baselines`, 9/9). Pilot fixture finalize expectations unchanged (fixture `windows.lit` becomes explicit `0.4`).
 - **Integration (completed):** PR [#14](https://github.com/gkosarintsev/3d-game-three-js/pull/14) merged to `main` at 2026-11-19T02:35:03Z (merge commit `c2f18fe9c8d99a827f802e654f444aac6151b45a`, head `3dae1d8b69014340164d4a205e70dbacaab19bfb`). PR CI [44444920885](https://github.com/gkosarintsev/3d-game-three-js/actions/runs/44444920885) **success** (full merge-gate incl. node fast/citygen/etalon/rebuild shards, browser suites, 100×3 seed-series plain+transport, `aggregate / report`); push CI [44444868770](https://github.com/gkosarintsev/3d-game-three-js/actions/runs/44444868770) **success**.
 
-#### Continuation increment (R0.1, `agent/plan21-r55-chunk-meta`, in progress)
+#### Continuation increment (R0.1, `agent/plan21-r55-chunk-meta`, integrated)
 - **Scope (R0.1 correspondence matrix, docs/state-only):** `.ai/state/citygen-procedural-rules.md`, `.ai/state/citygen-plan21-execution.md`, `.ai/plans/21-citygen-procedural-rules.md`
   - **Матрица соответствия §3–13:** оформлена и добавлена таблица сопоставления doc ↔ текущие модули/стадии/пайплайн/схемы/гейты со статусами covered/partial/missing/n/a, evidence-ссылками (код, committed derived/снапшоты, CI PR #1–#14) и выводом по R0.1 в `.ai/state/citygen-procedural-rules.md` (раздел «R0.1 Матрица соответствия», 2026-11-19).
   - **План:** `R0.1` отмечен `[x]` в `.ai/plans/21-citygen-procedural-rules.md` (deliverable выполнен; R0.2–R0.5 остаются открытыми).
   - **Execution state:** актуализирован `origin/main`/gv до `c2f18fe`/0.68.0 (PR #14 integrated) и зафиксирован данный инкремент.
 - **Versioning/artifacts:** без изменений генератора/`DEFAULT_GENERATOR_VERSION`/`src/levels/level-16..22*`/baselines/etalons (docs/state-only).
-- **Local prep checks (hints only):** `git diff --check`/status clean after edits; no rebuild required.
-- **CI:** pending (commit/push fast CI on `agent/**` per protocol; CI source of truth). Sequential merge only on green required checks.
+- **Integration (completed):** PR [#15](https://github.com/gkosarintsev/3d-game-three-js/pull/15) merged to `main` at 2026-11-19T02:56:56Z (merge commit `a9c30d9f01d8a74c444ac0d950f68b32f79e0813`, head `442bb9816ea45704d2fc6c57a293bd95dc6d283e`). Push CI [44447044491](https://github.com/gkosarintsev/3d-game-three-js/actions/runs/44447044491) **success** (fast: `node / fast checks`, `aggregate / report`). PR CI [44447438024](https://github.com/gkosarintsev/3d-game-three-js/actions/runs/44447438024) **success** (full merge-gate incl. node fast/citygen/etalon/rebuild shards, browser suites, 100×3 seed-series plain+transport, `aggregate / report`).
 - **Still remaining in R0:** R0.2–R0.5 (formal DoD/acceptance/baseline documentation depth per plan) remain open/partial. R4.3/R4.4 residuals, R5.1–R5.5, unresolved R1/R2/R3 DoD items, R6 remain open.
 
 
