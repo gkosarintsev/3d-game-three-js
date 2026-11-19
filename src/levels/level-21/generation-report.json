@@ -1,7 +1,7 @@
 {
   "version": 1,
   "generator": {
-    "generatorVersion": "0.60.0",
+    "generatorVersion": "0.61.0",
     "seed": 21,
     "deterministic": true
   },
@@ -1058,8 +1058,8 @@
       "severity": "warn",
       "code": "chunk_buildings_heavy",
       "stage": "6_finalize_emit",
-      "message": "high building count in a single chunk (179)",
-      "maxBuildings": 179,
+      "message": "high building count in a single chunk (178)",
+      "maxBuildings": 178,
       "chunk": 640,
       "grid": 2
     },
@@ -1067,8 +1067,8 @@
       "severity": "warn",
       "code": "chunk_props_heavy",
       "stage": "6_finalize_emit",
-      "message": "high prop count in a single chunk (148)",
-      "maxProps": 148,
+      "message": "high prop count in a single chunk (146)",
+      "maxProps": 146,
       "chunk": 640,
       "grid": 2
     },
@@ -3304,7 +3304,7 @@
       "message": "generated buildings from parcels",
       "count": 410,
       "budget": 420,
-      "skippedConflict": 394
+      "skippedConflict": 413
     },
     {
       "severity": "info",
@@ -3332,7 +3332,7 @@
       "code": "facade_no_three_consecutive_same",
       "stage": "4_buildings_structures",
       "message": "three consecutive identical facades remediated (section 9.7)",
-      "swapped": 2
+      "swapped": 1
     },
     {
       "severity": "info",
@@ -3405,7 +3405,7 @@
       "code": "floors_contrast_built",
       "stage": "4_buildings_structures",
       "message": "building floors distribution (section 9.4): L-modulation, adjacency contrast <= 2.5x, one dominant per high-L district",
-      "clamped": 105,
+      "clamped": 88,
       "dominants": 8,
       "districts": 47,
       "adjacencyPairs": 89
@@ -3415,8 +3415,8 @@
       "code": "post_buildings_local_connectors",
       "stage": "4_buildings_structures",
       "message": "added local connector segments after building placement (R3.5)",
-      "added": 1,
-      "candidates": 2
+      "added": 2,
+      "candidates": 3
     },
     {
       "severity": "info",
@@ -3431,21 +3431,21 @@
       "message": "generated district props",
       "count": 360,
       "budget": 360,
-      "attempts": 1019,
+      "attempts": 1030,
       "byDistrictType": {
         "old_town": 45,
-        "luxury": 14,
-        "residential": 94,
-        "parking": 7,
-        "slums": 56,
+        "luxury": 9,
+        "residential": 92,
+        "parking": 8,
+        "slums": 50,
         "industrial": 7,
-        "market": 25,
+        "market": 24,
         "commercial": 47,
         "sports": 5,
-        "office": 15,
-        "suburb": 21,
-        "forest": 14,
-        "campus": 8
+        "office": 20,
+        "suburb": 28,
+        "forest": 16,
+        "campus": 7
       }
     },
     {
@@ -3489,10 +3489,10 @@
         "grid": 2,
         "total": 4
       },
-      "roadNodes": 129,
-      "roadSegments": 158,
+      "roadNodes": 131,
+      "roadSegments": 160,
       "roadComponents": 1,
-      "roadGraphNodes": 129,
+      "roadGraphNodes": 131,
       "interchanges": {
         "segments": 8,
         "junctions": 4,
@@ -3595,17 +3595,17 @@
       },
       "buildings": 410,
       "buildingsByDistrictType": {
-        "residential": 119,
-        "slums": 72,
+        "residential": 122,
+        "slums": 74,
         "luxury": 22,
-        "old_town": 46,
+        "old_town": 43,
         "market": 23,
-        "office": 32,
-        "commercial": 45,
-        "industrial": 21,
-        "parking": 5,
+        "office": 31,
+        "commercial": 48,
+        "industrial": 19,
+        "parking": 6,
         "suburb": 11,
-        "campus": 11,
+        "campus": 8,
         "forest": 1,
         "sports": 2
       },
@@ -3613,24 +3613,24 @@
       "props": 360,
       "propsByDistrictType": {
         "old_town": 45,
-        "luxury": 14,
-        "residential": 94,
-        "parking": 7,
-        "slums": 56,
+        "luxury": 9,
+        "residential": 92,
+        "parking": 8,
+        "slums": 50,
         "industrial": 7,
-        "market": 25,
+        "market": 24,
         "commercial": 47,
         "sports": 5,
-        "office": 15,
-        "suburb": 21,
-        "forest": 14,
-        "campus": 8
+        "office": 20,
+        "suburb": 28,
+        "forest": 16,
+        "campus": 7
       },
       "chunkLoad": {
         "nonEmptyChunks": 4,
-        "maxBuildings": 179,
-        "maxProps": 148,
-        "maxLights": 2,
+        "maxBuildings": 178,
+        "maxProps": 146,
+        "maxLights": 3,
         "avgBuildings": 102.5,
         "avgProps": 90
       }
@@ -3800,8 +3800,8 @@
     "version": 1,
     "partial": true,
     "counts": {
-      "roads": 158,
-      "roadNodes": 129,
+      "roads": 160,
+      "roadNodes": 131,
       "districts": 47,
       "parcels": 2407,
       "reservedParcels": 488,
@@ -3813,24 +3813,24 @@
       "lakes": 0
     },
     "graph": {
-      "nodes": 129,
-      "edges": 158,
+      "nodes": 131,
+      "edges": 160,
       "components": 1,
-      "largestComponent": 129,
+      "largestComponent": 131,
       "deadEnds": 37,
-      "deadEndRatio": 0.286822,
-      "avgDegree": 2.449612,
-      "gamma": 0.414698
+      "deadEndRatio": 0.282443,
+      "avgDegree": 2.442748,
+      "gamma": 0.413437
     },
     "roads": {
-      "totalLength": 13359.476,
+      "totalLength": 13439.746,
       "lengthByType": {
         "arterial": 2080,
-        "local": 11279.476
+        "local": 11359.746
       },
       "shareByType": {
-        "arterial": 0.155695,
-        "local": 0.844305
+        "arterial": 0.154765,
+        "local": 0.845235
       },
       "maxSlope": 0.297561,
       "slopeByClass": {
@@ -3841,7 +3841,7 @@
           "overAbsolute": 0
         },
         "local": {
-          "count": 155,
+          "count": 157,
           "maxSlope": 0.1,
           "overPolicy": 0,
           "overAbsolute": 0
@@ -3854,7 +3854,7 @@
         "local": 12
       },
       "classPolicyViolations": 1,
-      "classPolicyOk": 157,
+      "classPolicyOk": 159,
       "overAbsolute": 0,
       "version": 2
     },
@@ -3958,7 +3958,7 @@
       "dividesPlate": true
     },
     "determinism": {
-      "generatorVersion": "0.60.0",
+      "generatorVersion": "0.61.0",
       "seed": 21,
       "deterministic": true
     },

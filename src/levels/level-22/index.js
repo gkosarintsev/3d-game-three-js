@@ -80,10 +80,10 @@ export const LEVEL_22 = {
         "file": "chunk-0-1.l14b",
         "id": "0_1",
         "objects": {
-          "buildings": 21,
-          "lights": 2,
+          "buildings": 22,
+          "lights": 1,
           "props": 52,
-          "roads": 6
+          "roads": 5
         },
         "rect": {
           "maxX": 0,
@@ -113,7 +113,7 @@ export const LEVEL_22 = {
         "id": "1_1",
         "objects": {
           "buildings": 6,
-          "lights": 2,
+          "lights": 3,
           "props": 39,
           "roads": 68
         },
@@ -4382,35 +4382,6 @@ export const LEVEL_22 = {
               "x": -222,
               "y": 0,
               "z": 160
-            }
-          ],
-          "shoulder": 1,
-          "width": 6
-        },
-        {
-          "blend": 5,
-          "crossLevel": true,
-          "id": "tr_postb_2_2",
-          "points": [
-            {
-              "x": -222,
-              "y": 0,
-              "z": 160
-            },
-            {
-              "x": -222,
-              "y": 0,
-              "z": 149.33
-            },
-            {
-              "x": -222,
-              "y": 0,
-              "z": 138.67
-            },
-            {
-              "x": -222,
-              "y": 0,
-              "z": 128
             }
           ],
           "shoulder": 1,

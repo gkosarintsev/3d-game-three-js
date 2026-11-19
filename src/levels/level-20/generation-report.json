@@ -1,7 +1,7 @@
 {
   "version": 1,
   "generator": {
-    "generatorVersion": "0.60.0",
+    "generatorVersion": "0.61.0",
     "seed": 20,
     "deterministic": true
   },
@@ -3690,14 +3690,14 @@
       "gamma": 0.409669
     },
     "roads": {
-      "totalLength": 13775.313,
+      "totalLength": 13772.683,
       "lengthByType": {
         "arterial": 2080,
-        "local": 11695.313
+        "local": 11692.683
       },
       "shareByType": {
-        "arterial": 0.150995,
-        "local": 0.849005
+        "arterial": 0.151024,
+        "local": 0.848976
       },
       "maxSlope": 0.3,
       "slopeByClass": {
@@ -3818,7 +3818,7 @@
       "dividesPlate": true
     },
     "determinism": {
-      "generatorVersion": "0.60.0",
+      "generatorVersion": "0.61.0",
       "seed": 20,
       "deterministic": true
     },
