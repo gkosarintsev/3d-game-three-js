@@ -1,7 +1,7 @@
 {
   "version": 1,
   "generator": {
-    "generatorVersion": "0.78.0",
+    "generatorVersion": "0.79.0",
     "seed": 16,
     "deterministic": true
   },
@@ -51,7 +51,7 @@
     {
       "id": "6_finalize_emit",
       "status": "ok",
-      "diagnostics": 10,
+      "diagnostics": 11,
       "repairs": 1,
       "drops": 0
     }
@@ -2582,6 +2582,23 @@
     },
     {
       "severity": "info",
+      "code": "finish_chaos_meso",
+      "stage": "6_finalize_emit",
+      "message": "meso chaos (epoch insert) applied at finish stage",
+      "applied": 2,
+      "changes": [
+        {
+          "id": "b_district_0_0_231",
+          "era": "historic_insert"
+        },
+        {
+          "id": "b_district_1_0_393",
+          "era": "modern_insert"
+        }
+      ]
+    },
+    {
+      "severity": "info",
       "code": "finish_chaos_seams",
       "stage": "6_finalize_emit",
       "message": "seam districts selected for chaos boost",
@@ -3124,7 +3141,7 @@
       "dividesPlate": true
     },
     "determinism": {
-      "generatorVersion": "0.78.0",
+      "generatorVersion": "0.79.0",
       "seed": 16,
       "deterministic": true
     },

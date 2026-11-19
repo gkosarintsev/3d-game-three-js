@@ -11,14 +11,14 @@ const clampParam = (v, lo, hi) => Math.max(lo, Math.min(hi, Number(v) || lo));
 
 // R0.4: canonical generator version for deterministic behavior/regression snapshots.
 // Bump on intentional layout/IR/report-affecting changes (see .ai/state/citygen-procedural-rules.md).
-export const DEFAULT_GENERATOR_VERSION = '0.78.0';
+export const DEFAULT_GENERATOR_VERSION = '0.79.0';
 
 export const DEFAULT_CITY_POLICIES = Object.freeze({
   roadDensity: { bMin: 60, bMax: 260, gamma: 0.8 },
   // проценты (док §7.4); J.maxSlope остаётся абсолютным пределом в м/м
   slopeLimitPct: { highway: 6, arterial: 8, collector: 10, local: 12 },
   enterableShare: 0.2,
-  chaos: { global: 0.35, seamsMax: 2 },
+  chaos: { global: 0.35, seamsMax: 2, mesoMax: 2 },
   interchanges: { min: 0, max: 0 },
   parkShare: { min: 0.08, max: 0.15 },
 });
@@ -145,6 +145,7 @@ export function normalizePolicies(rawPolicies) {
   if (isObj(p.chaos)) {
     if (Number.isFinite(Number(p.chaos.global))) p.chaos.global = clamp01(Number(p.chaos.global));
     if (Number.isFinite(Number(p.chaos.seamsMax))) p.chaos.seamsMax = Math.max(0, Math.floor(Number(p.chaos.seamsMax)));
+    if (Number.isFinite(Number(p.chaos.mesoMax))) p.chaos.mesoMax = Math.max(0, Math.floor(Number(p.chaos.mesoMax)));
   }
   if (Number.isFinite(Number(p.enterableShare))) p.enterableShare = clamp01(Number(p.enterableShare));
   if (isObj(p.slopeLimitPct)) {

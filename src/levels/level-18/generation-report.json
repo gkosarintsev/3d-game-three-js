@@ -1,7 +1,7 @@
 {
   "version": 1,
   "generator": {
-    "generatorVersion": "0.78.0",
+    "generatorVersion": "0.79.0",
     "seed": 18,
     "deterministic": true
   },
@@ -51,7 +51,7 @@
     {
       "id": "6_finalize_emit",
       "status": "ok",
-      "diagnostics": 6,
+      "diagnostics": 7,
       "repairs": 0,
       "drops": 0
     }
@@ -701,6 +701,14 @@
     },
     {
       "severity": "info",
+      "code": "finish_chaos_meso",
+      "stage": "6_finalize_emit",
+      "message": "meso chaos (epoch insert) applied at finish stage",
+      "applied": 0,
+      "changes": []
+    },
+    {
+      "severity": "info",
       "code": "road_conflicts_none",
       "stage": "6_finalize_emit",
       "message": "no same-layer road crossing conflicts detected"
@@ -915,7 +923,7 @@
       "dividesPlate": true
     },
     "determinism": {
-      "generatorVersion": "0.78.0",
+      "generatorVersion": "0.79.0",
       "seed": 18,
       "deterministic": true
     },

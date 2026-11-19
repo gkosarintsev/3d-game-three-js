@@ -755,6 +755,50 @@ export function makeStage6() {
       if (seams.length > 0) {
         ctx.report.diagnostics.push(info('finish_chaos_seams', stageId, 'seam districts selected for chaos boost', { seams: seams.slice(0, seamsMax) }));
       }
+
+      // Meso v1 (§10.1/§10.2): «дом-вставка другой эпохи в ряду» — только в районах
+      // шва (§10.3: хаос сгущается на границах эпох). Детерминированно, не чаще
+      // policies.chaos.mesoMax на город; геометрия/высотность/комнаты не меняются,
+      // меняются только визуальные IR-поля (facadeMaterial/wallColor/windowDensity/windowScale),
+      // поэтому инварианты §12.1 не затрагиваются. Проверка ролей: только не-locked,
+      // не доминанты (>=15 этажей), с валидным центром. Пристройки/проходные дворы —
+      // следующие шаги meso.
+      const mesoMax = Math.max(0, Math.floor(Number(policies?.chaos?.mesoMax ?? 2)));
+      let mesoApplied = 0;
+      const mesoChanges = [];
+      if (mesoMax > 0) {
+        const modernSet = ['glass_and_concrete', 'glass_steel', 'panel_block', 'concrete'];
+        const modernPick = (r) => modernSet[Math.floor(r * modernSet.length) % modernSet.length];
+        const rngM = makeRng(mix(ctx.meta?.seed ?? 0, 'finish_chaos_meso'));
+        for (const b of sorted) {
+          if (mesoApplied >= mesoMax) break;
+          if (b?.locked === true) continue;
+          const floors = Number(b?.floorsCount ?? 1);
+          if (floors >= 15) continue; // доминанты читаемы — не трогаем
+          const districtId = b?.districtId ?? null;
+          if (!districtId || !seamSet.has(districtId)) continue; // только швы эпох (§10.3)
+          const c = buildingCenter(b); if (!c) continue;
+          const fm = String(b?.facadeMaterial ?? '');
+          const isModern = modernSet.includes(fm);
+          const isHistoric = (fm === 'painted_brick' || fm === 'stone_base');
+          if (!isModern && !isHistoric) continue; // неизвестные материалы — не рискуем
+          if (isModern) {
+            b.facadeMaterial = 'painted_brick';
+            b.wallColor = '#7b493b';
+            b.windowDensity = 1;
+            b.windowScale = 0.91;
+            mesoChanges.push({ id: b.id ?? null, era: 'historic_insert' });
+          } else {
+            b.facadeMaterial = modernPick(rngM());
+            b.wallColor = '#c9bfae';
+            b.windowDensity = 3;
+            b.windowScale = 1.05;
+            mesoChanges.push({ id: b.id ?? null, era: 'modern_insert' });
+          }
+          mesoApplied += 1;
+        }
+      }
+      ctx.report.diagnostics.push(info('finish_chaos_meso', stageId, 'meso chaos (epoch insert) applied at finish stage', { applied: mesoApplied, changes: mesoChanges }));
     },
         repair(ctx) {
       const stageId = '6_finalize_emit';
