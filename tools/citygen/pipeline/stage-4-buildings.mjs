@@ -498,7 +498,7 @@ function footprintNearAnchors(fp, anchors = [], margin = 8) {
   return false;
 }
 
-function materialFor(profile, kind, rng) {
+function materialFor(profile, kind, rng, districtType = null) {
   // Промышленные типы industrial-района получают собственный фасадный материал,
   // чтобы рантайм мог отрисовать им особый процедурный (шейдерный) вид.
   const INDUSTRIAL_FACADE = {
@@ -507,6 +507,29 @@ function materialFor(profile, kind, rng) {
     workshop: 'industrial_workshop',
   };
   if (INDUSTRIAL_FACADE[kind]) return INDUSTRIAL_FACADE[kind];
+
+  // R4.4 §9.7 (partial): district palette policies (coherent per district type, with variation).
+  const DISTRICT_MATS = {
+    office: ['glass_and_concrete', 'concrete', 'glass_steel'],
+    commercial: ['glass_and_concrete', 'concrete', 'painted_brick'],
+    retail: ['glass_and_concrete', 'painted_brick', 'concrete'],
+    downtown: ['glass_and_concrete', 'concrete', 'glass_steel', 'painted_brick'],
+    old_town: ['stone_base', 'painted_brick'],
+    historic: ['stone_base', 'painted_brick'],
+    residential: ['painted_brick', 'stone_base', 'concrete'],
+    suburban: ['painted_brick', 'stone_base'],
+    housing: ['painted_brick', 'stone_base', 'panel_block'],
+    luxury: ['stone_base', 'glass_and_concrete', 'painted_brick'],
+    industrial: ['concrete', 'rusted_metal'],
+    port: ['concrete', 'rusted_metal'],
+    railway: ['concrete', 'rusted_metal'],
+    slums: ['rusted_metal', 'painted_brick'],
+    campus: ['concrete', 'painted_brick', 'glass_and_concrete'],
+    park: ['painted_brick', 'stone_base'],
+    forest: ['painted_brick', 'stone_base'],
+    sports: ['concrete', 'glass_and_concrete', 'painted_brick'],
+  };
+
   const ARCH_MATS = {
     office_tower: ['glass_and_concrete', 'concrete'],
     office_mid: ['glass_and_concrete', 'concrete', 'painted_brick'],
@@ -540,10 +563,27 @@ function materialFor(profile, kind, rng) {
     slum_shack: ['rusted_metal', 'painted_brick'],
     booth: ['concrete', 'painted_brick'],
   };
+
+  const profMats = Array.isArray(profile?.buildings?.materials) ? profile.buildings.materials.filter(Boolean) : [];
+  if (profMats.length) {
+    const dm = DISTRICT_MATS[districtType] || null;
+    if (dm && dm.length) {
+      const inter = profMats.filter(m => dm.includes(m));
+      if (inter.length) return pick(inter, rng);
+    }
+    return pick(profMats, rng);
+  }
+
   const km = ARCH_MATS[kind];
-  if (Array.isArray(km) && km.length) return pick(km, rng);
-  const mats = profile?.buildings?.materials;
-  if (Array.isArray(mats) && mats.length) return pick(mats, rng);
+  const dm = DISTRICT_MATS[districtType] || null;
+  if (Array.isArray(km) && km.length) {
+    if (dm && dm.length) {
+      const inter = km.filter(m => dm.includes(m));
+      if (inter.length) return pick(inter, rng);
+    }
+    return pick(km, rng);
+  }
+  if (dm && dm.length) return pick(dm, rng);
   return 'concrete';
 }
 
@@ -558,7 +598,30 @@ function materialFor(profile, kind, rng) {
     rusted_metal:       ['#5a8a92', '#8e5a44', '#8d949b', '#b88a56', '#484e57'],
     neon_panel:         ['#4b5563', '#8899ab', '#c9bfae'],
   };
-  function pickWallColor(mat, rng) {
+  // R4.4 §9.7 (partial): district palette bias for wall colors (coherent per district type).
+  const DISTRICT_WALL_BIAS = {
+    office:        { concrete: ['#b8c2cc', '#8899ab', '#adb5bd'], glass_and_concrete: ['#b8c2cc', '#8899ab', '#4b5563'], glass_steel: ['#4b5563', '#8899ab'] },
+    commercial:    { painted_brick: ['#c8ab89', '#a95842'], glass_and_concrete: ['#b8c2cc', '#8899ab', '#c9bfae'] },
+    retail:        { painted_brick: ['#c8ab89', '#a95842'], glass_and_concrete: ['#b8c2cc', '#c9bfae'] },
+    downtown:      { concrete: ['#b8c2cc', '#8899ab', '#adb5bd'], glass_and_concrete: ['#4b5563', '#8899ab', '#b8c2cc'] },
+    old_town:      { stone_base: ['#d5cbb8', '#d9dde2', '#adb5bd'], painted_brick: ['#a95842', '#7b493b', '#c8ab89'] },
+    historic:      { stone_base: ['#d5cbb8', '#d9dde2', '#adb5bd'], painted_brick: ['#a95842', '#7b493b', '#c8ab89'] },
+    residential:   { painted_brick: ['#c8ab89', '#a95842', '#7b493b'], stone_base: ['#d9dde2', '#d5cbb8'] },
+    suburban:      { painted_brick: ['#c8ab89', '#a95842'], stone_base: ['#d9dde2', '#d5cbb8'] },
+    housing:       { panel_block: ['#d6d0c4', '#9eb5c4', '#b4bac0'], painted_brick: ['#c8ab89', '#a95842'] },
+    luxury:        { stone_base: ['#d9dde2', '#d5cbb8', '#adb5bd'], glass_and_concrete: ['#b8c2cc', '#8899ab'] },
+    industrial:    { concrete: ['#adb5bd', '#5f6770', '#8d949b'], rusted_metal: ['#8d949b', '#484e57', '#8e5a44'] },
+    port:          { concrete: ['#adb5bd', '#5f6770'], rusted_metal: ['#5a8a92', '#484e57', '#8d949b'] },
+    railway:       { concrete: ['#adb5bd', '#5f6770'], rusted_metal: ['#484e57', '#8d949b', '#5a8a92'] },
+    slums:         { rusted_metal: ['#484e57', '#8e5a44', '#8d949b'], painted_brick: ['#7b493b', '#4b4e54'] },
+    campus:        { painted_brick: ['#c8ab89', '#a95842'], concrete: ['#d9dde2', '#adb5bd'], glass_and_concrete: ['#b8c2cc', '#8899ab'] },
+    park:          { painted_brick: ['#c8ab89', '#a95842'], stone_base: ['#d5cbb8', '#d9dde2'] },
+    forest:        { painted_brick: ['#c8ab89', '#7b493b'], stone_base: ['#d5cbb8', '#d9dde2'] },
+    sports:        { concrete: ['#d9dde2', '#b8c2cc', '#adb5bd'], glass_and_concrete: ['#b8c2cc', '#8899ab'] },
+  };
+  function pickWallColor(mat, rng, districtType = null) {
+    const bias = DISTRICT_WALL_BIAS[districtType]?.[mat];
+    if (Array.isArray(bias) && bias.length) return bias[Math.floor(rng() * bias.length) % bias.length];
     const s = FACADE_SWATCHES[mat];
     return s ? s[Math.floor(rng() * s.length) % s.length] : null;
   }
@@ -585,7 +648,7 @@ function materialFor(profile, kind, rng) {
     return { density, scale };
   }
 
-  function pickRoofAppearance(kind, facadeMaterial, floors, rng) {
+  function pickRoofAppearance(kind, facadeMaterial, floors, rng, districtType = null) {
     let mats = ['concrete_slab', 'bitumen'];
     let colors = ['#5f6770', '#4b5563', '#6b7280', '#8d949b'];
     if (kind === 'skyscraper' || kind === 'office_block' || kind === 'office' || kind === 'megablock') {
@@ -604,6 +667,34 @@ function materialFor(profile, kind, rng) {
       mats = ['tile', 'bitumen', 'metal_sheet'];
       colors = ['#6b4a3a', '#5f6770', '#7a6a58', '#4b5563'];
     }
+
+    // R4.4 §9.7 (partial): district palette bias for roofs (coherent per district type).
+    const DISTRICT_ROOF = {
+      office:        { mats: ['concrete_slab', 'metal_sheet', 'composite'], colors: ['#4b5563', '#5f6770', '#6b7280', '#77808a'] },
+      commercial:    { mats: ['concrete_slab', 'metal_sheet', 'bitumen'],    colors: ['#5f6770', '#4b5563', '#6b7280'] },
+      retail:        { mats: ['metal_sheet', 'bitumen', 'concrete_slab'],   colors: ['#5f6770', '#6b7280', '#7a6a58'] },
+      downtown:      { mats: ['concrete_slab', 'metal_sheet', 'composite'], colors: ['#4b5563', '#5f6770', '#77808a'] },
+      old_town:      { mats: ['tile', 'shingles', 'bitumen'],               colors: ['#6b4a3a', '#7a4a3a', '#5f6770', '#6b5b4b'] },
+      historic:      { mats: ['tile', 'shingles', 'bitumen'],               colors: ['#6b4a3a', '#7a4a3a', '#5f6770'] },
+      residential:   { mats: ['tile', 'bitumen', 'metal_sheet', 'shingles'],colors: ['#6b5b4b', '#7a6a58', '#5f6770', '#6b4a3a'] },
+      suburban:      { mats: ['tile', 'shingles', 'metal_sheet'],           colors: ['#7a4a3a', '#6b5b4b', '#5f6770'] },
+      housing:       { mats: ['concrete_slab', 'bitumen', 'tile'],          colors: ['#5f6770', '#6b7280', '#7a6a58'] },
+      luxury:        { mats: ['tile', 'metal_sheet', 'shingles'],           colors: ['#4b5563', '#6b5b4b', '#5f6770', '#7a4a3a'] },
+      industrial:    { mats: ['metal_sheet', 'corrugated_metal', 'bitumen'],colors: ['#6b7280', '#7a6a58', '#5f6770', '#8b7355'] },
+      port:          { mats: ['metal_sheet', 'corrugated_metal'],           colors: ['#6b7280', '#5f6770', '#7a6a58'] },
+      railway:       { mats: ['metal_sheet', 'corrugated_metal', 'bitumen'],colors: ['#6b7280', '#5f6770', '#7a6a58'] },
+      slums:         { mats: ['corrugated_metal', 'bitumen', 'patchwork'],  colors: ['#7a6a58', '#6b7280', '#8d949b', '#5f6770'] },
+      campus:        { mats: ['metal_sheet', 'concrete_slab', 'tile'],      colors: ['#5f6770', '#6b7280', '#6b5b4b'] },
+      park:          { mats: ['tile', 'shingles', 'metal_sheet'],           colors: ['#6b5b4b', '#4f5d4a', '#7a6a58'] },
+      forest:        { mats: ['tile', 'shingles', 'metal_sheet'],           colors: ['#4f5d4a', '#6b5b4b', '#5f6770'] },
+      sports:        { mats: ['metal_sheet', 'concrete_slab'],              colors: ['#6b7280', '#5f6770', '#77808a'] },
+    };
+    const db = DISTRICT_ROOF[districtType];
+    if (db) {
+      if (Array.isArray(db.mats) && db.mats.length) mats = db.mats;
+      if (Array.isArray(db.colors) && db.colors.length) colors = db.colors;
+    }
+
     const roofMaterial = mats[Math.floor(rng() * mats.length) % mats.length];
     const roofColor = colors[Math.floor(rng() * colors.length) % colors.length];
     // Explicit roof object: keep non-walkable, no parapet to avoid nav/physics changes (R4.4 data/visual metadata increment).
@@ -954,8 +1045,8 @@ export function makeStage4() {
         if (p.type === 'industrial' && floorHeight < 4.2) floorHeight = +(4.2 + rng() * 1.2).toFixed(2);
         if ((p.type === 'sports' || p.type === 'campus') && floorHeight < 3.8) floorHeight = +(3.8 + rng() * 1.4).toFixed(2);
         const id = `b_${p.districtId}_${placed + 1}`;
-        const facadeMaterial = materialFor(profile, kind, rng);
-        const wallColor = pickWallColor(facadeMaterial, rng);
+        const facadeMaterial = materialFor(profile, kind, rng, p.type ?? p.profileId ?? null);
+        const wallColor = pickWallColor(facadeMaterial, rng, p.type ?? p.profileId ?? null);
         // Подъезды (docs/houses): для панельки рандомизируемо по длине фасада, иначе 1
         let entrances = 1;
         if (kind === 'panelka') {
@@ -982,7 +1073,7 @@ export function makeStage4() {
         const detailedVisual = isL17Panelka ? 'soviet_panel' : (DETAILED_VISUAL_BY_KIND[kind] || null);
         // R4.4 §9.7 (partial): typological windows + deterministic roof material/color/parapet metadata.
         const win = pickWindowParams(kind, p.type ?? null, floors, rng);
-        const roofApp = pickRoofAppearance(kind, facadeMaterial, floors, rng);
+        const roofApp = pickRoofAppearance(kind, facadeMaterial, floors, rng, p.type ?? p.profileId ?? null);
         // R4.3 §9.6: baseY от медианы рельефа пятна + цоколь (normalizer зафиксирует по фактической опоре; задаём осмысленный минимум).
         const reliefBaseY = (reliefStats && Number.isFinite(reliefStats.medianY))
           ? +(reliefStats.medianY + (floors > 4 ? 0.25 : 0.2)).toFixed(3)
@@ -1105,7 +1196,7 @@ export function makeStage4() {
             const floors = clamp(arch ? arch.floors[0] : 1, 1, maxFloors);
             const floorHeight = arch ? +Number(arch.floorHeight[0]).toFixed(2) : (d.type === 'industrial' ? 4.5 : 3.3);
             const id = `b_${d.id}_${placed + 1}`;
-            const facadeMaterial = materialFor(profile, kind, () => 0);
+            const facadeMaterial = materialFor(profile, kind, () => 0, d.type ?? d.profileId ?? null);
             const isL17PanelkaFallback = kind === 'panelka' && /level-17/i.test(levelName);
             const DETAILED_VISUAL_BY_KIND = {
               panelka: 'soviet_panel',
@@ -1122,7 +1213,7 @@ export function makeStage4() {
             };
             const detailedVisual = isL17PanelkaFallback ? 'soviet_panel' : (DETAILED_VISUAL_BY_KIND[kind] || null);
             const win = pickWindowParams(kind, d.type ?? null, floors, () => 0);
-            const roofApp = pickRoofAppearance(kind, facadeMaterial, floors, () => 0);
+            const roofApp = pickRoofAppearance(kind, facadeMaterial, floors, () => 0, d.type ?? d.profileId ?? null);
             out.push({
               id,
               districtId: d.id ?? null,
@@ -1133,7 +1224,7 @@ export function makeStage4() {
               floorHeight,
               foundation: 'terrain',
               facadeMaterial,
-              ...(pickWallColor(facadeMaterial, () => 0) ? { wallColor: pickWallColor(facadeMaterial, () => 0) } : {}),
+              ...(pickWallColor(facadeMaterial, () => 0, d.type ?? d.profileId ?? null) ? { wallColor: pickWallColor(facadeMaterial, () => 0, d.type ?? d.profileId ?? null) } : {}),
               houseKind: kind,
               ...(isL17PanelkaFallback ? { entrances: 3 } : (kind === 'panelka' ? { entrances: 1 } : {})),
               ...(detailedVisual ? { detailedVisual } : {}),
