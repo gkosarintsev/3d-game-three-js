@@ -1,7 +1,7 @@
 {
   "version": 1,
   "generator": {
-    "generatorVersion": "0.79.0",
+    "generatorVersion": "0.80.0",
     "seed": 16,
     "deterministic": true
   },
@@ -51,9 +51,9 @@
     {
       "id": "6_finalize_emit",
       "status": "ok",
-      "diagnostics": 12,
+      "diagnostics": 13,
       "repairs": 0,
-      "drops": 0
+      "drops": 13
     }
   ],
   "districts": [
@@ -4124,6 +4124,69 @@
     },
     {
       "severity": "info",
+      "code": "finish_chaos_macro",
+      "stage": "6_finalize_emit",
+      "message": "macro chaos (void parcel instead of building, 3-5%) applied at finish stage",
+      "eligible": 326,
+      "dropped": 13,
+      "target": 13,
+      "changes": [
+        {
+          "id": "b_district_3_2_1_33",
+          "districtId": "district_3_2_1"
+        },
+        {
+          "id": "b_district_1_3_1_46",
+          "districtId": "district_1_3_1"
+        },
+        {
+          "id": "b_district_3_2_0_75",
+          "districtId": "district_3_2_0"
+        },
+        {
+          "id": "b_district_3_1_11_105",
+          "districtId": "district_3_1_2100"
+        },
+        {
+          "id": "b_district_0_0_00_112",
+          "districtId": "district_0_0_00"
+        },
+        {
+          "id": "b_district_0_0_10_119",
+          "districtId": "district_0_0_10"
+        },
+        {
+          "id": "b_district_3_2_0_156",
+          "districtId": "district_3_2_0"
+        },
+        {
+          "id": "b_district_1_3_1_225",
+          "districtId": "district_1_3_1"
+        },
+        {
+          "id": "b_district_3_0_1_285",
+          "districtId": "district_3_0_1"
+        },
+        {
+          "id": "b_district_3_0_0_291",
+          "districtId": "district_3_0_0"
+        },
+        {
+          "id": "b_district_3_1_11_355",
+          "districtId": "district_3_1_11"
+        },
+        {
+          "id": "b_district_3_0_1_369",
+          "districtId": "district_3_0_1"
+        },
+        {
+          "id": "b_district_2_0_0_391",
+          "districtId": "district_2_0_0"
+        }
+      ]
+    },
+    {
+      "severity": "info",
       "code": "finish_chaos_meso",
       "stage": "6_finalize_emit",
       "message": "meso chaos (epoch insert) applied at finish stage",
@@ -4245,13 +4308,78 @@
       "stage": "4_buildings_structures",
       "id": "b_district_3_3_1_73",
       "reason": "building_on_steep_slope"
+    },
+    {
+      "stage": "6_finalize_emit",
+      "id": "b_district_0_0_00_112",
+      "reason": "finish_chaos_macro_void"
+    },
+    {
+      "stage": "6_finalize_emit",
+      "id": "b_district_0_0_10_119",
+      "reason": "finish_chaos_macro_void"
+    },
+    {
+      "stage": "6_finalize_emit",
+      "id": "b_district_1_3_1_225",
+      "reason": "finish_chaos_macro_void"
+    },
+    {
+      "stage": "6_finalize_emit",
+      "id": "b_district_1_3_1_46",
+      "reason": "finish_chaos_macro_void"
+    },
+    {
+      "stage": "6_finalize_emit",
+      "id": "b_district_2_0_0_391",
+      "reason": "finish_chaos_macro_void"
+    },
+    {
+      "stage": "6_finalize_emit",
+      "id": "b_district_3_0_0_291",
+      "reason": "finish_chaos_macro_void"
+    },
+    {
+      "stage": "6_finalize_emit",
+      "id": "b_district_3_0_1_285",
+      "reason": "finish_chaos_macro_void"
+    },
+    {
+      "stage": "6_finalize_emit",
+      "id": "b_district_3_0_1_369",
+      "reason": "finish_chaos_macro_void"
+    },
+    {
+      "stage": "6_finalize_emit",
+      "id": "b_district_3_1_11_105",
+      "reason": "finish_chaos_macro_void"
+    },
+    {
+      "stage": "6_finalize_emit",
+      "id": "b_district_3_1_11_355",
+      "reason": "finish_chaos_macro_void"
+    },
+    {
+      "stage": "6_finalize_emit",
+      "id": "b_district_3_2_0_156",
+      "reason": "finish_chaos_macro_void"
+    },
+    {
+      "stage": "6_finalize_emit",
+      "id": "b_district_3_2_0_75",
+      "reason": "finish_chaos_macro_void"
+    },
+    {
+      "stage": "6_finalize_emit",
+      "id": "b_district_3_2_1_33",
+      "reason": "finish_chaos_macro_void"
     }
   ],
   "summary": {
     "errors": 0,
     "warnings": 9,
     "repairs": 9,
-    "drops": 1
+    "drops": 14
   },
   "metrics": {
     "version": 2,
@@ -4262,7 +4390,7 @@
       "districts": 52,
       "parcels": 1955,
       "reservedParcels": 500,
-      "buildings": 408,
+      "buildings": 395,
       "enterableBuildings": 82,
       "props": 360,
       "lights": 8,
@@ -4318,7 +4446,7 @@
     "gameplay": {
       "spawnToRoad": 0,
       "exitToRoad": 0,
-      "enterableShare": 0.20098,
+      "enterableShare": 0.207595,
       "enterableTarget": 0.2,
       "spawnDistrictType": "office",
       "exitDistrictType": "suburb",
@@ -4515,7 +4643,7 @@
       "dividesPlate": true
     },
     "determinism": {
-      "generatorVersion": "0.79.0",
+      "generatorVersion": "0.80.0",
       "seed": 16,
       "deterministic": true
     },
@@ -4523,7 +4651,7 @@
       "diagnosticsErrors": 0,
       "diagnosticsWarnings": 9,
       "repairs": 9,
-      "drops": 1
+      "drops": 14
     }
   },
   "rules": {

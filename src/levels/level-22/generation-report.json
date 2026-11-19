@@ -1,7 +1,7 @@
 {
   "version": 1,
   "generator": {
-    "generatorVersion": "0.79.0",
+    "generatorVersion": "0.80.0",
     "seed": 22,
     "deterministic": true
   },
@@ -51,9 +51,9 @@
     {
       "id": "6_finalize_emit",
       "status": "ok",
-      "diagnostics": 14,
+      "diagnostics": 15,
       "repairs": 3,
-      "drops": 0
+      "drops": 2
     }
   ],
   "districts": [
@@ -2292,6 +2292,25 @@
     },
     {
       "severity": "info",
+      "code": "finish_chaos_macro",
+      "stage": "6_finalize_emit",
+      "message": "macro chaos (void parcel instead of building, 3-5%) applied at finish stage",
+      "eligible": 62,
+      "dropped": 2,
+      "target": 2,
+      "changes": [
+        {
+          "id": "b_district_0_0_00_1",
+          "districtId": "district_0_0_00"
+        },
+        {
+          "id": "b_district_0_2_01_56",
+          "districtId": "district_0_2_01"
+        }
+      ]
+    },
+    {
+      "severity": "info",
       "code": "finish_chaos_meso",
       "stage": "6_finalize_emit",
       "message": "meso chaos (epoch insert) applied at finish stage",
@@ -2415,12 +2434,23 @@
       ]
     }
   ],
-  "drops": [],
+  "drops": [
+    {
+      "stage": "6_finalize_emit",
+      "id": "b_district_0_0_00_1",
+      "reason": "finish_chaos_macro_void"
+    },
+    {
+      "stage": "6_finalize_emit",
+      "id": "b_district_0_2_01_56",
+      "reason": "finish_chaos_macro_void"
+    }
+  ],
   "summary": {
     "errors": 0,
     "warnings": 2,
     "repairs": 3,
-    "drops": 0
+    "drops": 2
   },
   "metrics": {
     "version": 2,
@@ -2431,7 +2461,7 @@
       "districts": 15,
       "parcels": 403,
       "reservedParcels": 70,
-      "buildings": 77,
+      "buildings": 75,
       "enterableBuildings": 15,
       "props": 183,
       "lights": 8,
@@ -2487,7 +2517,7 @@
     "gameplay": {
       "spawnToRoad": 0,
       "exitToRoad": 0,
-      "enterableShare": 0.194805,
+      "enterableShare": 0.2,
       "enterableTarget": 0.2,
       "spawnDistrictType": "office",
       "exitDistrictType": "parking",
@@ -2637,7 +2667,7 @@
       "dividesPlate": true
     },
     "determinism": {
-      "generatorVersion": "0.79.0",
+      "generatorVersion": "0.80.0",
       "seed": 22,
       "deterministic": true
     },
@@ -2645,7 +2675,7 @@
       "diagnosticsErrors": 0,
       "diagnosticsWarnings": 2,
       "repairs": 3,
-      "drops": 0
+      "drops": 2
     }
   },
   "rules": {
