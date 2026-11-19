@@ -598,6 +598,9 @@ t('чанк в мировых осях: копия равна мировому �
         if (!src) { errors.push(`${coll}: '${copy.id}' в чанке ${c.id} нет в мире`); continue; }
         const clean = { ...copy };
         if (clean.owner) { owners++; delete clean.owner; }
+        // служебная метаданные чанка — не входят в мировую копию объекта
+        delete clean.homeChunk;
+        delete clean.coverageChunks;
         const d = deepDiff(src, clean, '', 0);
         if (d.message) errors.push(`${coll}:${copy.id} в чанке ${c.id} — ${d.message}`);
         copies++;

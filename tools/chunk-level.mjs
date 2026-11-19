@@ -267,7 +267,7 @@ export function splitLevel(map, stream, opts = {}) {
       if (!inside.length) continue;   // объект целиком за пределами плиты мира
       const owner = pickOwner(plan, inside);
       ownerOf.set(`${collection}:${id}`, owner.id);
-      const insideIds = inside.map((c) => c.id);
+      const insideIds = inside.map((c) => c.id).sort();
       for (const cell of inside) {
         const bucket = members.get(cell.id);
         if (!bucket.has(collection)) bucket.set(collection, []);
