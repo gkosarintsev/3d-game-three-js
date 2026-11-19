@@ -7983,6 +7983,7 @@ export const LEVEL_21 = {
     },
     "units": "meters",
     "windows": {
+      "lit": 0.3,
       "spacing": 12
     }
   },

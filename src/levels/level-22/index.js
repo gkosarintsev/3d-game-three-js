@@ -4510,6 +4510,7 @@ export const LEVEL_22 = {
     },
     "units": "meters",
     "windows": {
+      "lit": 0.4,
       "spacing": 12
     }
   },

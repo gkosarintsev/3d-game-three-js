@@ -615,6 +615,7 @@ export const LEVEL_19 = {
     },
     "units": "meters",
     "windows": {
+      "lit": 0.4,
       "spacing": 12
     }
   },

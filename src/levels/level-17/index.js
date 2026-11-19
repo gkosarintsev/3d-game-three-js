@@ -8645,6 +8645,7 @@ export const LEVEL_17 = {
     },
     "units": "meters",
     "windows": {
+      "lit": 0.42,
       "spacing": 12
     }
   },

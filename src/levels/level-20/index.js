@@ -8015,6 +8015,7 @@ export const LEVEL_20 = {
     },
     "units": "meters",
     "windows": {
+      "lit": 0.36,
       "spacing": 12
     }
   },
