@@ -1,7 +1,7 @@
 {
   "version": 1,
   "generator": {
-    "generatorVersion": "0.64.0",
+    "generatorVersion": "0.65.0",
     "seed": 18,
     "deterministic": true
   },
@@ -436,7 +436,7 @@
       "code": "buildings_generated",
       "stage": "4_buildings_structures",
       "message": "generated buildings from parcels",
-      "count": 15,
+      "count": 13,
       "budget": 420,
       "skippedConflict": 0
     },
@@ -445,12 +445,12 @@
       "code": "enterable_share",
       "stage": "4_buildings_structures",
       "message": "enterable buildings share (section 9.8, target 15-25%)",
-      "total": 15,
+      "total": 13,
       "enterable": 3,
-      "share": 0.2,
+      "share": 0.231,
       "targetShare": 0.2,
       "required": {
-        "min": 3,
+        "min": 2,
         "max": 3
       }
     },
@@ -553,9 +553,9 @@
         "far": 90
       },
       "roadAccessByType": {},
-      "buildings": 15,
+      "buildings": 13,
       "buildingsByDistrictType": {
-        "forest": 15
+        "forest": 13
       },
       "lights": 0,
       "props": 0,
@@ -564,7 +564,7 @@
         "maxBuildings": 5,
         "maxProps": 0,
         "maxLights": 0,
-        "avgBuildings": 3.75,
+        "avgBuildings": 3.25,
         "avgProps": 0
       }
     },
@@ -622,7 +622,7 @@
       "districts": 1,
       "parcels": 121,
       "reservedParcels": 16,
-      "buildings": 15,
+      "buildings": 13,
       "enterableBuildings": 3,
       "props": 0,
       "lights": 0,
@@ -686,7 +686,7 @@
     "gameplay": {
       "spawnToRoad": 0,
       "exitToRoad": 0,
-      "enterableShare": 0.2,
+      "enterableShare": 0.230769,
       "enterableTarget": 0.2
     },
     "districts": {
@@ -737,7 +737,7 @@
       "dividesPlate": true
     },
     "determinism": {
-      "generatorVersion": "0.64.0",
+      "generatorVersion": "0.65.0",
       "seed": 18,
       "deterministic": true
     },

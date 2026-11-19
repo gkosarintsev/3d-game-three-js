@@ -563,6 +563,55 @@ function materialFor(profile, kind, rng) {
     return s ? s[Math.floor(rng() * s.length) % s.length] : null;
   }
 
+  // R4.4 §9.7 (partial): typological window rhythm/scale and roof materials/parapets (deterministic, schema-supported).
+  function pickWindowParams(kind, districtType, floors, rng) {
+    let dMin = 1, dMax = 3, sMin = 0.85, sMax = 1.2;
+    if (kind === 'skyscraper' || kind === 'office_block' || kind === 'office' || kind === 'megablock') {
+      dMin = 2; dMax = 3; sMin = 0.95; sMax = 1.25;
+    } else if (kind === 'panelka' || kind === 'apartment') {
+      dMin = 2; dMax = 3; sMin = 0.9; sMax = 1.15;
+    } else if (kind === 'warehouse' || kind === 'factory' || kind === 'hangar' || districtType === 'industrial') {
+      dMin = 1; dMax = 2; sMin = 0.85; sMax = 1.05;
+    } else if (kind === 'slum_shack') {
+      dMin = 1; dMax = 2; sMin = 0.8; sMax = 0.95;
+    } else if (kind === 'classic_cottage' || kind === 'barn_house' || kind === 'aframe' || kind === 'chalet' || kind === 'mansard_house' || kind === 'modern_pavilion') {
+      dMin = 1; dMax = 2; sMin = 0.9; sMax = 1.1;
+    } else if (districtType === 'commercial' || districtType === 'retail') {
+      dMin = 2; dMax = 3; sMin = 0.95; sMax = 1.2;
+    }
+    if (floors >= 12) { dMin = Math.max(dMin, 2); sMin = Math.max(sMin, 0.95); }
+    const density = clamp(dMin + Math.floor(rng() * (dMax - dMin + 1)), 1, 3);
+    const scale = +clamp(sMin + rng() * (sMax - sMin), 0.5, 2).toFixed(2);
+    return { density, scale };
+  }
+
+  function pickRoofAppearance(kind, facadeMaterial, floors, rng) {
+    let mats = ['concrete_slab', 'bitumen'];
+    let colors = ['#5f6770', '#4b5563', '#6b7280', '#8d949b'];
+    if (kind === 'skyscraper' || kind === 'office_block' || kind === 'office' || kind === 'megablock') {
+      mats = ['concrete_slab', 'metal_sheet', 'composite'];
+      colors = ['#4b5563', '#5f6770', '#6b7280', '#77808a'];
+    } else if (kind === 'warehouse' || kind === 'factory' || kind === 'hangar' || facadeMaterial === 'industrial_metal' || facadeMaterial === 'industrial_metal_rusted') {
+      mats = ['metal_sheet', 'corrugated_metal', 'bitumen'];
+      colors = ['#6b7280', '#7a6a58', '#5f6770', '#8b7355'];
+    } else if (kind === 'classic_cottage' || kind === 'barn_house' || kind === 'aframe' || kind === 'chalet' || kind === 'mansard_house' || kind === 'modern_pavilion') {
+      mats = ['tile', 'metal_sheet', 'shingles'];
+      colors = ['#7a4a3a', '#6b5b4b', '#5f6770', '#8b7355', '#4f5d4a'];
+    } else if (kind === 'slum_shack') {
+      mats = ['corrugated_metal', 'bitumen', 'patchwork'];
+      colors = ['#7a6a58', '#6b7280', '#8d949b', '#5f6770'];
+    } else if (facadeMaterial === 'brick' || facadeMaterial === 'old_brick') {
+      mats = ['tile', 'bitumen', 'metal_sheet'];
+      colors = ['#6b4a3a', '#5f6770', '#7a6a58', '#4b5563'];
+    }
+    const roofMaterial = mats[Math.floor(rng() * mats.length) % mats.length];
+    const roofColor = colors[Math.floor(rng() * colors.length) % colors.length];
+    // Explicit roof object: keep non-walkable, no parapet to avoid nav/physics changes (R4.4 data/visual metadata increment).
+    const roof = { walkable: false, parapet: 0 };
+    if (floors >= 20) roof.parapet = 0; // keep explicit; tall buildings remain non-walkable by default here
+    return { roofMaterial, roofColor, roof };
+  }
+
 const ARCHETYPES = {
   office_tower:    { floors: [10, 20], floorHeight: [3.5, 3.8], scale: [0.45, 0.62], aspect: [0.7, 1.3] },
   office_mid:      { floors: [4, 9],   floorHeight: [3.4, 3.7], scale: [0.5, 0.72],  aspect: [0.75, 1.35] },
@@ -931,6 +980,9 @@ export function makeStage4() {
           modern_pavilion: 'modern-pavilion',
         };
         const detailedVisual = isL17Panelka ? 'soviet_panel' : (DETAILED_VISUAL_BY_KIND[kind] || null);
+        // R4.4 §9.7 (partial): typological windows + deterministic roof material/color/parapet metadata.
+        const win = pickWindowParams(kind, p.type ?? null, floors, rng);
+        const roofApp = pickRoofAppearance(kind, facadeMaterial, floors, rng);
         // R4.3 §9.6: baseY от медианы рельефа пятна + цоколь (normalizer зафиксирует по фактической опоре; задаём осмысленный минимум).
         const reliefBaseY = (reliefStats && Number.isFinite(reliefStats.medianY))
           ? +(reliefStats.medianY + (floors > 4 ? 0.25 : 0.2)).toFixed(3)
@@ -950,10 +1002,13 @@ export function makeStage4() {
           houseKind: kind,
           ...(isL17Panelka ? { entrances } : (entrances > 1 ? { entrances } : (kind === 'panelka' ? { entrances: 1 } : {}))),
           ...(detailedVisual ? { detailedVisual } : {}),
-          windowDensity: 1 + Math.floor(rng() * 3),
-          windowScale: +(0.85 + rng() * 0.35).toFixed(2),
+          windowDensity: win.density,
+          windowScale: win.scale,
           footprint,
           ...(buildingRotation ? { rotation: buildingRotation } : {}),
+          roofMaterial: roofApp.roofMaterial,
+          roofColor: roofApp.roofColor,
+          roof: roofApp.roof,
           rooms: [],
           stairs: [],
           _accessEdge: placedAccessEdge,
@@ -1066,6 +1121,8 @@ export function makeStage4() {
               modern_pavilion: 'modern-pavilion',
             };
             const detailedVisual = isL17PanelkaFallback ? 'soviet_panel' : (DETAILED_VISUAL_BY_KIND[kind] || null);
+            const win = pickWindowParams(kind, d.type ?? null, floors, () => 0);
+            const roofApp = pickRoofAppearance(kind, facadeMaterial, floors, () => 0);
             out.push({
               id,
               districtId: d.id ?? null,
@@ -1080,9 +1137,12 @@ export function makeStage4() {
               houseKind: kind,
               ...(isL17PanelkaFallback ? { entrances: 3 } : (kind === 'panelka' ? { entrances: 1 } : {})),
               ...(detailedVisual ? { detailedVisual } : {}),
-              windowDensity: 2,
-              windowScale: 1,
+              windowDensity: win.density,
+              windowScale: win.scale,
               footprint,
+              roofMaterial: roofApp.roofMaterial,
+              roofColor: roofApp.roofColor,
+              roof: roofApp.roof,
               rooms: [],
               stairs: [],
               _accessEdge: p?.access?.edge ?? null,

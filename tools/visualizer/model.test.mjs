@@ -176,7 +176,7 @@ test('integration: level 18 counts/matching', async () => {
   const levelDef = await importCatalog(n);
   const decodedCells = decodeCellsFromCatalog(levelDef, dir);
   const model = buildModel({ level: n, mode: 'compiled', source, compiledIndex: levelDef.map, decodedCells, report });
-  assert.equal(model.entities.buildings.size, 15);
+  assert.equal(model.entities.buildings.size, 13);
   assert.equal(model.entities.roads.size, 12);
   assert.equal(model.entities.props.size, 158);
   assert.equal(model.skeleton.nodes.length, 101);

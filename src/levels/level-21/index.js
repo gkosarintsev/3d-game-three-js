@@ -72,10 +72,10 @@ export const LEVEL_21 = {
         "file": "chunk-0-0.l14b",
         "id": "0_0",
         "objects": {
-          "buildings": 59,
+          "buildings": 62,
           "channels": 2,
           "lights": 2,
-          "props": 71,
+          "props": 67,
           "roads": 20
         },
         "rect": {
@@ -89,10 +89,10 @@ export const LEVEL_21 = {
         "file": "chunk-0-1.l14b",
         "id": "0_1",
         "objects": {
-          "buildings": 39,
+          "buildings": 33,
           "channels": 1,
-          "lights": 1,
-          "props": 53,
+          "lights": 2,
+          "props": 60,
           "roads": 1
         },
         "rect": {
@@ -106,7 +106,7 @@ export const LEVEL_21 = {
         "file": "chunk-1-0.l14b",
         "id": "1_0",
         "objects": {
-          "buildings": 176,
+          "buildings": 172,
           "channels": 2,
           "lights": 2,
           "props": 145,
@@ -123,11 +123,11 @@ export const LEVEL_21 = {
         "file": "chunk-1-1.l14b",
         "id": "1_1",
         "objects": {
-          "buildings": 122,
+          "buildings": 134,
           "channels": 2,
-          "lights": 3,
-          "props": 98,
-          "roads": 104
+          "lights": 2,
+          "props": 95,
+          "roads": 102
         },
         "rect": {
           "maxX": 640,
@@ -7962,69 +7962,6 @@ export const LEVEL_21 = {
               "x": 338,
               "y": 2.33,
               "z": 360
-            }
-          ],
-          "shoulder": 1,
-          "width": 6
-        },
-        {
-          "blend": 5,
-          "crossLevel": true,
-          "id": "tr_postb_2",
-          "points": [
-            {
-              "x": 338,
-              "y": 2.33,
-              "z": 360
-            },
-            {
-              "x": 338,
-              "y": 2.17,
-              "z": 370.17
-            },
-            {
-              "x": 338,
-              "y": 1.95,
-              "z": 380.34
-            },
-            {
-              "x": 338,
-              "y": 1.7,
-              "z": 390.5
-            },
-            {
-              "x": 338,
-              "y": 1.42,
-              "z": 400.67
-            }
-          ],
-          "shoulder": 1,
-          "width": 6
-        },
-        {
-          "blend": 5,
-          "crossLevel": true,
-          "id": "tr_postb_2_2",
-          "points": [
-            {
-              "x": 338,
-              "y": 1.42,
-              "z": 400.67
-            },
-            {
-              "x": 328.36,
-              "y": 1.91,
-              "z": 400.67
-            },
-            {
-              "x": 318.71,
-              "y": 2.5,
-              "z": 400.67
-            },
-            {
-              "x": 309.07,
-              "y": 3.17,
-              "z": 400.67
             }
           ],
           "shoulder": 1,

@@ -64,7 +64,7 @@ export const LEVEL_18 = {
         "file": "chunk-0-0.l14b",
         "id": "0_0",
         "objects": {
-          "buildings": 5,
+          "buildings": 3,
           "props": 39,
           "roads": 6
         },
@@ -79,7 +79,7 @@ export const LEVEL_18 = {
         "file": "chunk-0-1.l14b",
         "id": "0_1",
         "objects": {
-          "buildings": 5,
+          "buildings": 6,
           "props": 39,
           "roads": 6
         },
