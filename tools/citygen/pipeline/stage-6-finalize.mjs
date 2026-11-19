@@ -846,6 +846,47 @@ export function makeStage6() {
         macroApplied = droppedList.length;
       }
       ctx.report.diagnostics.push(info('finish_chaos_macro', stageId, 'macro chaos (void parcel instead of building, 3-5%) applied at finish stage', { eligible: eligibleMacro.length, dropped: macroApplied, target: macroCount, changes: macroDropped }));
+
+      // Macro v2 (§10.1 macro: «несоосный стык двух эпох (шов)»):
+      // максимальный по ΔLV шов (seams[0], уже отсортированы по delta) — это эпоха-линия, где
+      // старый и новый город не сходятся. Всю «старую» сторону (меньший landValue) сдвигаем
+      // ВДОЛЬ оси шва единым вектором (0.5..1.0 м по globalChaos), без изменения высот/комнат:
+      // читается как несоосный стык, а не как случайный микро-джиттер (рот/вс/поворот не трогаем).
+      // Только не-locked здания стороны эпохи; сдвиг не выводит здания за плиту (half − 3 м).
+      const seamPick = seams.length > 0 ? seams[0] : null;
+      let seamShifted = 0;
+      const seamChanges = [];
+      if (seamPick) {
+        const dRect = (d) => rectOf(d);
+        const dA = districts.find(d => d.id === seamPick.a);
+        const dB = districts.find(d => d.id === seamPick.b);
+        const ra = dRect(dA), rb = dRect(dB);
+        if (dA && dB && ra && rb) {
+          // Касательная ось шва: вертикальное примыкание (по x) → вдоль z; горизонтальное → вдоль x.
+          const eps = 0.75;
+          const vertical = (Math.abs(ra.maxX - rb.minX) <= eps) || (Math.abs(rb.maxX - ra.minX) <= eps);
+          const tangentRow = vertical ? 'z' : 'x';
+          const older = (Number(dA?.landValue ?? 0) <= Number(dB?.landValue ?? 0)) ? dA : dB;
+          const offsetAbs = 0.5 + 0.5 * globalChaos;
+          const sign = (mix(ctx.meta?.seed ?? 0, 'finish_chaos_seam_side', seamPick.a, seamPick.b) % 2) ? 1 : -1;
+          const off = offsetAbs * sign;
+          for (const b of buildings) {
+            if (b?.locked === true) continue;
+            const did = b?.districtId ?? null;
+            if (!did || did !== older.id) continue;
+            const c = buildingCenter(b); if (!c) continue;
+            const nx = tangentRow === 'x' ? off : 0;
+            const nz = tangentRow === 'z' ? off : 0;
+            if (half > 0 && (Math.abs(c.x + nx) > half - 3 || Math.abs(c.z + nz) > half - 3)) continue;
+            if (Array.isArray(b.footprint)) {
+              b.footprint = b.footprint.map(p => ({ ...p, x: (Number(p?.x) || 0) + nx, z: (Number(p?.z) || 0) + nz }));
+              seamShifted += 1;
+              if (seamChanges.length < 16) seamChanges.push({ id: b.id ?? null, tangent: tangentRow, d: Number(off.toFixed(3)) });
+            }
+          }
+        }
+      }
+      ctx.report.diagnostics.push(info('finish_chaos_macro_seam', stageId, 'macro chaos (out-of-axis joint at the highest-delta seam) applied at finish stage', { seam: seamPick ? [seamPick.a, seamPick.b] : null, shifted: seamShifted, changes: seamChanges }));
     },
         repair(ctx) {
       const stageId = '6_finalize_emit';

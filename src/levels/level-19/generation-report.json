@@ -1,7 +1,7 @@
 {
   "version": 1,
   "generator": {
-    "generatorVersion": "0.80.0",
+    "generatorVersion": "0.81.0",
     "seed": 19,
     "deterministic": true
   },
@@ -51,7 +51,7 @@
     {
       "id": "6_finalize_emit",
       "status": "ok",
-      "diagnostics": 10,
+      "diagnostics": 11,
       "repairs": 0,
       "drops": 0
     }
@@ -813,6 +813,15 @@
     },
     {
       "severity": "info",
+      "code": "finish_chaos_macro_seam",
+      "stage": "6_finalize_emit",
+      "message": "macro chaos (out-of-axis joint at the highest-delta seam) applied at finish stage",
+      "seam": null,
+      "shifted": 0,
+      "changes": []
+    },
+    {
+      "severity": "info",
       "code": "finish_chaos_meso",
       "stage": "6_finalize_emit",
       "message": "meso chaos (epoch insert) applied at finish stage",
@@ -1031,7 +1040,7 @@
       "dividesPlate": true
     },
     "determinism": {
-      "generatorVersion": "0.80.0",
+      "generatorVersion": "0.81.0",
       "seed": 19,
       "deterministic": true
     },
