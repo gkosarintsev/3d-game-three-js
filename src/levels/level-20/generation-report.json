@@ -1,7 +1,7 @@
 {
   "version": 1,
   "generator": {
-    "generatorVersion": "0.73.0",
+    "generatorVersion": "0.74.0",
     "seed": 20,
     "deterministic": true
   },
@@ -3729,7 +3729,27 @@
       "spawnToRoad": 0,
       "exitToRoad": 0,
       "enterableShare": 0.200477,
-      "enterableTarget": 0.2
+      "enterableTarget": 0.2,
+      "spawnDistrictType": "office",
+      "exitDistrictType": "campus",
+      "straightMeters": 1470.8,
+      "routeMeters": 2080,
+      "routeRatio": 1.414,
+      "districtsPassed": 4,
+      "exitRadius": 4,
+      "cars": {
+        "declared": 1,
+        "spots": 1,
+        "onRoad": 1,
+        "misaligned": 1,
+        "nearJunction": 0
+      },
+      "enemies": {
+        "count": 6,
+        "alienCount": 3,
+        "available": false,
+        "note": "runtime placement via nav graph; D-scaling/spawn-distance enforced by engine constraints (not implemented in generator)"
+      }
     },
     "districts": {
       "plateArea": 1638400,
@@ -3893,7 +3913,7 @@
       "dividesPlate": true
     },
     "determinism": {
-      "generatorVersion": "0.73.0",
+      "generatorVersion": "0.74.0",
       "seed": 20,
       "deterministic": true
     },
@@ -3910,17 +3930,31 @@
     "violations": [
       {
         "severity": "warn",
+        "code": "cars_spot_misaligned",
+        "stage": "rules",
+        "message": "cars.spots yaw should align along the road (<=35deg)",
+        "misaligned": 1
+      },
+      {
+        "severity": "warn",
         "code": "road_slope_over_class_policy",
         "stage": "rules",
         "message": "road segments exceed class slope policy (see policies.slopeLimitPct)",
         "segments": 17,
         "maxSlope": 0.3
+      },
+      {
+        "severity": "info",
+        "code": "spawn_district_unusual",
+        "stage": "rules",
+        "message": "gameplay.spawn is not in a typical calm residential district",
+        "districtType": "office"
       }
     ],
     "summary": {
       "errors": 0,
-      "warnings": 1,
-      "infos": 0
+      "warnings": 2,
+      "infos": 1
     }
   }
 }

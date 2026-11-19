@@ -242,6 +242,170 @@ function impressionCadenceMetric(districts, nodes, segments, gp) {
   };
 }
 
+function nearestRoadGeometry(x, z, segments = []) {
+  let best = Infinity, dirAngle = null;
+  for (const s of segments) {
+    const pts = Array.isArray(s?.path) ? s.path : [];
+    for (let i = 0; i + 1 < pts.length; i++) {
+      const a = pts[i], b = pts[i + 1];
+      if (!a || !b) continue;
+      const d = pointSegDistXZ(x, z, a[0], a[2], b[0], b[2]);
+      if (d < best) { best = d; dirAngle = Math.atan2((b[2] ?? 0) - (a[2] ?? 0), (b[0] ?? 0) - (a[0] ?? 0)); }
+    }
+  }
+  return { dist: Number.isFinite(best) ? best : null, dirAngle };
+}
+
+function nearestRoadNodePoint(nodes, x, z) {
+  let best = null, bd = Infinity;
+  for (const n of nodes) {
+    const p = Array.isArray(n?.position) ? n.position : (n?.x != null && n?.z != null ? [n.x, 0, n.z] : null);
+    if (!p) continue;
+    const px = Number(p[0]), pz = Number(p[2] ?? p[1]);
+    if (!Number.isFinite(px) || !Number.isFinite(pz)) continue;
+    const d = Math.hypot(px - x, pz - z);
+    if (d < bd) { bd = d; best = { id: String(n?.id ?? ''), x: px, z: pz, dist: d }; }
+  }
+  return best;
+}
+
+function findRoadRoute(nodes, segments, from, to) {
+  // Детерминированная Dijkstra по дорожному графу; читаем как есть (без мутаций IR).
+  const byId = new Map();
+  for (const n of nodes) {
+    const p = Array.isArray(n?.position) ? n.position : (n?.x != null && n?.z != null ? [n.x, 0, n.z] : null);
+    if (!p) continue;
+    const px = Number(p[0]), pz = Number(p[2] ?? p[1]);
+    if (!Number.isFinite(px) || !Number.isFinite(pz)) continue;
+    byId.set(String(n?.id ?? ''), { x: px, z: pz });
+  }
+  if (!byId.has(from.id) || !byId.has(to.id)) return null;
+  const adj = new Map();
+  const addE = (a, b, len) => { const arr = adj.get(a) ?? []; arr.push({ to: b, len }); adj.set(a, arr); };
+  for (const s of segments) {
+    const a = String(s?.from ?? ''), b = String(s?.to ?? '');
+    if (!a || !b || a === b) continue;
+    if (!byId.has(a) || !byId.has(b)) continue;
+    const len = segLengthXZ(s);
+    if (!Number.isFinite(len) || len <= 0) continue;
+    addE(a, b, len);
+    addE(b, a, len);
+  }
+  const dist = new Map([[from.id, 0]]);
+  const prev = new Map();
+  const remaining = new Set(byId.keys());
+  while (remaining.size) {
+    let cur = null, bd = Infinity;
+    for (const id of remaining) { const d = dist.get(id); if (d != null && d < bd) { bd = d; cur = id; } }
+    if (cur == null) break;
+    remaining.delete(cur);
+    if (cur === to.id) break;
+    const cd = dist.get(cur) ?? Infinity;
+    for (const { to: nb, len } of adj.get(cur) || []) {
+      if (!remaining.has(nb)) continue;
+      const nd = cd + len;
+      if (dist.get(nb) == null || nd < dist.get(nb)) { dist.set(nb, nd); prev.set(nb, cur); }
+    }
+  }
+  if (!dist.has(to.id)) return null;
+  const path = [];
+  let cur = to.id;
+  path.push(cur);
+  while (prev.has(cur)) { cur = prev.get(cur); path.push(cur); }
+  path.reverse();
+  const pts = path.map(id => byId.get(id)).filter(Boolean);
+  return { pathLength: dist.get(to.id), pathNodeIds: path, pathPoints: pts };
+}
+
+function gameplayPlacementMetric(districts, nodes, segments, buildings, gp) {
+  // R5.3 §10.5: read-only checks for exit-goal gameplay (spawn/exit, cars).
+  // Enemies/alienEnemies placement éteht runtime (nav graph) — генератор не ставит врагов;
+  // валидируем только статические поля gameplay и дорожную привязку.
+  const out = {
+    available: true,
+    spawnDistrictType: null,
+    exitDistrictType: null,
+    straightMeters: null,
+    routeMeters: null,
+    routeRatio: null,
+    districtsPassed: null,
+    exitRadius: null,
+    cars: { declared: null, spots: 0, onRoad: 0, misaligned: 0, nearJunction: 0 },
+    enemies: { count: null, alienCount: null, available: false, note: 'runtime placement via nav graph; D-scaling/spawn-distance enforced by engine constraints (not implemented in generator)' },
+  };
+  const sx = Number(gp?.spawn?.x), sz = Number(gp?.spawn?.z);
+  const ex = Number(gp?.exit?.x), ez = Number(gp?.exit?.z);
+  if (Number.isFinite(sx) && Number.isFinite(sz)) out.spawnDistrictType = districtTypeAt(districts, sx, sz);
+  if (Number.isFinite(ex) && Number.isFinite(ez)) out.exitDistrictType = districtTypeAt(districts, ex, ez);
+  if (Number.isFinite(sx) && Number.isFinite(ex) && Number.isFinite(sz) && Number.isFinite(ez)) {
+    out.straightMeters = round(Math.hypot(ex - sx, ez - sz), 1);
+    out.exitRadius = Number.isFinite(Number(gp?.exitRadius)) ? Number(gp.exitRadius) : null;
+    const sN = nearestRoadNodePoint(nodes, sx, sz);
+    const eN = nearestRoadNodePoint(nodes, ex, ez);
+    if (sN && eN) {
+      const route = findRoadRoute(nodes, segments, sN, eN);
+      if (route) {
+        out.routeMeters = round(route.pathLength, 1);
+        if (out.straightMeters > 0) out.routeRatio = round(route.pathLength / out.straightMeters, 3);
+        // районы вдоль пути (уникальные типы по дискретизации 25 м)
+        const seen = new Set();
+        const pts = route.pathPoints;
+        const step = 25;
+        let count = 0;
+        for (let i = 1; i < pts.length; i++) {
+          const a = pts[i - 1], b = pts[i];
+          const legLen = Math.hypot(b.x - a.x, b.z - a.z);
+          if (legLen <= 0) continue;
+          for (let d = 0; d <= legLen; d += step) {
+            const t = d / legLen;
+            const x = a.x + (b.x - a.x) * t, z = a.z + (b.z - a.z) * t;
+            const dt = districtTypeAt(districts, x, z);
+            const key = dt;
+            if (!seen.has(key)) { seen.add(key); count += 1; }
+          }
+        }
+        out.districtsPassed = seen.size;
+      }
+    }
+  }
+  const cars = gp?.cars ?? {};
+  const spots = Array.isArray(cars?.spots) ? cars.spots : [];
+  out.cars.declared = Number.isFinite(Number(cars?.count)) ? Number(cars.count) : null;
+  out.cars.spots = spots.length;
+  let onRoad = 0, misaligned = 0, nearJunction = 0;
+  const DEG = Math.PI / 180;
+  for (const sp of spots) {
+    const x = Number(sp?.x), z = Number(sp?.z);
+    if (!Number.isFinite(x) || !Number.isFinite(z)) continue;
+    const geo = nearestRoadGeometry(x, z, segments);
+    if (geo.dist != null && geo.dist <= 8) onRoad += 1;
+    if (geo.dist != null && geo.dist <= 30 && Number.isFinite(Number(sp?.yaw)) && Number.isFinite(geo.dirAngle)) {
+      // vehicle.js: yaw в градусах; direction = (cos yaw, -sin yaw)
+      const yaw = Number(sp.yaw) * DEG;
+      const vx = Math.cos(yaw), vz = -Math.sin(yaw);
+      let roadAng = geo.dirAngle;
+      const rx = Math.cos(roadAng), rz = Math.sin(roadAng);
+      let dot = Math.abs(vx * rx + vz * rz); // против направления тоже вдоль дороги
+      dot = Math.max(-1, Math.min(1, dot));
+      const ang = Math.acos(dot) / DEG;
+      if (ang > 35) misaligned += 1;
+    }
+    const near = (nodes ?? []).some(n => {
+      const p = Array.isArray(n?.position) ? n.position : null;
+      if (!p) return false;
+      const px = Number(p[0]), pz = Number(p[2] ?? p[1]);
+      return Number.isFinite(px) && Math.hypot(px - x, pz - z) <= 15;
+    });
+    if (near) nearJunction += 1;
+  }
+  out.cars.onRoad = onRoad;
+  out.cars.misaligned = misaligned;
+  out.cars.nearJunction = nearJunction;
+  if (Number.isFinite(Number(gp?.enemies?.count))) out.enemies.count = Number(gp.enemies.count);
+  if (Number.isFinite(Number(gp?.alienEnemies?.count))) out.enemies.alienCount = Number(gp.alienEnemies.count);
+  return out;
+}
+
 function classSlopeLimitPct(type, policies) {
   const t = String(type || 'local');
   const sl = policies?.slopeLimitPct && typeof policies.slopeLimitPct === 'object' ? policies.slopeLimitPct : null;
@@ -580,6 +744,18 @@ export function evaluateRules(ctx) {
   if (exitDist != null && exitDist > 20) {
     v('warn', 'exit_far_from_road', 'gameplay.exit is far from road network (>20m)', { distance: round(exitDist, 3) });
   }
+  // R5.3 §10.5: read-only validation of gameplay placement (spawn/exit on suitable
+  // roads/districts, cars along road & away from junctions). No IR mutation; diagnostics only.
+  const gameplayPlace = gameplayPlacementMetric(districts, nodes, roads, buildings, gp);
+  if (gameplayPlace.spawnDistrictType) {
+    const okD = ['park','forest','residential','housing','suburb','campus','sports','old_town','historic','market','luxury'];
+    if (!okD.includes(String(gameplayPlace.spawnDistrictType))) v('info', 'spawn_district_unusual', 'gameplay.spawn is not in a typical calm residential district', { districtType: gameplayPlace.spawnDistrictType });
+  }
+  if (gameplayPlace.cars.spots > 0) {
+    if (gameplayPlace.cars.onRoad < gameplayPlace.cars.spots) v('warn', 'cars_spot_off_road', 'cars.spots must be near road network (<=8m)', { spots: gameplayPlace.cars.spots, onRoad: gameplayPlace.cars.onRoad });
+    if (gameplayPlace.cars.misaligned > 0) v('warn', 'cars_spot_misaligned', 'cars.spots yaw should align along the road (<=35deg)', { misaligned: gameplayPlace.cars.misaligned });
+    if (gameplayPlace.cars.nearJunction > 0) v('warn', 'cars_spot_near_junction', 'cars.spots must be >=15m from junctions', { nearJunction: gameplayPlace.cars.nearJunction });
+  }
 
   // R0.2/R2 prep: road slope vs class policy (read-only; absolute engine limit J.maxSlope=0.3 remains authoritative)
   let roadSlopeViolations = 0;
@@ -804,6 +980,15 @@ export function evaluateRules(ctx) {
       exitToRoad: round(exitDist, 3),
       enterableShare,
       enterableTarget: targetEnterable,
+      spawnDistrictType: gameplayPlace.spawnDistrictType,
+      exitDistrictType: gameplayPlace.exitDistrictType,
+      straightMeters: gameplayPlace.straightMeters,
+      routeMeters: gameplayPlace.routeMeters,
+      routeRatio: gameplayPlace.routeRatio,
+      districtsPassed: gameplayPlace.districtsPassed,
+      exitRadius: gameplayPlace.exitRadius,
+      cars: gameplayPlace.cars,
+      enemies: gameplayPlace.enemies,
     },
     districts: districtShare,
     parcels: {

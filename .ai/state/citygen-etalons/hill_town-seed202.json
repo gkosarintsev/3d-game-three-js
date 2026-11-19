@@ -1,8 +1,8 @@
 {
   "profile": "hill_town",
   "seed": 202,
-  "generatorVersion": "0.73.0",
-  "reportHash": "4d09b5cccb800ed3a11d4c9a04d078c62bbcedccd4ed73505c625834a192eb38",
+  "generatorVersion": "0.74.0",
+  "reportHash": "2f2e56fcce221bd85e706e140490ce08693906dab2407180ada1c3d7d09f0c9b",
   "summary": {
     "errors": 0,
     "warnings": 8,
@@ -60,7 +60,27 @@
       "spawnToRoad": null,
       "exitToRoad": null,
       "enterableShare": 0.200969,
-      "enterableTarget": 0.2
+      "enterableTarget": 0.2,
+      "spawnDistrictType": "forest",
+      "exitDistrictType": "luxury",
+      "straightMeters": 141.4,
+      "routeMeters": null,
+      "routeRatio": null,
+      "districtsPassed": null,
+      "exitRadius": null,
+      "cars": {
+        "declared": null,
+        "spots": 0,
+        "onRoad": 0,
+        "misaligned": 0,
+        "nearJunction": 0
+      },
+      "enemies": {
+        "count": null,
+        "alienCount": null,
+        "available": false,
+        "note": "runtime placement via nav graph; D-scaling/spawn-distance enforced by engine constraints (not implemented in generator)"
+      }
     },
     "districts": {
       "plateArea": 1638400,

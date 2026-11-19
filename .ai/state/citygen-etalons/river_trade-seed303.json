@@ -1,8 +1,8 @@
 {
   "profile": "river_trade",
   "seed": 303,
-  "generatorVersion": "0.73.0",
-  "reportHash": "516407f538ea3ff1a16034adde3e7a64a7512279a534c24bc44792a983f6aa92",
+  "generatorVersion": "0.74.0",
+  "reportHash": "4c87ca97703fbc77e31b6c5765865397b5b58ce34db5c44749c5b7065a242bd5",
   "summary": {
     "errors": 0,
     "warnings": 9,
@@ -12,7 +12,7 @@
   "rules": {
     "errors": 0,
     "warnings": 0,
-    "infos": 0
+    "infos": 1
   },
   "metrics": {
     "partial": true,
@@ -60,7 +60,27 @@
       "spawnToRoad": null,
       "exitToRoad": null,
       "enterableShare": 0.199029,
-      "enterableTarget": 0.2
+      "enterableTarget": 0.2,
+      "spawnDistrictType": "parking",
+      "exitDistrictType": "luxury",
+      "straightMeters": 141.4,
+      "routeMeters": null,
+      "routeRatio": null,
+      "districtsPassed": null,
+      "exitRadius": null,
+      "cars": {
+        "declared": null,
+        "spots": 0,
+        "onRoad": 0,
+        "misaligned": 0,
+        "nearJunction": 0
+      },
+      "enemies": {
+        "count": null,
+        "alienCount": null,
+        "available": false,
+        "note": "runtime placement via nav graph; D-scaling/spawn-distance enforced by engine constraints (not implemented in generator)"
+      }
     },
     "districts": {
       "plateArea": 1638400,
