@@ -7,7 +7,7 @@ Protocol: `.ai/plans/22-parallel-agents-github-ci.md`, `.ai/prompts/agent-ci-pro
 
 ## Current position (summary)
 
-- **Generator:** `DEFAULT_GENERATOR_VERSION = 0.71.0` on branch `agent/plan21-r52-read` @ `C:\Temp\wt-plan21-next4` from `origin/main` `2957aec` (R5.2 dominants/viewpoints increment, output-affecting; CI pending). `origin/main` remains at `2957aec` (PRs #22/#23 merged; evidence recorded for #22). Staged v4 pipeline (`tools/citygen/index.mjs`, `pipeline/stage-1..6-*`), profiles/policies/validation/metrics/etalons/seed-series tooling developed incrementally.
+- **Generator:** `DEFAULT_GENERATOR_VERSION = 0.71.0` on `origin/main` `acf7a03` (PR #24 merged 2026-11-19T05:03:15Z, R5.2 dominants/viewpoints; green CI 44461948814 push / 44461966642 incl. 100×3). Active increment: `agent/plan21-r24-evidence` @ `C:\Temp\wt-plan21-evidence3` from `acf7a03` (record PR #24 merge evidence, docs/state-only; CI pending). Staged v4 pipeline (`tools/citygen/index.mjs`, `pipeline/stage-1..6-*`), profiles/policies/validation/metrics/etalons/seed-series tooling developed incrementally.
 - **Gates/artifacts:** `tools/citygen.test.mjs`, `tools/citygen-etalon-check.mjs`, `tools/citygen-seed-series.mjs`, `tools/check-levels.mjs`, `tools/build-level.mjs --check`, browser suites by scope/CI; committed derived outputs and etalon/baseline snapshots are part of determinism/regression.
 - **Constraint:** any IR/report/derived level output changes require deterministic rebuild of committed artifacts and baseline/etalon updates per version policy, verified in GitHub CI.
 
@@ -249,15 +249,21 @@ Protocol: `.ai/plans/22-parallel-agents-github-ci.md`, `.ai/prompts/agent-ci-pro
 - **Still remaining:** R5.2 (политика тупиков/ложных тупиков, ритм впечатлений 150–300 м), unresolved R1/R2/R3 DoD items, R4.3/R4.4 residuals, R5.1/R5.3/R5.5, R6.1/R6.2, overall plan 21 DoD.
 
 
-#### Continuation increment (PR #22 merge evidence, `agent/plan21-r22-evidence`, in progress, CI pending)
+#### Continuation increment (PR #22 merge evidence, `agent/plan21-r22-evidence`, integrated)
 - **Branch/worktree:** `agent/plan21-r22-evidence` @ `C:\Temp\wt-plan21-evidence2` (from `origin/main` `946b6cd`, gv `0.70.0`; `node scripts/agent/check-env.mjs` OK).
 - **Scope (docs/state-only):** records merge/CI evidence for PR #22 (R5.2/R0.3 terrain LOS landmark visibility metric): merge commit `946b6cd0202baa7e25b5b59bfbbe29e7f925f1b2`, head `e5ab6b0cb2e54a480d4ea4f1f5ddffd188770ce0`, push CI `44459964592` **success**, PR CI `44459988928` **success** (full merge-gate incl. 100×3 seed-series).
+- **Integration evidence:** PR [#23](https://github.com/gkosarintsev/3d-game-three-js/pull/23) merged to `main` at 2026-11-19T04:52:01Z (merge commit `2957aec0faba9a3001c14db9bbeff5f6c2a75aa5`, head `93acc8a945c47afa7a0aa40707b4477798b9c5ff`). Push CI [44460709889](https://github.com/gkosarintsev/3d-game-three-js/actions/runs/44460709889) **success**; PR CI [44460729702](https://github.com/gkosarintsev/3d-game-three-js/actions/runs/44460729702) **success**.
 - **Still remaining:** R5.2 (политика тупиков/ложных тупиков, ритм впечатлений 150–300 м), unresolved R1/R2/R3 DoD items, R4.3/R4.4 residuals, R5.1/R5.3/R5.5, R6.1/R6.2, overall plan 21 DoD.
 
-#### Continuation increment (R5.2 dominants/viewpoints, agent/plan21-r52-read, in progress, CI pending)
+#### Continuation increment (R5.2 dominants/viewpoints, agent/plan21-r52-read, integrated)
 - **Branch/worktree:** `agent/plan21-r52-read` @ `C:\Temp\wt-plan21-next4` (from `origin/main` `2957aec`, gv `0.70.0 -> 0.71.0`; `node scripts/agent/check-env.mjs` OK).
 - **Scope (output-affecting, gv bump):** `tools/citygen/pipeline/stage-4-buildings.mjs` (доминанты: global cap 8, fill min 5 по landValue/floors, one per district), `tools/citygen/pipeline/stage-1-landscape.mjs` (viewpoints <=4; fallback >=2), `tools/citygen/config.mjs` (gv 0.71.0), `src/levels/level-16..22.json`, `src/levels/level-16/`-`src/levels/level-22/` (rebuilt 0 warnings), `.ai/state/citygen-baselines/level-16..22*`, `.ai/state/citygen-etalons/*` (10 updated), `.ai/plans/21-citygen-procedural-rules.md`, `.ai/state/*`.
   - **R5.2 [partial]:** 5-8 доминант (report floors_contrast_built.dominants: L16 5, L17 6, L20 5, L21 8, L22 5; L18/L19 pilots with one buildable district keep 1 — documented pilot limitation). Viewpoints 2-4 (stage-1, >=2 fallback). Not closed: dead-end/false dead-end policy, impression cadence 150-300 m.
 - **Versioning/artifacts:** gv `0.70.0 -> 0.71.0`; rebuild 0 warnings; local prep `node tools/citygen-etalon-check.mjs` **16/16 passed**; `node --test tools/citygen.test.mjs` **57/57 pass**.
-- **CI/merge evidence:** pending (commit/push/PR + green GitHub CI/merge-gate, sequential merge to `main`, finalize evidence with next state-update).
+- **CI/merge evidence:** PR [#24](https://github.com/gkosarintsev/3d-game-three-js/pull/24) merged to `main` at 2026-11-19T05:03:15Z (merge commit `acf7a0309dd3d2718e123f546fd9dfacb7ca889a`, head `97eef6cc76bc7251f61223d2244c0508980e2b5c`). Push CI [44461948814](https://github.com/gkosarintsev/3d-game-three-js/actions/runs/44461948814) **success**; PR CI [44461966642](https://github.com/gkosarintsev/3d-game-three-js/actions/runs/44461966642) **success** (full merge-gate incl. 100×3 seed-series).
+- **Still remaining:** R5.2 (тупики/ложные тупики, ритм впечатлений), unresolved R1/R2/R3 DoD items, R4.3/R4.4 residuals, R5.1/R5.3/R5.5, R6.1/R6.2, overall plan 21 DoD.
+
+#### Continuation increment (PR #24 merge evidence, `agent/plan21-r24-evidence`, in progress, CI pending)
+- **Branch/worktree:** `agent/plan21-r24-evidence` @ `C:\Temp\wt-plan21-evidence3` (from `origin/main` `acf7a03`, gv `0.71.0`; `node scripts/agent/check-env.mjs` OK).
+- **Scope (docs/state-only):** records merge/CI evidence for PR #24 (R5.2 dominants/viewpoints increment): merge commit `acf7a0309dd3d2718e123f546fd9dfacb7ca889a`, head `97eef6cc76bc7251f61223d2244c0508980e2b5c`, push CI `44461948814` success, PR CI `44461966642` success (full merge-gate incl. 100×3 seed-series).
 - **Still remaining:** R5.2 (тупики/ложные тупики, ритм впечатлений), unresolved R1/R2/R3 DoD items, R4.3/R4.4 residuals, R5.1/R5.3/R5.5, R6.1/R6.2, overall plan 21 DoD.
