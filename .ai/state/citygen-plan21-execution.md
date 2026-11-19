@@ -7,7 +7,7 @@ Protocol: `.ai/plans/22-parallel-agents-github-ci.md`, `.ai/prompts/agent-ci-pro
 
 ## Current position (summary)
 
-- **Generator:** `DEFAULT_GENERATOR_VERSION = 0.69.0` on active branch `agent/plan21-r04-rhythm` @ `C:\Temp\wt-plan21-next` from `origin/main` `7c49812` (R0.3 metrics scaffold increment, output-affecting; CI pending). `origin/main` remains at `7c49812` / gv `0.68.0` until sequential merge of this increment. Staged v4 pipeline (`tools/citygen/index.mjs`, `pipeline/stage-1..6-*`), profiles/policies/validation/metrics/etalons/seed-series tooling developed incrementally.
+- **Generator:** `DEFAULT_GENERATOR_VERSION = 0.69.0` on `origin/main` `69d40e1` (PR #18 merged 2026-11-19, R0.3 scaffold, green CI 44451424341 push / 44451506464 PR incl. 100×3). Active increment: `agent/plan21-r04-formalize` @ `C:\Temp\wt-plan21-r04` from `69d40e1` (R0.4 formalization, docs/state-only; CI pending). Staged v4 pipeline (`tools/citygen/index.mjs`, `pipeline/stage-1..6-*`), profiles/policies/validation/metrics/etalons/seed-series tooling developed incrementally.
 - **Gates/artifacts:** `tools/citygen.test.mjs`, `tools/citygen-etalon-check.mjs`, `tools/citygen-seed-series.mjs`, `tools/check-levels.mjs`, `tools/build-level.mjs --check`, browser suites by scope/CI; committed derived outputs and etalon/baseline snapshots are part of determinism/regression.
 - **Constraint:** any IR/report/derived level output changes require deterministic rebuild of committed artifacts and baseline/etalon updates per version policy, verified in GitHub CI.
 
@@ -15,7 +15,7 @@ Protocol: `.ai/plans/22-parallel-agents-github-ci.md`, `.ai/prompts/agent-ci-pro
 
 | Area | Status (indicative) | Note / risk |
 | --- | --- | --- |
-| R0 (validator/metrics/etalons/procedures) | mostly implemented, DoD/formalization in places; **R0.1,R0.2,R0.3,R0.5 [x]** | R0.1 matrix formalized; R0.2/R0.5 implemented; R0.3 metrics scaffold §12.2 implemented on gv 0.69.0 (`agent/plan21-r04-rhythm`, park share, Spearman D vs 1/area, landmark visibility stub, chunkBuild scaffold, metrics v2 + snapshots/baselines/etalons refreshed; CI pending). R0.4 formal DoD/acceptance remains partial/open. |
+| R0 (validator/metrics/etalons/procedures) | **R0.1,R0.2,R0.3,R0.4(stated scope),R0.5 [x]**; full R0/R6 DoD partial/open | R0.1–R0.3,R0.5 implemented/recorded; R0.3 merged PR #18 (`69d40e1`, gv 0.69.0, green CI 44451424341/44451506464). R0.4 stated-scope formalization (etalons 3×3 + baselines L16–22, hash/summary/rules/metrics, bump/regen/verify procedure, CI `node-etalon`) in progress on `agent/plan21-r04-formalize` (docs/state-only, CI pending). Remaining R0/R6: automation/full cycle, ≥100 seed/full regression, broader §12 coverage/visualization. |
 | R1 (relief/water) | mostly implemented | Further changes output-affecting. |
 | R2 (network/intersections/bridges/tunnels/interchanges/repair) | partial | High coupling, perf/navigation risks. |
 | R3 (settlement/districts/D,B(D)) | mostly implemented | Metrics/series sensitive. |
@@ -203,12 +203,21 @@ Protocol: `.ai/plans/22-parallel-agents-github-ci.md`, `.ai/prompts/agent-ci-pro
 - **Versioning/artifacts:** no generator/runtime/output changes, no `DEFAULT_GENERATOR_VERSION` bump, no rebuild of `src/levels/level-16..22/*`, no baseline/etalon changes.
 - **Local prep checks (hints only):** `git diff --check` clean after edits; baseline comparison 16–19 MATCH on 4663c80 as recorded above (prep, not CI gate).
 - **CI:** pending (commit/push fast CI on `agent/**` per protocol, PR merge-gate as required; CI source of truth). Sequential merge only on green required checks.
-- **Still remaining:** R0.4 formal DoD, unresolved R1/R2/R3 DoD items, R4.3/R4.4 residuals, R5.1–R5.3,R5.5, R6 and overall plan 21 DoD.
+- **Still remaining (current focus):** unresolved R1/R2/R3 DoD items, R4.3/R4.4 residuals, R5.1–R5.3,R5.5, R6 (beyond R0.4 stated scope: ≥100 seed/full regression, automation/full cycle, profile pilots/registration decisions) and overall plan 21 DoD.
 
-#### Continuation increment (R0.3 metrics scaffold, `agent/plan21-r04-rhythm`, in progress, CI pending)
+#### Continuation increment (R0.3 metrics scaffold, `agent/plan21-r04-rhythm`, integrated)
 - **Scope (output-affecting, gv bump):** `tools/citygen/config.mjs`, `tools/citygen/rules.mjs`, `tools/citygen-baseline.mjs`, `tools/citygen-etalon.mjs`, `tools/citygen-etalon-check.mjs`, `src/levels/level-16.json`–`src/levels/level-22.json`, `src/levels/level-16/`–`src/levels/level-22/` (rebuilt catalogs/reports), `.ai/state/citygen-baselines/level-16..22*`, `.ai/state/citygen-etalons/*`, `.ai/plans/21-citygen-procedural-rules.md`, `.ai/state/citygen-plan21-execution.md`, `.ai/state/citygen-procedural-rules.md`.
   - **R0.3 [x] (scaffold, §12.2):** `report.metrics.version=2` extended in `evaluateRules` — park share by district rect/geometry area (`districts.parkShare/areaByType/shareByType`, forest+park counted), `blockDensityCorrelation` Spearman(D,1/area) when D/area available, `landmarkVisibility` (stub/count proxy), `chunkBuild` scaffold (`buildTimeMs: null, partial`). Snapshot serializers/checker updated to match.
 - **Versioning/artifacts:** bump `DEFAULT_GENERATOR_VERSION` `0.68.0 -> 0.69.0`, sources `level-16..22.json` bumped, `node tools/build-level.mjs src/levels/level-16..22.json` (0 warnings each), baselines regenerated for L16–22 and etalons 3×3 refreshed for 0.69.0 (committed as derived/state).
 - **Local prep checks (hints only):** `node tools/citygen-etalon-check.mjs` **16/16 passed** (0 failed) in `C:\Temp\wt-plan21-next`; deterministic rebuild completed with 0 warnings. CI is source of truth (push fast on `agent/**`, PR merge-gate as required/profile).
-- **CI/merge evidence:** pending (commit/push/PR + green CI/merge-gate, sequential merge to `main`, then record run IDs/URLs/SHAs in state/PR).
-- **Still remaining:** R0.4 formal DoD, unresolved R1/R2/R3 DoD items, R4.3/R4.4 residuals, R5.1–R5.3,R5.5, R6 and overall plan 21 DoD.
+- **CI/merge evidence:** PR [#18](https://github.com/gkosarintsev/3d-game-three-js/pull/18) merged to `main` at 2026-11-19T03:31:03Z (merge commit `69d40e1eee8b220c2913ee43c68ef00e3c85f4f7`, head `53b6f74deec58e5f83cb1998eb9daa5cb7deaf94`). Push CI [44451424341](https://github.com/gkosarintsev/3d-game-three-js/actions/runs/44451424341) **success**; PR CI [44451506464](https://github.com/gkosarintsev/3d-game-three-js/actions/runs/44451506464) **success** (full merge-gate incl. 100×3).
+- **Still remaining (current focus):** unresolved R1/R2/R3 DoD items, R4.3/R4.4 residuals, R5.1–R5.3,R5.5, R6 (beyond R0.4 stated scope: ≥100 seed/full regression, automation/full cycle, profile pilots/registration decisions) and overall plan 21 DoD.
+
+
+#### Continuation increment (R0.4 formalization, `agent/plan21-r04-formalize`, in progress, CI pending)
+- **Branch/worktree:** `agent/plan21-r04-formalize` @ `C:\Temp\wt-plan21-r04` (from `origin/main` `69d40e1`, gv `0.69.0`; `node scripts/agent/check-env.mjs` OK).
+- **Scope (docs/state-only, no gv bump/rebuild):** `.ai/plans/21-citygen-procedural-rules.md`, `.ai/state/citygen-procedural-rules.md`, `.ai/state/citygen-plan21-execution.md`.
+  - **R0.4 [x] (stated scope, §12.3):** зафиксирован/подтверждён набор synthetic etalons 3×3 (`river_trade`,`hill_town`,`railway_industrial` × seeds 101/202/303) с hash/summary/rules/metrics в `.ai/state/citygen-etalons/` (`summary.json`, gv 0.69.0) и pilot baselines L16–L22 в `.ai/state/citygen-baselines/`; формализована процедура bump/regen/verify (инструменты `tools/citygen-etalon.mjs` / `tools/citygen-etalon-check.mjs` / `tools/citygen-baseline.mjs`, CI job `node-etalon` в `.github/workflows/ci.yml`, порядок/артефакты/policy). Расширение до полного R6 DoD (≥100 seed, автоматизация полного цикла, регистрация/полная регрессия пилотов) — вне R0.4 stated scope.
+- **Local prep checks (hints only):** `git diff --check` clean; `node tools/citygen-etalon-check.mjs` **16/16 passed** on 69d40e1/gv 0.69.0 (CI source of truth).
+- **CI/merge evidence:** pending (commit/push/PR + green GitHub CI/merge-gate, sequential merge to `main`, then record run IDs/URLs/SHAs and merged commit in state/plan).
+- **Still remaining:** unresolved R1/R2/R3 DoD items, R4.3/R4.4 residuals, R5.1–R5.3,R5.5, R6 (beyond R0.4 stated scope) and overall plan 21 DoD.
