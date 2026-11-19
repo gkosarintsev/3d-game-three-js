@@ -132,11 +132,8 @@ function districtTypeAt(districts, x, z) {
   return best?.type ?? 'unknown';
 }
 
-function impressionCadenceMetric(districts, nodes, segments, gp) {
-  // R5.2 §10.4: «смена впечатлений каждые 150–300 м пути» — приближённая метрика.
-  // Детерминированно: shortest path spawn→exit по графу дорог (Dijkstra), дискретизация
-  // каждые 25 м, наблюдение смены типа района. Ритм — чисто исследовательская метрика,
-  // не требование инварианта; целевые 150–300 м фиксируются, ок=false допустимо.
+/** Shared: spawn→exit shortest path by road graph (Dijkstra); returns legs [ {x,z}, {x,z}, len ] or null. */
+function spawnExitLegs(nodes, segments, gp) {
   if (!gp?.spawn || !gp?.exit || !Array.isArray(nodes) || !Array.isArray(segments) || !segments.length) return null;
   if (!Number.isFinite(Number(gp.spawn.x)) || !Number.isFinite(Number(gp.spawn.z))) return null;
   if (!Number.isFinite(Number(gp.exit.x)) || !Number.isFinite(Number(gp.exit.z))) return null;
@@ -220,6 +217,47 @@ function impressionCadenceMetric(districts, nodes, segments, gp) {
     legs.push([a, b, legLen]);
   }
   if (!legs.length) return null;
+  return { legs };
+}
+
+/** §10.4: якоря «живой» смены — детерминированные точки вдоль маршрута каждые `spacingMeters`. */
+function impressionAnchorsMetric(nodes, segments, gp, spacingMeters = 200) {
+  const legsInfo = spawnExitLegs(nodes, segments, gp);
+  const legs = legsInfo?.legs;
+  if (!legs) return null;
+  const spacing = Math.max(150, Math.min(300, Math.floor(Number(spacingMeters) || 200)));
+  const anchors = [];
+  let traveled = 0;
+  let next = spacing;
+  let total = 0;
+  for (const [a, b, legLen] of legs) {
+    total += legLen;
+    while (next <= traveled + legLen) {
+      const t = (next - traveled) / legLen;
+      const x = a.x + (b.x - a.x) * t;
+      const z = a.z + (b.z - a.z) * t;
+      anchors.push({ d: round(next, 1), x: round(x, 1), z: round(z, 1) });
+      next += spacing;
+    }
+    traveled += legLen;
+  }
+  return {
+    method: 'spawn_exit_anchors_spacing',
+    spacingMeters: spacing,
+    anchors,
+    anchorsCount: anchors.length,
+    pathLength: round(total, 1),
+  };
+}
+
+function impressionCadenceMetric(districts, nodes, segments, gp) {
+  // R5.2 §10.4: «смена впечатлений каждые 150–300 м пути» — приближённая метрика.
+  // Детерминированно: shortest path spawn→exit по графу дорог (Dijkstra), дискретизация
+  // каждые 25 м, наблюдение смены типа района. Ритм — чисто исследовательская метрика,
+  // не требование инварианта; целевые 150–300 м фиксируются, ок=false допустимо.
+  const legsInfo = spawnExitLegs(nodes, segments, gp);
+  const legs = legsInfo?.legs;
+  if (!legs) return null;
 
   const sampleStep = 25;
   const signatureOf = (x, z) => {
@@ -1070,6 +1108,7 @@ export function evaluateRules(ctx) {
     })() : null,
     landmarkVisibility,
     impressionCadence,
+    impressionAnchors: impressionAnchorsMetric(nodes, roads, gp, 200),
     falseDeadEnds: {
       // R5.2 §10.4: false dead-ends must be ≤10% of dead-ends. None are emitted by the
       // generator design (turnarounds are reward endpoints, not fake-passes); audit-only

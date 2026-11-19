@@ -1,7 +1,7 @@
 {
   "version": 1,
   "generator": {
-    "generatorVersion": "0.83.0",
+    "generatorVersion": "0.84.0",
     "seed": 19,
     "deterministic": true
   },
@@ -1042,6 +1042,7 @@
       "visibleTargets": 2
     },
     "impressionCadence": null,
+    "impressionAnchors": null,
     "falseDeadEnds": {
       "count": 0,
       "share": 0,
@@ -1071,7 +1072,7 @@
       "dividesPlate": true
     },
     "determinism": {
-      "generatorVersion": "0.83.0",
+      "generatorVersion": "0.84.0",
       "seed": 19,
       "deterministic": true
     },
