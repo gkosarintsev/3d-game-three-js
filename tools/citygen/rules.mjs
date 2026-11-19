@@ -92,6 +92,156 @@ function segMaxSlope(seg) {
   return maxS;
 }
 
+function districtRectOf(d) {
+  const g = d?.geometry;
+  const r = g?.rect ?? (Number.isFinite(Number(g?.minX)) ? g : null);
+  if (!r) return null;
+  const minX = Number(r.minX), maxX = Number(r.maxX), minZ = Number(r.minZ), maxZ = Number(r.maxZ);
+  if (![minX, maxX, minZ, maxZ].every(Number.isFinite) || !(maxX > minX) || !(maxZ > minZ)) return null;
+  return { minX, maxX, minZ, maxZ };
+}
+
+function districtTypeAt(districts, x, z) {
+  let best = null, bestArea = Infinity;
+  for (const d of districts ?? []) {
+    const r = districtRectOf(d);
+    if (!r) continue;
+    if (x < r.minX || x > r.maxX || z < r.minZ || z > r.maxZ) continue;
+    const a = (r.maxX - r.minX) * (r.maxZ - r.minZ);
+    if (a < bestArea) { bestArea = a; best = d; }
+  }
+  return best?.type ?? 'unknown';
+}
+
+function impressionCadenceMetric(districts, nodes, segments, gp) {
+  // R5.2 §10.4: «смена впечатлений каждые 150–300 м пути» — приближённая метрика.
+  // Детерминированно: shortest path spawn→exit по графу дорог (Dijkstra), дискретизация
+  // каждые 25 м, наблюдение смены типа района. Ритм — чисто исследовательская метрика,
+  // не требование инварианта; целевые 150–300 м фиксируются, ок=false допустимо.
+  if (!gp?.spawn || !gp?.exit || !Array.isArray(nodes) || !Array.isArray(segments) || !segments.length) return null;
+  if (!Number.isFinite(Number(gp.spawn.x)) || !Number.isFinite(Number(gp.spawn.z))) return null;
+  if (!Number.isFinite(Number(gp.exit.x)) || !Number.isFinite(Number(gp.exit.z))) return null;
+
+  const posOf = (n) => {
+    const p = Array.isArray(n?.position) ? n.position : (n?.x != null && n?.z != null ? [n.x, 0, n.z] : null);
+    if (!p) return null;
+    const x = Number(p[0]), z = Number(p[2] ?? p[1]);
+    if (!Number.isFinite(x) || !Number.isFinite(z)) return null;
+    return { x, z };
+  };
+  const byId = new Map();
+  for (const n of nodes) {
+    const id = String(n?.id ?? '');
+    if (!id) continue;
+    const q = posOf(n);
+    if (q) byId.set(id, q);
+  }
+  if (byId.size < 2) return null;
+
+  const adj = new Map();
+  const add = (a, b, len) => {
+    const arr = adj.get(a) ?? [];
+    arr.push({ to: b, len });
+    adj.set(a, arr);
+  };
+  for (const s of segments) {
+    const a = String(s?.from ?? ''), b = String(s?.to ?? '');
+    if (!a || !b || a === b) continue;
+    if (!byId.has(a) || !byId.has(b)) continue;
+    const len = segLengthXZ(s);
+    if (!Number.isFinite(len) || len <= 0) continue;
+    add(a, b, len);
+    add(b, a, len);
+  }
+
+  const nearestNode = (x, z) => {
+    let best = null, bd = Infinity;
+    for (const [id, q] of byId) {
+      const d = Math.hypot(q.x - x, q.z - z);
+      if (d < bd) { bd = d; best = id; }
+    }
+    return { id: best, dist: bd };
+  };
+  const sN = nearestNode(Number(gp.spawn.x), Number(gp.spawn.z));
+  const eN = nearestNode(Number(gp.exit.x), Number(gp.exit.z));
+  if (!sN.id || !eN.id) return null;
+
+  const dist = new Map([[sN.id, 0]]);
+  const prev = new Map();
+  const remaining = new Set(byId.keys());
+  while (remaining.size) {
+    let cur = null, bd = Infinity;
+    for (const id of remaining) {
+      const d = dist.get(id);
+      if (d != null && d < bd) { bd = d; cur = id; }
+    }
+    if (cur == null) break;
+    remaining.delete(cur);
+    if (cur === eN.id) break;
+    const cd = dist.get(cur) ?? Infinity;
+    for (const { to, len } of adj.get(cur) || []) {
+      if (!remaining.has(to)) continue;
+      const nd = cd + len;
+      if (dist.get(to) == null || nd < dist.get(to)) { dist.set(to, nd); prev.set(to, cur); }
+    }
+  }
+  if (!dist.has(eN.id)) return null;
+
+  const path = [];
+  let cur = eN.id;
+  path.push(cur);
+  while (prev.has(cur)) { cur = prev.get(cur); path.push(cur); }
+  path.reverse();
+  const legs = [];
+  for (let i = 1; i < path.length; i++) {
+    const a = byId.get(path[i - 1]), b = byId.get(path[i]);
+    if (!a || !b) continue;
+    const legLen = Math.hypot(b.x - a.x, b.z - a.z);
+    if (legLen <= 0) continue;
+    legs.push([a, b, legLen]);
+  }
+  if (!legs.length) return null;
+
+  const sampleStep = 25;
+  let traveled = 0;
+  let prevType = districtTypeAt(districts, legs[0][0].x, legs[0][0].z);
+  let changes = 0;
+  let lastChangeAt = 0;
+  let minGap = null;
+  let samples = 0;
+  for (const [a, b, legLen] of legs) {
+    for (let d = traveled + sampleStep; d <= traveled + legLen; d += sampleStep) {
+      const t = (d - traveled) / legLen;
+      const x = a.x + (b.x - a.x) * t;
+      const z = a.z + (b.z - a.z) * t;
+      samples += 1;
+      const type = districtTypeAt(districts, x, z);
+      if (type !== prevType) {
+        changes += 1;
+        const gap = d - lastChangeAt;
+        if (minGap == null || gap < minGap) minGap = gap;
+        lastChangeAt = d;
+        prevType = type;
+      }
+    }
+    traveled += legLen;
+  }
+  const total = traveled;
+  const avg = changes > 0 ? round(total / (changes + 1), 1) : total;
+  return {
+    partial: true,
+    method: 'spawn_exit_shortest_path_25m',
+    samples,
+    changes,
+    pathLength: round(total, 1),
+    avgSpacingMeters: avg,
+    minSpacingMeters: minGap == null ? null : round(minGap, 1),
+    targetMin: 150,
+    targetMax: 300,
+    ok: avg >= 150 && avg <= 300,
+  };
+}
+
 function classSlopeLimitPct(type, policies) {
   const t = String(type || 'local');
   const sl = policies?.slopeLimitPct && typeof policies.slopeLimitPct === 'object' ? policies.slopeLimitPct : null;
@@ -396,6 +546,8 @@ export function evaluateRules(ctx) {
   }
 
   const graph = roadGraphStats(nodes, roads);
+  // R5.2 §10.4: приближённая метрика 'смена впечатлений каждые 150-300 м' - read-only (путь spawn/exit + смены типа района каждые 25 м).
+  const impressionCadence = impressionCadenceMetric(districts, nodes, roads, gp);
   if (graph.nodes > 0 && graph.components > 1) {
     v('warn', 'road_graph_not_single_component', `road graph has ${graph.components} connected components`, { components: graph.components, nodes: graph.nodes });
   }
@@ -679,6 +831,14 @@ export function evaluateRules(ctx) {
       floodplains: floodplains.length,
     } : ((rivers.length + lakes.length) > 0 ? { waterBuffers: waterBuffers.length, floodplains: floodplains.length } : null),
     landmarkVisibility,
+    impressionCadence,
+    falseDeadEnds: {
+      // R5.2 §10.4: false dead-ends must be ≤10% of dead-ends. None are emitted by the
+      // generator design (turnarounds are reward endpoints, not fake-passes); audit-only
+      // scaffold until false-pass semantics (lit reveal/choke) are implemented.
+      count: 0, share: 0, deadEndRatio: null, target: 0.1, ok: true, partial: true,
+      note: 'no false dead-ends emitted by design; metric scaffold until false-pass semantics are implemented',
+    },
     blockDensityCorrelation: blockDensityCorr,
     chunkBuild: { partial: true, buildTimeMs: null },
     stream: stream ? {

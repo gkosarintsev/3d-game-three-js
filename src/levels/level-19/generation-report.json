@@ -1,7 +1,7 @@
 {
   "version": 1,
   "generator": {
-    "generatorVersion": "0.72.0",
+    "generatorVersion": "0.73.0",
     "seed": 19,
     "deterministic": true
   },
@@ -772,6 +772,16 @@
       "visibleFraction": 1,
       "visibleTargets": 2
     },
+    "impressionCadence": null,
+    "falseDeadEnds": {
+      "count": 0,
+      "share": 0,
+      "deadEndRatio": null,
+      "target": 0.1,
+      "ok": true,
+      "partial": true,
+      "note": "no false dead-ends emitted by design; metric scaffold until false-pass semantics are implemented"
+    },
     "blockDensityCorrelation": {
       "rho": null,
       "n": 1,
@@ -792,7 +802,7 @@
       "dividesPlate": true
     },
     "determinism": {
-      "generatorVersion": "0.72.0",
+      "generatorVersion": "0.73.0",
       "seed": 19,
       "deterministic": true
     },
