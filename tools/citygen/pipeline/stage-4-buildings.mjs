@@ -1478,9 +1478,18 @@ export function makeStage4() {
           sx = clamp(sx, inner.minX + 1.2, inner.maxX - 1.2);
           sz = clamp(sz, inner.minZ + 1.2, inner.maxZ - 1.2);
           const stairsPos = { x: +sx.toFixed(3), z: +sz.toFixed(3) };
+          // R4.3 §9.6: orient straight stair so its bottom/entry faces the street-access (sidewalk) side
+          // and the run ascends inward. Local +X is ascent (bottom at X=0) in normalize-level toWorld.
+          const stairEntryRot = (() => {
+            if (edge === 'south') return 90;  // face south, ascend north (inward)
+            if (edge === 'north') return 270; // face north, ascend south (inward)
+            if (edge === 'west') return 0;    // face west, ascend east (inward)
+            if (edge === 'east') return 180;  // face east, ascend west (inward)
+            return snapYaw90(b.rotation ?? 0);
+          })();
           const stairs = [];
           for (let s = 0; s + 1 < floorsN; s++) {
-            stairs.push({ id: `${id}:s${s}_${s + 1}`, connectsFloors: [s, s + 1], type: 'straight', position: stairsPos, rotation: snapYaw90(b.rotation ?? 0), dimensions: { width: 2, length: stairLen } });
+            stairs.push({ id: `${id}:s${s}_${s + 1}`, connectsFloors: [s, s + 1], type: 'straight', position: stairsPos, rotation: stairEntryRot, dimensions: { width: 2, length: stairLen } });
           }
           b.rooms = rooms;
           b.stairs = stairs;
