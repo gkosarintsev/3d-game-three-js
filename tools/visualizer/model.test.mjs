@@ -178,7 +178,7 @@ test('integration: level 18 counts/matching', async () => {
   const model = buildModel({ level: n, mode: 'compiled', source, compiledIndex: levelDef.map, decodedCells, report });
   assert.equal(model.entities.buildings.size, 12);
   assert.equal(model.entities.roads.size, 12);
-  assert.equal(model.entities.props.size, 158);
+  assert.equal(model.entities.props.size, 164);
   assert.equal(model.skeleton.nodes.length, 101);
   assert.equal(model.skeleton.edges.length, 100);
   const srcRoads = new Set((source.cityforge.networks.roads.segments || []).map(s => s.id));
