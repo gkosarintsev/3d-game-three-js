@@ -105,8 +105,12 @@ function computeEtalonRun(expected) {
       graph: m.graph ?? null,
       roads: m.roads ?? null,
       gameplay: m.gameplay ?? null,
+      districts: m.districts ?? null,
       terrain: m.terrain ?? null,
       parcels: m.parcels ?? null,
+      landmarkVisibility: m.landmarkVisibility ?? null,
+      blockDensityCorrelation: m.blockDensityCorrelation ?? null,
+      chunkBuild: m.chunkBuild ?? null,
     },
   };
   return { run };
@@ -174,6 +178,9 @@ function computeBaselineRun(expected) {
       districts: m.districts,
       parcels: m.parcels ?? null,
       terrain: m.terrain ?? null,
+      landmarkVisibility: m.landmarkVisibility ?? null,
+      blockDensityCorrelation: m.blockDensityCorrelation ?? null,
+      chunkBuild: m.chunkBuild ?? null,
       stream: m.stream,
     } : null,
   };

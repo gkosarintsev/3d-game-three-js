@@ -165,24 +165,123 @@ function roadClassShares(segments = []) {
   return { totalLength: round(total, 3), lengthByType: lengths, shareByType: shares };
 }
 
+function rectArea(rect) {
+  if (!rect) return null;
+  const w = Number(rect.maxX) - Number(rect.minX);
+  const h = Number(rect.maxZ) - Number(rect.minZ);
+  if (!(Number.isFinite(w) && Number.isFinite(h) && w > 0 && h > 0)) return null;
+  return w * h;
+}
+
+function districtAreaOf(d) {
+  if (Number.isFinite(d?.area) && d.area > 0) return Number(d.area);
+  const r = d?.geometry?.rect ?? (Number.isFinite(d?.geometry?.minX) ? d.geometry : null);
+  const ra = rectArea(r);
+  if (ra != null) return ra;
+  if (Number.isFinite(d?.geometry?.width) && Number.isFinite(d?.geometry?.height)) {
+    const a = d.geometry.width * d.geometry.height;
+    return Number.isFinite(a) && a > 0 ? a : null;
+  }
+  return null;
+}
+
 function districtAreaShare(districts = [], groundSize = 0) {
   const plateArea = groundSize > 0 ? groundSize * groundSize : 0;
   const byType = Object.create(null);
   let known = 0;
+  let parkArea = 0;
   for (const d of districts) {
     const t = String(d?.type || d?.profileId || 'unknown');
-    // v4 generator districts in source/report often lack explicit area; skip unknown areas.
-    const area = Number.isFinite(d?.area) ? Number(d.area)
-      : (Number.isFinite(d?.geometry?.width) && Number.isFinite(d?.geometry?.height) ? d.geometry.width * d.geometry.height : null);
+    const area = districtAreaOf(d);
     if (Number.isFinite(area) && area > 0) {
       byType[t] = (byType[t] || 0) + area;
       known += area;
+      if (t === 'park' || t === 'forest') parkArea += area;
     }
   }
   const types = Object.keys(byType).sort();
   const shareByType = Object.create(null);
-  for (const t of types) shareByType[t] = plateArea > 0 ? round(byType[t] / plateArea, 6) : null;
-  return { plateArea: round(plateArea, 3), knownArea: round(known, 3), areaByType: byType, shareByType };
+  const areaByType = Object.create(null);
+  for (const t of types) {
+    areaByType[t] = round(byType[t], 3);
+    shareByType[t] = plateArea > 0 ? round(byType[t] / plateArea, 6) : null;
+  }
+  const parkShare = plateArea > 0 ? round(parkArea / plateArea, 6) : (known > 0 ? round(parkArea / known, 6) : null);
+  return {
+    plateArea: round(plateArea, 3),
+    knownArea: round(known, 3),
+    areaByType,
+    shareByType,
+    parkShare,
+  };
+}
+
+function rankWithTies(values) {
+  const order = values.map((v, i) => ({ v, i })).sort((a, b) => a.v - b.v || a.i - b.i);
+  const ranks = new Array(values.length);
+  for (let i = 0; i < order.length;) {
+    let j = i + 1;
+    while (j < order.length && order[j].v === order[i].v) j++;
+    const avgRank = (i + 1 + j) / 2; // 1-based average rank
+    for (let k = i; k < j; k++) ranks[order[k].i] = avgRank;
+    i = j;
+  }
+  return ranks;
+}
+
+function spearmanRho(xs, ys) {
+  const n = xs.length;
+  if (n < 3 || ys.length !== n) return null;
+  const rx = rankWithTies(xs);
+  const ry = rankWithTies(ys);
+  let num = 0, dx2 = 0, dy2 = 0;
+  const mx = rx.reduce((s, v) => s + v, 0) / n;
+  const my = ry.reduce((s, v) => s + v, 0) / n;
+  for (let i = 0; i < n; i++) {
+    const dx = rx[i] - mx;
+    const dy = ry[i] - my;
+    num += dx * dy;
+    dx2 += dx * dx;
+    dy2 += dy * dy;
+  }
+  if (!(dx2 > 0 && dy2 > 0)) return null;
+  return round(num / Math.sqrt(dx2 * dy2), 6);
+}
+
+function blockDensityCorrelation(districts = []) {
+  // R0.3/R3.6 metric (каркас): Spearman(D, 1/area) по районам, когда D и площадь доступны.
+  const xs = [];
+  const ys = [];
+  for (const d of districts) {
+    const pressure = Number(d?.pressure ?? d?.D ?? d?.metrics?.D);
+    const area = districtAreaOf(d);
+    if (!Number.isFinite(pressure) || !(area > 0)) continue;
+    xs.push(pressure);
+    ys.push(1 / area);
+  }
+  if (xs.length < 3) return { rho: null, n: xs.length, target: 0.6, ok: null, partial: true };
+  const rho = spearmanRho(xs, ys);
+  return { rho, n: xs.length, target: 0.6, ok: rho == null ? null : rho >= 0.6, partial: false };
+}
+
+function landmarkVisibilityMetric(ctx, terrainAnalysis) {
+  // R0.3 §12.2: видимость ориентиров (заглушка/приближение) — count/coverage proxy, no LOS raycast.
+  const landmarks = Array.isArray(terrainAnalysis?.landmarks) ? terrainAnalysis.landmarks
+    : (Array.isArray(ctx?.masks?.terrain?.landmarks) ? ctx.masks.terrain.landmarks : []);
+  const crossings = Array.isArray(terrainAnalysis?.crossings) ? terrainAnalysis.crossings
+    : (Array.isArray(ctx?.masks?.terrain?.crossings) ? ctx.masks.terrain.crossings : []);
+  const cores = Array.isArray(terrainAnalysis?.cores) ? terrainAnalysis.cores
+    : (Array.isArray(ctx?.terrain?.analysis?.cores) ? ctx.terrain.analysis.cores : []);
+  const total = landmarks.length + crossings.length;
+  return {
+    partial: true,
+    method: 'stub_count_proxy',
+    landmarks: landmarks.length,
+    crossings: crossings.length,
+    cores: cores.length,
+    total,
+    visibleApprox: total, // placeholder approximation: assume marked candidates are intended-visible
+  };
 }
 
 function insidePlate(x, z, size) {
@@ -298,6 +397,9 @@ export function evaluateRules(ctx) {
   const enterableShare = buildings.length > 0 ? round(enterable / buildings.length, 6) : null;
   const roadShares = roadClassShares(roads);
   const districtShare = districtAreaShare(districts, groundSize);
+  const blockDensityCorr = blockDensityCorrelation(districts);
+  const terrainAnalysisForMetrics = ctx?.terrain?.analysis ?? null;
+  const landmarkVisibility = landmarkVisibilityMetric(ctx, terrainAnalysisForMetrics);
   const targetEnterable = Number.isFinite(Number(policies?.enterableShare)) ? Number(policies.enterableShare) : null;
   if (buildings.length > 0 && targetEnterable != null && enterableShare != null) {
     // мягкая цель §9.8: 15–25% (policy default 0.2)
@@ -450,9 +552,11 @@ export function evaluateRules(ctx) {
     v('info', 'terrain_analysis_missing', 'hydrology present but terrain analysis/masks are unavailable (informational)');
   }
 
-  // §12.2 subset metrics (deterministic snapshot). Many targets need richer IR; marked partial.
+  // §12.2 subset metrics (deterministic snapshot). R0.3 scaffold/coverage: γ, road class shares,
+  // dead-end share, park share (by district area), enterable-share, landmark visibility (stub),
+  // chunk build time (scaffold), D vs 1/area correlation (when available). Marked partial.
   const metrics = {
-    version: 1,
+    version: 2,
     partial: true,
     counts: {
       roads: roads.length,
@@ -509,6 +613,9 @@ export function evaluateRules(ctx) {
       waterBuffers: waterBuffers.length,
       floodplains: floodplains.length,
     } : ((rivers.length + lakes.length) > 0 ? { waterBuffers: waterBuffers.length, floodplains: floodplains.length } : null),
+    landmarkVisibility,
+    blockDensityCorrelation: blockDensityCorr,
+    chunkBuild: { partial: true, buildTimeMs: null },
     stream: stream ? {
       chunk: stream.chunk ?? null,
       keep: stream.keep ?? null,

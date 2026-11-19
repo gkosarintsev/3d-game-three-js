@@ -7,7 +7,7 @@ Protocol: `.ai/plans/22-parallel-agents-github-ci.md`, `.ai/prompts/agent-ci-pro
 
 ## Current position (summary)
 
-- **Generator:** `DEFAULT_GENERATOR_VERSION = 0.68.0` on `origin/main` after merge of PR #16 (`4663c80`, 2026-11-19, R0.1 CI/merge evidence recorded; R0.1 matrix/PR #15 integrated earlier). Active continuation: `agent/plan21-r04-r05-formalize` @ `C:\Temp\wt-plan21-r04-r05` from `origin/main` `4663c80` (R0.2/R0.5/R5.4 checklist formalization/evidence; docs/state-only, CI pending). Staged v4 pipeline (`tools/citygen/index.mjs`, `pipeline/stage-1..6-*`), profiles/policies/validation/metrics/etalons/seed-series tooling developed incrementally.
+- **Generator:** `DEFAULT_GENERATOR_VERSION = 0.69.0` on active branch `agent/plan21-r04-rhythm` @ `C:\Temp\wt-plan21-next` from `origin/main` `7c49812` (R0.3 metrics scaffold increment, output-affecting; CI pending). `origin/main` remains at `7c49812` / gv `0.68.0` until sequential merge of this increment. Staged v4 pipeline (`tools/citygen/index.mjs`, `pipeline/stage-1..6-*`), profiles/policies/validation/metrics/etalons/seed-series tooling developed incrementally.
 - **Gates/artifacts:** `tools/citygen.test.mjs`, `tools/citygen-etalon-check.mjs`, `tools/citygen-seed-series.mjs`, `tools/check-levels.mjs`, `tools/build-level.mjs --check`, browser suites by scope/CI; committed derived outputs and etalon/baseline snapshots are part of determinism/regression.
 - **Constraint:** any IR/report/derived level output changes require deterministic rebuild of committed artifacts and baseline/etalon updates per version policy, verified in GitHub CI.
 
@@ -15,7 +15,7 @@ Protocol: `.ai/plans/22-parallel-agents-github-ci.md`, `.ai/prompts/agent-ci-pro
 
 | Area | Status (indicative) | Note / risk |
 | --- | --- | --- |
-| R0 (validator/metrics/etalons/procedures) | mostly implemented, DoD/formalization in places; **R0.1,R0.2,R0.5 [x]** | R0.1 matrix formalized; R0.2 read-only validator+baselines 16–19 verified on 4663c80/gv 0.68.0 (committed baselines match `citygen-baseline` prep run), R0.5 config/profiles/policies with fallbacks implemented; R0.3/R0.4 formal DoD/acceptance remain partial/open. |
+| R0 (validator/metrics/etalons/procedures) | mostly implemented, DoD/formalization in places; **R0.1,R0.2,R0.3,R0.5 [x]** | R0.1 matrix formalized; R0.2/R0.5 implemented; R0.3 metrics scaffold §12.2 implemented on gv 0.69.0 (`agent/plan21-r04-rhythm`, park share, Spearman D vs 1/area, landmark visibility stub, chunkBuild scaffold, metrics v2 + snapshots/baselines/etalons refreshed; CI pending). R0.4 formal DoD/acceptance remains partial/open. |
 | R1 (relief/water) | mostly implemented | Further changes output-affecting. |
 | R2 (network/intersections/bridges/tunnels/interchanges/repair) | partial | High coupling, perf/navigation risks. |
 | R3 (settlement/districts/D,B(D)) | mostly implemented | Metrics/series sensitive. |
@@ -203,4 +203,12 @@ Protocol: `.ai/plans/22-parallel-agents-github-ci.md`, `.ai/prompts/agent-ci-pro
 - **Versioning/artifacts:** no generator/runtime/output changes, no `DEFAULT_GENERATOR_VERSION` bump, no rebuild of `src/levels/level-16..22/*`, no baseline/etalon changes.
 - **Local prep checks (hints only):** `git diff --check` clean after edits; baseline comparison 16–19 MATCH on 4663c80 as recorded above (prep, not CI gate).
 - **CI:** pending (commit/push fast CI on `agent/**` per protocol, PR merge-gate as required; CI source of truth). Sequential merge only on green required checks.
-- **Still remaining:** R0.3/R0.4 formal DoD, unresolved R1/R2/R3 DoD items, R4.3/R4.4 residuals, R5.1–R5.3,R5.5, R6 and overall plan 21 DoD.
+- **Still remaining:** R0.4 formal DoD, unresolved R1/R2/R3 DoD items, R4.3/R4.4 residuals, R5.1–R5.3,R5.5, R6 and overall plan 21 DoD.
+
+#### Continuation increment (R0.3 metrics scaffold, `agent/plan21-r04-rhythm`, in progress, CI pending)
+- **Scope (output-affecting, gv bump):** `tools/citygen/config.mjs`, `tools/citygen/rules.mjs`, `tools/citygen-baseline.mjs`, `tools/citygen-etalon.mjs`, `tools/citygen-etalon-check.mjs`, `src/levels/level-16.json`–`src/levels/level-22.json`, `src/levels/level-16/`–`src/levels/level-22/` (rebuilt catalogs/reports), `.ai/state/citygen-baselines/level-16..22*`, `.ai/state/citygen-etalons/*`, `.ai/plans/21-citygen-procedural-rules.md`, `.ai/state/citygen-plan21-execution.md`, `.ai/state/citygen-procedural-rules.md`.
+  - **R0.3 [x] (scaffold, §12.2):** `report.metrics.version=2` extended in `evaluateRules` — park share by district rect/geometry area (`districts.parkShare/areaByType/shareByType`, forest+park counted), `blockDensityCorrelation` Spearman(D,1/area) when D/area available, `landmarkVisibility` (stub/count proxy), `chunkBuild` scaffold (`buildTimeMs: null, partial`). Snapshot serializers/checker updated to match.
+- **Versioning/artifacts:** bump `DEFAULT_GENERATOR_VERSION` `0.68.0 -> 0.69.0`, sources `level-16..22.json` bumped, `node tools/build-level.mjs src/levels/level-16..22.json` (0 warnings each), baselines regenerated for L16–22 and etalons 3×3 refreshed for 0.69.0 (committed as derived/state).
+- **Local prep checks (hints only):** `node tools/citygen-etalon-check.mjs` **16/16 passed** (0 failed) in `C:\Temp\wt-plan21-next`; deterministic rebuild completed with 0 warnings. CI is source of truth (push fast on `agent/**`, PR merge-gate as required/profile).
+- **CI/merge evidence:** pending (commit/push/PR + green CI/merge-gate, sequential merge to `main`, then record run IDs/URLs/SHAs in state/PR).
+- **Still remaining:** R0.4 formal DoD, unresolved R1/R2/R3 DoD items, R4.3/R4.4 residuals, R5.1–R5.3,R5.5, R6 and overall plan 21 DoD.

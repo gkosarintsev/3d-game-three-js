@@ -1,8 +1,8 @@
 {
   "profile": "hill_town",
   "seed": 202,
-  "generatorVersion": "0.68.0",
-  "reportHash": "1879ba78c959c8832f498849103561e5cbe26cc50f2320174b6c17ba4cffcbbf",
+  "generatorVersion": "0.69.0",
+  "reportHash": "3497870d47420b9c61c486f6309aa5a35affa332fc43fcfdec7a19b3b7904c4e",
   "summary": {
     "errors": 0,
     "warnings": 8,
@@ -61,6 +61,43 @@
       "exitToRoad": null,
       "enterableShare": 0.199029,
       "enterableTarget": 0.2
+    },
+    "districts": {
+      "plateArea": 1638400,
+      "knownArea": 1638400,
+      "areaByType": {
+        "campus": 102400,
+        "commercial": 102400,
+        "forest": 102400,
+        "industrial": 102400,
+        "luxury": 102400,
+        "market": 102400,
+        "office": 102400,
+        "old_town": 102400,
+        "park": 102400,
+        "parking": 102400,
+        "residential": 204800,
+        "slums": 102400,
+        "sports": 102400,
+        "suburb": 204800
+      },
+      "shareByType": {
+        "campus": 0.0625,
+        "commercial": 0.0625,
+        "forest": 0.0625,
+        "industrial": 0.0625,
+        "luxury": 0.0625,
+        "market": 0.0625,
+        "office": 0.0625,
+        "old_town": 0.0625,
+        "park": 0.0625,
+        "parking": 0.0625,
+        "residential": 0.125,
+        "slums": 0.0625,
+        "sports": 0.0625,
+        "suburb": 0.125
+      },
+      "parkShare": 0.125
     },
     "terrain": {
       "slope": {
@@ -135,6 +172,26 @@
         "district_3_3_0": 66,
         "district_3_3_1": 66
       }
+    },
+    "landmarkVisibility": {
+      "partial": true,
+      "method": "stub_count_proxy",
+      "landmarks": 4,
+      "crossings": 0,
+      "cores": 0,
+      "total": 4,
+      "visibleApprox": 4
+    },
+    "blockDensityCorrelation": {
+      "rho": 0.872021,
+      "n": 42,
+      "target": 0.6,
+      "ok": true,
+      "partial": false
+    },
+    "chunkBuild": {
+      "partial": true,
+      "buildTimeMs": null
     }
   }
 }

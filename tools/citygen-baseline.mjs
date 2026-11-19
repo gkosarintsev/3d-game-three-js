@@ -48,6 +48,9 @@ for (const file of files) {
       districts: m.districts,
       parcels: m.parcels ?? null,
       terrain: m.terrain ?? null,
+      landmarkVisibility: m.landmarkVisibility ?? null,
+      blockDensityCorrelation: m.blockDensityCorrelation ?? null,
+      chunkBuild: m.chunkBuild ?? null,
       stream: m.stream,
     } : null,
   };

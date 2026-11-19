@@ -1,7 +1,7 @@
 {
   "version": 1,
   "generator": {
-    "generatorVersion": "0.68.0",
+    "generatorVersion": "0.69.0",
     "seed": 22,
     "deterministic": true
   },
@@ -2197,7 +2197,7 @@
     "drops": 0
   },
   "metrics": {
-    "version": 1,
+    "version": 2,
     "partial": true,
     "counts": {
       "roads": 101,
@@ -2266,9 +2266,28 @@
     },
     "districts": {
       "plateArea": 262144,
-      "knownArea": 0,
-      "areaByType": {},
-      "shareByType": {}
+      "knownArea": 262144,
+      "areaByType": {
+        "commercial": 29127.111,
+        "forest": 29127.111,
+        "industrial": 29127.111,
+        "market": 29127.111,
+        "office": 29127.111,
+        "parking": 29127.111,
+        "residential": 58254.222,
+        "slums": 29127.111
+      },
+      "shareByType": {
+        "commercial": 0.111111,
+        "forest": 0.111111,
+        "industrial": 0.111111,
+        "market": 0.111111,
+        "office": 0.111111,
+        "parking": 0.111111,
+        "residential": 0.222222,
+        "slums": 0.111111
+      },
+      "parkShare": 0.111111
     },
     "parcels": {
       "reservedShare": 0.171216,
@@ -2317,6 +2336,26 @@
       "waterBuffers": 0,
       "floodplains": 0
     },
+    "landmarkVisibility": {
+      "partial": true,
+      "method": "stub_count_proxy",
+      "landmarks": 2,
+      "crossings": 0,
+      "cores": 0,
+      "total": 2,
+      "visibleApprox": 2
+    },
+    "blockDensityCorrelation": {
+      "rho": 0.752622,
+      "n": 15,
+      "target": 0.6,
+      "ok": true,
+      "partial": false
+    },
+    "chunkBuild": {
+      "partial": true,
+      "buildTimeMs": null
+    },
     "stream": {
       "chunk": 256,
       "keep": 1,
@@ -2326,7 +2365,7 @@
       "dividesPlate": true
     },
     "determinism": {
-      "generatorVersion": "0.68.0",
+      "generatorVersion": "0.69.0",
       "seed": 22,
       "deterministic": true
     },
