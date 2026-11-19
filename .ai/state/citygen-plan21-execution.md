@@ -7,7 +7,7 @@ Protocol: `.ai/plans/22-parallel-agents-github-ci.md`, `.ai/prompts/agent-ci-pro
 
 ## Current position (summary)
 
-- **Generator:** `DEFAULT_GENERATOR_VERSION = 0.67.0` on `origin/main` after merge of PR #13 (`db024e5`, 2026-11-19, R5.4 partial instance provenance/locked handling). Active continuation: `agent/plan21-r44c-windows-lit` @ `C:\Temp\wt-plan21-r44c` from `origin/main` `db024e5` (0.68.0 partial R4.4 night/window-lit semantics; CI pending). Staged v4 pipeline (`tools/citygen/index.mjs`, `pipeline/stage-1..6-*`), profiles/policies/validation/metrics/etalons/seed-series tooling developed incrementally.
+- **Generator:** `DEFAULT_GENERATOR_VERSION = 0.68.0` on `origin/main` after merge of PR #14 (`c2f18fe`, 2026-11-19, 0.68.0 partial R4.4 night/window-lit semantics). Active continuation: `agent/plan21-r55-chunk-meta` @ `C:\Temp\wt-plan21-r55` from `origin/main` `c2f18fe` (R0.1 correspondence matrix formalized in state; CI pending for docs/state increment). Staged v4 pipeline (`tools/citygen/index.mjs`, `pipeline/stage-1..6-*`), profiles/policies/validation/metrics/etalons/seed-series tooling developed incrementally.
 - **Gates/artifacts:** `tools/citygen.test.mjs`, `tools/citygen-etalon-check.mjs`, `tools/citygen-seed-series.mjs`, `tools/check-levels.mjs`, `tools/build-level.mjs --check`, browser suites by scope/CI; committed derived outputs and etalon/baseline snapshots are part of determinism/regression.
 - **Constraint:** any IR/report/derived level output changes require deterministic rebuild of committed artifacts and baseline/etalon updates per version policy, verified in GitHub CI.
 
@@ -15,7 +15,7 @@ Protocol: `.ai/plans/22-parallel-agents-github-ci.md`, `.ai/prompts/agent-ci-pro
 
 | Area | Status (indicative) | Note / risk |
 | --- | --- | --- |
-| R0 (validator/metrics/etalons/procedures) | mostly implemented, DoD/formalization in places | Expanding rules/metrics changes reports → etalons/baselines/reports. |
+| R0 (validator/metrics/etalons/procedures) | mostly implemented, DoD/formalization in places; **R0.1 [x]** | R0.1 matrix formalized in `.ai/state/citygen-procedural-rules.md`; R0.2–R0.5 formal DoD/acceptance remain partial/open. |
 | R1 (relief/water) | mostly implemented | Further changes output-affecting. |
 | R2 (network/intersections/bridges/tunnels/interchanges/repair) | partial | High coupling, perf/navigation risks. |
 | R3 (settlement/districts/D,B(D)) | mostly implemented | Metrics/series sensitive. |
@@ -179,12 +179,19 @@ Protocol: `.ai/plans/22-parallel-agents-github-ci.md`, `.ai/prompts/agent-ci-pro
 - **Integration (completed):** PR [#13](https://github.com/gkosarintsev/3d-game-three-js/pull/13) merged to `main` at 2026-11-19T02:05:53Z (merge commit `db024e594c5dc81ebae416d7edb2d19f3757cc25`, head `32648de`). PR CI [44441255265](https://github.com/gkosarintsev/3d-game-three-js/actions/runs/44441255265) **success** (full merge-gate incl. node fast/citygen/etalon/rebuild shards, browser suites, 100×3 seed-series plain+transport, `aggregate / report`); push CI [44441220355](https://github.com/gkosarintsev/3d-game-three-js/actions/runs/44441220355) **success**.
 - **Still remaining in R5.4:** full author-edit/regeneration semantics across all instance-producing/consuming paths and integration with chunk/streaming metadata as applicable (R5.5 overlap).
 
-#### Continuation increment (0.68.0, `agent/plan21-r44c-windows-lit`, in progress)
-- **Scope (partial R4.4 §9.7, night/window-lit appearance semantics):** `tools/citygen/index.mjs`
-  - **`windows.lit` semantics (schema/runtime-supported, deterministic):** post-stage `finalizeWindows` sets an explicit `windows.lit` when `windows` is present and `lit` is not already set, using profile-aware deterministic values (`river_trade: 0.42`, `hill_town: 0.36`, `railway_industrial: 0.3`, default `0.4`) and respecting explicit author values. `lit` is supported by `src/levels/level-v4.schema.json`/runtime (`src/json-map.js`) and passed through normalize/build.
-- **Versioning/artifacts (deterministic, prepared):** bump `DEFAULT_GENERATOR_VERSION` `0.67.0 -> 0.68.0` (`tools/citygen/config.mjs`), update `generator.generatorVersion` in `src/levels/level-16..22.json`, deterministically rebuild committed derived catalogs/reports for level-16..22 (0 warnings), refresh `.ai/state/citygen-baselines/level-16..22*` and `.ai/state/citygen-etalons/*` (`--update --generatorVersion 0.68.0 --skip-baselines`). Pilot fixture finalize expectations unchanged (`roadComponents=1, roadSegments=176, roadNodes=146, buildings=415, props=360, lights=8`, errors 0, warnings 8; fixture `windows.lit` becomes explicit `0.4`).
-- **Local prep checks (hints only):** `node --check` for modified files OK; pilot run OK; rebuild/baselines/etalons refreshed locally.
-- **CI:** pending (commit/push fast CI on `agent/**` per protocol; full merge-gate per workflow/profile as required by scope; CI source of truth). Sequential merge only on green required checks.
-- **Still remaining in R4.4:** further district palette/variation refinements, richer roof/parapet/equipment/facade rhythm — only where schema/runtime/nav-safe and supported. R4.3 residuals (contour-aligned orientation where feasible, stepped-plinth/podium if supported) and R5.1–R5.3,R5.5, unresolved R0/R2/R3/DoD, R6 remain open.
+#### Continuation increment (0.68.0, `agent/plan21-r44c-windows-lit`, integrated)
+- **Scope (partial R4.4 §9.7, night/window-lit appearance semantics):** `tools/citygen/index.mjs` — `finalizeWindows` sets explicit deterministic, profile-aware `windows.lit` when `windows` is present and `lit` is unset (`river_trade: 0.42`, `hill_town: 0.36`, `railway_industrial: 0.3`, default `0.4`), respecting explicit values (schema/runtime-supported).
+- **Versioning/artifacts:** bump `DEFAULT_GENERATOR_VERSION` `0.67.0 -> 0.68.0`, `src/levels/level-16..22.json` bumped, `src/levels/level-16..22/*` rebuilt (0 warnings), baselines/etalons refreshed (`--update --generatorVersion 0.68.0 --skip-baselines`, 9/9). Pilot fixture finalize expectations unchanged (fixture `windows.lit` becomes explicit `0.4`).
+- **Integration (completed):** PR [#14](https://github.com/gkosarintsev/3d-game-three-js/pull/14) merged to `main` at 2026-11-19T02:35:03Z (merge commit `c2f18fe9c8d99a827f802e654f444aac6151b45a`, head `3dae1d8b69014340164d4a205e70dbacaab19bfb`). PR CI [44444920885](https://github.com/gkosarintsev/3d-game-three-js/actions/runs/44444920885) **success** (full merge-gate incl. node fast/citygen/etalon/rebuild shards, browser suites, 100×3 seed-series plain+transport, `aggregate / report`); push CI [44444868770](https://github.com/gkosarintsev/3d-game-three-js/actions/runs/44444868770) **success**.
+
+#### Continuation increment (R0.1, `agent/plan21-r55-chunk-meta`, in progress)
+- **Scope (R0.1 correspondence matrix, docs/state-only):** `.ai/state/citygen-procedural-rules.md`, `.ai/state/citygen-plan21-execution.md`, `.ai/plans/21-citygen-procedural-rules.md`
+  - **Матрица соответствия §3–13:** оформлена и добавлена таблица сопоставления doc ↔ текущие модули/стадии/пайплайн/схемы/гейты со статусами covered/partial/missing/n/a, evidence-ссылками (код, committed derived/снапшоты, CI PR #1–#14) и выводом по R0.1 в `.ai/state/citygen-procedural-rules.md` (раздел «R0.1 Матрица соответствия», 2026-11-19).
+  - **План:** `R0.1` отмечен `[x]` в `.ai/plans/21-citygen-procedural-rules.md` (deliverable выполнен; R0.2–R0.5 остаются открытыми).
+  - **Execution state:** актуализирован `origin/main`/gv до `c2f18fe`/0.68.0 (PR #14 integrated) и зафиксирован данный инкремент.
+- **Versioning/artifacts:** без изменений генератора/`DEFAULT_GENERATOR_VERSION`/`src/levels/level-16..22*`/baselines/etalons (docs/state-only).
+- **Local prep checks (hints only):** `git diff --check`/status clean after edits; no rebuild required.
+- **CI:** pending (commit/push fast CI on `agent/**` per protocol; CI source of truth). Sequential merge only on green required checks.
+- **Still remaining in R0:** R0.2–R0.5 (formal DoD/acceptance/baseline documentation depth per plan) remain open/partial. R4.3/R4.4 residuals, R5.1–R5.5, unresolved R1/R2/R3 DoD items, R6 remain open.
 
 
