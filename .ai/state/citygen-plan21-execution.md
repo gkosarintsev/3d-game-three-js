@@ -7,7 +7,7 @@ Protocol: `.ai/plans/22-parallel-agents-github-ci.md`, `.ai/prompts/agent-ci-pro
 
 ## Current position (summary)
 
-- **Generator:** `DEFAULT_GENERATOR_VERSION = 0.68.0` on `origin/main` after merge of PR #15 (`a9c30d9`, 2026-11-19, R0.1 correspondence matrix formalized; PR #14/0.68.0 partial R4.4 window-lit semantics integrated earlier). Active continuation: next schema/runtime-supported increment from `origin/main` `a9c30d9` in a new isolated worktree/branch (TBD). Staged v4 pipeline (`tools/citygen/index.mjs`, `pipeline/stage-1..6-*`), profiles/policies/validation/metrics/etalons/seed-series tooling developed incrementally.
+- **Generator:** `DEFAULT_GENERATOR_VERSION = 0.68.0` on `origin/main` after merge of PR #16 (`4663c80`, 2026-11-19, R0.1 CI/merge evidence recorded; R0.1 matrix/PR #15 integrated earlier). Active continuation: `agent/plan21-r04-r05-formalize` @ `C:\Temp\wt-plan21-r04-r05` from `origin/main` `4663c80` (R0.2/R0.5/R5.4 checklist formalization/evidence; docs/state-only, CI pending). Staged v4 pipeline (`tools/citygen/index.mjs`, `pipeline/stage-1..6-*`), profiles/policies/validation/metrics/etalons/seed-series tooling developed incrementally.
 - **Gates/artifacts:** `tools/citygen.test.mjs`, `tools/citygen-etalon-check.mjs`, `tools/citygen-seed-series.mjs`, `tools/check-levels.mjs`, `tools/build-level.mjs --check`, browser suites by scope/CI; committed derived outputs and etalon/baseline snapshots are part of determinism/regression.
 - **Constraint:** any IR/report/derived level output changes require deterministic rebuild of committed artifacts and baseline/etalon updates per version policy, verified in GitHub CI.
 
@@ -15,7 +15,7 @@ Protocol: `.ai/plans/22-parallel-agents-github-ci.md`, `.ai/prompts/agent-ci-pro
 
 | Area | Status (indicative) | Note / risk |
 | --- | --- | --- |
-| R0 (validator/metrics/etalons/procedures) | mostly implemented, DoD/formalization in places; **R0.1 [x]** | R0.1 matrix formalized in `.ai/state/citygen-procedural-rules.md`; R0.2–R0.5 formal DoD/acceptance remain partial/open. |
+| R0 (validator/metrics/etalons/procedures) | mostly implemented, DoD/formalization in places; **R0.1,R0.2,R0.5 [x]** | R0.1 matrix formalized; R0.2 read-only validator+baselines 16–19 verified on 4663c80/gv 0.68.0 (committed baselines match `citygen-baseline` prep run), R0.5 config/profiles/policies with fallbacks implemented; R0.3/R0.4 formal DoD/acceptance remain partial/open. |
 | R1 (relief/water) | mostly implemented | Further changes output-affecting. |
 | R2 (network/intersections/bridges/tunnels/interchanges/repair) | partial | High coupling, perf/navigation risks. |
 | R3 (settlement/districts/D,B(D)) | mostly implemented | Metrics/series sensitive. |
@@ -25,7 +25,7 @@ Protocol: `.ai/plans/22-parallel-agents-github-ci.md`, `.ai/prompts/agent-ci-pro
 | **R5.1** (controlled chaos) | open | Behavior/layout change; versioning per policy. |
 | **R5.2** (readability/landmarks) | open | Metrics/heuristics + possible placement changes. |
 | **R5.3** (gameplay spawn/exit/cars/enemies) | open | Gameplay/connectivity/rules. |
-| **R5.4** (`locked`, `instance.generation`) | open | Plumbing without regressions. |
+| **R5.4** (`locked`, `instance.generation`) | **done (stated scope)** | `finalizeInstances` preserves `locked` and stamps `source/seed/generator/generatorVersion`; broader regen/chunk integration tracked under R5.5/follow-ups. |
 | **R5.5** (`homeChunk`/`coverageChunks`, streaming) | open | Chunk/build pipeline, catalog rebuilds. |
 | **R6** (profiles, pilots, >=100 seed, etalons, docs/CI) | open/partial | Series runs and regression in CI. |
 
@@ -194,3 +194,13 @@ Protocol: `.ai/plans/22-parallel-agents-github-ci.md`, `.ai/prompts/agent-ci-pro
 - **Still remaining in R0:** R0.2–R0.5 (formal DoD/acceptance/baseline documentation depth per plan) remain open/partial. R4.3/R4.4 residuals, R5.1–R5.5, unresolved R1/R2/R3 DoD items, R6 remain open.
 
 
+
+#### Continuation increment (R0.2/R0.5/R5.4 formalization, `agent/plan21-r04-r05-formalize`, in progress)
+- **Scope (docs/state-only, evidence-based):** `.ai/plans/21-citygen-procedural-rules.md`, `.ai/state/citygen-plan21-execution.md`, `.ai/state/citygen-procedural-rules.md`
+  - **R0.2 [x]:** read-only validator/rules+metrics snapshot implemented and integrated (`tools/citygen/rules.mjs`, `attachRulesToReport` via diagnostics/finalize); pilot baselines 16–19 committed in `.ai/state/citygen-baselines/level-16..19.citygen-baseline.json`. Local preparation check on `origin/main` `4663c80` (gv 0.68.0): `node tools/citygen-baseline.mjs src/levels/level-16.json src/levels/level-17.json src/levels/level-18.json src/levels/level-19.json` produced outputs identical to committed baselines (MATCH 16–19). CI/etalon-check remain source of truth; full §12.1 coverage is incremental.
+  - **R0.5 [x]:** `generator.profiles.<name>`/`generator.policies` structure and defaults with fallback implemented in `tools/citygen/config.mjs` (`DEFAULT_CITY_POLICIES/PROFILES`, `normalizePolicies`, `normalizeCityProfiles`, `resolveGeneratorConfig`) and normalized into `ctx.meta.policies/cityProfiles/activeCityProfile*` in `tools/citygen/context.mjs`.
+  - **R5.4 [x] (stated scope):** `tools/citygen/index.mjs` `finalizeInstances` respects `locked === true` and stamps/fills `instance.generation` (`source`, `seed`, `generator`, `generatorVersion`, preserving existing fields) for non-locked instances. Broader regeneration/chunk/streaming integration remains in R5.5/follow-ups.
+- **Versioning/artifacts:** no generator/runtime/output changes, no `DEFAULT_GENERATOR_VERSION` bump, no rebuild of `src/levels/level-16..22/*`, no baseline/etalon changes.
+- **Local prep checks (hints only):** `git diff --check` clean after edits; baseline comparison 16–19 MATCH on 4663c80 as recorded above (prep, not CI gate).
+- **CI:** pending (commit/push fast CI on `agent/**` per protocol, PR merge-gate as required; CI source of truth). Sequential merge only on green required checks.
+- **Still remaining:** R0.3/R0.4 formal DoD, unresolved R1/R2/R3 DoD items, R4.3/R4.4 residuals, R5.1–R5.3,R5.5, R6 and overall plan 21 DoD.
