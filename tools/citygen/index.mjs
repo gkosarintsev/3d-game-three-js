@@ -14,6 +14,28 @@ import { makeStage5 } from './pipeline/stage-5-props.mjs';
 import { makeStage6 } from './pipeline/stage-6-finalize.mjs';
 import { DEFAULT_GENERATOR_VERSION } from './config.mjs';
 
+// R4.4 §9.7 (partial): deterministic night/window-lit semantics by generator profile (schema/runtime-supported).
+const PROFILE_WINDOWS_LIT = Object.freeze({
+  river_trade: 0.42,
+  hill_town: 0.36,
+  railway_industrial: 0.3,
+});
+
+function finalizeWindows(engine, meta, raw) {
+  const w = engine?.windows;
+  if (!w || typeof w !== 'object' || Array.isArray(w)) return; // windows disabled/unset -> keep as-is
+  if (Number.isFinite(Number(w.lit))) return; // respect explicit author/generator value
+  const profileId = meta?.activeCityProfileId
+    ?? (typeof raw?.generator?.profile === 'string' ? raw.generator.profile : null)
+    ?? (typeof raw?.generator?.profileId === 'string' ? raw.generator.profileId : null)
+    ?? (typeof raw?.generator?.cityProfile === 'string' ? raw.generator.cityProfile : null)
+    ?? null;
+  const lit = Object.prototype.hasOwnProperty.call(PROFILE_WINDOWS_LIT, profileId)
+    ? PROFILE_WINDOWS_LIT[profileId]
+    : 0.4;
+  w.lit = lit;
+}
+
 const STAGES = [
   stage('0_input_space', {}),
   makeStage1(),
@@ -54,6 +76,7 @@ export function runCitygen(raw) {
   // Stages emit into ctx.input/ctx.engine; prefer transformed source for compilation.
   if (!ctx.engine) ctx.engine = ctx.input ?? raw;
   finalizeInstances(ctx.engine, ctx.meta);
+  finalizeWindows(ctx.engine, ctx.meta, raw);
   finalizeReport(ctx.report, ctx);
   return { engine: ctx.engine, report: ctx.report, reportJson: reportToJson(ctx.report, ctx), ctx };
 }
