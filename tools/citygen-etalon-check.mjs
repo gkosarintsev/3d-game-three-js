@@ -10,10 +10,11 @@
  *   node tools/citygen-etalon-check.mjs [--etalons <dir>] [--baselines <dir>] [--skip-etalons] [--skip-baselines] [--update] [--generatorVersion <v>]
  *
  * --update rewrites snapshots to match current deterministic output (intentional regression/bump workflow).
+ * --cache [on|off|force] reuses cached etalon computation when synthetic input is unchanged (gitignored local cache); CI does not rely on it.
  * --generatorVersion overrides generatorVersion when recomputing/writing synthetic etalons (use for bump).
  * Exits 1 on mismatch unless --update is used.
  */
-import { readFileSync, readdirSync, existsSync, writeFileSync } from 'node:fs';
+import { readFileSync, readdirSync, existsSync, writeFileSync, mkdirSync } from 'node:fs';
 import { resolve, join } from 'node:path';
 import { createHash } from 'node:crypto';
 import { runCitygen } from './citygen/index.mjs';
@@ -26,6 +27,7 @@ let skipEtalons = false;
 let skipBaselines = false;
 let update = false;
 let generatorVersionOverride = null;
+let cache = 'off'; // --cache [on|off|force] — reuse cached etalon computation when synthetic input is unchanged
 for (let i = 0; i < args.length; i++) {
   const a = args[i];
   const take = () => args[++i];
@@ -37,6 +39,8 @@ for (let i = 0; i < args.length; i++) {
   else if (a === '--skip-baselines') skipBaselines = true;
   else if (a === '--update' || a === '--write') update = true;
   else if (a === '--generatorVersion') generatorVersionOverride = String(take() ?? '') || null;
+  else if (a === '--cache') cache = String(take() ?? 'on').toLowerCase();
+  else if (a.startsWith('--cache=')) cache = a.slice('--cache='.length).toLowerCase();
   else if (a.startsWith('--generatorVersion=')) generatorVersionOverride = a.slice('--generatorVersion='.length) || null;
 }
 
@@ -48,6 +52,38 @@ function ok(msg) { console.log(`OK: ${msg}`); }
 function upd(msg) { updated++; console.log(`UPDATE: ${msg}`); }
 
 function stable(v) { return JSON.stringify(v); }
+
+const CACHE_PATH = '.ai/state/.cache/etalon-report-hashes.json';
+function cacheKey(profile, seed, gv) {
+  // makeSynthetic детерминирован по (profile, seed, gv), поэтому ключ можно построить от них.
+  const raw = JSON.stringify(makeSynthetic(profile, seed, gv));
+  return createHash('sha256').update(raw).digest('hex');
+}
+function cacheLoad() {
+  try {
+    return JSON.parse(readFileSync(CACHE_PATH, 'utf8'));
+  } catch { return null; }
+}
+function cacheSave(obj) {
+  if (!cache || cache === 'off') return;
+  try {
+    mkdirSync(resolve(CACHE_PATH, '..'), { recursive: true });
+    writeFileSync(CACHE_PATH, JSON.stringify(obj, null, 2) + '\n', 'utf8');
+  } catch (e) { console.error('etalon cache save failed:', e?.message ?? e); }
+}
+function cacheLookup(profile, seed, gv) {
+  if (cache !== 'force' && cache !== 'on') return null;
+  const store = cacheLoad();
+  if (!store || typeof store !== 'object') return null;
+  return store[cacheKey(profile, seed, gv)] ?? null;
+}
+function cacheRecord(profile, seed, gv, run) {
+  if (cache !== 'force' && cache !== 'on') return;
+  const store = cacheLoad() ?? {};
+  store[cacheKey(profile, seed, gv)] = run;
+  cacheSave(store);
+}
+
 function writeJson(filePath, obj) {
   writeFileSync(filePath, JSON.stringify(obj, null, 2).replace(/\r\n/g, '\n') + '\n', 'utf8');
 }
@@ -88,6 +124,8 @@ function computeEtalonRun(expected) {
   const { profile, seed } = expected;
   const gv = generatorVersionOverride ?? expected.generatorVersion ?? DEFAULT_GENERATOR_VERSION;
   if (!DEFAULT_CITY_PROFILES[profile]) return { error: `unknown profile ${profile}` };
+  const cached = cacheLookup(profile, seed, gv);
+  if (cached) return { run: cached, fromCache: true };
   const raw = makeSynthetic(profile, seed, gv);
   const r = runCitygen(raw);
   const hash = createHash('sha256').update(r.reportJson).digest('hex');
@@ -113,6 +151,7 @@ function computeEtalonRun(expected) {
       chunkBuild: m.chunkBuild ?? null,
     },
   };
+  cacheRecord(profile, seed, gv, run);
   return { run };
 }
 

@@ -6,3 +6,7 @@
 .ai/state/ci-results/
 .ai/state/ci-results/**
 
+
+# Local etalon/hash cache (gitignored)
+.ai/state/.cache/
+.ai/state/.cache/**

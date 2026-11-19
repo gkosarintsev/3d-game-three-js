@@ -23,6 +23,7 @@
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { basename, dirname, extname, join, relative, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { spawn } from 'node:child_process';
 import { validateLevel, LEVEL_SPEC_OPEN, LEVEL_SPEC_V3, LEVEL_SPEC_V4 } from './level-schema.mjs';
 import { normalizeLevel } from './normalize-level.mjs';
 import { expandCity } from './city.js';
@@ -542,11 +543,75 @@ class ValidationError extends Error {
 /** Путь модуля главы по пути JSON: src/levels/level-15.json → .../level-15.js */
 const defaultOut = jsonPath => resolve(dirname(jsonPath), `${basename(jsonPath, extname(jsonPath))}.js`);
 
+
+function sameContent(t) {
+  if (!existsSync(t.path)) return false;
+  if (t.bytes) {
+    const cur = readFileSync(t.path);
+    return cur.length === t.bytes.length && cur.every((v, i) => v === t.bytes[i]);
+  }
+  return readFileSync(t.path, 'utf8').replace(/\r\n/g, '\n') === t.code.replace(/\r\n/g, '\n');
+}
+
+/** Параллельный прогон нескольких файлов в дочерних процессах (--parallel N). */
+function runMultiprocess(files, check, parallel) {
+  const script = fileURLToPath(import.meta.url);
+  const results = new Array(files.length).fill(null);
+  let done = 0, failed = 0, running = 0, idx = 0;
+  const labels = check ? ' --check' : '';
+  const launchNext = () => {
+    while (idx < files.length && running < parallel) {
+      const i = idx++;
+      running++;
+      const args = [process.execPath, script, files[i]];
+      if (check) args.push('--check');
+      console.log('=== build-level' + labels + ' ' + files[i] + ' ===');
+      const child = spawn(args[0], args.slice(1), { stdio: 'inherit' });
+      child.on('exit', code => {
+        results[i] = code ?? 1;
+        running--;
+        done++;
+        if (code !== 0) failed++;
+        launchNext();
+        if (done === files.length) {
+          if (failed === 0) console.log('runMultiprocess: ' + files.length + ' файлов — OK');
+          else console.error('runMultiprocess: ' + failed + ' из ' + files.length + ' файлов завершились с ошибкой');
+          process.exitCode = failed === 0 ? 0 : 1;
+        }
+      });
+    }
+  };
+  launchNext();
+}
+
 function main(argv) {
-  const jsonArg = argv.find(a => !a.startsWith('--'));
-  if (!jsonArg) {
-    console.error('использование: node tools/build-level.mjs <level.json> [--check] [--out <file.js>|<каталог>]');
+  const parrIdx = argv.indexOf('--parallel');
+  const parallel = parrIdx >= 0 ? Math.max(1, Math.floor(Number(argv[parrIdx + 1]) || 2)) : 1;
+  if (parrIdx >= 0 && !Number.isFinite(Number(argv[parrIdx + 1]))) {
+    console.error('--parallel: ожидается число (например 4)');
     return 1;
+  }
+  const positional = [];
+  for (let i = 0; i < argv.length; i++) {
+    const a = argv[i];
+    if (a === '--parallel') { i += 1; continue; }
+    if (a.startsWith('--')) continue;
+    positional.push(a);
+  }
+  const jsonArg = positional[0];
+  if (!jsonArg) {
+    console.error('использование: node tools/build-level.mjs <level.json> [level-NN.json ...] [--check] [--out <file.js>|<каталог>] [--parallel N]');
+    return 1;
+  }
+
+  // Несколько файлов за один прогон: каждый собирается/проверяется независимо (--parallel N).
+  if (positional.length > 1) {
+    if (argv.includes('--out')) {
+      console.error('--out применяется только при одном входном файле (каталог берётся из имени)');
+      return 1;
+    }
+    runMultiprocess(positional.sort(), argv.includes('--check'), parallel);
+    return 0;
   }
   const jsonPath = resolve(jsonArg);
   const outArg = argv.includes('--out') ? resolve(argv[argv.indexOf('--out') + 1]) : null;
@@ -622,11 +687,15 @@ function main(argv) {
     return 0;
   }
 
+  let written = 0, unchanged = 0;
   for (const t of targets) {
+    if (sameContent(t)) { unchanged++; continue; }
     mkdirSync(dirname(t.path), { recursive: true });
     if (t.bytes) writeFileSync(t.path, t.bytes);
     else writeFileSync(t.path, t.code, 'utf8');
+    written++;
   }
+  if (unchanged > 0) console.log('  без изменений: ' + unchanged + ' файл(ов) пропущено, записано: ' + written);
   if (generated.kind === 'catalog') {
     const m = generated.meta;
     const dataFiles = generated.files.filter(f => f.bytes);
