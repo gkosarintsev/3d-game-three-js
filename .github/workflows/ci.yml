@@ -41,6 +41,41 @@ env:
   CI_FAST: ${{ (github.event_name == 'push' && startsWith(github.ref, 'refs/heads/agent/')) || (github.event_name == 'workflow_dispatch' && (inputs.ci_profile == 'fast' || (inputs.ci_profile == 'auto' && startsWith(github.ref, 'refs/heads/agent/')))) }}
 
 jobs:
+  detect:
+    name: detect / docs-only
+    runs-on: ubuntu-latest
+    outputs:
+      docs_only: ${{ steps.dc.outputs.docs_only }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Detect docs-only changes
+        id: dc
+        shell: bash
+        run: |
+          set -euo pipefail
+          base_ref="${{ github.base_ref }}"
+          if [ -n "$base_ref" ]; then
+            git fetch origin "$base_ref" --depth=1 2>/dev/null || true
+            base_sha=$(git rev-parse FETCH_HEAD 2>/dev/null || true)
+          fi
+          if [ -n "$base_ref" ] && [ -n "$base_sha" ]; then
+            changed=$(git diff --name-only "$base_sha...HEAD")
+          elif git rev-parse HEAD~1 >/dev/null 2>&1; then
+            changed=$(git diff --name-only HEAD~1 HEAD)
+          else
+            changed=$(git diff --name-only --staged)
+          fi
+          echo "changed files:"
+          printf '%s\n' "$changed"
+          pattern='^(docs/|\.ai/state/|\.ai/plans/|\.ai/prompts/)'
+          if [ -z "$changed" ]; then echo "docs_only=false" >> "$GITHUB_OUTPUT" && exit 0; fi
+          if printf '%s\n' "$changed" | grep -Eqv "$pattern"; then
+            echo "docs_only=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "docs_only=true" >> "$GITHUB_OUTPUT"
+          fi
   node-fast:
     name: node / fast checks
     runs-on: ubuntu-latest
@@ -96,7 +131,8 @@ jobs:
     name: node / citygen unit tests
     runs-on: ubuntu-latest
     timeout-minutes: 20
-    if: ${{ !( (github.event_name == 'push' && startsWith(github.ref, 'refs/heads/agent/')) || (github.event_name == 'workflow_dispatch' && (inputs.ci_profile == 'fast' || (inputs.ci_profile == 'auto' && startsWith(github.ref, 'refs/heads/agent/')))) ) || (github.event_name == 'workflow_dispatch' && inputs.run_node_extended == 'true') }}
+    needs: [detect]
+    if: ${{ (!( (github.event_name == 'push' && startsWith(github.ref, 'refs/heads/agent/')) || (github.event_name == 'workflow_dispatch' && (inputs.ci_profile == 'fast' || (inputs.ci_profile == 'auto' && startsWith(github.ref, 'refs/heads/agent/')))) ) || (github.event_name == 'workflow_dispatch' && inputs.run_node_extended == 'true')) && needs.detect.outputs.docs_only != 'true' }}
     steps:
       - uses: actions/checkout@v4
 
@@ -132,7 +168,8 @@ jobs:
     name: node / etalon regression
     runs-on: ubuntu-latest
     timeout-minutes: 20
-    if: ${{ !( (github.event_name == 'push' && startsWith(github.ref, 'refs/heads/agent/')) || (github.event_name == 'workflow_dispatch' && (inputs.ci_profile == 'fast' || (inputs.ci_profile == 'auto' && startsWith(github.ref, 'refs/heads/agent/')))) ) || (github.event_name == 'workflow_dispatch' && inputs.run_node_extended == 'true') }}
+    needs: [detect]
+    if: ${{ (!( (github.event_name == 'push' && startsWith(github.ref, 'refs/heads/agent/')) || (github.event_name == 'workflow_dispatch' && (inputs.ci_profile == 'fast' || (inputs.ci_profile == 'auto' && startsWith(github.ref, 'refs/heads/agent/')))) ) || (github.event_name == 'workflow_dispatch' && inputs.run_node_extended == 'true')) && needs.detect.outputs.docs_only != 'true' }}
     steps:
       - uses: actions/checkout@v4
 
@@ -147,7 +184,8 @@ jobs:
     name: rebuild / build-level --check (${{ matrix.group }})
     runs-on: ubuntu-latest
     timeout-minutes: 30
-    if: ${{ !( (github.event_name == 'push' && startsWith(github.ref, 'refs/heads/agent/')) || (github.event_name == 'workflow_dispatch' && (inputs.ci_profile == 'fast' || (inputs.ci_profile == 'auto' && startsWith(github.ref, 'refs/heads/agent/')))) ) || (github.event_name == 'workflow_dispatch' && inputs.run_node_extended == 'true') }}
+    needs: [detect]
+    if: ${{ (!( (github.event_name == 'push' && startsWith(github.ref, 'refs/heads/agent/')) || (github.event_name == 'workflow_dispatch' && (inputs.ci_profile == 'fast' || (inputs.ci_profile == 'auto' && startsWith(github.ref, 'refs/heads/agent/')))) ) || (github.event_name == 'workflow_dispatch' && inputs.run_node_extended == 'true')) && needs.detect.outputs.docs_only != 'true' }}
     strategy:
       fail-fast: false
       matrix:
@@ -201,7 +239,8 @@ jobs:
   browser:
     name: browser / ${{ matrix.group }}
     runs-on: ubuntu-latest
-    if: ${{ !( (github.event_name == 'push' && startsWith(github.ref, 'refs/heads/agent/')) || (github.event_name == 'workflow_dispatch' && (inputs.ci_profile == 'fast' || (inputs.ci_profile == 'auto' && startsWith(github.ref, 'refs/heads/agent/')))) ) && (github.event_name != 'workflow_dispatch' || inputs.run_browser == 'true') }}
+    needs: [detect]
+    if: ${{ (!( (github.event_name == 'push' && startsWith(github.ref, 'refs/heads/agent/')) || (github.event_name == 'workflow_dispatch' && (inputs.ci_profile == 'fast' || (inputs.ci_profile == 'auto' && startsWith(github.ref, 'refs/heads/agent/')))) ) && (github.event_name != 'workflow_dispatch' || inputs.run_browser == 'true')) && needs.detect.outputs.docs_only != 'true' }}
     timeout-minutes: 45
     container:
       image: mcr.microsoft.com/playwright:v1.49.0-noble
@@ -275,7 +314,8 @@ jobs:
   seed-series:
     name: series / ${{ matrix.mode }} / ${{ matrix.profile }}
     runs-on: ubuntu-latest
-    if: ${{ !( (github.event_name == 'push' && startsWith(github.ref, 'refs/heads/agent/')) || (github.event_name == 'workflow_dispatch' && (inputs.ci_profile == 'fast' || (inputs.ci_profile == 'auto' && startsWith(github.ref, 'refs/heads/agent/')))) ) && (github.event_name != 'workflow_dispatch' || inputs.run_full_series == 'true') }}
+    needs: [detect]
+    if: ${{ (!( (github.event_name == 'push' && startsWith(github.ref, 'refs/heads/agent/')) || (github.event_name == 'workflow_dispatch' && (inputs.ci_profile == 'fast' || (inputs.ci_profile == 'auto' && startsWith(github.ref, 'refs/heads/agent/')))) ) && (github.event_name != 'workflow_dispatch' || inputs.run_full_series == 'true')) && needs.detect.outputs.docs_only != 'true' }}
     timeout-minutes: 60
     strategy:
       fail-fast: false
@@ -315,7 +355,7 @@ jobs:
           node tools/citygen-seed-series.mjs \
             --profiles "${{ matrix.profile }}" \
             --count 100 \
-            --concurrency 2 \
+            --concurrency 4 \
             ${{ matrix.transport_flag }} \
             --out "ci-artifacts/series-${{ matrix.mode }}-${{ matrix.profile }}" \
             2>&1 | tee "ci-artifacts/series-${{ matrix.mode }}-${{ matrix.profile }}.log"

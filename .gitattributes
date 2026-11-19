@@ -1,0 +1,24 @@
+# Нормализация EOL: git больше не будет считать текстовыми файлами, сохраняющими CRLF
+*.md text
+*.mjs text
+*.js text
+*.json text
+*.yml text
+*.yaml text
+*.txt text
+*.xml text
+*.css text
+*.html text
+*.l14b binary
+*.gz binary
+*.png binary
+*.jpg binary
+*.gif binary
+*.webp binary
+*.ico binary
+*.glb binary
+*.zip binary
+*.pdf binary
+
+# prevent accidental EOL churn being committed as CRLF on Windows checkouts
+* text=auto
