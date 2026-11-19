@@ -412,4 +412,4 @@ Protocol: `.ai/plans/22-parallel-agents-github-ci.md`, `.ai/prompts/agent-ci-pro
 #### Continuation increment (T23.7 plan 21 cleanup, `agent/plan23-t237-cleanup`, in progress, CI pending)
 - **Branch/worktree:** `agent/plan23-t237-cleanup` @ `C:\Temp\wt-t237` (from `origin/main` `3794d36`, docs-only; `node scripts/agent/check-env.mjs` OK; no gv/rebuild/etalons changes).
 - **Scope (docs-only):** `.ai/plans/21-citygen-procedural-rules.md` — stated-scope closure formalized with explicit reference to Plan 23; DoD/S1-cadence/R4.3 notes updated; added section "Выведено из scope плана 21 → перенесено/закрыто в Плане 23" mapping T23.1–T23.8 and R4.3 deferred backlog with reasons/evidence. `.ai/plans/23-plan21-literal-closure.md` marked T23.7 [x] (CI pending). State files updated with T23.7 increment.
-- **CI/merge evidence:** pending (PR → green CI → sequential merge, then evidence back-fill).
+- **CI/merge evidence:** PR #61 merged `db4bb5a` (push 44603084347 SUCCESS, PR CI 44603141296 SUCCESS).
