@@ -1389,3 +1389,141 @@ test('citygen R1: stage 1 terrain analysis (slope/reservations/crossings) is det
   assert.ok(a.report.diagnostics.some(d => d.code === 'terrain_slope_analysis' && d.stage === '1_landscape_hydrology'));
   assert.ok(a.report.diagnostics.some(d => d.code === 'terrain_reservations_marked' && d.stage === '1_landscape_hydrology'));
 });
+
+test('citygen R1.2: slope grid classification (8-16 m) is deterministic and wall-consistent', () => {
+  const base = () => {
+    const raw = v4Base();
+    raw.generator.seed = 777;
+    raw.generator.landscape = {
+      generate: true,
+      hills: { count: 4, minHeight: 15, maxHeight: 35, minRadius: 70, maxRadius: 140 },
+      river: { enabled: true, width: 20, depth: 3, points: 6, axis: 'z' },
+    };
+    return raw;
+  };
+  const a = runCitygen(base());
+  const slope = a.ctx?.terrain?.analysis?.slope;
+  assert.ok(slope && typeof slope === 'object');
+  assert.equal(slope.cells, slope.grid * slope.grid);
+  assert.ok(slope.step >= 8 && slope.step <= 16);
+  assert.ok(Number.isFinite(slope.maxSlope));
+  assert.ok(slope.maxSlope >= 0);
+  assert.ok(Object.keys(slope.share).length >= 3);
+  const sumShares = Object.values(slope.share).reduce((s, v) => s + v, 0);
+  assert.ok(Math.abs(sumShares - 1) < 0.02);
+  const countsSum = Object.values(slope.counts).reduce((s, v) => s + v, 0);
+  assert.equal(countsSum, slope.cells);
+  const b = runCitygen(base());
+  assert.deepEqual(a.ctx.terrain.analysis.slope, b.ctx.terrain.analysis.slope);
+});
+
+test('citygen R1.3: flat-site reservations and core candidates are selected deterministically', () => {
+  const base = () => {
+    const raw = v4Base();
+    raw.generator.seed = 909;
+    raw.generator.landscape = {
+      generate: true,
+      hills: { count: 5, minHeight: 10, maxHeight: 30, minRadius: 60, maxRadius: 130 },
+      river: { enabled: true, width: 18, depth: 2.5, points: 6, axis: 'z' },
+    };
+    return raw;
+  };
+  const a = runCitygen(base());
+  const reserves = a.ctx?.terrain?.analysis?.reservations ?? [];
+  assert.ok(Array.isArray(reserves));
+  assert.ok(reserves.length >= 1 && reserves.length <= 16);
+  for (const r of reserves) {
+    assert.ok(Number.isFinite(r.x) && Number.isFinite(r.z));
+    assert.ok(Number.isFinite(Number(r.slope ?? 0)));
+  }
+  const cores = a.ctx?.terrain?.analysis?.coreCandidates ?? [];
+  assert.ok(cores.length >= 1 && cores.length <= 4);
+  for (const c of cores) {
+    assert.ok(Number.isFinite(c.x) && Number.isFinite(c.z));
+  }
+  const b = runCitygen(base());
+  assert.deepEqual(a.ctx.terrain.analysis.reservations, b.ctx.terrain.analysis.reservations);
+  assert.deepEqual(a.ctx.terrain.analysis.coreCandidates, b.ctx.terrain.analysis.coreCandidates);
+});
+
+test('citygen R1.1: ordered procedural terrain (large forms -> terraces/platforms) produces modifiers', () => {
+  const base = () => {
+    const raw = v4Base();
+    raw.generator.seed = 313;
+    raw.generator.landscape = {
+      generate: true,
+      ordered: true,
+      hills: { count: 4, minHeight: 8, maxHeight: 24, minRadius: 80, maxRadius: 180 },
+      terraces: { count: 2, minRadius: 20, maxRadius: 40 },
+      platforms: { count: 1 },
+    };
+    return raw;
+  };
+  const a = runCitygen(base());
+  const mods = a.engine?.cityforge?.terrain?.modifiers ?? [];
+  assert.ok(mods.length >= 2);
+  const b = runCitygen(base());
+  assert.deepEqual(mods, b.engine.cityforge.terrain.modifiers); // order preserved by deterministic pipeline
+  assert.ok(a.report.diagnostics.some(d => d.code === 'landscape_generated'));
+});
+
+test('citygen R1.4: procedural river generation is deterministic and carve-enabled', () => {
+  const base = () => {
+    const raw = v4Base();
+    raw.generator.seed = 4242;
+    raw.generator.generatorVersion = 'test-0.1.0';
+    raw.generator.landscape = {
+      generate: true,
+      river: { enabled: true, width: 20, depth: 3, points: 6, axis: 'z' },
+    };
+    return raw;
+  };
+  const a = runCitygen(base());
+  const b = runCitygen(base());
+  const rivers = a.engine.cityforge.hydrology.rivers;
+  assert.ok(rivers.length >= 1);
+  for (const r of rivers) {
+    assert.ok(Array.isArray(r.path) && r.path.length >= 2);
+    assert.equal(r.carveTerrain, true);
+    for (const pt of r.path) {
+      assert.ok(Number.isFinite(pt[0]) && Number.isFinite(pt[2]));
+    }
+  }
+  assert.deepEqual(rivers, b.engine.cityforge.hydrology.rivers);
+});
+
+test('citygen R1.4: floodplain/buffer reservations present and deterministic', () => {
+  const base = () => {
+    const raw = v4Base();
+    raw.generator.seed = 2024;
+    raw.generator.landscape = {
+      generate: true,
+      river: { enabled: true, width: 22, depth: 4, points: 6, axis: 'z' },
+    };
+    return raw;
+  };
+  const a = runCitygen(base());
+  assert.ok(Array.isArray(a.ctx?.masks?.terrain?.floodplains) || Array.isArray(a.ctx?.terrain?.analysis?.floodplains));
+  const fps = a.ctx?.masks?.terrain?.floodplains ?? a.ctx?.terrain?.analysis?.floodplains ?? [];
+  const fps2 = (() => { const b = runCitygen(base()); return b.ctx?.masks?.terrain?.floodplains ?? b.ctx?.terrain?.analysis?.floodplains ?? []; })();
+  assert.deepEqual(fps, fps2);
+});
+
+test('citygen R1.5/R1.1: crossing candidates and landmarks deterministic; terrain modifiers present', () => {
+  const base = () => {
+    const raw = v4Base();
+    raw.generator.seed = 101;
+    raw.generator.landscape = {
+      generate: true,
+      hills: { count: 3, minHeight: 10, maxHeight: 26, minRadius: 80, maxRadius: 160 },
+      river: { enabled: true, width: 18, depth: 2.5, points: 5, axis: 'z' },
+    };
+    return raw;
+  };
+  const a = runCitygen(base());
+  const b = runCitygen(base());
+  assert.deepEqual(a.ctx.terrain.analysis.crossings, b.ctx.terrain.analysis.crossings);
+  assert.deepEqual(a.ctx.terrain.analysis.landmarks, b.ctx.terrain.analysis.landmarks);
+  assert.ok(Array.isArray(a.ctx.terrain.analysis.landmarks));
+  assert.ok(a.engine.cityforge.terrain.modifiers.length >= 1);
+});
