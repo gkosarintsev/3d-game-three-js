@@ -409,11 +409,18 @@ function buildLandmarks(ctx, baseY, size, slope, crossings, flatSamples = []) {
     landmarks.push(lm);
     return true;
   };
-  // Viewpoints / hilltops
+  // Viewpoints / hilltops (R5.2 §10.4: 2-4 viewpoints, deterministic)
   let vi = 0;
   for (const p of peaks) {
-    if (landmarks.length >= 3) break;
+    if (vi >= 4) break;
+    if (landmarks.length >= 6) break;
     if (p.y <= baseY + 1.5) continue; // only meaningful elevation
+    if (pushUnique({ id: `landmark_view_${vi + 1}`, role: 'viewpoint', kind: 'viewpoint', x: p.x, z: p.z, elevation: p.y })) vi++;
+  }
+  // Fallback: guarantee >=2 viewpoints even on near-flat plates (deterministic first peaks).
+  for (const p of peaks) {
+    if (vi >= 2 || vi >= 4) break;
+    if (landmarks.length >= 6) break;
     if (pushUnique({ id: `landmark_view_${vi + 1}`, role: 'viewpoint', kind: 'viewpoint', x: p.x, z: p.z, elevation: p.y })) vi++;
   }
   // Crossing landmarks (historic/strategic crossing vicinity)

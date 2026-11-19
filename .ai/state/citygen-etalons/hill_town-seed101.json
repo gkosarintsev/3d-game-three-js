@@ -1,8 +1,8 @@
 {
   "profile": "hill_town",
   "seed": 101,
-  "generatorVersion": "0.70.0",
-  "reportHash": "0ce65a59dfdf94a42271641f9c5c3b98750a4df5fda80b8568152f5288a34e90",
+  "generatorVersion": "0.71.0",
+  "reportHash": "2c2fc2b121bfa9212930da3ecccdf84f4b16cd30b4bd0ca52aa57ccf7757a6e1",
   "summary": {
     "errors": 0,
     "warnings": 10,
@@ -21,8 +21,8 @@
       "roadNodes": 0,
       "districts": 48,
       "parcels": 2246,
-      "reservedParcels": 57,
-      "buildings": 409,
+      "reservedParcels": 58,
+      "buildings": 408,
       "enterableBuildings": 82,
       "props": 360,
       "lights": 0,
@@ -59,7 +59,7 @@
     "gameplay": {
       "spawnToRoad": null,
       "exitToRoad": null,
-      "enterableShare": 0.200489,
+      "enterableShare": 0.20098,
       "enterableTarget": 0.2
     },
     "districts": {
@@ -121,13 +121,13 @@
         }
       },
       "crossings": 0,
-      "reservations": 12,
-      "landmarks": 4,
+      "reservations": 13,
+      "landmarks": 5,
       "waterBuffers": 0,
       "floodplains": 0
     },
     "parcels": {
-      "reservedShare": 0.025378,
+      "reservedShare": 0.025824,
       "byDistrictCount": {
         "district_0_0_00": 25,
         "district_0_0_01": 25,
@@ -182,16 +182,16 @@
     "landmarkVisibility": {
       "partial": true,
       "method": "terrain_los_sample",
-      "landmarks": 4,
+      "landmarks": 5,
       "crossings": 0,
       "cores": 0,
-      "total": 4,
-      "observers": 5,
-      "totalPairs": 17,
-      "visiblePairs": 10,
-      "visibleApprox": 4,
-      "visibleFraction": 0.588235,
-      "visibleTargets": 4
+      "total": 5,
+      "observers": 6,
+      "totalPairs": 26,
+      "visiblePairs": 14,
+      "visibleApprox": 5,
+      "visibleFraction": 0.538462,
+      "visibleTargets": 5
     },
     "blockDensityCorrelation": {
       "rho": 0.818529,

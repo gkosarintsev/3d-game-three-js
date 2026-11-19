@@ -1,4 +1,4 @@
-﻿/**
+/**
  * Stage 4: buildings and large structures (TASK-006, incremental MVP).
  * Places simple deterministic buildings on parcels by district profile, emitting
  * engine-compatible building definitions (no new primitives). Static only.
@@ -1459,7 +1459,7 @@ export function makeStage4() {
       const out = filtered;
       // R4.2 §9.4/§6.6: floors distribution & neighbour contrast.
       // L-modulation: higher landValue -> taller (bounded), then adjacency clamp for built-floors contrast <= 2.5x,
-      // exempting green seams (park/forest/parking/sports) as §10 relief, then one dominant per high-L district.
+      // exempting green seams (park/forest/parking/sports) as §10 relief, then 5-8 dominants per city (one per high-L district, capped/filled 2026-11-19).
       {
         const DS = ctx.districts ?? [];
         const rectOf = (d) => d?.geometry?.rect ?? null;
@@ -1483,14 +1483,27 @@ export function makeStage4() {
           if (Number.isFinite(lv)) b.floorsCount = Math.max(1, Math.min(60, Math.floor((b.floorsCount ?? 1) * (0.75 + lv * 0.5))));
         }
 
-        // dominants: one per district with landValue >= 0.6 — bump the local tallest
+        // dominants (R5.2 §10.4: 5-8 dominants per city): one per district, picked by landValue/floors;
+        // globally capped to 8 and filled to a minimum of 5 (when enough districts exist).
         const byDistrict = new Map();
         for (const b of out) { const arr = byDistrict.get(b.districtId) ?? []; arr.push(b); byDistrict.set(b.districtId, arr); }
-        let dominants = 0;
+        const districtCandidates = [];
         for (const [did, arr] of byDistrict) {
-          const d = DS.find(x => x?.id === did); if (!d || !Number.isFinite(Number(d?.landValue)) || Number(d.landValue) < 0.6) continue;
+          const d = DS.find(x => x?.id === did); if (!d) continue;
+          const lvRaw = Number(d?.landValue);
+          const lv = Number.isFinite(lvRaw) ? lvRaw : 0;
           const hi = [...arr].sort((x, y) => (Number(y.floorsCount ?? 0) - Number(x.floorsCount ?? 0)) || String(x.id).localeCompare(String(y.id)))[0];
           if (!hi) continue;
+          districtCandidates.push({ did, lv, hi });
+        }
+        districtCandidates.sort((a, b) => (b.lv - a.lv) || (Number(b.hi.floorsCount ?? 0) - Number(a.hi.floorsCount ?? 0)) || String(a.did).localeCompare(String(b.did)));
+        const minDom = 5, maxDom = 8; // §10.4
+        const picked = [];
+        for (const cd of districtCandidates) if (cd.lv >= 0.6 && picked.length < maxDom) picked.push(cd);
+        for (const cd of districtCandidates) if (picked.length < minDom && !picked.includes(cd)) picked.push(cd);
+        let dominants = 0;
+        for (const cd of picked) {
+          const hi = cd.hi;
           hi.floorsCount = Math.min(60, Number(hi.floorsCount ?? 1) + 1);
           dominants += 1;
         }
@@ -1530,7 +1543,7 @@ export function makeStage4() {
           }
           if (!changed) break;
         }
-        ctx.report.diagnostics.push(info('floors_contrast_built', stageId, 'building floors distribution (section 9.4): L-modulation, adjacency contrast <= 2.5x, one dominant per high-L district', { clamped, dominants, districts: DS.length, adjacencyPairs: adjD.reduce((s, s2) => s + s2.size, 0) / 2 }));
+        ctx.report.diagnostics.push(info('floors_contrast_built', stageId, 'building floors distribution (section 9.4): L-modulation, adjacency contrast <= 2.5x, 5-8 dominants per city (one per high-L district, capped/filled 2026-11-19)', { clamped, dominants, districts: DS.length, adjacencyPairs: adjD.reduce((s, s2) => s + s2.size, 0) / 2 }));
       }
 
       // R4.5 §9.5/§9.8: enterable share target = policies.enterableShare (default 0.2, clamp 0.15–0.25).
