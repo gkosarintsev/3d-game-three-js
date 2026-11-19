@@ -8,6 +8,7 @@
 import { info, warn } from '../diagnostics.mjs';
 import { makeTerrainSampler } from './stage-2-transport.mjs';
 import { createSpatialIndex } from '../spatial.mjs';
+import { makeRng, mix } from '../rng.mjs';
 
 function distXZ(ax, az, bx, bz) { return Math.hypot(ax - bx, az - bz); }
 
@@ -673,7 +674,89 @@ export function makeStage6() {
       // Keep engine pointing to transformed input for downstream build/compile.
       ctx.engine = ctx.input;
     },
-    repair(ctx) {
+    finish(ctx) {
+      // R5.1 §10.1/§10.2 controlled chaos (finish stage): deterministic micro-jitter for IR buildings.
+      // Macro (seams) limited by policies.chaos.seamsMax; micro jitter ±0.3..1.0 m / ±2..6° capped by
+      // chaos.global; skipped for dominant (>=15 floors), locked=true or buildings within 3 m of a road easement.
+      const stageId = '6_finalize_emit';
+      const policies = ctx.meta?.policies ?? {};
+      const globalChaos = Math.max(0, Math.min(1, Number(policies?.chaos?.global ?? 0)));
+      if (!(globalChaos > 0)) {
+        ctx.report?.diagnostics?.push(info('finish_chaos_skipped', stageId, 'chaos.global <= 0; chaos pass skipped', {}));
+        return;
+      }
+      const seamsMax = Math.max(0, Math.floor(Number(policies?.chaos?.seamsMax ?? 2)));
+      const buildings = Array.isArray(ctx.buildings) ? ctx.buildings : [];
+      if (!buildings.length) return;
+      const districts = Array.isArray(ctx.districts) ? ctx.districts : [];
+      const districtById = new Map(districts.map(d => [d.id, d]));
+      const sorted = [...buildings].sort((a, b) => String(a?.id ?? '').localeCompare(String(b?.id ?? '')));
+      const rng = makeRng(mix(ctx.meta?.seed ?? 0, 'finish_chaos'));
+      const rectOf = (d) => d?.geometry?.rect ?? null;
+      const edgeTouch = (a, b, eps = 0.75) => {
+        const ixMin = Math.max(a.minX, b.minX), ixMax = Math.min(a.maxX, b.maxX);
+        const izMin = Math.max(a.minZ, b.minZ), izMax = Math.min(a.maxZ, b.maxZ);
+        return (Math.abs(a.maxX - b.minX) <= eps && (izMax - izMin) > eps)
+          || (Math.abs(b.maxX - a.minX) <= eps && (izMax - izMin) > eps)
+          || (Math.abs(a.maxZ - b.minZ) <= eps && (ixMax - ixMin) > eps)
+          || (Math.abs(b.maxZ - a.minZ) <= eps && (ixMax - ixMin) > eps);
+      };
+      const seams = [];
+      for (let i = 0; i < districts.length; i++) {
+        const ra = rectOf(districts[i]); if (!ra) continue;
+        for (let j = i + 1; j < districts.length; j++) {
+          const rb = rectOf(districts[j]); if (!rb) continue;
+          if (edgeTouch(ra, rb)) {
+            const lvA = Number(districts[i]?.landValue) || 0, lvB = Number(districts[j]?.landValue) || 0;
+            seams.push({ a: districts[i].id, b: districts[j].id, delta: Math.abs(lvA - lvB) });
+          }
+        }
+      }
+      seams.sort((x, y) => (y.delta - x.delta) || String(x.a).localeCompare(String(y.a)) || String(x.b).localeCompare(String(y.b)));
+      const seamSet = new Set(seams.slice(0, seamsMax).flatMap(s => [s.a, s.b]));
+      const roads = ctx.networks?.roads?.segments ?? [];
+      const half = (() => Math.max(0, Number(ctx.meta?.worldBounds?.size ?? ctx.input?.ground?.size ?? 256)) / 2)();
+      let applied = 0, skipped = 0, lockedSkipped = 0;
+      const changes = [];
+      for (const b of sorted) {
+        if (b?.locked === true) { lockedSkipped++; continue; }
+        const floors = Number(b?.floorsCount ?? 1);
+        if (floors >= 15) { skipped++; continue; } // dominants kept stable for readability
+        const districtId = b?.districtId ?? null;
+        const seamBoost = districtId && seamSet.has(districtId) ? 0.15 : 0;
+        const eff = Math.min(1, globalChaos + seamBoost);
+        if (!(eff > 0)) { skipped++; continue; }
+        const c = buildingCenter(b); if (!c) { skipped++; continue; }
+        const jitter = 0.3 + 0.7 * eff; // m up to ~1.0
+        const jitterDeg = 0.6 + (eff >= 0.6 ? 2.4 : 1.4 * eff); // deg range 0.6..3.0
+        const jx = (rng() * 2 - 1) * jitter;
+        const jz = (rng() * 2 - 1) * jitter;
+        if (half > 0 && (Math.abs(c.x + jx) > half - 3 || Math.abs(c.z + jz) > half - 3)) { skipped++; continue; }
+        const dRoad = minRoadDist(c.x, c.z, roads);
+        if (Number.isFinite(dRoad) && dRoad <= 3.0) { skipped++; continue; } // red line honored
+        // apply deterministic micro jitter (features shifted with parent anchor — offset anchor keeps relative bucket)
+        if (Array.isArray(b.footprint)) {
+          b.footprint = b.footprint.map(p => {
+            const o = { ...p };
+            o.x = (Number(o.x) || 0) + jx;
+            o.z = (Number(o.z) || 0) + jz;
+            return o;
+          });
+        }
+        if (Number.isFinite(Number(b?.rotation))) {
+          b.rotation = Number(b.rotation) + (rng() * 2 - 1) * jitterDeg * (Math.PI / 180);
+        }
+        applied += 1;
+        if (applied <= 24 && changes.length < 24) {
+          changes.push({ id: b.id ?? null, dXZ: [Number(jx.toFixed(3)), Number(jz.toFixed(3))] });
+        }
+      }
+      ctx.report.diagnostics.push(info('finish_chaos_applied', stageId, 'chaos applied at finish stage', { applied, skipped, lockedSkipped, seams: seamSet.size, changes }));
+      if (seams.length > 0) {
+        ctx.report.diagnostics.push(info('finish_chaos_seams', stageId, 'seam districts selected for chaos boost', { seams: seams.slice(0, seamsMax) }));
+      }
+    },
+        repair(ctx) {
       const stageId = '6_finalize_emit';
       const networks = ctx.networks?.roads;
       if (!networks || !Array.isArray(networks.nodes) || !Array.isArray(networks.segments)) return;

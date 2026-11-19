@@ -347,6 +347,8 @@
 
 - 2026-11-19, **R2 stated scope wave (docs/tests-only, gv 0.74.0)** (agent/plan21-r2-wave, from origin/main 0db16a2, CI pending): `tools/citygen.test.mjs` — two new tests (R2.1 speedLimit fill, R2.3 slope policy); `node --test` **65/65 pass**. R2.1-R2.4, R2.6-R2.8 marked [x] stated scope with documented partial coverage.
 
+- 2026-11-19, **R5.1 controlled chaos v1 (gv 0.74.0 → 0.75.0)** (agent/plan21-r51-chaos, от origin/main e2e5014, CI pending): `tools/citygen/pipeline/stage.mjs` — optional `finish(ctx)` phase; `stage-6-finalize.mjs` — micro-jitter chaos (rotation/footprint jitter), seams by max ΔLV limited by `chaos.seamsMax`; L16 359/361 applied; L17 408/408; L20 417/419; L21 410/410; L22 77/77. Rebuild L16-22 (0 warnings), baselines/etalons refreshed, citygen.test 65/65, etalon-check 16/16. R5.1 marked [x] stated scope; meso/macro techniques, `properties.reason` (schema-closed), third-seam-rule — residual.
+
 ### Вывод R0.1 (deliverable)
 - Матрица соответствия §3–13 оформлена и зафиксирована (покрытие/частичность/пробелы привязаны к модулям и текущему evidence). Это закрывает формулировку **R0.1** как документационный артефакт анализа; R0.2/R0.3/R0.4 (stated scope)/R0.5 формализованы отдельно (см. чеклист/историю ниже).
 - Ключевые крупные незакрытые области по матрице: полные R2 (каркас/топология/мосты-тоннели-развязки/repair), остатки R4.3/R4.4, R5.1–R5.3/R5.5, формальное закрытие R1/R6 (в т.ч. расширение эталонов/серий/автоматизация цикла сверх R0.4 stated scope) и общий DoD плана 21.

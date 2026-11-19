@@ -1,7 +1,7 @@
 {
   "version": 1,
   "generator": {
-    "generatorVersion": "0.74.0",
+    "generatorVersion": "0.75.0",
     "seed": 21,
     "deterministic": true
   },
@@ -51,7 +51,7 @@
     {
       "id": "6_finalize_emit",
       "status": "ok",
-      "diagnostics": 14,
+      "diagnostics": 16,
       "repairs": 2,
       "drops": 0
     }
@@ -3653,6 +3653,204 @@
     },
     {
       "severity": "info",
+      "code": "finish_chaos_applied",
+      "stage": "6_finalize_emit",
+      "message": "chaos applied at finish stage",
+      "applied": 410,
+      "skipped": 0,
+      "lockedSkipped": 0,
+      "seams": 4,
+      "changes": [
+        {
+          "id": "b_district_0_0_00_156",
+          "dXZ": [
+            -0.36,
+            0.195
+          ]
+        },
+        {
+          "id": "b_district_0_0_00_157",
+          "dXZ": [
+            0.225,
+            0.175
+          ]
+        },
+        {
+          "id": "b_district_0_0_00_239",
+          "dXZ": [
+            -0.249,
+            0.294
+          ]
+        },
+        {
+          "id": "b_district_0_0_00_240",
+          "dXZ": [
+            -0.521,
+            -0.001
+          ]
+        },
+        {
+          "id": "b_district_0_0_00_241",
+          "dXZ": [
+            0.311,
+            0.147
+          ]
+        },
+        {
+          "id": "b_district_0_0_00_258",
+          "dXZ": [
+            0.046,
+            0.086
+          ]
+        },
+        {
+          "id": "b_district_0_0_00_259",
+          "dXZ": [
+            -0.517,
+            -0.386
+          ]
+        },
+        {
+          "id": "b_district_0_0_00_31",
+          "dXZ": [
+            -0.098,
+            0.294
+          ]
+        },
+        {
+          "id": "b_district_0_0_00_32",
+          "dXZ": [
+            0.499,
+            -0.407
+          ]
+        },
+        {
+          "id": "b_district_0_0_00_334",
+          "dXZ": [
+            0.107,
+            0.455
+          ]
+        },
+        {
+          "id": "b_district_0_0_00_335",
+          "dXZ": [
+            0.132,
+            -0.343
+          ]
+        },
+        {
+          "id": "b_district_0_0_01_242",
+          "dXZ": [
+            -0.046,
+            -0.483
+          ]
+        },
+        {
+          "id": "b_district_0_0_01_243",
+          "dXZ": [
+            0.053,
+            -0.229
+          ]
+        },
+        {
+          "id": "b_district_0_0_01_244",
+          "dXZ": [
+            -0.544,
+            0.363
+          ]
+        },
+        {
+          "id": "b_district_0_0_01_245",
+          "dXZ": [
+            -0.182,
+            -0.39
+          ]
+        },
+        {
+          "id": "b_district_0_0_01_325",
+          "dXZ": [
+            0.048,
+            0.315
+          ]
+        },
+        {
+          "id": "b_district_0_0_01_326",
+          "dXZ": [
+            -0.435,
+            -0.006
+          ]
+        },
+        {
+          "id": "b_district_0_0_01_327",
+          "dXZ": [
+            0.284,
+            -0.342
+          ]
+        },
+        {
+          "id": "b_district_0_0_01_377",
+          "dXZ": [
+            0.407,
+            0.383
+          ]
+        },
+        {
+          "id": "b_district_0_0_10_246",
+          "dXZ": [
+            0.088,
+            0.036
+          ]
+        },
+        {
+          "id": "b_district_0_0_10_247",
+          "dXZ": [
+            -0.088,
+            -0.458
+          ]
+        },
+        {
+          "id": "b_district_0_0_10_248",
+          "dXZ": [
+            -0.057,
+            0.353
+          ]
+        },
+        {
+          "id": "b_district_0_0_10_249",
+          "dXZ": [
+            -0.122,
+            0.064
+          ]
+        },
+        {
+          "id": "b_district_0_0_10_250",
+          "dXZ": [
+            -0.473,
+            0.055
+          ]
+        }
+      ]
+    },
+    {
+      "severity": "info",
+      "code": "finish_chaos_seams",
+      "stage": "6_finalize_emit",
+      "message": "seam districts selected for chaos boost",
+      "seams": [
+        {
+          "a": "district_2_0_0",
+          "b": "district_2_1_0",
+          "delta": 0.15889999999999999
+        },
+        {
+          "a": "district_2_1_11",
+          "b": "district_3_1_0",
+          "delta": 0.14650000000000002
+        }
+      ]
+    },
+    {
+      "severity": "info",
       "code": "interchange_junction_candidates",
       "stage": "6_finalize_emit",
       "message": "identified junction nodes as grade-separation candidates",
@@ -4045,7 +4243,7 @@
       "dividesPlate": true
     },
     "determinism": {
-      "generatorVersion": "0.74.0",
+      "generatorVersion": "0.75.0",
       "seed": 21,
       "deterministic": true
     },

@@ -1,7 +1,7 @@
 {
   "version": 1,
   "generator": {
-    "generatorVersion": "0.74.0",
+    "generatorVersion": "0.75.0",
     "seed": 19,
     "deterministic": true
   },
@@ -51,7 +51,7 @@
     {
       "id": "6_finalize_emit",
       "status": "ok",
-      "diagnostics": 7,
+      "diagnostics": 8,
       "repairs": 0,
       "drops": 0
     }
@@ -612,6 +612,186 @@
     },
     {
       "severity": "info",
+      "code": "finish_chaos_applied",
+      "stage": "6_finalize_emit",
+      "message": "chaos applied at finish stage",
+      "applied": 24,
+      "skipped": 0,
+      "lockedSkipped": 0,
+      "seams": 0,
+      "changes": [
+        {
+          "id": "b_d0_1",
+          "dXZ": [
+            -0.43,
+            -0.363
+          ]
+        },
+        {
+          "id": "b_d0_10",
+          "dXZ": [
+            0.502,
+            0.251
+          ]
+        },
+        {
+          "id": "b_d0_11",
+          "dXZ": [
+            -0.181,
+            -0.077
+          ]
+        },
+        {
+          "id": "b_d0_12",
+          "dXZ": [
+            -0.257,
+            -0.327
+          ]
+        },
+        {
+          "id": "b_d0_13",
+          "dXZ": [
+            -0.308,
+            0.062
+          ]
+        },
+        {
+          "id": "b_d0_14",
+          "dXZ": [
+            0.464,
+            0.292
+          ]
+        },
+        {
+          "id": "b_d0_15",
+          "dXZ": [
+            0.504,
+            0.209
+          ]
+        },
+        {
+          "id": "b_d0_16",
+          "dXZ": [
+            -0.034,
+            -0.068
+          ]
+        },
+        {
+          "id": "b_d0_17",
+          "dXZ": [
+            -0.439,
+            0.122
+          ]
+        },
+        {
+          "id": "b_d0_18",
+          "dXZ": [
+            -0.521,
+            0.402
+          ]
+        },
+        {
+          "id": "b_d0_19",
+          "dXZ": [
+            0.35,
+            0.153
+          ]
+        },
+        {
+          "id": "b_d0_2",
+          "dXZ": [
+            -0.285,
+            0.186
+          ]
+        },
+        {
+          "id": "b_d0_20",
+          "dXZ": [
+            0.543,
+            0.405
+          ]
+        },
+        {
+          "id": "b_d0_21",
+          "dXZ": [
+            -0.428,
+            0.389
+          ]
+        },
+        {
+          "id": "b_d0_22",
+          "dXZ": [
+            -0.421,
+            -0.143
+          ]
+        },
+        {
+          "id": "b_d0_23",
+          "dXZ": [
+            -0.355,
+            -0.001
+          ]
+        },
+        {
+          "id": "b_d0_24",
+          "dXZ": [
+            0.333,
+            0.063
+          ]
+        },
+        {
+          "id": "b_d0_3",
+          "dXZ": [
+            0.285,
+            0.033
+          ]
+        },
+        {
+          "id": "b_d0_4",
+          "dXZ": [
+            -0.214,
+            0.029
+          ]
+        },
+        {
+          "id": "b_d0_5",
+          "dXZ": [
+            -0.123,
+            -0.29
+          ]
+        },
+        {
+          "id": "b_d0_6",
+          "dXZ": [
+            0.198,
+            0.278
+          ]
+        },
+        {
+          "id": "b_d0_7",
+          "dXZ": [
+            -0.326,
+            -0.382
+          ]
+        },
+        {
+          "id": "b_d0_8",
+          "dXZ": [
+            0.463,
+            0.277
+          ]
+        },
+        {
+          "id": "b_d0_9",
+          "dXZ": [
+            -0.177,
+            -0.39
+          ]
+        }
+      ]
+    },
+    {
+      "severity": "info",
       "code": "interchange_junction_candidates",
       "stage": "6_finalize_emit",
       "message": "identified junction nodes as grade-separation candidates",
@@ -822,7 +1002,7 @@
       "dividesPlate": true
     },
     "determinism": {
-      "generatorVersion": "0.74.0",
+      "generatorVersion": "0.75.0",
       "seed": 19,
       "deterministic": true
     },

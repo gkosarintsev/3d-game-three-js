@@ -7,7 +7,7 @@ Protocol: `.ai/plans/22-parallel-agents-github-ci.md`, `.ai/prompts/agent-ci-pro
 
 ## Current position (summary)
 
-- **Generator:** current section `R2 stated scope wave` (agent/plan21-r2-wave @ `C:\Temp\wt-plan21-r2wave` from `origin/main` `0db16a2`, docs/tests-only — no gv bump, no rebuild). `origin/main` at `0db16a2` after PR #35 (R1 relief wave merged). Staged v4 pipeline (`tools/citygen/index.mjs`, `pipeline/stage-1..6-*`), profiles/policies/validation/metrics/etalons/seed-series tooling developed incrementally.
+- **Generator:** current section `R5.1 chaos v1` (agent/plan21-r51-chaos @ `C:\Temp\wt-plan21-r51-chaos` from `origin/main` `e2e5014`, gv 0.74.0 -> 0.75.0, output-affecting). `origin/main` at `e2e5014` after PR #36 (R2 stated scope wave merged). Staged v4 pipeline (`tools/citygen/index.mjs`, `pipeline/stage-1..6-*`), profiles/policies/validation/metrics/etalons/seed-series tooling developed incrementally.
 - **Gates/artifacts:** `tools/citygen.test.mjs`, `tools/citygen-etalon-check.mjs`, `tools/citygen-seed-series.mjs`, `tools/check-levels.mjs`, `tools/build-level.mjs --check`, browser suites by scope/CI; committed derived outputs and etalon/baseline snapshots are part of determinism/regression.
 - **Constraint:** any IR/report/derived level output changes require deterministic rebuild of committed artifacts and baseline/etalon updates per version policy, verified in GitHub CI.
 
@@ -22,7 +22,7 @@ Protocol: `.ai/plans/22-parallel-agents-github-ci.md`, `.ai/prompts/agent-ci-pro
 | R4.1,R4.2,R4.5,R4.6 | done (per plan/history) | Possible follow-ups within R4.3/R4.4. |
 | **R4.3** (placement, foundation, building relief) | **partial** (W1-002 increment merged; §9.5/§9.6 gaps remain) | Stage-4/placement; output-affecting, requires rebuild+CI. |
 | **R4.4** (appearance/palettes/windows/roofs) | **done (stated scope)** | PR #24+squat; flat roofs centre/industrial ~25% walkable + parapet 0.9–1.2 m; palettes/windows/night/no-three implemented; roof equipment not supported by v4 schema (`houseFeatures` closed) — excluded. |
-| **R5.1** (controlled chaos) | open | Behavior/layout change; versioning per policy. |
+| **R5.1** (controlled chaos) | **done (stated scope)** | stage-6 finish-phase micro chaos (jitter ±0.3..1.0 m / rotation ±2–6°), seamsMax=2 по ΔLV, skip-rollback guard, gv 0.75.0. `properties.reason` schema-closed; meso/macro techniques + 1/3-consecutive not implemented. |
 | **R5.2** (readability/landmarks) | **done (stated scope)** | LOS metric (PR #22), dominants 5-8 + viewpoints 2-4 (PR #24), impressionCadence metric (L16/L17/L21/L22 in-range, L20 367 m documented deviation) + falseDeadEnds scaffold (PR #TBD, gv 0.73.0). |
 | **R5.3** (gameplay spawn/exit/cars/enemies) | **done (stated scope)** | Read-only §10.5 validator + metrics (`metrics.gameplay`: spawn/exit district type, straight/route/ratio, districtsPassed, cars onRoad/misaligned/nearJunction); pilots L16/L17 car yaw fixed 90→0 per §10.5; enemies runtime nav graph (generator не размещает). |
 | **R5.4** (`locked`, `instance.generation`) | **done (stated scope)** | `finalizeInstances` preserves `locked` and stamps `source/seed/generator/generatorVersion`; broader regen/chunk integration tracked under R5.5/follow-ups. |
@@ -317,3 +317,11 @@ Protocol: `.ai/plans/22-parallel-agents-github-ci.md`, `.ai/prompts/agent-ci-pro
 - **R2.1,R2.2,R2.3,R2.4,R2.6,R2.7,R2.8 [x] (stated scope)** in `.ai/plans/21-citygen-procedural-rules.md` with documented partial coverage. Осталось: R5.1 (chaos stage), R5.5 (chunks/homeChunk), R6.1/R6.2, общий DoD.
 - **CI/merge evidence:** pending (PR → green GitHub CI → sequential merge).
 - **Still remaining:** R5.1, R5.5, R6.1/R6.2, overall plan 21 DoD; R2 remaining gaps (между-районные пути, полный набор интерчейндж-прототипов, ремонт всех типов пересечений).
+
+#### Continuation increment (R5.1 chaos v1, `agent/plan21-r51-chaos`, in progress, CI pending)
+- **Branch/worktree:** `agent/plan21-r51-chaos` @ `C:\Temp\wt-plan21-r51-chaos` (from `origin/main` `e2e5014`, gv `0.74.0 -> 0.75.0`; `node scripts/agent/check-env.mjs` OK).
+- **Scope (output-affecting, gv bump):** `tools/citygen/pipeline/stage.mjs` (optional `finish(ctx)` phase), `tools/citygen/pipeline/stage-6-finalize.mjs` (`finish(ctx)` chaos: deterministic micro jitter), `tools/citygen/config.mjs` (gv `0.75.0`), `src/levels/level-16..22.json` + derived rebuilt (0 warnings; buildings jittered, chunks/catalogs regenerate), `.ai/state/citygen-baselines/level-16..22*`, `.ai/state/citygen-etalons/*` (10 refreshed), `.ai/state/*`, `.ai/plans/21-citygen-procedural-rules.md`.
+  - **R5.1 [x] (stated scope):** micro-jitter chaos at finish stage. Per-level chaos applied: L16 359/361, L17 408/408, L20 417/419, L21 410/410, L22 77/77 (dominants>=15 floors skipped). Seams: selectable by max ΔLV, limited by `chaos.seamsMax` (default 2). `properties.reason/generation` cannot be emitted (v4 schema closed) — recorded via `report.diagnostics` (`finish_chaos_applied`, `finish_chaos_seams`).
+- **Verification (local prep):** `node --test tools/citygen.test.mjs` **65/65**; `node tools/citygen-etalon-check.mjs` **16/16**; `node tools/build-level.mjs src/levels/level-16..22.json` 0 warnings.
+- **Still remaining:** R5.5 (chunks/coverageChunks), R6.1/R6.2, overall plan 21 DoD; R5.1 follow-ups (meso/macro techniques, seam third-rule, audit reasons via report or ADR for schema extension).
+- **CI/merge evidence:** pending (commit/push/PR + green GitHub CI/merge-gate, sequential merge to `main`, recorded in next state-update).
