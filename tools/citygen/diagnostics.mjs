@@ -4,6 +4,7 @@
  */
 import { byId } from './ids.mjs';
 import { attachRulesToReport } from './rules.mjs';
+import { finalizeFeatureManifest } from './features.mjs';
 
 export function diag(severity, code, stage, message, extra = {}) {
   return { severity, code, stage, message, ...extra };
@@ -31,6 +32,10 @@ export function createReport(meta = {}) {
 }
 
 export function finalizeReport(report, ctx = null) {
+  // T23.3: finalize feature manifest/report snapshot before deterministic sorting/summary.
+  if (ctx) {
+    try { finalizeFeatureManifest(ctx, '6_finalize_emit'); } catch { /* keep report robust */ }
+  }
   // Stable ordering for determinism
   report.stages = [...(report.stages ?? [])].sort((a, b) => String(a.id ?? a.stage ?? '').localeCompare(String(b.id ?? b.stage ?? '')));
   report.districts = [...(report.districts ?? [])].sort(byId);

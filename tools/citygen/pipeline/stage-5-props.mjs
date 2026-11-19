@@ -7,6 +7,7 @@ import { info } from '../diagnostics.mjs';
 import { makeRng, mix } from '../rng.mjs';
 import { createSpatialIndex } from '../spatial.mjs';
 import { reliefOf } from '../../../src/relief.js';
+import { applyFeatureProps } from '../features.mjs';
 
 const clamp = (v, lo, hi) => Math.max(lo, Math.min(hi, v));
 
@@ -562,10 +563,13 @@ export function makeStage5() {
       const cfg = gen.props ?? gen.infrastructure ?? {};
       if (cfg.enabled === false) {
         ctx.report.diagnostics.push(info('props_disabled', stageId, 'infrastructure/props generation disabled'));
-        return;
+      } else {
+        generateLights(ctx, stageId, cfg);
+        generateProps(ctx, stageId, cfg);
       }
-      generateLights(ctx, stageId, cfg);
-      generateProps(ctx, stageId, cfg);
+      // T23.3: deterministic manifestation of selected §11.2 features (prop-based, best-effort).
+      // Run even when random prop generation is disabled so selected features can still appear.
+      applyFeatureProps(ctx, stageId);
     },
     validate(ctx) {
       const stageId = '5_infrastructure_props';

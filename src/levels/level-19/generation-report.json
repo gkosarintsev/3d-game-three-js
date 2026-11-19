@@ -1,7 +1,7 @@
 {
   "version": 1,
   "generator": {
-    "generatorVersion": "0.86.0",
+    "generatorVersion": "0.87.0",
     "seed": 19,
     "deterministic": true
   },
@@ -551,6 +551,32 @@
     },
     {
       "severity": "info",
+      "code": "features_manifest",
+      "stage": "6_finalize_emit",
+      "message": "feature manifest: 0 applied, 0 degraded, 1 skipped, 0 planned",
+      "selected": [
+        "stadium_dominant"
+      ],
+      "applied": 0,
+      "degraded": 0,
+      "skipped": 1,
+      "planned": 0
+    },
+    {
+      "severity": "info",
+      "code": "features_manifest",
+      "stage": "6_finalize_emit",
+      "message": "feature manifest: 0 applied, 0 degraded, 1 skipped, 0 planned",
+      "selected": [
+        "stadium_dominant"
+      ],
+      "applied": 0,
+      "degraded": 0,
+      "skipped": 1,
+      "planned": 0
+    },
+    {
+      "severity": "info",
       "code": "finalize_counts",
       "stage": "6_finalize_emit",
       "message": "generation summary",
@@ -881,6 +907,31 @@
     "repairs": 0,
     "drops": 0
   },
+  "features": {
+    "selected": [
+      "stadium_dominant"
+    ],
+    "count": 1,
+    "applied": 0,
+    "degraded": 0,
+    "skipped": 1,
+    "planned": 0,
+    "items": [
+      {
+        "id": "feature_1_stadium_dominant",
+        "type": "stadium_dominant",
+        "status": "skipped",
+        "reason": "handler_not_implemented",
+        "anchor": null,
+        "emitted": {
+          "props": 0,
+          "landscapeObjects": 0,
+          "buildings": 0,
+          "districts": 0
+        }
+      }
+    ]
+  },
   "metrics": {
     "version": 2,
     "partial": true,
@@ -1072,7 +1123,7 @@
       "dividesPlate": true
     },
     "determinism": {
-      "generatorVersion": "0.86.0",
+      "generatorVersion": "0.87.0",
       "seed": 19,
       "deterministic": true
     },

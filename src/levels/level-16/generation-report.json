@@ -1,7 +1,7 @@
 {
   "version": 1,
   "generator": {
-    "generatorVersion": "0.86.0",
+    "generatorVersion": "0.87.0",
     "seed": 16,
     "deterministic": true
   },
@@ -2220,6 +2220,32 @@
     },
     {
       "severity": "info",
+      "code": "features_manifest",
+      "stage": "6_finalize_emit",
+      "message": "feature manifest: 0 applied, 0 degraded, 1 skipped, 0 planned",
+      "selected": [
+        "citadel_hill"
+      ],
+      "applied": 0,
+      "degraded": 0,
+      "skipped": 1,
+      "planned": 0
+    },
+    {
+      "severity": "info",
+      "code": "features_manifest",
+      "stage": "6_finalize_emit",
+      "message": "feature manifest: 0 applied, 0 degraded, 1 skipped, 0 planned",
+      "selected": [
+        "citadel_hill"
+      ],
+      "applied": 0,
+      "degraded": 0,
+      "skipped": 1,
+      "planned": 0
+    },
+    {
+      "severity": "info",
       "code": "finalize_counts",
       "stage": "6_finalize_emit",
       "message": "generation summary",
@@ -3038,6 +3064,31 @@
     "repairs": 1,
     "drops": 52
   },
+  "features": {
+    "selected": [
+      "citadel_hill"
+    ],
+    "count": 1,
+    "applied": 0,
+    "degraded": 0,
+    "skipped": 1,
+    "planned": 0,
+    "items": [
+      {
+        "id": "feature_1_citadel_hill",
+        "type": "citadel_hill",
+        "status": "skipped",
+        "reason": "handler_not_implemented",
+        "anchor": null,
+        "emitted": {
+          "props": 0,
+          "landscapeObjects": 0,
+          "buildings": 0,
+          "districts": 0
+        }
+      }
+    ]
+  },
   "metrics": {
     "version": 2,
     "partial": true,
@@ -3372,7 +3423,7 @@
       "dividesPlate": true
     },
     "determinism": {
-      "generatorVersion": "0.86.0",
+      "generatorVersion": "0.87.0",
       "seed": 16,
       "deterministic": true
     },

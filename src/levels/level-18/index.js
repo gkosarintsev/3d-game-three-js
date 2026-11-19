@@ -65,7 +65,7 @@ export const LEVEL_18 = {
         "id": "0_0",
         "objects": {
           "buildings": 1,
-          "props": 39,
+          "props": 41,
           "roads": 6
         },
         "rect": {
@@ -80,7 +80,7 @@ export const LEVEL_18 = {
         "id": "0_1",
         "objects": {
           "buildings": 4,
-          "props": 39,
+          "props": 41,
           "roads": 6
         },
         "rect": {
@@ -95,7 +95,7 @@ export const LEVEL_18 = {
         "id": "1_0",
         "objects": {
           "buildings": 4,
-          "props": 37,
+          "props": 39,
           "roads": 4
         },
         "rect": {
@@ -110,7 +110,7 @@ export const LEVEL_18 = {
         "id": "1_1",
         "objects": {
           "buildings": 3,
-          "props": 43,
+          "props": 45,
           "roads": 7
         },
         "rect": {
