@@ -1,7 +1,7 @@
 {
   "version": 1,
   "generator": {
-    "generatorVersion": "0.83.0",
+    "generatorVersion": "0.84.0",
     "seed": 20,
     "deterministic": true
   },
@@ -4280,6 +4280,49 @@
       "targetMax": 300,
       "ok": false
     },
+    "impressionAnchors": {
+      "method": "spawn_exit_anchors_spacing",
+      "spacingMeters": 200,
+      "anchors": [
+        {
+          "d": 200,
+          "x": -378.6,
+          "z": -378.6
+        },
+        {
+          "d": 400,
+          "x": -237.2,
+          "z": -237.2
+        },
+        {
+          "d": 600,
+          "x": -95.7,
+          "z": -95.7
+        },
+        {
+          "d": 800,
+          "x": 45.7,
+          "z": 45.7
+        },
+        {
+          "d": 1000,
+          "x": 187.1,
+          "z": 187.1
+        },
+        {
+          "d": 1200,
+          "x": 328.5,
+          "z": 328.5
+        },
+        {
+          "d": 1400,
+          "x": 469.9,
+          "z": 469.9
+        }
+      ],
+      "anchorsCount": 7,
+      "pathLength": 1470.8
+    },
     "falseDeadEnds": {
       "count": 0,
       "share": 0,
@@ -4309,7 +4352,7 @@
       "dividesPlate": true
     },
     "determinism": {
-      "generatorVersion": "0.83.0",
+      "generatorVersion": "0.84.0",
       "seed": 20,
       "deterministic": true
     },

@@ -1,7 +1,7 @@
 {
   "version": 1,
   "generator": {
-    "generatorVersion": "0.83.0",
+    "generatorVersion": "0.84.0",
     "seed": 22,
     "deterministic": true
   },
@@ -2697,6 +2697,24 @@
       "targetMax": 300,
       "ok": false
     },
+    "impressionAnchors": {
+      "method": "spawn_exit_anchors_spacing",
+      "spacingMeters": 200,
+      "anchors": [
+        {
+          "d": 200,
+          "x": -58.6,
+          "z": -58.6
+        },
+        {
+          "d": 400,
+          "x": 82.8,
+          "z": 82.8
+        }
+      ],
+      "anchorsCount": 2,
+      "pathLength": 565.7
+    },
     "falseDeadEnds": {
       "count": 0,
       "share": 0,
@@ -2726,7 +2744,7 @@
       "dividesPlate": true
     },
     "determinism": {
-      "generatorVersion": "0.83.0",
+      "generatorVersion": "0.84.0",
       "seed": 22,
       "deterministic": true
     },
