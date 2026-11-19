@@ -1447,9 +1447,37 @@ export function makeStage4() {
             return { minX: Math.min(...xs), maxX: Math.max(...xs), minZ: Math.min(...zs), maxZ: Math.max(...zs) };
           })();
           const floorsN = Math.max(1, Math.floor(Number(b.floorsCount) || 1));
+          const edge = b._accessEdge || null;
           const rooms = [];
           for (let s = 0; s < floorsN; s++) {
             rooms.push({ id: `${id}:r${s}`, type: s === 0 ? 'lobby' : 'room', floor: s, polygon: innerPoly });
+          }
+          // R4.3 §9.6: explicit entrance/door portal semantics to sidewalk/street on lobby (ground floor).
+          // Portal is placed on the street-access facade edge; target must resolve to a valid adjacent road id (schema).
+          const lobby = rooms[0];
+          if (lobby && edge) {
+            const portalY = +(Number.isFinite(Number(b.baseY)) ? Number(b.baseY) : 0).toFixed(3);
+            let px = fpCx, pz = fpCz;
+            if (edge === 'south') { px = (inner.minX + inner.maxX) / 2; pz = inner.minZ; }
+            else if (edge === 'north') { px = (inner.minX + inner.maxX) / 2; pz = inner.maxZ; }
+            else if (edge === 'west') { px = inner.minX; pz = (inner.minZ + inner.maxZ) / 2; }
+            else if (edge === 'east') { px = inner.maxX; pz = (inner.minZ + inner.maxZ) / 2; }
+            let bestRoadId = null, bestRoadD = Infinity;
+            for (const seg of roadSegmentsPlan) {
+              const pts = seg?.path;
+              if (!seg?.id || !Array.isArray(pts)) continue;
+              for (let i = 0; i + 5 < pts.length; i += 3) {
+                const d = pointSegDistXZ(px, pz, pts[i], pts[i + 2], pts[i + 3], pts[i + 5]);
+                if (d < bestRoadD) { bestRoadD = d; bestRoadId = seg.id; }
+              }
+            }
+            if (bestRoadId && bestRoadD <= 40) {
+              lobby.connections = [{
+                target: bestRoadId,
+                linkType: 'main_entrance',
+                portalPosition: { x: +px.toFixed(3), y: portalY, z: +pz.toFixed(3) },
+              }];
+            }
           }
           // R4.3 §9.6: вход/лестница ближе к уличному фасаду (сторона доступа/тротуара), а не в геометрическом центре.
           const stairRise = Number.isFinite(Number(b.floorHeight)) && Number(b.floorHeight) > 0 ? Number(b.floorHeight) : 3.3;
@@ -1458,7 +1486,6 @@ export function makeStage4() {
           const innerD = Math.max(0.1, inner.maxZ - inner.minZ);
           const margin = 0.75;
           let sx = fpCx, sz = fpCz;
-          const edge = b._accessEdge || null;
           // offset inward from facade edge so stair body stays inside inner polygon
           const offZ = Math.min(innerD / 2 - 0.25, Math.max(stairLen / 2 + 0.5, innerD * 0.22));
           const offX = Math.min(innerW / 2 - 0.25, Math.max(stairLen / 2 + 0.5, innerW * 0.22));
