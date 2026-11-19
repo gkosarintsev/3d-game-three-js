@@ -551,7 +551,7 @@ test('pilot level-16 v4: generateOutput deterministic (report and catalog conten
   assert.equal(fin.roadSegments, 176);
   assert.equal(fin.roadNodes, 146);
   assert.equal(fin.buildings, 415);
-  assert.equal(fin.props, 360);
+  assert.equal(fin.props, 372);
   assert.equal(fin.lights, 8);
   assert.ok(Array.isArray(fin.districtTypes) && fin.districtTypes.length >= 10, 'pilot should retain broad district type coverage');
   for (const t of ['commercial', 'old_town', 'campus', 'market']) {

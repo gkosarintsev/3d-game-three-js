@@ -1,7 +1,7 @@
 {
   "version": 1,
   "generator": {
-    "generatorVersion": "0.87.0",
+    "generatorVersion": "0.88.0",
     "seed": 16,
     "deterministic": true
   },
@@ -3758,26 +3758,26 @@
       "severity": "info",
       "code": "features_manifest",
       "stage": "6_finalize_emit",
-      "message": "feature manifest: 0 applied, 0 degraded, 1 skipped, 0 planned",
+      "message": "feature manifest: 1 applied, 0 degraded, 0 skipped, 0 planned",
       "selected": [
         "citadel_hill"
       ],
-      "applied": 0,
+      "applied": 1,
       "degraded": 0,
-      "skipped": 1,
+      "skipped": 0,
       "planned": 0
     },
     {
       "severity": "info",
       "code": "features_manifest",
       "stage": "6_finalize_emit",
-      "message": "feature manifest: 0 applied, 0 degraded, 1 skipped, 0 planned",
+      "message": "feature manifest: 1 applied, 0 degraded, 0 skipped, 0 planned",
       "selected": [
         "citadel_hill"
       ],
-      "applied": 0,
+      "applied": 1,
       "degraded": 0,
-      "skipped": 1,
+      "skipped": 0,
       "planned": 0
     },
     {
@@ -3919,7 +3919,7 @@
         "forest": 2
       },
       "lights": 8,
-      "props": 360,
+      "props": 372,
       "propsByDistrictType": {
         "residential": 74,
         "sports": 10,
@@ -3941,7 +3941,7 @@
         "maxProps": 112,
         "maxLights": 3,
         "avgBuildings": 102,
-        "avgProps": 90
+        "avgProps": 93
       }
     },
     {
@@ -4469,19 +4469,23 @@
       "citadel_hill"
     ],
     "count": 1,
-    "applied": 0,
+    "applied": 1,
     "degraded": 0,
-    "skipped": 1,
+    "skipped": 0,
     "planned": 0,
     "items": [
       {
         "id": "feature_1_citadel_hill",
         "type": "citadel_hill",
-        "status": "skipped",
-        "reason": "handler_not_implemented",
-        "anchor": null,
+        "status": "applied",
+        "reason": null,
+        "anchor": {
+          "districtId": "district_0_0_11",
+          "x": -400,
+          "z": -400
+        },
         "emitted": {
-          "props": 0,
+          "props": 12,
           "landscapeObjects": 0,
           "buildings": 0,
           "districts": 0
@@ -4500,7 +4504,7 @@
       "reservedParcels": 500,
       "buildings": 395,
       "enterableBuildings": 82,
-      "props": 360,
+      "props": 372,
       "lights": 8,
       "rivers": 2,
       "lakes": 0
@@ -4823,7 +4827,7 @@
       "dividesPlate": true
     },
     "determinism": {
-      "generatorVersion": "0.87.0",
+      "generatorVersion": "0.88.0",
       "seed": 16,
       "deterministic": true
     },

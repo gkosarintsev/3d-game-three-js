@@ -1,7 +1,7 @@
 {
   "version": 1,
   "generator": {
-    "generatorVersion": "0.87.0",
+    "generatorVersion": "0.88.0",
     "seed": 20,
     "deterministic": true
   },
@@ -1012,8 +1012,8 @@
       "severity": "warn",
       "code": "chunk_props_heavy",
       "stage": "6_finalize_emit",
-      "message": "high prop count in a single chunk (154)",
-      "maxProps": 154,
+      "message": "high prop count in a single chunk (166)",
+      "maxProps": 166,
       "chunk": 640,
       "grid": 2
     },
@@ -3380,26 +3380,26 @@
       "severity": "info",
       "code": "features_manifest",
       "stage": "6_finalize_emit",
-      "message": "feature manifest: 0 applied, 0 degraded, 1 skipped, 0 planned",
+      "message": "feature manifest: 1 applied, 0 degraded, 0 skipped, 0 planned",
       "selected": [
         "citadel_hill"
       ],
-      "applied": 0,
+      "applied": 1,
       "degraded": 0,
-      "skipped": 1,
+      "skipped": 0,
       "planned": 0
     },
     {
       "severity": "info",
       "code": "features_manifest",
       "stage": "6_finalize_emit",
-      "message": "feature manifest: 0 applied, 0 degraded, 1 skipped, 0 planned",
+      "message": "feature manifest: 1 applied, 0 degraded, 0 skipped, 0 planned",
       "selected": [
         "citadel_hill"
       ],
-      "applied": 0,
+      "applied": 1,
       "degraded": 0,
-      "skipped": 1,
+      "skipped": 0,
       "planned": 0
     },
     {
@@ -3540,7 +3540,7 @@
         "luxury": 2
       },
       "lights": 8,
-      "props": 360,
+      "props": 372,
       "propsByDistrictType": {
         "old_town": 42,
         "slums": 52,
@@ -3559,10 +3559,10 @@
       "chunkLoad": {
         "nonEmptyChunks": 4,
         "maxBuildings": 184,
-        "maxProps": 154,
+        "maxProps": 166,
         "maxLights": 3,
         "avgBuildings": 104.75,
-        "avgProps": 90
+        "avgProps": 93
       }
     },
     {
@@ -4098,19 +4098,23 @@
       "citadel_hill"
     ],
     "count": 1,
-    "applied": 0,
+    "applied": 1,
     "degraded": 0,
-    "skipped": 1,
+    "skipped": 0,
     "planned": 0,
     "items": [
       {
         "id": "feature_1_citadel_hill",
         "type": "citadel_hill",
-        "status": "skipped",
-        "reason": "handler_not_implemented",
-        "anchor": null,
+        "status": "applied",
+        "reason": null,
+        "anchor": {
+          "districtId": "district_3_0_0",
+          "x": 400,
+          "z": -480
+        },
         "emitted": {
-          "props": 0,
+          "props": 12,
           "landscapeObjects": 0,
           "buildings": 0,
           "districts": 0
@@ -4129,7 +4133,7 @@
       "reservedParcels": 180,
       "buildings": 406,
       "enterableBuildings": 84,
-      "props": 360,
+      "props": 372,
       "lights": 8,
       "rivers": 0,
       "lakes": 0
@@ -4432,7 +4436,7 @@
       "dividesPlate": true
     },
     "determinism": {
-      "generatorVersion": "0.87.0",
+      "generatorVersion": "0.88.0",
       "seed": 20,
       "deterministic": true
     },

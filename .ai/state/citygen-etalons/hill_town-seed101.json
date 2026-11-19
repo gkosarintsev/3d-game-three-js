@@ -1,8 +1,8 @@
 {
   "profile": "hill_town",
   "seed": 101,
-  "generatorVersion": "0.87.0",
-  "reportHash": "a9526b50bba843e1ac4f0088671f515260feb849bea954cae8b45759df7de662",
+  "generatorVersion": "0.88.0",
+  "reportHash": "9b19b96478a268c8d2e0d394692be0088f5f1c4c988cb0165a59455c27d8c036",
   "summary": {
     "errors": 0,
     "warnings": 10,
@@ -24,7 +24,7 @@
       "reservedParcels": 58,
       "buildings": 396,
       "enterableBuildings": 82,
-      "props": 360,
+      "props": 370,
       "lights": 0,
       "rivers": 0,
       "lakes": 0

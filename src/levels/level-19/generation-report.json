@@ -1,7 +1,7 @@
 {
   "version": 1,
   "generator": {
-    "generatorVersion": "0.87.0",
+    "generatorVersion": "0.88.0",
     "seed": 19,
     "deterministic": true
   },
@@ -553,26 +553,26 @@
       "severity": "info",
       "code": "features_manifest",
       "stage": "6_finalize_emit",
-      "message": "feature manifest: 0 applied, 0 degraded, 1 skipped, 0 planned",
+      "message": "feature manifest: 1 applied, 0 degraded, 0 skipped, 0 planned",
       "selected": [
         "stadium_dominant"
       ],
-      "applied": 0,
+      "applied": 1,
       "degraded": 0,
-      "skipped": 1,
+      "skipped": 0,
       "planned": 0
     },
     {
       "severity": "info",
       "code": "features_manifest",
       "stage": "6_finalize_emit",
-      "message": "feature manifest: 0 applied, 0 degraded, 1 skipped, 0 planned",
+      "message": "feature manifest: 1 applied, 0 degraded, 0 skipped, 0 planned",
       "selected": [
         "stadium_dominant"
       ],
-      "applied": 0,
+      "applied": 1,
       "degraded": 0,
-      "skipped": 1,
+      "skipped": 0,
       "planned": 0
     },
     {
@@ -613,14 +613,14 @@
         "forest": 24
       },
       "lights": 0,
-      "props": 0,
+      "props": 9,
       "chunkLoad": {
-        "nonEmptyChunks": 12,
+        "nonEmptyChunks": 14,
         "maxBuildings": 4,
-        "maxProps": 0,
+        "maxProps": 4,
         "maxLights": 0,
         "avgBuildings": 1.5,
-        "avgProps": 0
+        "avgProps": 0.56
       }
     },
     {
@@ -912,19 +912,23 @@
       "stadium_dominant"
     ],
     "count": 1,
-    "applied": 0,
+    "applied": 1,
     "degraded": 0,
-    "skipped": 1,
+    "skipped": 0,
     "planned": 0,
     "items": [
       {
         "id": "feature_1_stadium_dominant",
         "type": "stadium_dominant",
-        "status": "skipped",
-        "reason": "handler_not_implemented",
-        "anchor": null,
+        "status": "applied",
+        "reason": null,
+        "anchor": {
+          "districtId": "d0",
+          "x": 0,
+          "z": 0
+        },
         "emitted": {
-          "props": 0,
+          "props": 9,
           "landscapeObjects": 0,
           "buildings": 0,
           "districts": 0
@@ -943,7 +947,7 @@
       "reservedParcels": 9,
       "buildings": 24,
       "enterableBuildings": 5,
-      "props": 0,
+      "props": 9,
       "lights": 0,
       "rivers": 0,
       "lakes": 0
@@ -1123,7 +1127,7 @@
       "dividesPlate": true
     },
     "determinism": {
-      "generatorVersion": "0.87.0",
+      "generatorVersion": "0.88.0",
       "seed": 19,
       "deterministic": true
     },

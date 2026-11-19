@@ -1,4 +1,4 @@
-import { makeRng, mix } from './rng.mjs';
+﻿import { makeRng, mix } from './rng.mjs';
 
 /**
  * R0.5: generator profiles/policies config with defaults (docs/level_generation_rules_claude.md §11, §13.2).
@@ -11,7 +11,7 @@ const clampParam = (v, lo, hi) => Math.max(lo, Math.min(hi, Number(v) || lo));
 
 // R0.4: canonical generator version for deterministic behavior/regression snapshots.
 // Bump on intentional layout/IR/report-affecting changes (see .ai/state/citygen-procedural-rules.md).
-export const DEFAULT_GENERATOR_VERSION = '0.87.0';
+export const DEFAULT_GENERATOR_VERSION = '0.88.0';
 
 export const DEFAULT_CITY_POLICIES = Object.freeze({
   roadDensity: { bMin: 60, bMax: 260, gamma: 0.8 },
@@ -196,4 +196,5 @@ export function resolveGeneratorConfig(input) {
     profileMutation: { enabled: mutationEnabled, delta: mutationDelta, features },
   };
 }
+
 

@@ -209,7 +209,7 @@ export const LEVEL_16 = {
         "id": "1_4",
         "objects": {
           "buildings": 24,
-          "props": 25,
+          "props": 37,
           "roads": 5
         },
         "rect": {

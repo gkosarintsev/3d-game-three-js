@@ -75,7 +75,7 @@ export const LEVEL_17 = {
           "buildings": 62,
           "channels": 1,
           "lights": 2,
-          "props": 74,
+          "props": 86,
           "roads": 36
         },
         "rect": {
