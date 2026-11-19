@@ -7,7 +7,7 @@ Protocol: `.ai/plans/22-parallel-agents-github-ci.md`, `.ai/prompts/agent-ci-pro
 
 ## Current position (summary)
 
-- **Generator:** `DEFAULT_GENERATOR_VERSION = 0.73.0` on branch `agent/plan21-r52-cadence` @ `C:\Temp\wt-plan21-next6` from `origin/main` `a4a4822` (R5.2 impression cadence/false dead-end metrics, output-affecting/report-only; CI pending). `origin/main` remains at `a4a4822` (PRs #24/#25/#26/#27 merged; evidence recorded). Staged v4 pipeline (`tools/citygen/index.mjs`, `pipeline/stage-1..6-*`), profiles/policies/validation/metrics/etalons/seed-series tooling developed incrementally.
+- **Generator:** `DEFAULT_GENERATOR_VERSION = 0.73.0` on `origin/main` `bd8c530` (PR #28 merged 2026-11-19T05:38:58Z, R5.2 impressionCadence/falseDeadEnds metrics; green CI 44466041340 push / 44466063763 incl. 100×3). Active increment: `agent/plan21-r28-evidence` @ `C:\Temp\wt-plan21-evidence5` from `bd8c530` (record PR #28 merge evidence, docs/state-only; CI pending). Staged v4 pipeline (`tools/citygen/index.mjs`, `pipeline/stage-1..6-*`), profiles/policies/validation/metrics/etalons/seed-series tooling developed incrementally.
 - **Gates/artifacts:** `tools/citygen.test.mjs`, `tools/citygen-etalon-check.mjs`, `tools/citygen-seed-series.mjs`, `tools/check-levels.mjs`, `tools/build-level.mjs --check`, browser suites by scope/CI; committed derived outputs and etalon/baseline snapshots are part of determinism/regression.
 - **Constraint:** any IR/report/derived level output changes require deterministic rebuild of committed artifacts and baseline/etalon updates per version policy, verified in GitHub CI.
 
@@ -280,9 +280,14 @@ Protocol: `.ai/plans/22-parallel-agents-github-ci.md`, `.ai/prompts/agent-ci-pro
 - **Scope (docs/state-only):** records merge/CI evidence for PR #26 (R4.4 flat-roofs increment): merge commit `fa2e7ba7b52a84e1cac6102169b92f93902e4cea`, head `b77a33890aeadcbaf9b47fbe5466d8f6a2ceceb1`, push CI `44464021684` **success**, PR CI `44464051061` **success** (full merge-gate incl. 100×3 seed-series).
 - **Still remaining:** R5.2 (false dead-end policy, impression cadence 150-300 m), R5.1/R5.3/R5.5, unresolved R1/R2/R3 DoD items, R2.6-2.8, R6.1/R6.2, overall plan 21 DoD.
 
-#### Continuation increment (R5.2 cadence/false dead-ends, `agent/plan21-r52-cadence`, in progress, CI pending)
+#### Continuation increment (R5.2 cadence/false dead-ends, `agent/plan21-r52-cadence`, integrated)
 - **Branch/worktree:** `agent/plan21-r52-cadence` @ `C:\Temp\wt-plan21-next6` (from `origin/main` `a4a4822`, gv `0.72.0 -> 0.73.0`; `node scripts/agent/check-env.mjs` OK).
 - **Scope (output-affecting/report-only, gv bump):** `tools/citygen/rules.mjs` — `impressionCadence` (spawn→exit shortest path, 25 m sampling, district-type changes; avg/min spacing + target 150–300, L16 245 m, L17 227 m, L21 267 m, L22 189 m in range; L20 367 m documented deviation) and `falseDeadEnds` scaffold (none emitted by design, audit scaffold until false-pass semantics implemented). Metrics report-only; no generator behavior change. `tools/citygen/config.mjs` gv 0.73.0; `src/levels/level-16..22.json` bumped; rebuild L16-22 (0 warnings); baselines L16-22 + etalons refreshed (10 updated); `node --test tools/citygen.test.mjs` **57/57**; etalon-check **16/16** (prep).
 - **R5.2 [x] (stated scope).**
-- **CI/merge evidence:** pending (commit/push/PR + green GitHub CI/merge-gate, sequential merge to `main`, finalize evidence next state-update).
+- **CI/merge evidence:** PR [#28](https://github.com/gkosarintsev/3d-game-three-js/pull/28) merged to `main` at 2026-11-19T05:38:58Z (merge commit `bd8c530d1d0c908b99f0feb939c2a6fa523ae933`, head `2a013d85d26580ef2299e24dc4e1f2924a260533`). Push CI [44466041340](https://github.com/gkosarintsev/3d-game-three-js/actions/runs/44466041340) **success**; PR CI [44466063763](https://github.com/gkosarintsev/3d-game-three-js/actions/runs/44466063763) **success** (full merge-gate incl. 100×3 seed-series).
+- **Still remaining:** R5.1/R5.3/R5.5, unresolved R1/R2/R3 DoD items, R2.6–R2.8, R6.1/R6.2, overall plan 21 DoD.
+
+#### Continuation increment (PR #28 merge evidence, `agent/plan21-r28-evidence`, in progress, CI pending)
+- **Branch/worktree:** `agent/plan21-r28-evidence` @ `C:\Temp\wt-plan21-evidence5` (from `origin/main` `bd8c530`, gv `0.73.0`; `node scripts/agent/check-env.mjs` OK).
+- **Scope (docs/state-only):** records merge/CI evidence for PR #28 (R5.2 impressionCadence/falseDeadEnds metrics): merge commit `bd8c530d1d0c908b99f0feb939c2a6fa523ae933`, head `2a013d85d26580ef2299e24dc4e1f2924a260533`, push CI `44466041340` **success**, PR CI `44466063763` **success** (full merge-gate incl. 100×3 seed-series).
 - **Still remaining:** R5.1/R5.3/R5.5, unresolved R1/R2/R3 DoD items, R2.6–R2.8, R6.1/R6.2, overall plan 21 DoD.
