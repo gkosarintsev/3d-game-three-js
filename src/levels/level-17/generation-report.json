@@ -1,7 +1,7 @@
 {
   "version": 1,
   "generator": {
-    "generatorVersion": "0.81.0",
+    "generatorVersion": "0.82.0",
     "seed": 16,
     "deterministic": true
   },
@@ -4606,6 +4606,12 @@
       "waterBuffers": 2,
       "floodplains": 2
     },
+    "reliefCeiling": {
+      "engineHillMaxSlope": 0.06,
+      "engineMaxSlope": 0.12,
+      "terrainMaxSlope": 0.37447,
+      "overEngineCapExceeds": true
+    },
     "landmarkVisibility": {
       "partial": true,
       "method": "terrain_los_sample",
@@ -4661,7 +4667,7 @@
       "dividesPlate": true
     },
     "determinism": {
-      "generatorVersion": "0.81.0",
+      "generatorVersion": "0.82.0",
       "seed": 16,
       "deterministic": true
     },
@@ -4676,6 +4682,16 @@
     "version": 1,
     "partial": true,
     "violations": [
+      {
+        "severity": "warn",
+        "code": "relief_ceiling_advisory",
+        "stage": "rules",
+        "message": "terrain analysis maxSlope exceeds engine field capability (CONFIG.jsonMap.relief.maxSlope / CONFIG.relief.maxSlope) — advisory only (hills legal); autoring cap for a single capsule is relief.hillMaxSlope",
+        "maxSlope": 0.37447,
+        "engineMaxSlope": 0.12,
+        "hillCapsuleCap": 0.06,
+        "excess": 0.25447
+      },
       {
         "severity": "warn",
         "code": "road_slope_over_class_policy",
@@ -4694,7 +4710,7 @@
     ],
     "summary": {
       "errors": 0,
-      "warnings": 1,
+      "warnings": 2,
       "infos": 1
     }
   }
