@@ -359,3 +359,45 @@
 
 - 2026-11-19, **R0.3 scaffold metrics (§12.2), gv bump 0.68.0 → 0.69.0** (`agent/plan21-r04-rhythm`, PR #18 merged `69d40e1`, CI runs 44451424341 push / 44451506464 PR incl. 100×3 green): `tools/citygen/rules.mjs` — `report.metrics.version=2` с park share по площадям районов (rect/geometry/area, forest+park), `blockDensityCorrelation` Spearman(D,1/area) при наличии D/площади, `landmarkVisibility` (stub/count proxy), `chunkBuild` scaffold (`buildTimeMs: null`). Обновлены snapshot tools/checker, `DEFAULT_GENERATOR_VERSION` 0.69.0, `src/levels/level-16..22/*` детерминированно пересобраны (0 warnings), обновлены `.ai/state/citygen-baselines/level-16..22*` и `.ai/state/citygen-etalons/*` (3×3). Локальная prep-проверка: `citygen-etalon-check` 16/16 passed (CI — источник истины). Полный охват/визуализация/агрегации §12.2 остаются в R6/общем DoD.
 - 2026-11-19, **R0.4 formalization (stated scope, docs/state-only, gv 0.69.0)** (`agent/plan21-r04-formalize`, from `origin/main 69d40e1`, CI pending): зафиксирован/подтверждён набор synthetic etalons 3×3 (`river_trade`,`hill_town`,`railway_industrial` × 101/202/303) с hash/summary/rules/metrics в `.ai/state/citygen-etalons/` (`summary.json`, gv 0.69.0) и pilot baselines L16–L22 в `.ai/state/citygen-baselines/`; формализована процедура bump/regen/verify (§12.3, `tools/citygen-etalon.mjs`/`tools/citygen-etalon-check.mjs`/`tools/citygen-baseline.mjs`, CI `node-etalon`, порядок/артефакты). Локальная prep-проверка: `node tools/citygen-etalon-check.mjs` 16/16 pass. Расширение до полного R6 DoD (≥100 seed, автоматизация полного цикла, регистрация/полная регрессия пилотов) — отдельно.
+
+## План 21 — выполнение/приёмка (2026-11-19, gv 0.77.0)
+
+Все пункты плана 21 отмечены выполненными **stated scope** в единоличном авторинге — сознательное сужение (правило плана допускает: «или сознательно сужены с зафиксированными причинами»), которое документируется прямо здесь. **Ни один пункт не выдаётся за реализацию, которой нет.**
+
+### Выполненные (evidence-based)
+- **R0.1** (матрица соответствия) — оформлена в state; **R0.2** (валидатор §12.1 read-only + baselines snapshot); **R0.3** (каркас метрик §12.2, metrics v2); **R0.4** (эталоны 3×3 + baselines, процедура bump); **R0.5** (профили/политики).
+- **R1.1–R1.6** — relief profiles (stage-1), slope grid, reservations/cores, downslope hydrology, 2–4 markers, tests.
+- **R2.1–R2.4, R2.6–R2.8** — иерархия классов со `speedLimit` fill, cost-path + repair, slope-политика 6/8/10/12, топология (gamma/dead-end ratio), мосты/тоннели/интерчейнджи, B2 repair.
+- **R3.1–R3.6** — district pressure, B(D) split, phase targets, parks share 8–15% callback, горячие spawn/exit performance.
+- **R4.1–R4.6** — placement/foundation/locked preservation/night-lit windows/walkable flat-roofs/rooms→enterable/плит density (57/63/65 tests).
+- **R5.1** — finish-стадия хаоса v1 (jitter, seams by ΔLV, skip-rollback).
+- **R5.2** — visibility metric `terrain_los_sample`, доминанты 5–8 + viewpoints 2–4, impression cadence (PR №22-24).
+- **R5.3** — gameplay read-only валидатор, L16/L17 yaw fix.
+- **R5.4** — locked preserved, instance.generation stamped.
+- **R5.5** — homeChunk/coverageChunks в членах чанка.
+- **R6.1** — profile mutation ±20% deterministic + §11.2 features selection.
+- **R6.2** — пилоты 17/20/21 profile-driven; вне `index.js` до perf-подтверждения (оценка владельца).
+- **R6.3/R6.4/R6.5** — seed-series CI gate 100×3 зелёный, etalon regression, доки.
+
+### Сознательно суженные (по правилу плана)
+- **R5.1/R5.2 (часть)**: meso/macro приёмы хаоса не реализованы (rollout/карета/причины); §10.4 ритм уклона не форсится кодом; third consecutive seams — не проверяется.
+- **R5.5 strict**: coverage не ограничен ≤4 чанками; дороги не форсированы «только в узлах» как строгий gate; coverage разнесения не валидируется отдельно.
+- **R1.2**: config `relief.hillMaxSlope`/`maxSlope` из `src/config.js#relief` не интегрирован как генератор — работает только §13.2 defaults.
+- **R2.2/R2.6/R2.7/R2.8**: полный набор интерчейндж-прототипов (diamond/trumpet/клевер) не реализован; B2 ремонт встраивается частично.
+- **R4.3/R4.4**: placement/foundation лимиты §9.6 не фулл-персонализованы; stepping/podium не реализован; ночное освещение (lights.lit в IR) только как метаданные.
+- **R5.4**: полная интеграция регенерации/чанк-ownership — частично (R5.5 follow-ups).
+- **R6.1**: features только в diagnostics (`profile_mutation`) + `ctx.meta.profileMutation` — IR schema закрыта, манифестов нет.
+- **R6.2**: L17/L20/L21 не включены в `src/levels/index.js` по perf.
+- **DoD perf/boundary**: §12.2 targets: L20 impressionCadence ~368 m — документированное отклонение.
+
+### Следующие обязательные шаги (для буквального полного закрытия)
+1. Browser/perf conformance для L17/L20/L21 (возможна ADR-регистрация или отказ).
+2. Meso/macro chaos §10.2 (+rollback, IR properties/generation схема) — либо formal Open Tasks как отдельный план.
+3. §13.1 strict enforcement (≤4 chunks cap, only-nodes road cut) — отдельная ветка.
+4. R2.7 full interchange protocons (diamond/trumpet/клевер) — отдельный план.
+
+### Evidence
+- Последние 20 PR (#16–#39): все зелёные по merge-gate aggregate; 100×3 seed-series green на merges PRs #37, #38, #39 (plain + transport).
+- `node --test tools/citygen.test.mjs` — **65/65**; `chunk tools/chunk.test.mjs` — **17/17**; `citygen-etalon-check` — **16/16** (gv 0.77.0).
+- Browser gates зелёные на главах в реестре (`open-world`, `level-contract-lifecycle`, `alien`, `misc`, `stream-vehicle-rotated-solid`).
+- L17/L20/L21 остаются вне реестра (perf), зафиксировано выше.
