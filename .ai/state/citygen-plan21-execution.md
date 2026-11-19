@@ -7,7 +7,7 @@ Protocol: `.ai/plans/22-parallel-agents-github-ci.md`, `.ai/prompts/agent-ci-pro
 
 ## Current position (summary)
 
-- **Generator:** `DEFAULT_GENERATOR_VERSION = 0.70.0` on branch `agent/plan21-r1-slope-class` @ `C:\Temp\wt-plan21-next3` from `origin/main` `3886aed` (R5.2/R0.3 landmark visibility increment, output-affecting; CI pending). `origin/main` remains at `3886aed` (PR #21 evidence merged, green CI 44458355015/44458372437). Staged v4 pipeline (`tools/citygen/index.mjs`, `pipeline/stage-1..6-*`), profiles/policies/validation/metrics/etalons/seed-series tooling developed incrementally.
+- **Generator:** `DEFAULT_GENERATOR_VERSION = 0.70.0` on `origin/main` `946b6cd` (PR #22 merged 2026-11-19T04:46:22Z, terrain LOS landmark visibility; green CI 44459964592 push / 44459988928 incl. 100×3). Active increment: `agent/plan21-r22-evidence` @ `C:\Temp\wt-plan21-evidence2` from `946b6cd` (record PR #22 merge evidence, docs/state-only; CI pending). Staged v4 pipeline (`tools/citygen/index.mjs`, `pipeline/stage-1..6-*`), profiles/policies/validation/metrics/etalons/seed-series tooling developed incrementally.
 - **Gates/artifacts:** `tools/citygen.test.mjs`, `tools/citygen-etalon-check.mjs`, `tools/citygen-seed-series.mjs`, `tools/check-levels.mjs`, `tools/build-level.mjs --check`, browser suites by scope/CI; committed derived outputs and etalon/baseline snapshots are part of determinism/regression.
 - **Constraint:** any IR/report/derived level output changes require deterministic rebuild of committed artifacts and baseline/etalon updates per version policy, verified in GitHub CI.
 
@@ -240,10 +240,16 @@ Protocol: `.ai/plans/22-parallel-agents-github-ci.md`, `.ai/prompts/agent-ci-pro
 - **Still remaining:** R6.1/R6.2 (profile pilots formalization), unresolved R1/R2/R3 DoD items, R4.3/R4.4 residuals, R5.1–R5.3/R5.5, overall plan 21 DoD.
 
 
-#### Continuation increment (R5.2/R0.3 landmark visibility, `agent/plan21-r1-slope-class`, in progress, CI pending)
+#### Continuation increment (R5.2/R0.3 landmark visibility, `agent/plan21-r1-slope-class`, integrated)
 - **Branch/worktree:** `agent/plan21-r1-slope-class` @ `C:\Temp\wt-plan21-next3` (from `origin/main` `3886aed`, gv `0.69.0 -> 0.70.0`; `node scripts/agent/check-env.mjs` OK).
 - **Scope (output-affecting, gv bump):** `tools/citygen/terrain-height.mjs` (new shared analytic terrain sampler; extracted verbatim from `stage-1-landscape.mjs`), `tools/citygen/pipeline/stage-1-landscape.mjs` (import), `tools/citygen/rules.mjs` (`landmarkVisibilityMetric` now `terrain_los_sample`), `tools/citygen/config.mjs`, `src/levels/level-16..22.json` (gv bump), `src/levels/level-16/`–`src/levels/level-22/` (rebuilt, 0 warnings; chunks unchanged, `generation-report.json` updated), `.ai/state/citygen-baselines/level-16..22.citygen-baseline.json`, `.ai/state/citygen-etalons/*` (10 updated), `.ai/plans/21-citygen-procedural-rules.md`, `.ai/state/*`.
   - **R5.2 [partial]/R0.3 (§12.2 visibility metric):** детерминированный 1-D raycast по аналитическому полю высот; обозреватели = viewpoint-ориентиры + исторические пересечения + spawn/exit; eye 1.7 м; учёт только рельефных преград (здания/растительность — следующие шаги). Метрика: `method: terrain_los_sample`, поля `observers/totalPairs/visiblePairs/visibleTargets/visibleApprox/visibleFraction`. Доминанты/видовые точки/политика тупиков/ритм впечатлений 150–300 м — открыты.
 - **Versioning/artifacts:** gv `0.69.0 -> 0.70.0`; `node tools/build-level.mjs src/levels/level-16..22.json` (0 warnings each), baselines regenerated, etalons 3×3 refreshed (10 updated); локально `node tools/citygen-etalon-check.mjs` **16/16 passed**; `node --test tools/citygen.test.mjs` **57/57 pass**.
-- **CI/merge evidence:** pending (commit/push/PR + green GitHub CI/merge-gate, sequential merge to `main`, затем финализация evidence в следующем state-update).
+- **CI/merge evidence:** PR [#22](https://github.com/gkosarintsev/3d-game-three-js/pull/22) merged to `main` at 2026-11-19T04:46:22Z (merge commit `946b6cd0202baa7e25b5b59bfbbe29e7f925f1b2`, head `e5ab6b0cb2e54a480d4ea4f1f5ddffd188770ce0`). Push CI [44459964592](https://github.com/gkosarintsev/3d-game-three-js/actions/runs/44459964592) **success**; PR CI [44459988928](https://github.com/gkosarintsev/3d-game-three-js/actions/runs/44459988928) **success** (full merge-gate incl. 100×3 seed-series).
+- **Still remaining:** R5.2 (доминанты/видовые точки/политика тупиков/ритм впечатлений), unresolved R1/R2/R3 DoD items, R4.3/R4.4 residuals, R5.1/R5.3/R5.5, R6.1/R6.2, overall plan 21 DoD.
+
+
+#### Continuation increment (PR #22 merge evidence, `agent/plan21-r22-evidence`, in progress, CI pending)
+- **Branch/worktree:** `agent/plan21-r22-evidence` @ `C:\Temp\wt-plan21-evidence2` (from `origin/main` `946b6cd`, gv `0.70.0`; `node scripts/agent/check-env.mjs` OK).
+- **Scope (docs/state-only):** records merge/CI evidence for PR #22 (R5.2/R0.3 terrain LOS landmark visibility metric): merge commit `946b6cd0202baa7e25b5b59bfbbe29e7f925f1b2`, head `e5ab6b0cb2e54a480d4ea4f1f5ddffd188770ce0`, push CI `44459964592` **success**, PR CI `44459988928` **success** (full merge-gate incl. 100×3 seed-series).
 - **Still remaining:** R5.2 (доминанты/видовые точки/политика тупиков/ритм впечатлений), unresolved R1/R2/R3 DoD items, R4.3/R4.4 residuals, R5.1/R5.3/R5.5, R6.1/R6.2, overall plan 21 DoD.
