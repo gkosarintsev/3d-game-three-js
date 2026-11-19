@@ -64,9 +64,9 @@ export const LEVEL_22 = {
         "file": "chunk-0-0.l14b",
         "id": "0_0",
         "objects": {
-          "buildings": 22,
+          "buildings": 23,
           "lights": 3,
-          "props": 39,
+          "props": 42,
           "roads": 29
         },
         "rect": {
@@ -80,9 +80,9 @@ export const LEVEL_22 = {
         "file": "chunk-0-1.l14b",
         "id": "0_1",
         "objects": {
-          "buildings": 21,
+          "buildings": 22,
           "lights": 2,
-          "props": 51,
+          "props": 50,
           "roads": 9
         },
         "rect": {
@@ -96,9 +96,9 @@ export const LEVEL_22 = {
         "file": "chunk-1-0.l14b",
         "id": "1_0",
         "objects": {
-          "buildings": 31,
+          "buildings": 24,
           "lights": 1,
-          "props": 55,
+          "props": 59,
           "roads": 1
         },
         "rect": {
@@ -112,9 +112,9 @@ export const LEVEL_22 = {
         "file": "chunk-1-1.l14b",
         "id": "1_1",
         "objects": {
-          "buildings": 10,
+          "buildings": 9,
           "lights": 2,
-          "props": 39,
+          "props": 37,
           "roads": 68
         },
         "rect": {
@@ -4476,14 +4476,19 @@ export const LEVEL_22 = {
               "z": 200
             },
             {
-              "x": -233.2,
+              "x": -222,
               "y": 0,
-              "z": 200
+              "z": 188.33
             },
             {
-              "x": -244.41,
+              "x": -222,
               "y": 0,
-              "z": 200
+              "z": 176.67
+            },
+            {
+              "x": -222,
+              "y": 0,
+              "z": 165
             }
           ],
           "shoulder": 1,
@@ -4495,19 +4500,19 @@ export const LEVEL_22 = {
           "id": "tr_postb_3_2",
           "points": [
             {
-              "x": -244.41,
+              "x": -222,
               "y": 0,
-              "z": 200
+              "z": 165
             },
             {
-              "x": -244.41,
+              "x": -232.24,
               "y": 0,
-              "z": 191.54
+              "z": 165
             },
             {
-              "x": -244.41,
+              "x": -242.48,
               "y": 0,
-              "z": 183.08
+              "z": 165
             }
           ],
           "shoulder": 1,

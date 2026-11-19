@@ -7,7 +7,7 @@ Protocol: `.ai/plans/22-parallel-agents-github-ci.md`, `.ai/prompts/agent-ci-pro
 
 ## Current position (summary)
 
-- **Generator:** `DEFAULT_GENERATOR_VERSION = 0.71.0` on `origin/main` `acf7a03` (PR #24 merged 2026-11-19T05:03:15Z, R5.2 dominants/viewpoints; green CI 44461948814 push / 44461966642 incl. 100×3). Active increment: `agent/plan21-r24-evidence` @ `C:\Temp\wt-plan21-evidence3` from `acf7a03` (record PR #24 merge evidence, docs/state-only; CI pending). Staged v4 pipeline (`tools/citygen/index.mjs`, `pipeline/stage-1..6-*`), profiles/policies/validation/metrics/etalons/seed-series tooling developed incrementally.
+- **Generator:** `DEFAULT_GENERATOR_VERSION = 0.72.0` on branch `agent/plan21-r44-close` @ `C:\Temp\wt-plan21-next5` from `origin/main` `b8bde8b` (R4.4 flat-roofs increment, output-affecting; CI pending). `origin/main` remains at `b8bde8b` (PRs #24/#25 merged; evidence recorded for #24). Staged v4 pipeline (`tools/citygen/index.mjs`, `pipeline/stage-1..6-*`), profiles/policies/validation/metrics/etalons/seed-series tooling developed incrementally.
 - **Gates/artifacts:** `tools/citygen.test.mjs`, `tools/citygen-etalon-check.mjs`, `tools/citygen-seed-series.mjs`, `tools/check-levels.mjs`, `tools/build-level.mjs --check`, browser suites by scope/CI; committed derived outputs and etalon/baseline snapshots are part of determinism/regression.
 - **Constraint:** any IR/report/derived level output changes require deterministic rebuild of committed artifacts and baseline/etalon updates per version policy, verified in GitHub CI.
 
@@ -15,15 +15,15 @@ Protocol: `.ai/plans/22-parallel-agents-github-ci.md`, `.ai/prompts/agent-ci-pro
 
 | Area | Status (indicative) | Note / risk |
 | --- | --- | --- |
-| R0 (validator/metrics/etalons/procedures) | **R0.1,R0.2,R0.3,R0.4(stated scope),R0.5 [x]**; full R0/R6 DoD partial/open | R0.1–R0.3,R0.5 implemented/recorded; R0.3 merged PR #18 (`69d40e1`, gv 0.69.0, green CI 44451424341/44451506464). R0.4 stated-scope formalization (etalons 3×3 + baselines L16–22, hash/summary/rules/metrics, bump/regen/verify procedure, CI `node-etalon`) in progress on `agent/plan21-r04-formalize` (docs/state-only, CI pending). Remaining R0/R6: automation/full cycle, ≥100 seed/full regression, broader §12 coverage/visualization. |
+| R0 (validator/metrics/etalons/procedures) | **R0.1,R0.2,R0.3,R0.4(stated scope),R0.5 [x]**; full R0/R6 DoD partial/open | merged: R0.1 PR#15/PR#18 gv0.69, R0.2 PR#17, R0.3 PR#18, R0.4 PR#19 (merge 7b7af39), R0.5 PR#17; CI node-etalon + seed-series gate 100×3 in merge-gate. Remaining: R6 full regression/automation, broader §12 coverage. |
 | R1 (relief/water) | mostly implemented | Further changes output-affecting. |
 | R2 (network/intersections/bridges/tunnels/interchanges/repair) | partial | High coupling, perf/navigation risks. |
 | R3 (settlement/districts/D,B(D)) | mostly implemented | Metrics/series sensitive. |
 | R4.1,R4.2,R4.5,R4.6 | done (per plan/history) | Possible follow-ups within R4.3/R4.4. |
 | **R4.3** (placement, foundation, building relief) | **partial** (W1-002 increment merged; §9.5/§9.6 gaps remain) | Stage-4/placement; output-affecting, requires rebuild+CI. |
-| **R4.4** (appearance/palettes/windows/roofs) | **open** | Visual/data, output-affecting. |
+| **R4.4** (appearance/palettes/windows/roofs) | **done (stated scope)** | PR #24+squat; flat roofs centre/industrial ~25% walkable + parapet 0.9–1.2 m; palettes/windows/night/no-three implemented; roof equipment not supported by v4 schema (`houseFeatures` closed) — excluded. |
 | **R5.1** (controlled chaos) | open | Behavior/layout change; versioning per policy. |
-| **R5.2** (readability/landmarks) | open | Metrics/heuristics + possible placement changes. |
+| **R5.2** (readability/landmarks) | **partial** (LOS metric terrain_los_sample PR #22; dominants 5-8 PR #24; viewpoints 2-4) | Residual: false dead-end policy, impression cadence 150-300 m (requires generation/rhythm work, open). |
 | **R5.3** (gameplay spawn/exit/cars/enemies) | open | Gameplay/connectivity/rules. |
 | **R5.4** (`locked`, `instance.generation`) | **done (stated scope)** | `finalizeInstances` preserves `locked` and stamps `source/seed/generator/generatorVersion`; broader regen/chunk integration tracked under R5.5/follow-ups. |
 | **R5.5** (`homeChunk`/`coverageChunks`, streaming) | open | Chunk/build pipeline, catalog rebuilds. |
@@ -267,3 +267,10 @@ Protocol: `.ai/plans/22-parallel-agents-github-ci.md`, `.ai/prompts/agent-ci-pro
 - **Branch/worktree:** `agent/plan21-r24-evidence` @ `C:\Temp\wt-plan21-evidence3` (from `origin/main` `acf7a03`, gv `0.71.0`; `node scripts/agent/check-env.mjs` OK).
 - **Scope (docs/state-only):** records merge/CI evidence for PR #24 (R5.2 dominants/viewpoints increment): merge commit `acf7a0309dd3d2718e123f546fd9dfacb7ca889a`, head `97eef6cc76bc7251f61223d2244c0508980e2b5c`, push CI `44461948814` success, PR CI `44461966642` success (full merge-gate incl. 100×3 seed-series).
 - **Still remaining:** R5.2 (тупики/ложные тупики, ритм впечатлений), unresolved R1/R2/R3 DoD items, R4.3/R4.4 residuals, R5.1/R5.3/R5.5, R6.1/R6.2, overall plan 21 DoD.
+
+#### Continuation increment (R4.4 flat roofs, agent/plan21-r44-close, in progress, CI pending)
+- **Branch/worktree:** `agent/plan21-r44-close` @ `C:\Temp\wt-plan21-next5` (from `origin/main` `b8bde8b`, gv `0.71.0 -> 0.72.0`; `node scripts/agent/check-env.mjs` OK).
+- **Scope (output-affecting, gv bump):** `tools/citygen/pipeline/stage-4-buildings.mjs` (pickRoofAppearance: flat roofs in centre/industrial — walkable ~25% with parapet 0.9–1.2 m for flatKinds in [skyscraper, office_block/tower/office, megablock, panelka, apartment*, housing_block, residential_mid]; district whitelist [downtown, old_town, historic, industrial, port, railway, market, commercial, retail, luxury, office]). Bump `tools/citygen/config.mjs` to `0.72.0`; `src/levels/level-16..22.json`; rebuild L16-22 (0 warnings); baselines L16-22 + etalons refreshed (10 updated); `node --test tools/citygen.test.mjs` **57/57**; etalon-check **16/16** (prep). Generated-path walkable share measured: L17 16/46 (35%), L20 5/26 (19%), L21 8/36 (22%), L22 5/13 (38%) target ≈25%.
+- **R4.4 [x] (stated scope):** palettes/tone, window density/scale typology, night windows (windows.lit PR #14), three-consecutive-remediation, flat-roof walkable share (this change). Roof equipment not supported by v4 schema (houseFeatures closed) — excluded by spec. Authored source pilots (e.g. L16) inherit authored buildings; synthetic roofs not retro-applied.
+- **CI/merge evidence:** pending (commit/push/PR + green GitHub CI/merge-gate, sequential merge to `main`, finalize evidence next state-update).
+- **Still remaining:** R5.2 (false dead-end policy, impression cadence 150-300 m), R5.1/R5.3/R5.5, unresolved R1/R2/R3 DoD items, R2.6-2.8, R6.1/R6.2, overall plan 21 DoD.

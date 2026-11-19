@@ -698,8 +698,17 @@ function materialFor(profile, kind, rng, districtType = null) {
     const roofMaterial = mats[Math.floor(rng() * mats.length) % mats.length];
     const roofColor = colors[Math.floor(rng() * colors.length) % colors.length];
     // Explicit roof object: keep non-walkable, no parapet to avoid nav/physics changes (R4.4 data/visual metadata increment).
-    const roof = { walkable: false, parapet: 0 };
-    if (floors >= 20) roof.parapet = 0; // keep explicit; tall buildings remain non-walkable by default here
+    // R4.4 §9.7: flat roofs in centre/industrial get walkable roofs in 20-30% of cases (parapet 0.9-1.2 m); equipment not supported by v4 schema (houseFeatures closed) - excluded by spec.
+    const flatKinds = ['skyscraper', 'office_block', 'office_tower', 'office', 'megablock',
+      'panelka', 'apartment', 'apartment_block', 'housing_block', 'residential_mid'];
+    const centreIndustrial = ['downtown', 'old_town', 'historic', 'industrial', 'port',
+      'railway', 'market', 'commercial', 'retail', 'luxury', 'office'];
+    const isFlat = kind != null && flatKinds.includes(String(kind));
+    const isCentreIndustrial = districtType != null && centreIndustrial.includes(String(districtType));
+    let roof = { walkable: false, parapet: 0 };
+    if (isFlat && isCentreIndustrial && rng() < 0.25) {
+      roof = { walkable: true, parapet: +(0.9 + rng() * 0.3).toFixed(2) };
+    }
     return { roofMaterial, roofColor, roof };
   }
 
