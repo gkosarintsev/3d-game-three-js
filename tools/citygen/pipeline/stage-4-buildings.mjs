@@ -58,9 +58,11 @@ function translateFootprint(fp, dx, dz) {
   return fp.map(pt => ({ x: +(pt.x + dx).toFixed(3), z: +(pt.z + dz).toFixed(3) }));
 }
 
-function clampFootprintToParcel(fp, parcelAabb, margin = 0.75) {
+function clampFootprintToParcel(fp, parcelAabb, margin = 0.75, opts = null) {
+  // R4.3 §9.5: clamp footprint inside parcel; frontage-preserving mode is best-effort for continuity.
   if (!parcelAabb) return fp;
   const { minX: pMinX, maxX: pMaxX, minZ: pMinZ, maxZ: pMaxZ } = parcelAabb;
+  const preserveEdge = opts?.preserveEdge ?? null; // 'south'|'north'|'west'|'east' (street-facing facade edge)
   let dx = 0, dz = 0;
   for (let iter = 0; iter < 2; iter++) {
     let fMinX = Infinity, fMaxX = -Infinity, fMinZ = Infinity, fMaxZ = -Infinity;
@@ -72,10 +74,23 @@ function clampFootprintToParcel(fp, parcelAabb, margin = 0.75) {
     if (!Number.isFinite(fMinX)) break;
     const innerMinX = pMinX + margin, innerMaxX = pMaxX - margin;
     const innerMinZ = pMinZ + margin, innerMaxZ = pMaxZ - margin;
-    if (fMinX < innerMinX) dx += innerMinX - fMinX;
-    else if (fMaxX > innerMaxX) dx += innerMaxX - fMaxX;
-    if (fMinZ < innerMinZ) dz += innerMinZ - fMinZ;
-    else if (fMaxZ > innerMaxZ) dz += innerMaxZ - fMaxZ;
+    let sx = 0, sz = 0;
+    if (fMinX < innerMinX) sx = innerMinX - fMinX;
+    else if (fMaxX > innerMaxX) sx = innerMaxX - fMaxX;
+    if (fMinZ < innerMinZ) sz = innerMinZ - fMinZ;
+    else if (fMaxZ > innerMaxZ) sz = innerMaxZ - fMaxZ;
+    // Best-effort continuity: prefer not to move frontage edge to fix opposite overflow.
+    // If that would leave the building outside on the opposite side, fall back to normal clamp for validity.
+    if (preserveEdge === 'south') {
+      if (sz < 0 && fMaxZ + sz <= innerMaxZ + EPS) sz = 0;
+    } else if (preserveEdge === 'north') {
+      if (sz > 0 && fMinZ + sz >= innerMinZ - EPS) sz = 0;
+    } else if (preserveEdge === 'west') {
+      if (sx < 0 && fMaxX + sx <= innerMaxX + EPS) sx = 0;
+    } else if (preserveEdge === 'east') {
+      if (sx > 0 && fMinX + sx >= innerMinX - EPS) sx = 0;
+    }
+    dx += sx; dz += sz;
   }
   return translateFootprint(fp, +dx.toFixed(3), +dz.toFixed(3));
 }
@@ -122,21 +137,28 @@ function finalizeByAccess(fp, cx, cz, p, maxW, maxD, rng, worldHalf = Infinity) 
     const margin = 0.75;
     const innerMinX = parcel.minX + margin, innerMaxX = parcel.maxX - margin;
     const innerMinZ = parcel.minZ + margin, innerMaxZ = parcel.maxZ - margin;
-    const setback = SETBACK_BY_TYPE[p?.type] ?? 5.0;
+    const desiredSetback = SETBACK_BY_TYPE[p?.type] ?? 5.0;
+    // R4.3 §9.5: explicit continuous building-line/frontage target from parcel street boundary.
+    // Adjacent parcels on the same frontage band share the same street-edge coordinate, so aligning to
+    // street edge + desired setback yields a continuous facade line when parcel depth allows.
+    const availDepth = (edge === 'north' || edge === 'south')
+      ? Math.max(0, (innerMaxZ - innerMinZ) - spanZ)
+      : Math.max(0, (innerMaxX - innerMinX) - spanX);
+    const frontageSetback = Math.min(desiredSetback, availDepth);
     let dx = 0, dz = 0;
     if (edge === 'south') {
-      // улица у южной границы участка: фасад (minZ) на setback внутрь
-      const wantMinZ = parcel.minZ + Math.min(setback, Math.max(0, (innerMaxZ - innerMinZ) - spanZ));
+      // улица у южной границы участка: фасад (minZ) на линию застройки внутрь
+      const wantMinZ = parcel.minZ + frontageSetback;
       dz = wantMinZ - b.minZ;
     } else if (edge === 'north') {
-      // улица у северной границы участка: фасад (maxZ) на setback внутрь
-      const wantMaxZ = parcel.maxZ - Math.min(setback, Math.max(0, (innerMaxZ - innerMinZ) - spanZ));
+      // улица у северной границы участка: фасад (maxZ) на линию застройки внутрь
+      const wantMaxZ = parcel.maxZ - frontageSetback;
       dz = wantMaxZ - b.maxZ;
     } else if (edge === 'west') {
-      const wantMinX = parcel.minX + Math.min(setback, Math.max(0, (innerMaxX - innerMinX) - spanX));
+      const wantMinX = parcel.minX + frontageSetback;
       dx = wantMinX - b.minX;
     } else if (edge === 'east') {
-      const wantMaxX = parcel.maxX - Math.min(setback, Math.max(0, (innerMaxX - innerMinX) - spanX));
+      const wantMaxX = parcel.maxX - frontageSetback;
       dx = wantMaxX - b.maxX;
     }
     aligned = translateFootprint(rot, +dx.toFixed(3), +dz.toFixed(3));
@@ -154,7 +176,7 @@ function finalizeByAccess(fp, cx, cz, p, maxW, maxD, rng, worldHalf = Infinity) 
       cdz = clamp(cdz, -maxCornerShift, maxCornerShift);
       if (cdx || cdz) aligned = translateFootprint(aligned, +cdx.toFixed(3), +cdz.toFixed(3));
     }
-    aligned = clampFootprintToParcel(aligned, parcel, margin);
+    aligned = clampFootprintToParcel(aligned, parcel, margin, { preserveEdge: edge });
   } else {
     // fallback: legacy center shift when parcel bounds are unavailable
     const b = aabbOfFootprint(rot);
