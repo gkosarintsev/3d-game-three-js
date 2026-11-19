@@ -384,3 +384,9 @@ Protocol: `.ai/plans/22-parallel-agents-github-ci.md`, `.ai/prompts/agent-ci-pro
 - **Honesty clause:** decisions delegated by owner («выбери сам»); NONE upgrade visible implementation; plan 21 accepted only as scope-narrowed; reverting any decision requires written owner order.
 - **Still remaining (out-of-scope accepted deviations):** §10.4 enforcement/rewrite (next phase), L17/L20/L21 registry after perf, IR-features ADR, meso пристройки/yards/firewall, макро «диагональная улица» (stage-2 territory) / площадь-клапан; полный §10.2 набор.
 - **CI/merge evidence:** pending (PR → green CI → sequential merge по merge-gate).
+
+#### Continuation increment (Plan 23 drafted, `agent/plan23-doc`, in progress, CI pending)
+- **Branch/worktree:** `agent/plan23-doc` @ `C:\Temp\wt-plan23` (from `origin/main` `1506b2d`; `node scripts/agent/check-env.mjs` OK; docs-only, no gv bump).
+- **Scope (docs-only):** NEW `.ai/plans/23-plan21-literal-closure.md` — full literal-closure plan with acceptance criteria, risk register, next-step order (T23.1 first), CI/parallelization section. `.ai/state/citygen-procedural-rules.md` — forward pointer to Plan 23 added in «Решения владельца» section.
+- **Honest note:** Plan 23 is a backlog document; T23.1 implementation does not start until this PR merges. Tasks: T23.1 (§10.4 living cadence), T23.2 (L17/L20/L21 registry after perf), T23.3 (§11.2 features IR/ADR), T23.4 (macro residue: diagonal street, plaza valve, corner cuts), T23.5 (meso residue: add-ons, yards, blank facade), T23.6 (§12.2 soft warn gate), T23.7 (plan-21 cleanup), T23.8 (release hygiene).
+- **CI/merge evidence:** pending (PR → green CI → sequential merge).
