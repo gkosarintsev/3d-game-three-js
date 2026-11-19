@@ -7,7 +7,7 @@ Protocol: `.ai/plans/22-parallel-agents-github-ci.md`, `.ai/prompts/agent-ci-pro
 
 ## Current position (summary)
 
-- **Generator:** current section `R5.1 chaos v1` (agent/plan21-r51-chaos @ `C:\Temp\wt-plan21-r51-chaos` from `origin/main` `e2e5014`, gv 0.74.0 -> 0.75.0, output-affecting). `origin/main` at `e2e5014` after PR #36 (R2 stated scope wave merged). Staged v4 pipeline (`tools/citygen/index.mjs`, `pipeline/stage-1..6-*`), profiles/policies/validation/metrics/etalons/seed-series tooling developed incrementally.
+- **Generator:** current section `R5.5 chunk home/coverage v1` (agent/plan21-r55-chunks @ `C:\Temp\wt-plan21-r55-chunks` from `origin/main` `e27e6fd`, gv 0.75.0 -> 0.76.0). `origin/main` at `e27e6fd` after PR #37 (R5.1 chaos v1 merged). Staged v4 pipeline (`tools/citygen/index.mjs`, `pipeline/stage-1..6-*`), profiles/policies/validation/metrics/etalons/seed-series tooling developed incrementally.
 - **Gates/artifacts:** `tools/citygen.test.mjs`, `tools/citygen-etalon-check.mjs`, `tools/citygen-seed-series.mjs`, `tools/check-levels.mjs`, `tools/build-level.mjs --check`, browser suites by scope/CI; committed derived outputs and etalon/baseline snapshots are part of determinism/regression.
 - **Constraint:** any IR/report/derived level output changes require deterministic rebuild of committed artifacts and baseline/etalon updates per version policy, verified in GitHub CI.
 
@@ -26,7 +26,7 @@ Protocol: `.ai/plans/22-parallel-agents-github-ci.md`, `.ai/prompts/agent-ci-pro
 | **R5.2** (readability/landmarks) | **done (stated scope)** | LOS metric (PR #22), dominants 5-8 + viewpoints 2-4 (PR #24), impressionCadence metric (L16/L17/L21/L22 in-range, L20 367 m documented deviation) + falseDeadEnds scaffold (PR #TBD, gv 0.73.0). |
 | **R5.3** (gameplay spawn/exit/cars/enemies) | **done (stated scope)** | Read-only §10.5 validator + metrics (`metrics.gameplay`: spawn/exit district type, straight/route/ratio, districtsPassed, cars onRoad/misaligned/nearJunction); pilots L16/L17 car yaw fixed 90→0 per §10.5; enemies runtime nav graph (generator не размещает). |
 | **R5.4** (`locked`, `instance.generation`) | **done (stated scope)** | `finalizeInstances` preserves `locked` and stamps `source/seed/generator/generatorVersion`; broader regen/chunk integration tracked under R5.5/follow-ups. |
-| **R5.5** (`homeChunk`/`coverageChunks`, streaming) | open | Chunk/build pipeline, catalog rebuilds. |
+| **R5.5** (`homeChunk`/`coverageChunks`, streaming) | **done (stated scope)** | chunk members carry `homeChunk` (owner cell) + `coverageChunks` (overlap chunks); decode verified L16/L22 seam-crossings; strict ≤4 chunks/node-cut validation not enforced yet. |
 | **R6** (profiles, pilots, >=100 seed, etalons, docs/CI) | **R6.3/R6.4/R6.5 [x] stated scope**; R6.1/R6.2 partial (implemented, registration/formalization open) | R6.3 seed-series CI gate (100×3, 0 hard failures), R6.4 etalons 3×3 + baselines L16–L22 (16/16 incremental 2026-11-19), R6.5 docs (`architecture-citygen.md`). R6.1/R6.2: 3 synthetic profiles + pilot levels; L20/L21 registration pending browser/perf confirm. |
 
 ## Wave 1
@@ -325,3 +325,10 @@ Protocol: `.ai/plans/22-parallel-agents-github-ci.md`, `.ai/prompts/agent-ci-pro
 - **Verification (local prep):** `node --test tools/citygen.test.mjs` **65/65**; `node tools/citygen-etalon-check.mjs` **16/16**; `node tools/build-level.mjs src/levels/level-16..22.json` 0 warnings.
 - **Still remaining:** R5.5 (chunks/coverageChunks), R6.1/R6.2, overall plan 21 DoD; R5.1 follow-ups (meso/macro techniques, seam third-rule, audit reasons via report or ADR for schema extension).
 - **CI/merge evidence:** pending (commit/push/PR + green GitHub CI/merge-gate, sequential merge to `main`, recorded in next state-update).
+
+#### Continuation increment (R5.5 homeChunk/coverageChunks v1, `agent/plan21-r55-chunks`, in progress, CI pending)
+- **Branch/worktree:** `agent/plan21-r55-chunks` @ `C:\Temp\wt-plan21-r55-chunks` (from `origin/main` `e27e6fd`, gv `0.75.0 -> 0.76.0`; `node scripts/agent/check-env.mjs` OK).
+- **Scope (output-affecting, gv bump):** `tools/chunk-level.mjs` — chunk member records now carry deterministic `homeChunk` (owner cell id) and `coverageChunks` (all cells intersecting the instance plan, incl. overlap margin); `tools/citygen/config.mjs` gv `0.76.0`; `src/levels/level-16..22.json` bumped; catalogs rebuilt (0 warnings); baselines L16-22 + etalons refreshed; `node --test tools/citygen.test.mjs` **65/65**; etalon-check **16/16** (prep).
+  - **R5.5 [x] (stated scope).** Decoding L16/L22 chunk `chunk-0-0.l14b` confirms records `homeChunk: like '0_0'`, seam-crossing buildings `coverageChunks: ['0_0','0_1',...]` (e.g. L22 2 multi-coverage buildings in chunk 0_0). Strict §13.1 not enforced yet: `coverageChunks` not capped to ≤4; road cuts not restricted to nodes; instance coverage across boundaries not validated independently — tracked in plan/state as follow-ups.
+- **CI/merge evidence:** pending (commit/push/PR + green GitHub CI/merge-gate, sequential merge to `main`, recorded in next state-update).
+- **Still remaining:** R5.1 residual (meso/macro chaos), R6.1/R6.2, overall plan 21 DoD.

@@ -349,6 +349,8 @@
 
 - 2026-11-19, **R5.1 controlled chaos v1 (gv 0.74.0 → 0.75.0)** (agent/plan21-r51-chaos, от origin/main e2e5014, CI pending): `tools/citygen/pipeline/stage.mjs` — optional `finish(ctx)` phase; `stage-6-finalize.mjs` — micro-jitter chaos (rotation/footprint jitter), seams by max ΔLV limited by `chaos.seamsMax`; L16 359/361 applied; L17 408/408; L20 417/419; L21 410/410; L22 77/77. Rebuild L16-22 (0 warnings), baselines/etalons refreshed, citygen.test 65/65, etalon-check 16/16. R5.1 marked [x] stated scope; meso/macro techniques, `properties.reason` (schema-closed), third-seam-rule — residual.
 
+- 2026-11-19, **R5.5 chunk homeChunk/coverageChunks v1 (gv 0.75.0 → 0.76.0)** (agent/plan21-r55-chunks, от origin/main e27e6fd, CI pending): `tools/chunk-level.mjs` — member records carry `homeChunk` (owner cell) + `coverageChunks` (overlap cells); L16/L22 seam-crossing buildings confirmed via chunk decode. Rebuild L16-22 (0 warnings), baselines/etalons refreshed, citygen.test 65/65, etalon-check 16/16. Strict §13.1 (≤4 chunks cap, nodes-only road cut, independent coverage validation) — residual. R5.5 marked [x] stated scope.
+
 ### Вывод R0.1 (deliverable)
 - Матрица соответствия §3–13 оформлена и зафиксирована (покрытие/частичность/пробелы привязаны к модулям и текущему evidence). Это закрывает формулировку **R0.1** как документационный артефакт анализа; R0.2/R0.3/R0.4 (stated scope)/R0.5 формализованы отдельно (см. чеклист/историю ниже).
 - Ключевые крупные незакрытые области по матрице: полные R2 (каркас/топология/мосты-тоннели-развязки/repair), остатки R4.3/R4.4, R5.1–R5.3/R5.5, формальное закрытие R1/R6 (в т.ч. расширение эталонов/серий/автоматизация цикла сверх R0.4 stated scope) и общий DoD плана 21.
