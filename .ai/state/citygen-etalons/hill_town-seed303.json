@@ -1,13 +1,13 @@
 {
   "profile": "hill_town",
   "seed": 303,
-  "generatorVersion": "0.76.0",
-  "reportHash": "d1e79d6e46f65a0c80d43f6e9179f841e3e379682377ac932aee72d4f014bc24",
+  "generatorVersion": "0.77.0",
+  "reportHash": "2dd6f6773585ee4865aebc8898019ddfe4c277b1ba5dbe17b4198c92cc96f513",
   "summary": {
     "errors": 0,
-    "warnings": 12,
+    "warnings": 13,
     "repairs": 2,
-    "drops": 0
+    "drops": 1
   },
   "rules": {
     "errors": 0,
@@ -19,10 +19,10 @@
     "counts": {
       "roads": 0,
       "roadNodes": 0,
-      "districts": 40,
-      "parcels": 2389,
+      "districts": 39,
+      "parcels": 2228,
       "reservedParcels": 93,
-      "buildings": 411,
+      "buildings": 408,
       "enterableBuildings": 82,
       "props": 360,
       "lights": 0,
@@ -59,7 +59,7 @@
     "gameplay": {
       "spawnToRoad": null,
       "exitToRoad": null,
-      "enterableShare": 0.199513,
+      "enterableShare": 0.20098,
       "enterableTarget": 0.2,
       "spawnDistrictType": "sports",
       "exitDistrictType": "luxury",
@@ -94,9 +94,9 @@
         "market": 204800,
         "office": 102400,
         "old_town": 102400,
-        "park": 102400,
+        "park": 204800,
         "parking": 102400,
-        "residential": 307200,
+        "residential": 204800,
         "slums": 102400,
         "sports": 102400
       },
@@ -109,13 +109,13 @@
         "market": 0.125,
         "office": 0.0625,
         "old_town": 0.0625,
-        "park": 0.0625,
+        "park": 0.125,
         "parking": 0.0625,
-        "residential": 0.1875,
+        "residential": 0.125,
         "slums": 0.0625,
         "sports": 0.0625
       },
-      "parkShare": 0.125
+      "parkShare": 0.1875
     },
     "terrain": {
       "slope": {
@@ -145,15 +145,14 @@
       "floodplains": 0
     },
     "parcels": {
-      "reservedShare": 0.038928,
+      "reservedShare": 0.041741,
       "byDistrictCount": {
         "district_0_0_00": 25,
         "district_0_0_01": 25,
         "district_0_0_10": 25,
         "district_0_0_11": 25,
         "district_1_0": 49,
-        "district_2_0_0": 105,
-        "district_2_0_1": 105,
+        "district_2_0": 49,
         "district_3_0_0": 136,
         "district_3_0_1": 136,
         "district_0_1_0": 32,
@@ -204,8 +203,8 @@
       "visibleTargets": 4
     },
     "blockDensityCorrelation": {
-      "rho": 0.913832,
-      "n": 40,
+      "rho": 0.930032,
+      "n": 39,
       "target": 0.6,
       "ok": true,
       "partial": false

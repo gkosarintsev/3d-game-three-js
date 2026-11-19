@@ -1,7 +1,7 @@
 {
   "version": 1,
   "generator": {
-    "generatorVersion": "0.76.0",
+    "generatorVersion": "0.77.0",
     "seed": 21,
     "deterministic": true
   },
@@ -63,7 +63,7 @@
       "profileId": "office",
       "era": "suburb",
       "style": "era_suburb",
-      "landValue": 0.497,
+      "landValue": 0.4645,
       "buildingDensity": 0.8,
       "heightRange": [
         3,
@@ -82,7 +82,7 @@
       "profileId": "office",
       "era": "suburb",
       "style": "era_suburb",
-      "landValue": 0.5125,
+      "landValue": 0.4779,
       "buildingDensity": 0.8,
       "heightRange": [
         3,
@@ -101,7 +101,7 @@
       "profileId": "office",
       "era": "suburb",
       "style": "era_suburb",
-      "landValue": 0.4314,
+      "landValue": 0.4079,
       "buildingDensity": 0.8,
       "heightRange": [
         3,
@@ -120,7 +120,7 @@
       "profileId": "office",
       "era": "suburb",
       "style": "era_suburb",
-      "landValue": 0.4362,
+      "landValue": 0.4119,
       "buildingDensity": 0.8,
       "heightRange": [
         3,
@@ -139,7 +139,7 @@
       "profileId": "industrial",
       "era": "suburb",
       "style": "era_suburb",
-      "landValue": 0.5125,
+      "landValue": 0.4779,
       "buildingDensity": 0.3,
       "heightRange": [
         1,
@@ -158,7 +158,7 @@
       "profileId": "industrial",
       "era": "suburb",
       "style": "era_suburb",
-      "landValue": 0.5143,
+      "landValue": 0.4972,
       "buildingDensity": 0.3,
       "heightRange": [
         1,
@@ -177,7 +177,7 @@
       "profileId": "parking",
       "era": "suburb",
       "style": "era_suburb",
-      "landValue": 0.5356,
+      "landValue": 0.5034,
       "buildingDensity": 0.08,
       "heightRange": [
         1,
@@ -196,7 +196,7 @@
       "profileId": "campus",
       "era": "suburb",
       "style": "era_suburb",
-      "landValue": 0.5125,
+      "landValue": 0.4779,
       "buildingDensity": 0.28,
       "heightRange": [
         2,
@@ -215,7 +215,7 @@
       "profileId": "campus",
       "era": "suburb",
       "style": "era_suburb",
-      "landValue": 0.5125,
+      "landValue": 0.4779,
       "buildingDensity": 0.28,
       "heightRange": [
         2,
@@ -234,7 +234,7 @@
       "profileId": "suburb",
       "era": "suburb",
       "style": "era_suburb",
-      "landValue": 0.3164,
+      "landValue": 0.3156,
       "buildingDensity": 0.35,
       "heightRange": [
         1,
@@ -253,7 +253,7 @@
       "profileId": "suburb",
       "era": "modern",
       "style": "era_modern",
-      "landValue": 0.3614,
+      "landValue": 0.3713,
       "buildingDensity": 0.35,
       "heightRange": [
         1,
@@ -272,7 +272,7 @@
       "profileId": "forest",
       "era": "modern",
       "style": "era_modern",
-      "landValue": 0.4575,
+      "landValue": 0.479,
       "buildingDensity": 0.03,
       "heightRange": [
         0,
@@ -291,7 +291,7 @@
       "profileId": "sports",
       "era": "modern",
       "style": "era_modern",
-      "landValue": 0.4714,
+      "landValue": 0.484,
       "buildingDensity": 0.2,
       "heightRange": [
         1,
@@ -310,7 +310,7 @@
       "profileId": "sports",
       "era": "modern",
       "style": "era_modern",
-      "landValue": 0.4993,
+      "landValue": 0.5246,
       "buildingDensity": 0.2,
       "heightRange": [
         1,
@@ -329,7 +329,7 @@
       "profileId": "residential",
       "era": "suburb",
       "style": "era_suburb",
-      "landValue": 0.5332,
+      "landValue": 0.5015,
       "buildingDensity": 0.45,
       "heightRange": [
         2,
@@ -348,7 +348,7 @@
       "profileId": "residential",
       "era": "modern",
       "style": "era_modern",
-      "landValue": 0.5563,
+      "landValue": 0.5285,
       "buildingDensity": 0.45,
       "heightRange": [
         2,
@@ -367,7 +367,7 @@
       "profileId": "residential",
       "era": "xix",
       "style": "era_xix",
-      "landValue": 0.4308,
+      "landValue": 0.4446,
       "buildingDensity": 0.45,
       "heightRange": [
         2,
@@ -386,7 +386,7 @@
       "profileId": "residential",
       "era": "xix",
       "style": "era_xix",
-      "landValue": 0.3919,
+      "landValue": 0.4051,
       "buildingDensity": 0.45,
       "heightRange": [
         2,
@@ -405,7 +405,7 @@
       "profileId": "market",
       "era": "xix",
       "style": "era_xix",
-      "landValue": 0.5897,
+      "landValue": 0.6208,
       "buildingDensity": 0.63,
       "heightRange": [
         1,
@@ -424,7 +424,7 @@
       "profileId": "market",
       "era": "medieval",
       "style": "era_medieval",
-      "landValue": 0.5364,
+      "landValue": 0.5637,
       "buildingDensity": 0.63,
       "heightRange": [
         1,
@@ -443,7 +443,7 @@
       "profileId": "market",
       "era": "medieval",
       "style": "era_medieval",
-      "landValue": 0.6179,
+      "landValue": 0.6536,
       "buildingDensity": 0.63,
       "heightRange": [
         1,
@@ -462,7 +462,7 @@
       "profileId": "luxury",
       "era": "xix",
       "style": "era_xix",
-      "landValue": 0.5729,
+      "landValue": 0.6035,
       "buildingDensity": 0.5,
       "heightRange": [
         2,
@@ -486,7 +486,7 @@
       "profileId": "luxury",
       "era": "medieval",
       "style": "era_medieval",
-      "landValue": 0.638,
+      "landValue": 0.6738,
       "buildingDensity": 0.5,
       "heightRange": [
         2,
@@ -510,7 +510,7 @@
       "profileId": "luxury",
       "era": "medieval",
       "style": "era_medieval",
-      "landValue": 0.596,
+      "landValue": 0.6294,
       "buildingDensity": 0.5,
       "heightRange": [
         2,
@@ -534,7 +534,7 @@
       "profileId": "luxury",
       "era": "xix",
       "style": "era_xix",
-      "landValue": 0.5534,
+      "landValue": 0.5738,
       "buildingDensity": 0.5,
       "heightRange": [
         2,
@@ -558,7 +558,7 @@
       "profileId": "commercial",
       "era": "modern",
       "style": "era_modern",
-      "landValue": 0.5915,
+      "landValue": 0.5816,
       "buildingDensity": 0.65,
       "heightRange": [
         3,
@@ -582,7 +582,7 @@
       "profileId": "commercial",
       "era": "modern",
       "style": "era_modern",
-      "landValue": 0.6175,
+      "landValue": 0.6084,
       "buildingDensity": 0.65,
       "heightRange": [
         3,
@@ -606,7 +606,7 @@
       "profileId": "commercial",
       "era": "modern",
       "style": "era_modern",
-      "landValue": 0.5486,
+      "landValue": 0.5186,
       "buildingDensity": 0.65,
       "heightRange": [
         3,
@@ -630,7 +630,7 @@
       "profileId": "commercial",
       "era": "modern",
       "style": "era_modern",
-      "landValue": 0.5744,
+      "landValue": 0.5451,
       "buildingDensity": 0.65,
       "heightRange": [
         3,
@@ -654,7 +654,7 @@
       "profileId": "commercial",
       "era": "modern",
       "style": "era_modern",
-      "landValue": 0.6309,
+      "landValue": 0.6222,
       "buildingDensity": 0.65,
       "heightRange": [
         3,
@@ -678,7 +678,7 @@
       "profileId": "commercial",
       "era": "xix",
       "style": "era_xix",
-      "landValue": 0.6037,
+      "landValue": 0.594,
       "buildingDensity": 0.65,
       "heightRange": [
         3,
@@ -702,7 +702,7 @@
       "profileId": "commercial",
       "era": "modern",
       "style": "era_modern",
-      "landValue": 0.6099,
+      "landValue": 0.5815,
       "buildingDensity": 0.65,
       "heightRange": [
         3,
@@ -726,7 +726,7 @@
       "profileId": "commercial",
       "era": "industrial",
       "style": "era_industrial",
-      "landValue": 0.6142,
+      "landValue": 0.5857,
       "buildingDensity": 0.65,
       "heightRange": [
         3,
@@ -750,7 +750,7 @@
       "profileId": "old_town",
       "era": "xix",
       "style": "era_xix",
-      "landValue": 0.3299,
+      "landValue": 0.3395,
       "buildingDensity": 0.8,
       "heightRange": [
         2,
@@ -769,7 +769,7 @@
       "profileId": "old_town",
       "era": "modern",
       "style": "era_modern",
-      "landValue": 0.2829,
+      "landValue": 0.2876,
       "buildingDensity": 0.8,
       "heightRange": [
         2,
@@ -788,7 +788,7 @@
       "profileId": "slums",
       "era": "xix",
       "style": "era_xix",
-      "landValue": 0.4714,
+      "landValue": 0.4956,
       "buildingDensity": 0.55,
       "heightRange": [
         1,
@@ -807,7 +807,7 @@
       "profileId": "slums",
       "era": "xix",
       "style": "era_xix",
-      "landValue": 0.3869,
+      "landValue": 0.4026,
       "buildingDensity": 0.55,
       "heightRange": [
         1,
@@ -826,7 +826,7 @@
       "profileId": "residential",
       "era": "xix",
       "style": "era_xix",
-      "landValue": 0.4822,
+      "landValue": 0.5059,
       "buildingDensity": 0.45,
       "heightRange": [
         2,
@@ -845,7 +845,7 @@
       "profileId": "residential",
       "era": "xix",
       "style": "era_xix",
-      "landValue": 0.3806,
+      "landValue": 0.3955,
       "buildingDensity": 0.45,
       "heightRange": [
         2,
@@ -864,7 +864,7 @@
       "profileId": "commercial",
       "era": "xix",
       "style": "era_xix",
-      "landValue": 0.5892,
+      "landValue": 0.578,
       "buildingDensity": 0.65,
       "heightRange": [
         3,
@@ -883,7 +883,7 @@
       "profileId": "commercial",
       "era": "xix",
       "style": "era_xix",
-      "landValue": 0.5674,
+      "landValue": 0.554,
       "buildingDensity": 0.65,
       "heightRange": [
         3,
@@ -902,7 +902,7 @@
       "profileId": "commercial",
       "era": "modern",
       "style": "era_modern",
-      "landValue": 0.604,
+      "landValue": 0.5744,
       "buildingDensity": 0.65,
       "heightRange": [
         3,
@@ -921,7 +921,7 @@
       "profileId": "commercial",
       "era": "xix",
       "style": "era_xix",
-      "landValue": 0.5643,
+      "landValue": 0.5324,
       "buildingDensity": 0.65,
       "heightRange": [
         3,
@@ -940,7 +940,7 @@
       "profileId": "commercial",
       "era": "xix",
       "style": "era_xix",
-      "landValue": 0.5174,
+      "landValue": 0.5006,
       "buildingDensity": 0.65,
       "heightRange": [
         3,
@@ -959,7 +959,7 @@
       "profileId": "commercial",
       "era": "modern",
       "style": "era_modern",
-      "landValue": 0.4594,
+      "landValue": 0.4419,
       "buildingDensity": 0.65,
       "heightRange": [
         3,
@@ -978,7 +978,7 @@
       "profileId": "commercial",
       "era": "modern",
       "style": "era_modern",
-      "landValue": 0.5225,
+      "landValue": 0.4882,
       "buildingDensity": 0.65,
       "heightRange": [
         3,
@@ -997,7 +997,7 @@
       "profileId": "commercial",
       "era": "modern",
       "style": "era_modern",
-      "landValue": 0.4728,
+      "landValue": 0.4436,
       "buildingDensity": 0.65,
       "heightRange": [
         3,
@@ -1094,6 +1094,17 @@
       "stage": "6_finalize_emit",
       "message": "detected 2 same-layer road crossing conflict(s) without shared junction",
       "count": 2
+    },
+    {
+      "severity": "info",
+      "code": "profile_mutation",
+      "stage": "0_input_space",
+      "message": "profile mutation applied (+-20%, deterministic)",
+      "delta": 0.2,
+      "enabled": true,
+      "features": [
+        "cemetery_park"
+      ]
     },
     {
       "severity": "info",
@@ -2870,13 +2881,13 @@
       "stage": "3_districts_parcels",
       "message": "land value field assigned to districts (profile weights)",
       "profile": "railway_industrial",
-      "mean": 0.4931,
+      "mean": 0.4905,
       "weights": [
-        0.35,
-        0.3,
-        0.1,
-        0.15,
-        0.1
+        0.397273,
+        0.265968,
+        0.105531,
+        0.157649,
+        0.100264
       ]
     },
     {
@@ -2927,8 +2938,8 @@
       "message": "park/forest share enforced by section 6.8",
       "before": 0.125,
       "after": 0.0625,
-      "min": 0.05,
-      "max": 0.08,
+      "min": 0.046228,
+      "max": 0.070188,
       "promoted": 0,
       "demoted": 1,
       "bridged": 0,
@@ -3405,8 +3416,8 @@
       "code": "floors_contrast_built",
       "stage": "4_buildings_structures",
       "message": "building floors distribution (section 9.4): L-modulation, adjacency contrast <= 2.5x, 5-8 dominants per city (one per high-L district, capped/filled 2026-11-19)",
-      "clamped": 81,
-      "dominants": 8,
+      "clamped": 97,
+      "dominants": 7,
       "districts": 47,
       "adjacencyPairs": 89
     },
@@ -3840,12 +3851,12 @@
         {
           "a": "district_2_0_0",
           "b": "district_2_1_0",
-          "delta": 0.15889999999999999
+          "delta": 0.17620000000000002
         },
         {
-          "a": "district_2_1_11",
-          "b": "district_3_1_0",
-          "delta": 0.14650000000000002
+          "a": "district_1_0_0",
+          "b": "district_1_1",
+          "delta": 0.1634
         }
       ]
     },
@@ -4243,7 +4254,7 @@
       "dividesPlate": true
     },
     "determinism": {
-      "generatorVersion": "0.76.0",
+      "generatorVersion": "0.77.0",
       "seed": 21,
       "deterministic": true
     },
