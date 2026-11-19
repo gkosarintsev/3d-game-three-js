@@ -162,15 +162,31 @@ function finalizeByAccess(fp, cx, cz, p, maxW, maxD, rng, worldHalf = Infinity) 
       dx = wantMaxX - b.maxX;
     }
     aligned = translateFootprint(rot, +dx.toFixed(3), +dz.toFixed(3));
-    // R4.3 §9.5: угловой дом — смещаем к пересечению уличных граней (вторичная грань участка на углу квартала).
+    // R4.3 §9.5: угловой дом — соблюдаем линию застройки и на вторичной уличной грани (угол квартала),
+    // смещая здание к пересечению фасадных линий без нарушения основной (primary) фасадной линии.
     if (access?.corner && Array.isArray(access.cornerEdges) && access.cornerEdges.length > 1) {
       const b2 = aabbOfFootprint(aligned);
+      const spanX2 = b2.maxX - b2.minX, spanZ2 = b2.maxZ - b2.minZ;
       let cdx = 0, cdz = 0;
-      if (access.cornerEdges.includes('west') && edge !== 'west') cdx += (parcel.minX + margin) - b2.minX;
-      else if (access.cornerEdges.includes('east') && edge !== 'east') cdx += (parcel.maxX - margin) - b2.maxX;
-      if (access.cornerEdges.includes('south') && edge !== 'south') cdz += (parcel.minZ + margin) - b2.minZ;
-      else if (access.cornerEdges.includes('north') && edge !== 'north') cdz += (parcel.maxZ - margin) - b2.maxZ;
-      // ограничиваем сдвиг к углу, чтобы не ломать фасадную линию вдоль основной улицы
+      if (access.cornerEdges.includes('west') && edge !== 'west') {
+        const secAvailX = Math.max(0, (innerMaxX - innerMinX) - spanX2);
+        const secSetbackX = Math.min(desiredSetback, secAvailX);
+        cdx += (parcel.minX + secSetbackX) - b2.minX;
+      } else if (access.cornerEdges.includes('east') && edge !== 'east') {
+        const secAvailX = Math.max(0, (innerMaxX - innerMinX) - spanX2);
+        const secSetbackX = Math.min(desiredSetback, secAvailX);
+        cdx += (parcel.maxX - secSetbackX) - b2.maxX;
+      }
+      if (access.cornerEdges.includes('south') && edge !== 'south') {
+        const secAvailZ = Math.max(0, (innerMaxZ - innerMinZ) - spanZ2);
+        const secSetbackZ = Math.min(desiredSetback, secAvailZ);
+        cdz += (parcel.minZ + secSetbackZ) - b2.minZ;
+      } else if (access.cornerEdges.includes('north') && edge !== 'north') {
+        const secAvailZ = Math.max(0, (innerMaxZ - innerMinZ) - spanZ2);
+        const secSetbackZ = Math.min(desiredSetback, secAvailZ);
+        cdz += (parcel.maxZ - secSetbackZ) - b2.maxZ;
+      }
+      // Ограничиваем сдвиг к углу, чтобы не ломать фасадную линию вдоль основной улицы (preserveEdge в clamp — страховка).
       const maxCornerShift = 4.0;
       cdx = clamp(cdx, -maxCornerShift, maxCornerShift);
       cdz = clamp(cdz, -maxCornerShift, maxCornerShift);

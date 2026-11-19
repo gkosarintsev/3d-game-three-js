@@ -72,10 +72,10 @@ export const LEVEL_21 = {
         "file": "chunk-0-0.l14b",
         "id": "0_0",
         "objects": {
-          "buildings": 62,
+          "buildings": 59,
           "channels": 2,
           "lights": 2,
-          "props": 57,
+          "props": 71,
           "roads": 20
         },
         "rect": {
@@ -91,8 +91,8 @@ export const LEVEL_21 = {
         "objects": {
           "buildings": 39,
           "channels": 1,
-          "lights": 2,
-          "props": 61,
+          "lights": 1,
+          "props": 53,
           "roads": 1
         },
         "rect": {
@@ -106,10 +106,10 @@ export const LEVEL_21 = {
         "file": "chunk-1-0.l14b",
         "id": "1_0",
         "objects": {
-          "buildings": 177,
+          "buildings": 176,
           "channels": 2,
           "lights": 2,
-          "props": 147,
+          "props": 145,
           "roads": 43
         },
         "rect": {
@@ -123,11 +123,11 @@ export const LEVEL_21 = {
         "file": "chunk-1-1.l14b",
         "id": "1_1",
         "objects": {
-          "buildings": 117,
+          "buildings": 122,
           "channels": 2,
-          "lights": 2,
-          "props": 102,
-          "roads": 102
+          "lights": 3,
+          "props": 98,
+          "roads": 104
         },
         "rect": {
           "maxX": 640,
@@ -7902,37 +7902,37 @@ export const LEVEL_21 = {
             {
               "x": 408,
               "y": 0,
-              "z": 408
+              "z": 328
             },
             {
               "x": 396.33,
-              "y": 0,
-              "z": 408
+              "y": 0.07,
+              "z": 328
             },
             {
               "x": 384.67,
-              "y": 0.02,
-              "z": 408
+              "y": 0.31,
+              "z": 328
             },
             {
               "x": 373,
-              "y": 0.17,
-              "z": 408
+              "y": 0.69,
+              "z": 328
             },
             {
               "x": 361.33,
-              "y": 0.44,
-              "z": 408
+              "y": 1.19,
+              "z": 328
             },
             {
               "x": 349.67,
-              "y": 0.79,
-              "z": 408
+              "y": 1.77,
+              "z": 328
             },
             {
               "x": 338,
-              "y": 1.21,
-              "z": 408
+              "y": 2.41,
+              "z": 328
             }
           ],
           "shoulder": 1,
@@ -7945,18 +7945,86 @@ export const LEVEL_21 = {
           "points": [
             {
               "x": 338,
-              "y": 1.21,
-              "z": 408
+              "y": 2.41,
+              "z": 328
             },
             {
               "x": 338,
-              "y": 1.51,
-              "z": 397.34
+              "y": 2.45,
+              "z": 338.67
             },
             {
               "x": 338,
-              "y": 1.8,
-              "z": 386.67
+              "y": 2.43,
+              "z": 349.33
+            },
+            {
+              "x": 338,
+              "y": 2.33,
+              "z": 360
+            }
+          ],
+          "shoulder": 1,
+          "width": 6
+        },
+        {
+          "blend": 5,
+          "crossLevel": true,
+          "id": "tr_postb_2",
+          "points": [
+            {
+              "x": 338,
+              "y": 2.33,
+              "z": 360
+            },
+            {
+              "x": 338,
+              "y": 2.17,
+              "z": 370.17
+            },
+            {
+              "x": 338,
+              "y": 1.95,
+              "z": 380.34
+            },
+            {
+              "x": 338,
+              "y": 1.7,
+              "z": 390.5
+            },
+            {
+              "x": 338,
+              "y": 1.42,
+              "z": 400.67
+            }
+          ],
+          "shoulder": 1,
+          "width": 6
+        },
+        {
+          "blend": 5,
+          "crossLevel": true,
+          "id": "tr_postb_2_2",
+          "points": [
+            {
+              "x": 338,
+              "y": 1.42,
+              "z": 400.67
+            },
+            {
+              "x": 328.36,
+              "y": 1.91,
+              "z": 400.67
+            },
+            {
+              "x": 318.71,
+              "y": 2.5,
+              "z": 400.67
+            },
+            {
+              "x": 309.07,
+              "y": 3.17,
+              "z": 400.67
             }
           ],
           "shoulder": 1,
