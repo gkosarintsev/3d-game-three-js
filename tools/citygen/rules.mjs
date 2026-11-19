@@ -8,6 +8,7 @@
  */
 import { byId } from './ids.mjs';
 import { terrainHeightAt } from './terrain-height.mjs';
+import { CONFIG } from '../../src/config.js';
 
 function round(v, n = 6) {
   if (!Number.isFinite(v)) return null;
@@ -812,6 +813,23 @@ export function evaluateRules(ctx) {
     v('warn', 'road_slope_over_class_policy', `road segments exceed class slope policy (see policies.slopeLimitPct)`, { segments: roadSlopeWarns, maxSlope: round(maxObservedRoadSlope, 6) });
   }
 
+  // R1.2: генератор читает физические константы рельефа движка (src/config.js#jsonMap.relief),
+  // а не только policy-дефолты §13.2: hillMaxSlope — предел уклона ОДНОЙ капсулы брифа,
+  // maxSlope — предел градиента самого поля. На committed-главах значения заведомо
+  // превышаются локальными холмами (они легальны), поэтому это advisory, не §12.1 error.
+  {
+    const tSlope = ctx?.terrain?.analysis?.slope ?? null;
+    const reliefCfg = CONFIG?.jsonMap?.relief ?? CONFIG?.relief ?? null;
+    const ceilHill = Number(reliefCfg?.hillMaxSlope ?? 0.06);
+    const ceilField = Number(reliefCfg?.maxSlope ?? 0.12);
+    if (tSlope && Number.isFinite(Number(tSlope.maxSlope))) {
+      const over = round(Number(tSlope.maxSlope) - ceilField, 6);
+      if (over > 0) {
+        v('warn', 'relief_ceiling_advisory', 'terrain analysis maxSlope exceeds engine field capability (CONFIG.jsonMap.relief.maxSlope / CONFIG.relief.maxSlope) — advisory only (hills legal); autoring cap for a single capsule is relief.hillMaxSlope', { maxSlope: round(Number(tSlope.maxSlope), 6), engineMaxSlope: ceilField, hillCapsuleCap: ceilHill, excess: over });
+      }
+    }
+  }
+
   const enterable = buildings.filter(b => b?.isEnterable === true).length;
   const enterableShare = buildings.length > 0 ? round(enterable / buildings.length, 6) : null;
   const roadShares = roadClassShares(roads);
@@ -1041,6 +1059,15 @@ export function evaluateRules(ctx) {
       waterBuffers: waterBuffers.length,
       floodplains: floodplains.length,
     } : ((rivers.length + lakes.length) > 0 ? { waterBuffers: waterBuffers.length, floodplains: floodplains.length } : null),
+    reliefCeiling: (CONFIG?.jsonMap?.relief ?? CONFIG?.relief) && typeof (CONFIG?.jsonMap?.relief ?? CONFIG?.relief) === 'object' ? (() => {
+      const reliefCfg = CONFIG?.jsonMap?.relief ?? CONFIG.relief;
+      return {
+        engineHillMaxSlope: Number(reliefCfg.hillMaxSlope ?? 0.06),
+        engineMaxSlope: Number(reliefCfg.maxSlope ?? 0.12),
+        terrainMaxSlope: terrainAnalysis?.slope ? round(terrainAnalysis.slope.maxSlope, 6) : null,
+        overEngineCapExceeds: !!(terrainAnalysis?.slope && Number(terrainAnalysis.slope.maxSlope) > Number(reliefCfg.maxSlope ?? 0.12)),
+      };
+    })() : null,
     landmarkVisibility,
     impressionCadence,
     falseDeadEnds: {

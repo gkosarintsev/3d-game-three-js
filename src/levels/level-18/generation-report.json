@@ -1,7 +1,7 @@
 {
   "version": 1,
   "generator": {
-    "generatorVersion": "0.81.0",
+    "generatorVersion": "0.82.0",
     "seed": 18,
     "deterministic": true
   },
@@ -887,6 +887,12 @@
       "waterBuffers": 0,
       "floodplains": 0
     },
+    "reliefCeiling": {
+      "engineHillMaxSlope": 0.06,
+      "engineMaxSlope": 0.12,
+      "terrainMaxSlope": 0,
+      "overEngineCapExceeds": false
+    },
     "landmarkVisibility": {
       "partial": true,
       "method": "terrain_los_sample",
@@ -942,7 +948,7 @@
       "dividesPlate": true
     },
     "determinism": {
-      "generatorVersion": "0.81.0",
+      "generatorVersion": "0.82.0",
       "seed": 18,
       "deterministic": true
     },
