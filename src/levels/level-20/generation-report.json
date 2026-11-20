@@ -1,7 +1,7 @@
 {
   "version": 1,
   "generator": {
-    "generatorVersion": "0.89.0",
+    "generatorVersion": "0.90.0",
     "seed": 20,
     "deterministic": true
   },
@@ -37,7 +37,7 @@
     {
       "id": "4_buildings_structures",
       "status": "ok",
-      "diagnostics": 9,
+      "diagnostics": 11,
       "repairs": 9,
       "drops": 0
     },
@@ -51,7 +51,7 @@
     {
       "id": "6_finalize_emit",
       "status": "ok",
-      "diagnostics": 18,
+      "diagnostics": 19,
       "repairs": 1,
       "drops": 13
     }
@@ -1003,8 +1003,8 @@
       "severity": "warn",
       "code": "chunk_buildings_heavy",
       "stage": "6_finalize_emit",
-      "message": "high building count in a single chunk (185)",
-      "maxBuildings": 185,
+      "message": "high building count in a single chunk (187)",
+      "maxBuildings": 187,
       "chunk": 640,
       "grid": 2
     },
@@ -3263,13 +3263,13 @@
       "code": "enterable_share",
       "stage": "4_buildings_structures",
       "message": "enterable buildings share (section 9.8, target 15-25%)",
-      "total": 418,
+      "total": 420,
       "enterable": 84,
-      "share": 0.201,
+      "share": 0.2,
       "targetShare": 0.2,
       "required": {
         "min": 63,
-        "max": 104
+        "max": 105
       }
     },
     {
@@ -3299,7 +3299,7 @@
           "max": null
         }
       ],
-      "totKeys": 40
+      "totKeys": 41
     },
     {
       "severity": "info",
@@ -3321,7 +3321,7 @@
           "max": null
         }
       ],
-      "totKeys": 40
+      "totKeys": 41
     },
     {
       "severity": "info",
@@ -3343,7 +3343,7 @@
           "max": null
         }
       ],
-      "totKeys": 40
+      "totKeys": 41
     },
     {
       "severity": "info",
@@ -3368,6 +3368,20 @@
       "code": "stage_ok",
       "stage": "4_buildings_structures",
       "message": "stage 4_buildings_structures completed"
+    },
+    {
+      "severity": "info",
+      "code": "t23_5_attachment",
+      "stage": "4_buildings_structures",
+      "message": "added attachment/self-build buildings (meso residue, ADR-005)",
+      "count": 2
+    },
+    {
+      "severity": "info",
+      "code": "t23_5_facade_blank",
+      "stage": "4_buildings_structures",
+      "message": "assigned blank facade sides (meso residue, ADR-005)",
+      "count": 58
     },
     {
       "severity": "info",
@@ -3571,12 +3585,12 @@
           "accessibleRatio": 1
         }
       },
-      "buildings": 418,
+      "buildings": 420,
       "buildingsByDistrictType": {
-        "old_town": 76,
+        "old_town": 77,
         "office": 27,
         "industrial": 18,
-        "slums": 71,
+        "slums": 72,
         "residential": 119,
         "commercial": 42,
         "market": 46,
@@ -3606,10 +3620,10 @@
       },
       "chunkLoad": {
         "nonEmptyChunks": 4,
-        "maxBuildings": 185,
+        "maxBuildings": 187,
         "maxProps": 186,
         "maxLights": 3,
-        "avgBuildings": 104.5,
+        "avgBuildings": 105,
         "avgProps": 97.5
       }
     },
@@ -3642,177 +3656,177 @@
       "code": "finish_chaos_applied",
       "stage": "6_finalize_emit",
       "message": "chaos applied at finish stage",
-      "applied": 417,
+      "applied": 419,
       "skipped": 1,
       "lockedSkipped": 0,
       "seams": 3,
       "changes": [
         {
-          "id": "b_district_0_0_00_10",
+          "id": "b_att_1",
           "dXZ": [
             -0.231,
             0.249
           ]
         },
         {
-          "id": "b_district_0_0_00_106",
+          "id": "b_att_2",
           "dXZ": [
             -0.115,
             -0.191
           ]
         },
         {
+          "id": "b_district_0_0_00_10",
+          "dXZ": [
+            -0.45,
+            0.441
+          ]
+        },
+        {
+          "id": "b_district_0_0_00_106",
+          "dXZ": [
+            0.041,
+            0.492
+          ]
+        },
+        {
           "id": "b_district_0_0_00_107",
           "dXZ": [
-            0.441,
-            0.041
+            -0.127,
+            0.114
           ]
         },
         {
           "id": "b_district_0_0_00_108",
           "dXZ": [
-            0.204,
-            -0.127
+            0.109,
+            -0.241
           ]
         },
         {
           "id": "b_district_0_0_00_126",
           "dXZ": [
-            0.141,
-            0.109
+            -0.347,
+            -0.238
           ]
         },
         {
           "id": "b_district_0_0_00_127",
           "dXZ": [
-            -0.241,
-            0.432
+            0.313,
+            -0.157
           ]
         },
         {
           "id": "b_district_0_0_00_205",
           "dXZ": [
-            -0.238,
-            0.313
+            -0.289,
+            0.478
           ]
         },
         {
           "id": "b_district_0_0_00_206",
           "dXZ": [
-            -0.157,
-            0.296
+            -0.281,
+            -0.393
           ]
         },
         {
           "id": "b_district_0_0_00_264",
           "dXZ": [
-            0.478,
-            -0.281
+            -0.425,
+            0.442
           ]
         },
         {
           "id": "b_district_0_0_00_297",
           "dXZ": [
-            -0.393,
-            -0.22
+            0.314,
+            -0.215
           ]
         },
         {
           "id": "b_district_0_0_00_349",
           "dXZ": [
-            0.442,
-            0.314
+            -0.233,
+            -0.084
           ]
         },
         {
           "id": "b_district_0_0_00_47",
-          "dXZ": [
-            -0.292,
-            -0.233
-          ]
-        },
-        {
-          "id": "b_district_0_0_00_48",
-          "dXZ": [
-            -0.084,
-            -0.529
-          ]
-        },
-        {
-          "id": "b_district_0_0_01_109",
           "dXZ": [
             -0.298,
             -0.38
           ]
         },
         {
+          "id": "b_district_0_0_00_48",
+          "dXZ": [
+            0.532,
+            -0.301
+          ]
+        },
+        {
+          "id": "b_district_0_0_01_109",
+          "dXZ": [
+            0.534,
+            -0.026
+          ]
+        },
+        {
           "id": "b_district_0_0_01_199",
           "dXZ": [
-            -0.301,
-            0.534
+            0.11,
+            0.482
           ]
         },
         {
           "id": "b_district_0_0_01_200",
           "dXZ": [
-            -0.416,
-            0.11
+            -0.224,
+            -0.003
           ]
         },
         {
           "id": "b_district_0_0_01_262",
           "dXZ": [
-            0.482,
-            0.008
+            0.062,
+            -0.322
           ]
         },
         {
           "id": "b_district_0_0_10_110",
           "dXZ": [
-            -0.003,
-            0.062
+            0.138,
+            -0.528
           ]
         },
         {
           "id": "b_district_0_0_10_111",
           "dXZ": [
-            -0.322,
-            0.102
+            0.228,
+            -0.458
           ]
         },
         {
           "id": "b_district_0_0_10_112",
           "dXZ": [
-            -0.528,
-            0.228
+            -0.245,
+            -0.178
           ]
         },
         {
           "id": "b_district_0_0_10_201",
           "dXZ": [
-            -0.377,
-            -0.245
+            -0.331,
+            0.204
           ]
         },
         {
           "id": "b_district_0_0_10_202",
           "dXZ": [
-            -0.178,
-            -0.188
-          ]
-        },
-        {
-          "id": "b_district_0_0_10_203",
-          "dXZ": [
-            0.204,
-            -0.146
-          ]
-        },
-        {
-          "id": "b_district_0_0_10_204",
-          "dXZ": [
-            -0.19,
-            0.037
+            -0.146,
+            0.365
           ]
         }
       ]
@@ -4001,6 +4015,15 @@
       "code": "stage_ok",
       "stage": "6_finalize_emit",
       "message": "stage 6_finalize_emit completed"
+    },
+    {
+      "severity": "info",
+      "code": "t23_5_courtyard_paths",
+      "stage": "6_finalize_emit",
+      "message": "generated courtyard paths in old core/1860 districts (meso residue, ADR-005)",
+      "targets": 2,
+      "made": 2,
+      "skipped": 0
     }
   ],
   "repairs": [
@@ -4179,7 +4202,7 @@
       "districts": 40,
       "parcels": 2381,
       "reservedParcels": 182,
-      "buildings": 405,
+      "buildings": 407,
       "enterableBuildings": 84,
       "props": 390,
       "lights": 8,
@@ -4235,7 +4258,7 @@
     "gameplay": {
       "spawnToRoad": 0,
       "exitToRoad": 0,
-      "enterableShare": 0.207407,
+      "enterableShare": 0.206388,
       "enterableTarget": 0.2,
       "spawnDistrictType": "office",
       "exitDistrictType": "campus",
@@ -4484,7 +4507,7 @@
       "dividesPlate": true
     },
     "determinism": {
-      "generatorVersion": "0.89.0",
+      "generatorVersion": "0.90.0",
       "seed": 20,
       "deterministic": true
     },

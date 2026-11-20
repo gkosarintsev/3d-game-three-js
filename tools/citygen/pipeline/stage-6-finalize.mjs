@@ -154,6 +154,89 @@ export function makeStage6() {
       const buildings = Array.isArray(ctx.buildings) ? ctx.buildings : [];
       const lights = Array.isArray(ctx.infrastructure?.lights) ? ctx.infrastructure.lights : (ctx.input?.lights ?? []);
       const props = Array.isArray(ctx.infrastructure?.props) ? ctx.infrastructure.props : (ctx.input?.landscapeObjects ?? []);
+
+      // T23.5 (ADR-005): проходные дворы — networks.paths через старые кварталы/«1860», без пересечения зданий.
+      {
+        ctx.networks = ctx.networks && typeof ctx.networks === 'object' ? ctx.networks : {};
+        if (!ctx.networks.paths || typeof ctx.networks.paths !== 'object') ctx.networks.paths = { nodes: [], segments: [], junctions: [] };
+        const pathsNet = ctx.networks.paths;
+        if (!Array.isArray(pathsNet.nodes)) pathsNet.nodes = [];
+        if (!Array.isArray(pathsNet.segments)) pathsNet.segments = [];
+        if (!Array.isArray(pathsNet.junctions)) pathsNet.junctions = [];
+
+        const oldCoreTypes = new Set(['old_town', 'historic']);
+        const is1860 = (d) => oldCoreTypes.has(String(d?.type || d?.profileId || '').toLowerCase())
+          || /1860|стар|historic|old/i.test(String(d?.id || '')) || /1860|стар|historic|old/i.test(String(d?.profileId || ''));
+        const rectOf = (d) => d?.geometry?.rect ?? null;
+        const bBounds = buildings.map(b => {
+          const fp = Array.isArray(b?.footprint) ? b.footprint : [];
+          if (!fp.length) return null;
+          let minX=Infinity,maxX=-Infinity,minZ=Infinity,maxZ=-Infinity;
+          for (const p of fp) { const x=+p.x, z=+p.z; if (Number.isFinite(x)&&Number.isFinite(z)) { if(x<minX)minX=x; if(x>maxX)maxX=x; if(z<minZ)minZ=z; if(z>maxZ)maxZ=z; } }
+          return Number.isFinite(minX) ? { minX, maxX, minZ, maxZ } : null;
+        }).filter(Boolean);
+        const segIntersectsBounds = (x1,z1,x2,z2, bb, pad=0.5) => {
+          // reject if segment passes through building bounds (conservative axis-aligned check)
+          const minX = Math.min(x1,x2)-pad, maxX = Math.max(x1,x2)+pad;
+          const minZ = Math.min(z1,z2)-pad, maxZ = Math.max(z1,z2)+pad;
+          if (maxX < bb.minX || minX > bb.maxX || maxZ < bb.minZ || minZ > bb.maxZ) return false;
+          // if mostly outside vertically/horizontally in axis-aligned case still considered intersecting by bbox overlap of corridor
+          // sample middle
+          const mx = (x1+x2)/2, mz = (z1+z2)/2;
+          if (mx >= bb.minX-pad && mx <= bb.maxX+pad && mz >= bb.minZ-pad && mz <= bb.maxZ+pad) return true;
+          return !(maxX < bb.minX || minX > bb.maxX || maxZ < bb.minZ || minZ > bb.maxZ);
+        };
+        const pathClear = (x1,z1,x2,z2) => bBounds.every(bb => !segIntersectsBounds(x1,z1,x2,z2,bb,0.6));
+
+        const targets = districts.filter(d => is1860(d) && rectOf(d)).sort((a,b)=>String(a?.id||'').localeCompare(String(b?.id||'')));
+        let made = 0, skipped = 0;
+        for (const d of targets) {
+          const r = rectOf(d);
+          const w = r.maxX - r.minX, h = r.maxZ - r.minZ;
+          if (!(w > 12 && h > 12)) { skipped++; continue; }
+          // try axis-aligned straight path connecting opposite sides through block interior (2 sides)
+          const cx = (r.minX + r.maxX) / 2, cz = (r.minZ + r.maxZ) / 2;
+          const y = 0;
+          const tries = [
+            // E-W through middle
+            { a:[r.minX + 1, y, cz], b:[r.maxX - 1, y, cz], axis:'x' },
+            // N-S through middle
+            { a:[cx, y, r.minZ + 1], b:[cx, y, r.maxZ - 1], axis:'z' },
+            // offsets
+            { a:[r.minX + 1, y, cz + h*0.15], b:[r.maxX - 1, y, cz + h*0.15], axis:'x' },
+            { a:[cx + w*0.15, y, r.minZ + 1], b:[cx + w*0.15, y, r.maxZ - 1], axis:'z' },
+          ];
+          let chosen = null;
+          for (const t of tries) {
+            if (pathClear(t.a[0], t.a[2], t.b[0], t.b[2])) { chosen = t; break; }
+          }
+          if (!chosen) { skipped++; ctx.report.diagnostics.push(warn('t23_5_courtyard_path_skipped', stageId, `no clear courtyard path for district '${d.id}'`, { districtId: d.id })); continue; }
+          const n1 = `path_${d.id}_a`, n2 = `path_${d.id}_b`, sid = `path_${d.id}_s1`;
+          if (pathsNet.segments.some(s => s?.id === sid)) continue;
+          pathsNet.nodes.push({ id: n1, position: [ +chosen.a[0].toFixed(3), +chosen.a[1].toFixed(3), +chosen.a[2].toFixed(3) ] });
+          pathsNet.nodes.push({ id: n2, position: [ +chosen.b[0].toFixed(3), +chosen.b[1].toFixed(3), +chosen.b[2].toFixed(3) ] });
+          pathsNet.segments.push({
+            id: sid,
+            from: n1,
+            to: n2,
+            type: 'local',
+            layer: 'ground',
+            path: [ [ +chosen.a[0].toFixed(3), 0, +chosen.a[2].toFixed(3) ], [ +chosen.b[0].toFixed(3), 0, +chosen.b[2].toFixed(3) ] ],
+            lanes: [{ id: `${sid}_l1`, type: 'pedestrian', direction: 'forward', width: 2 }],
+            surface: 'earth',
+          });
+          made += 1;
+        }
+        if (made > 0 || targets.length > 0) {
+          ctx.report.diagnostics.push(info('t23_5_courtyard_paths', stageId, 'generated courtyard paths in old core/1860 districts (meso residue, ADR-005)', { targets: targets.length, made, skipped }));
+          // mirror into cityforge source IR for compile/preservation (open engine root does not accept `networks`)
+          const cf = ctx.input?.cityforge ?? ctx.engine?.cityforge;
+          if (cf && typeof cf === 'object') {
+            cf.networks = cf.networks && typeof cf.networks === 'object' ? cf.networks : {};
+            cf.networks.paths = pathsNet;
+          }
+        }
+      }
       const propsDiag = (ctx.report?.diagnostics ?? []).find(d => d.stage === '5_infrastructure_props' && d.code === 'props_generated');
       const propsByDistrictType = (propsDiag?.byDistrictType && typeof propsDiag.byDistrictType === 'object') ? propsDiag.byDistrictType : null;
       const gp = ctx.input?.gameplay ?? {};

@@ -1,7 +1,7 @@
 {
   "version": 1,
   "generator": {
-    "generatorVersion": "0.89.0",
+    "generatorVersion": "0.90.0",
     "seed": 22,
     "deterministic": true
   },
@@ -37,7 +37,7 @@
     {
       "id": "4_buildings_structures",
       "status": "ok",
-      "diagnostics": 9,
+      "diagnostics": 11,
       "repairs": 0,
       "drops": 0
     },
@@ -1958,6 +1958,20 @@
     },
     {
       "severity": "info",
+      "code": "t23_5_attachment_skipped",
+      "stage": "4_buildings_structures",
+      "message": "no safe attachment placement (meso residue, ADR-005)",
+      "candidates": 0
+    },
+    {
+      "severity": "info",
+      "code": "t23_5_facade_blank",
+      "stage": "4_buildings_structures",
+      "message": "assigned blank facade sides (meso residue, ADR-005)",
+      "count": 6
+    },
+    {
+      "severity": "info",
       "code": "props_generated",
       "stage": "5_infrastructure_props",
       "message": "generated district props",
@@ -2876,7 +2890,7 @@
       "dividesPlate": true
     },
     "determinism": {
-      "generatorVersion": "0.89.0",
+      "generatorVersion": "0.90.0",
       "seed": 22,
       "deterministic": true
     },

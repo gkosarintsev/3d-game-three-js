@@ -2,11 +2,11 @@
   "file": "src/levels/level-16.json",
   "levelName": "level-16",
   "generator": {
-    "generatorVersion": "0.89.0",
+    "generatorVersion": "0.90.0",
     "seed": 16,
     "deterministic": true
   },
-  "reportHash": "a4df98d269982bc5d2c92296d56db0d59f265bb2a9af28170e484ea6e4a76369",
+  "reportHash": "09047e294a0f91642190590cb3fb52e96b084b6dc2b82cf014c204bc32f1b54d",
   "stages": 7,
   "summary": {
     "errors": 0,
@@ -27,8 +27,8 @@
       "districts": 44,
       "parcels": 2325,
       "reservedParcels": 550,
-      "buildings": 350,
-      "enterableBuildings": 72,
+      "buildings": 352,
+      "enterableBuildings": 73,
       "props": 370,
       "lights": 8,
       "rivers": 1,
@@ -99,7 +99,7 @@
     "gameplay": {
       "spawnToRoad": 0,
       "exitToRoad": 0,
-      "enterableShare": 0.205714,
+      "enterableShare": 0.207386,
       "enterableTarget": 0.2,
       "spawnDistrictType": "office",
       "exitDistrictType": "commercial",

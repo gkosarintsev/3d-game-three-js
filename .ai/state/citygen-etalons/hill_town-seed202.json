@@ -1,8 +1,8 @@
 {
   "profile": "hill_town",
   "seed": 202,
-  "generatorVersion": "0.89.0",
-  "reportHash": "cefc9ec08d6ba94da9722c5bc7fe0691cd099a4a61cd1ef27079dc9869178143",
+  "generatorVersion": "0.90.0",
+  "reportHash": "27cd26df49dae2d58cab5a8a494c06ae75b61997d21b2b50290d84919b512b2f",
   "summary": {
     "errors": 0,
     "warnings": 8,

@@ -2143,6 +2143,7 @@ export class JsonMap extends SurfaceField {
         if (!w.facade) continue;
         const face = this._outerFace(b, w);
         if (!face) continue;
+        if (this._isBlankFacade(b, face)) continue; // T23.5 (ADR-005)
         const buried = this._buriedRuns(b, face, cfg.offset);
         const line = face.coord + face.dir * cfg.offset;
         const hf = fnvMix(fnvMix(hb, Math.round(face.coord * 100)), face.axis === 'x' ? 1 : 2);
@@ -2212,6 +2213,7 @@ export class JsonMap extends SurfaceField {
         if (!w.facade) continue;
         const face = this._outerFace(b, w);
         if (!face || face.hi - face.lo < cfg.minRun) continue;
+        if (this._isBlankFacade(b, face)) continue; // T23.5 (ADR-005): глухой торец без окон/вывесок
         const buried = this._buriedRuns(b, face, cfg.offset);
         const line = face.coord + face.dir * cfg.offset;
         const hf = fnvMix(hb, Math.round(face.coord * 100) + (face.axis === 'x' ? 7 : 13));
@@ -2339,13 +2341,21 @@ export class JsonMap extends SurfaceField {
       coord = Math.abs(near - mine) >= Math.abs(far - mine) ? near : far;
       dir = coord === near ? -1 : 1;
     } else return null;
+    // T23.5 (ADR-005): сторона фасада в локальных осях footprint (до поворота)
+    const side = alongX ? (dir > 0 ? 'north' : 'south') : (dir > 0 ? 'east' : 'west');
     return {
-      axis: alongX ? 'x' : 'z', lo, hi, coord, dir,
+      axis: alongX ? 'x' : 'z', lo, hi, coord, dir, side,
       // квад лежит в XY и смотрит вдоль +Z: поворот вокруг Y выводит его нормаль
       // на нужную сторону. Точные ±1/0, а не cos(π/2) — матрицы пишутся руками
       c: dir < 0 ? (alongX ? -1 : 0) : (alongX ? 1 : 0),
       s: dir < 0 ? (alongX ? 0 : -1) : (alongX ? 0 : 1),
     };
+  }
+
+  /** T23.5: глухой фасад — окна не ставятся (ADR-005). */
+  _isBlankFacade(b, face) {
+    const sides = b?.facadeBlankSides;
+    return !!(face && Array.isArray(sides) && sides.length && sides.includes(face.side));
   }
 
   /** Есть ли план дома в точке его локальных осей (граница плана не считается). */

@@ -490,6 +490,19 @@ function minDistanceToRoadSegments(x, z, roadSegments = []) {
   return best;
 }
 
+function buildingCenter(b) {
+  const fp = Array.isArray(b?.footprint) ? b.footprint : [];
+  if (!fp.length) return null;
+  let sx = 0, sz = 0, n = 0;
+  for (const p of fp) {
+    const x = Number(p?.x ?? p?.[0]), z = Number(p?.z ?? p?.[2] ?? p?.[1]);
+    if (!Number.isFinite(x) || !Number.isFinite(z)) continue;
+    sx += x; sz += z; n++;
+  }
+  if (!n) return null;
+  return { x: sx / n, z: sz / n };
+}
+
 function footprintNearAnchors(fp, anchors = [], margin = 8) {
   const b = aabbOfFootprint(fp);
   for (const a of anchors) {
@@ -1466,6 +1479,142 @@ export function makeStage4() {
       const seedPlan = mix(ctx.meta.seed ?? 0, stageId);
       const roadSegmentsPlan = ctx.networks?.roads?.segments ?? [];
       const out = filtered;
+
+      // T23.5 (ADR-005): meso-chaos residue — глухие фасады (blank facades) на части зданий старых/плотных районов.
+      {
+        const oldCoreTypes = new Set(['old_town', 'historic', 'slums', 'irregular', 'mixed', 'residential']);
+        const blankRng = makeRng(mix(seedPlan, 't23_5_facade_blank'));
+        let blanked = 0;
+        for (const b of out) {
+          const dtype = String(b?.districtType || b?.type || '').toLowerCase();
+          if (!oldCoreTypes.has(dtype)) continue;
+          // детерминированно: ~20% зданий в целевых районах получают 1 глухой фасад
+          if (blankRng() > 0.2) continue;
+          const sides = ['north', 'south', 'east', 'west'];
+          const side = sides[Math.floor(blankRng() * sides.length) % sides.length];
+          const existing = Array.isArray(b.facadeBlankSides) ? b.facadeBlankSides : [];
+          const merged = [...new Set([...existing, side])].sort();
+          b.facadeBlankSides = merged;
+          blanked += 1;
+        }
+        if (blanked > 0) ctx.report.diagnostics.push(info('t23_5_facade_blank', stageId, 'assigned blank facade sides (meso residue, ADR-005)', { count: blanked }));
+      }
+
+      // T23.5 (ADR-005): пристройки/самострой — 1-2 малых attachment-здания в хаотичных/старых районах.
+      {
+        const chaosTypes = new Set(['old_town', 'historic', 'slums', 'irregular']);
+        const attRng = makeRng(mix(seedPlan, 't23_5_attachment'));
+        const districts = Array.isArray(ctx.districts) ? ctx.districts : [];
+        const districtById = new Map(districts.map(d => [d?.id, d]));
+        // кандидаты-хосты: в хаотичных/старых районах, не слишком близко к дорогам, axis-aligned footprint
+        const hosts = out.filter(b => {
+          const dtype = String(b?.districtType || districtById.get(b?.districtId)?.type || b?.district || '').toLowerCase();
+          if (!chaosTypes.has(dtype)) return false;
+          if (b?.rotation && Math.abs(+b.rotation) > 1e-6) return false; // T23.5: avoid rotation-mismatch conflicts (validator)
+          if (b?.attachment) return false;
+          const fp = b?.footprint;
+          if (!Array.isArray(fp) || fp.length < 4) return false;
+          const c = buildingCenter(b);
+          if (!c) return false;
+          const rd = minDistanceToRoadSegments(c.x, c.z, roadSegmentsPlan);
+          return Number.isFinite(rd) && rd >= 8; // есть двор/отступ для пристройки
+        }).sort((a, b) => String(a.id).localeCompare(String(b.id)));
+
+        const want = Math.min(2, hosts.length);
+        let made = 0;
+        // spatial-ish quick reject by existing building bounds
+        const bRects = out.map(b => {
+          const fp = b?.footprint || [];
+          if (!fp.length) return null;
+          return { minX: Math.min(...fp.map(p => p.x)), maxX: Math.max(...fp.map(p => p.x)), minZ: Math.min(...fp.map(p => p.z)), maxZ: Math.max(...fp.map(p => p.z)) };
+        }).filter(Boolean);
+        const rectsIntersectLoose = (a, r) => !(a.maxX <= r.minX || a.minX >= r.maxX || a.maxZ <= r.minZ || a.minZ >= r.maxZ);
+        const nearRoadMin = (fpRect) => {
+          const cx = (fpRect.minX + fpRect.maxX) / 2, cz = (fpRect.minZ + fpRect.maxZ) / 2;
+          return minDistanceToRoadSegments(cx, cz, roadSegmentsPlan);
+        };
+        for (let i = 0; i < hosts.length && made < want; i++) {
+          const host = hosts[Math.floor(attRng() * hosts.length) % hosts.length];
+          if (!host || host.__t23_att_used) continue;
+          const fp = host.footprint;
+          const minX = Math.min(...fp.map(p => p.x)), maxX = Math.max(...fp.map(p => p.x));
+          const minZ = Math.min(...fp.map(p => p.z)), maxZ = Math.max(...fp.map(p => p.z));
+          const w = Math.max(4, Math.min(6, (maxX - minX) * 0.35));
+          const d = Math.max(3.5, Math.min(5, (maxZ - minZ) * 0.3));
+          // пробуем приставить к одной из сторон (локальные стороны host bbox)
+          const sides = [
+            { x0: maxX, x1: maxX + w, z0: minZ + 0.5, z1: minZ + 0.5 + d }, // east
+            { x0: minX - w, x1: minX, z0: maxZ - 0.5 - d, z1: maxZ - 0.5 }, // west
+            { x0: minX + 0.5, x1: minX + 0.5 + w, z0: maxZ, z1: maxZ + d }, // north
+            { x0: maxX - 0.5 - w, x1: maxX - 0.5, z0: minZ - d, z1: minZ }, // south
+          ];
+          let placedAtt = null;
+          for (const s of sides) {
+            const ar = { minX: +s.x0.toFixed(3), maxX: +s.x1.toFixed(3), minZ: +s.z0.toFixed(3), maxZ: +s.z1.toFixed(3) };
+            if (ar.maxX - ar.minX < 3 || ar.maxZ - ar.minZ < 3) continue;
+            const cx = (ar.minX + ar.maxX) / 2, cz = (ar.minZ + ar.maxZ) / 2;
+            if (nearRoadMin(ar) < 3) continue; // §13.2 safety: min dist to road >= 3m
+            // не пересекать существующие здания (кроме касания к host по ребру допускаем малый зазор 0)
+            let hit = false;
+            for (const r of bRects) {
+              // conservative AABB overlap by area (not just edge touch)
+              const ox = Math.min(ar.maxX, r.maxX) - Math.max(ar.minX, r.minX);
+              const oz = Math.min(ar.maxZ, r.maxZ) - Math.max(ar.minZ, r.minZ);
+              if (ox > 0.02 && oz > 0.02) { hit = true; break; }
+            }
+            if (hit) continue;
+            // avoid water/river easements roughly via terrain/build masks if available
+            const rivers = ctx.masks?.easement?.rivers ?? ctx.hydrology?.rivers ?? [];
+            const lakes = ctx.masks?.easement?.lakes ?? [];
+            const fpPoly = [{x:ar.minX,z:ar.minZ},{x:ar.maxX,z:ar.minZ},{x:ar.maxX,z:ar.maxZ},{x:ar.minX,z:ar.maxZ}];
+            if (footprintIntersectsRiver(fpPoly, rivers, null, null) || footprintIntersectsLake(fpPoly, lakes)) continue;
+            placedAtt = ar;
+            break;
+          }
+          if (!placedAtt) continue;
+          const attId = `b_att_${String(made + 1)}`;
+          // avoid id collision
+          if (out.some(b => b.id === attId)) continue;
+          host.__t23_att_used = true;
+          const attFp = [
+            { x: placedAtt.minX, z: placedAtt.minZ },
+            { x: placedAtt.maxX, z: placedAtt.minZ },
+            { x: placedAtt.maxX, z: placedAtt.maxZ },
+            { x: placedAtt.minX, z: placedAtt.maxZ },
+          ];
+          const floors = 1;
+          const fh = 3.2;
+          out.push({
+            id: attId,
+            name: `Пристройка ${made + 1}`,
+            isEnterable: false,
+            floorsCount: floors,
+            floorHeight: fh,
+            foundation: host.foundation || 'terrain',
+            facadeMaterial: host.facadeMaterial || 'concrete',
+            wallColor: host.wallColor,
+            houseKind: host.houseKind || 'annex',
+            buildingType: host.buildingType || 'annex',
+            district: host.district,
+            districtType: host.districtType,
+            windowDensity: 1,
+            windowScale: 0.9,
+            footprint: attFp,
+            roofMaterial: host.roofMaterial || 'bitumen',
+            roofColor: host.roofColor,
+            roof: { walkable: false, parapet: 0 },
+            rooms: [],
+            stairs: [],
+            attachment: { hostId: host.id, offset: { x: +((placedAtt.minX + placedAtt.maxX) / 2 - (minX + maxX) / 2).toFixed(3), z: +((placedAtt.minZ + placedAtt.maxZ) / 2 - (minZ + maxZ) / 2).toFixed(3) } },
+          });
+          bRects.push(placedAtt);
+          made += 1;
+        }
+        // cleanup temp flags
+        for (const b of out) delete b.__t23_att_used;
+        if (made > 0) ctx.report.diagnostics.push(info('t23_5_attachment', stageId, 'added attachment/self-build buildings (meso residue, ADR-005)', { count: made }));
+        else ctx.report.diagnostics.push(info('t23_5_attachment_skipped', stageId, 'no safe attachment placement (meso residue, ADR-005)', { candidates: hosts.length }));
+      }
       // R4.2 §9.4/§6.6: floors distribution & neighbour contrast.
       // L-modulation: higher landValue -> taller (bounded), then adjacency clamp for built-floors contrast <= 2.5x,
       // exempting green seams (park/forest/parking/sports) as §10 relief, then 5-8 dominants per city (one per high-L district, capped/filled 2026-11-19).

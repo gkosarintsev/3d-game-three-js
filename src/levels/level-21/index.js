@@ -106,7 +106,7 @@ export const LEVEL_21 = {
         "file": "chunk-1-0.l14b",
         "id": "1_0",
         "objects": {
-          "buildings": 164,
+          "buildings": 166,
           "channels": 2,
           "lights": 2,
           "props": 148,
