@@ -1,0 +1,3433 @@
+{
+  "version": 1,
+  "generator": {
+    "generatorVersion": "0.90.0",
+    "seed": 38,
+    "deterministic": true
+  },
+  "stages": [
+    {
+      "id": "0_input_space",
+      "status": "ok",
+      "diagnostics": 1,
+      "repairs": 0,
+      "drops": 0
+    },
+    {
+      "id": "1_landscape_hydrology",
+      "status": "ok",
+      "diagnostics": 8,
+      "repairs": 0,
+      "drops": 0
+    },
+    {
+      "id": "2_transport",
+      "status": "ok",
+      "diagnostics": 94,
+      "repairs": 0,
+      "drops": 0
+    },
+    {
+      "id": "3_districts_parcels",
+      "status": "ok",
+      "diagnostics": 22,
+      "repairs": 0,
+      "drops": 0
+    },
+    {
+      "id": "4_buildings_structures",
+      "status": "ok",
+      "diagnostics": 10,
+      "repairs": 0,
+      "drops": 0
+    },
+    {
+      "id": "5_infrastructure_props",
+      "status": "ok",
+      "diagnostics": 4,
+      "repairs": 0,
+      "drops": 0
+    },
+    {
+      "id": "6_finalize_emit",
+      "status": "ok",
+      "diagnostics": 36,
+      "repairs": 21,
+      "drops": 1
+    }
+  ],
+  "districts": [
+    {
+      "id": "district_0_0_0",
+      "type": "office",
+      "profileId": "office",
+      "era": "xix",
+      "style": "era_xix",
+      "landValue": 0.5044,
+      "buildingDensity": 0.8,
+      "heightRange": [
+        3,
+        12
+      ],
+      "pressure": 0.475,
+      "targetB": 149.7,
+      "frame": {
+        "cx": -170.7,
+        "cz": -170.7,
+        "yaw": 90,
+        "reason": "slope"
+      },
+      "cells": 0,
+      "parcels": 18,
+      "reservedParcels": 10
+    },
+    {
+      "id": "district_0_0_1",
+      "type": "office",
+      "profileId": "office",
+      "era": "xix",
+      "style": "era_xix",
+      "landValue": 0.3497,
+      "buildingDensity": 0.8,
+      "heightRange": [
+        3,
+        12
+      ],
+      "pressure": 0.525,
+      "targetB": 140.6,
+      "frame": {
+        "cx": -170.7,
+        "cz": -170.7,
+        "yaw": 90,
+        "reason": "slope"
+      },
+      "cells": 0,
+      "parcels": 12,
+      "reservedParcels": 2
+    },
+    {
+      "id": "district_0_1",
+      "type": "industrial",
+      "profileId": "industrial",
+      "era": "industrial",
+      "style": "era_industrial",
+      "landValue": 0.3945,
+      "buildingDensity": 0.3,
+      "heightRange": [
+        1,
+        4
+      ],
+      "pressure": 0.1969,
+      "targetB": 205.5,
+      "frame": {
+        "cx": -170.7,
+        "cz": 0,
+        "yaw": 45,
+        "reason": "slope"
+      },
+      "cells": 1,
+      "parcels": 16,
+      "reservedParcels": 0
+    },
+    {
+      "id": "district_0_2_0",
+      "type": "commercial",
+      "profileId": "commercial",
+      "era": "modern",
+      "style": "era_modern",
+      "landValue": 0.4862,
+      "buildingDensity": 0.65,
+      "heightRange": [
+        3,
+        20
+      ],
+      "pressure": 0.5672,
+      "targetB": 132.9,
+      "frame": {
+        "cx": -170.7,
+        "cz": 170.7,
+        "yaw": 135,
+        "reason": "slope"
+      },
+      "cells": 0,
+      "parcels": 28,
+      "reservedParcels": 2
+    },
+    {
+      "id": "district_0_2_1",
+      "type": "commercial",
+      "profileId": "commercial",
+      "era": "modern",
+      "style": "era_modern",
+      "landValue": 0.3926,
+      "buildingDensity": 0.65,
+      "heightRange": [
+        3,
+        20
+      ],
+      "pressure": 0.4672,
+      "targetB": 151.2,
+      "frame": {
+        "cx": -170.7,
+        "cz": 170.7,
+        "yaw": 135,
+        "reason": "slope"
+      },
+      "cells": 0,
+      "parcels": 21,
+      "reservedParcels": 5
+    },
+    {
+      "id": "district_1_0_0",
+      "type": "residential",
+      "profileId": "residential",
+      "era": "xix",
+      "style": "era_xix",
+      "landValue": 0.3729,
+      "buildingDensity": 0.45,
+      "heightRange": [
+        2,
+        9
+      ],
+      "pressure": 0.5047,
+      "targetB": 144.3,
+      "frame": {
+        "cx": 0,
+        "cz": -170.7,
+        "yaw": 135,
+        "reason": "slope"
+      },
+      "cells": 0,
+      "parcels": 40,
+      "reservedParcels": 20
+    },
+    {
+      "id": "district_1_0_1",
+      "type": "residential",
+      "profileId": "residential",
+      "era": "medieval",
+      "style": "era_medieval",
+      "landValue": 0.4852,
+      "buildingDensity": 0.45,
+      "heightRange": [
+        2,
+        9
+      ],
+      "pressure": 0.5047,
+      "targetB": 144.3,
+      "frame": {
+        "cx": 0,
+        "cz": -170.7,
+        "yaw": 135,
+        "reason": "slope"
+      },
+      "cells": 0,
+      "parcels": 24,
+      "reservedParcels": 14
+    },
+    {
+      "id": "district_1_1_0",
+      "type": "slums",
+      "profileId": "slums",
+      "era": "xix",
+      "style": "era_xix",
+      "landValue": 0.345,
+      "buildingDensity": 0.55,
+      "heightRange": [
+        1,
+        4
+      ],
+      "pressure": 0.2359,
+      "targetB": 197,
+      "frame": null,
+      "cells": 0,
+      "parcels": 66,
+      "reservedParcels": 3
+    },
+    {
+      "id": "district_1_1_1",
+      "type": "slums",
+      "profileId": "slums",
+      "era": "medieval",
+      "style": "era_medieval",
+      "landValue": 0.4273,
+      "buildingDensity": 0.55,
+      "heightRange": [
+        1,
+        4
+      ],
+      "pressure": 0.4359,
+      "targetB": 157.1,
+      "frame": null,
+      "cells": 0,
+      "parcels": 44,
+      "reservedParcels": 22
+    },
+    {
+      "id": "district_1_2",
+      "type": "market",
+      "profileId": "market",
+      "era": "modern",
+      "style": "era_modern",
+      "landValue": 0.3874,
+      "buildingDensity": 0.63,
+      "heightRange": [
+        1,
+        3
+      ],
+      "pressure": 0.2288,
+      "targetB": 198.5,
+      "frame": {
+        "cx": 0,
+        "cz": 170.7,
+        "yaw": 0,
+        "reason": "slope"
+      },
+      "cells": 1,
+      "parcels": 49,
+      "reservedParcels": 7
+    },
+    {
+      "id": "district_2_0",
+      "type": "park",
+      "profileId": "park",
+      "era": "industrial",
+      "style": "era_industrial",
+      "landValue": 0.5444,
+      "buildingDensity": 0.03,
+      "heightRange": [
+        0,
+        1
+      ],
+      "pressure": 0.3509,
+      "targetB": 173.5,
+      "frame": {
+        "cx": 170.7,
+        "cz": -170.7,
+        "yaw": -45,
+        "reason": "slope"
+      },
+      "cells": 0,
+      "parcels": 16,
+      "reservedParcels": 16
+    },
+    {
+      "id": "district_2_1_0",
+      "type": "residential",
+      "profileId": "residential",
+      "era": "xix",
+      "style": "era_xix",
+      "landValue": 0.4749,
+      "buildingDensity": 0.45,
+      "heightRange": [
+        2,
+        9
+      ],
+      "pressure": 0.5047,
+      "targetB": 144.3,
+      "frame": {
+        "cx": 170.7,
+        "cz": 0,
+        "yaw": 90,
+        "reason": "slope"
+      },
+      "cells": 0,
+      "parcels": 32,
+      "reservedParcels": 30
+    },
+    {
+      "id": "district_2_1_1",
+      "type": "residential",
+      "profileId": "residential",
+      "era": "suburb",
+      "style": "era_suburb",
+      "landValue": 0.4229,
+      "buildingDensity": 0.45,
+      "heightRange": [
+        2,
+        9
+      ],
+      "pressure": 0.3047,
+      "targetB": 182.7,
+      "frame": {
+        "cx": 170.7,
+        "cz": 0,
+        "yaw": 90,
+        "reason": "slope"
+      },
+      "cells": 0,
+      "parcels": 32,
+      "reservedParcels": 32
+    },
+    {
+      "id": "district_2_2",
+      "type": "parking",
+      "profileId": "parking",
+      "era": "modern",
+      "style": "era_modern",
+      "landValue": 0.5304,
+      "buildingDensity": 0.08,
+      "heightRange": [
+        1,
+        2
+      ],
+      "pressure": 0.1575,
+      "targetB": 214.4,
+      "frame": {
+        "cx": 170.7,
+        "cz": 170.7,
+        "yaw": -135,
+        "reason": "slope"
+      },
+      "cells": 1,
+      "parcels": 16,
+      "reservedParcels": 16
+    }
+  ],
+  "diagnostics": [
+    {
+      "severity": "warn",
+      "code": "road_slope_over_class_policy",
+      "stage": "2_transport",
+      "message": "road segments exceed class slope policy (policies.slopeLimitPct)",
+      "segments": 2,
+      "maxSlope": 0.3,
+      "policy": {
+        "highway": 6,
+        "arterial": 8,
+        "collector": 10,
+        "local": 12
+      }
+    },
+    {
+      "severity": "warn",
+      "code": "segment_self_intersection",
+      "stage": "2_transport",
+      "message": "segment 'tr_gb_29' has self-intersecting path",
+      "id": "tr_gb_29"
+    },
+    {
+      "severity": "warn",
+      "code": "segment_self_intersection",
+      "stage": "2_transport",
+      "message": "segment 'tr_gb_69' has self-intersecting path",
+      "id": "tr_gb_69"
+    },
+    {
+      "severity": "warn",
+      "code": "park_share_over_max_kept_diversity",
+      "stage": "3_districts_parcels",
+      "message": "park share above profile max kept to preserve type diversity",
+      "after": 0.1111,
+      "max": 0.08
+    },
+    {
+      "severity": "warn",
+      "code": "road_same_level_conflict",
+      "stage": "6_finalize_emit",
+      "message": "detected 53 same-layer road crossing conflict(s) without shared junction",
+      "count": 53
+    },
+    {
+      "severity": "info",
+      "code": "profile_mutation",
+      "stage": "0_input_space",
+      "message": "profile mutation applied (+-20%, deterministic)",
+      "delta": 0.2,
+      "enabled": false,
+      "features": [
+        "industrial_waterfront"
+      ]
+    },
+    {
+      "severity": "info",
+      "code": "stage_ok",
+      "stage": "0_input_space",
+      "message": "stage 0_input_space completed"
+    },
+    {
+      "severity": "info",
+      "code": "core_candidates_marked",
+      "stage": "1_landscape_hydrology",
+      "message": "marked 2 candidate core point(s) (downtown/secondary)",
+      "count": 2,
+      "roles": [
+        "downtown",
+        "secondary"
+      ]
+    },
+    {
+      "severity": "info",
+      "code": "historical_crossings_marked",
+      "stage": "1_landscape_hydrology",
+      "message": "marked 6 historical crossing candidate(s)",
+      "count": 6
+    },
+    {
+      "severity": "info",
+      "code": "landscape_generated",
+      "stage": "1_landscape_hydrology",
+      "message": "stage 1 generated terrain/hydrology from generator.landscape",
+      "modifiers": 5,
+      "rivers": 2,
+      "seed": 3254597627
+    },
+    {
+      "severity": "info",
+      "code": "stage_ok",
+      "stage": "1_landscape_hydrology",
+      "message": "stage 1_landscape_hydrology completed"
+    },
+    {
+      "severity": "info",
+      "code": "terrain_landmarks_marked",
+      "stage": "1_landscape_hydrology",
+      "message": "marked 6 landmark/orientation point(s)",
+      "count": 6
+    },
+    {
+      "severity": "info",
+      "code": "terrain_reservations_marked",
+      "stage": "1_landscape_hydrology",
+      "message": "reserved 5 flat site candidate(s)",
+      "count": 5
+    },
+    {
+      "severity": "info",
+      "code": "terrain_slope_analysis",
+      "stage": "1_landscape_hydrology",
+      "message": "terrain slope analysis computed",
+      "step": 16,
+      "grid": 32,
+      "maxSlope": 0.168561,
+      "share": {
+        "flat_lt3": 0.037109,
+        "gentle_3_8": 0.355469,
+        "moderate_8_15": 0.550781,
+        "steep_15_25": 0.056641,
+        "very_steep_gt25": 0
+      }
+    },
+    {
+      "severity": "info",
+      "code": "terrain_water_buffers_marked",
+      "stage": "1_landscape_hydrology",
+      "message": "marked 2 water buffer zone(s)",
+      "count": 2
+    },
+    {
+      "severity": "info",
+      "code": "junctions_derived",
+      "stage": "2_transport",
+      "message": "derived 17 junction(s) per §8.1 rules",
+      "total": 17,
+      "byType": {
+        "uncontrolled": 16,
+        "signalized": 1
+      },
+      "movements": {
+        "right": 168,
+        "left": 168,
+        "straight": 472
+      },
+      "uturn": 0
+    },
+    {
+      "severity": "info",
+      "code": "road_graph",
+      "stage": "2_transport",
+      "message": "road graph summary",
+      "nodes": 72,
+      "segments": 98,
+      "components": 1
+    },
+    {
+      "severity": "info",
+      "code": "stage_ok",
+      "stage": "2_transport",
+      "message": "stage 2_transport completed"
+    },
+    {
+      "severity": "info",
+      "code": "t23_4_chamfer_excluded",
+      "stage": "2_transport",
+      "message": "chamfered corners excluded: no honest axis-aligned IR realization (ADR-004, replacement: косые районы)",
+      "adr": "docs/architecture/adr/ADR-004-t234-macro-residue-chamfer-exclusion.md",
+      "replacement": "косые районы"
+    },
+    {
+      "severity": "info",
+      "code": "t23_4_diagonal_cut",
+      "stage": "2_transport",
+      "message": "applied diagonal street cut through fabric (stable intersections)",
+      "candidate": 45,
+      "splitSegments": 0,
+      "intersections": 2,
+      "diagonalSegments": 1,
+      "fabricConnections": 2
+    },
+    {
+      "severity": "info",
+      "code": "t23_4_plaza_valve",
+      "stage": "2_transport",
+      "message": "planned plaza-valve(s) at high-degree junction nodes (emitted via stage-5)",
+      "count": 2,
+      "nodes": [
+        {
+          "id": "tr_gn_10",
+          "degree": 25,
+          "x": -200,
+          "z": -136
+        },
+        {
+          "id": "tr_gn_50",
+          "degree": 5,
+          "x": 42,
+          "z": -152
+        }
+      ],
+      "props": 18
+    },
+    {
+      "severity": "info",
+      "code": "transport_branch",
+      "stage": "2_transport",
+      "message": "added connected terrain-following branch",
+      "id": "tr_gb_7",
+      "from": "tr_n_spawn",
+      "to": "tr_gn_7",
+      "tag": "p0"
+    },
+    {
+      "severity": "info",
+      "code": "transport_branch",
+      "stage": "2_transport",
+      "message": "added connected terrain-following branch",
+      "id": "tr_gb_8",
+      "from": "tr_n_spawn",
+      "to": "tr_gn_8",
+      "tag": "p0"
+    },
+    {
+      "severity": "info",
+      "code": "transport_branch",
+      "stage": "2_transport",
+      "message": "added connected terrain-following branch",
+      "id": "tr_gb_9",
+      "from": "tr_n_spawn",
+      "to": "tr_gn_9",
+      "tag": "p0"
+    },
+    {
+      "severity": "info",
+      "code": "transport_branch",
+      "stage": "2_transport",
+      "message": "added connected terrain-following branch",
+      "id": "tr_gb_10",
+      "from": "tr_n_spawn",
+      "to": "tr_gn_10",
+      "tag": "p0"
+    },
+    {
+      "severity": "info",
+      "code": "transport_branch",
+      "stage": "2_transport",
+      "message": "added connected terrain-following branch",
+      "id": "tr_gb_11",
+      "from": "tr_n_spawn",
+      "to": "tr_gn_11",
+      "tag": "p0"
+    },
+    {
+      "severity": "info",
+      "code": "transport_branch",
+      "stage": "2_transport",
+      "message": "added connected terrain-following branch",
+      "id": "tr_gb_12",
+      "from": "tr_n_spawn",
+      "to": "tr_gn_12",
+      "tag": "p0"
+    },
+    {
+      "severity": "info",
+      "code": "transport_branch",
+      "stage": "2_transport",
+      "message": "added connected terrain-following branch",
+      "id": "tr_gb_13",
+      "from": "tr_n_spawn",
+      "to": "tr_gn_13",
+      "tag": "p0"
+    },
+    {
+      "severity": "info",
+      "code": "transport_branch",
+      "stage": "2_transport",
+      "message": "added connected terrain-following branch",
+      "id": "tr_gb_14",
+      "from": "tr_n_spawn",
+      "to": "tr_gn_14",
+      "tag": "p0"
+    },
+    {
+      "severity": "info",
+      "code": "transport_branch",
+      "stage": "2_transport",
+      "message": "added connected terrain-following branch",
+      "id": "tr_gb_15",
+      "from": "tr_n_spawn",
+      "to": "tr_gn_15",
+      "tag": "p0"
+    },
+    {
+      "severity": "info",
+      "code": "transport_branch",
+      "stage": "2_transport",
+      "message": "added connected terrain-following branch",
+      "id": "tr_gb_16",
+      "from": "tr_n_spawn",
+      "to": "tr_gn_16",
+      "tag": "p0"
+    },
+    {
+      "severity": "info",
+      "code": "transport_branch",
+      "stage": "2_transport",
+      "message": "added connected terrain-following branch",
+      "id": "tr_gb_17",
+      "from": "tr_n_spawn",
+      "to": "tr_gn_17",
+      "tag": "p0"
+    },
+    {
+      "severity": "info",
+      "code": "transport_branch",
+      "stage": "2_transport",
+      "message": "added connected terrain-following branch",
+      "id": "tr_gb_18",
+      "from": "tr_n_spawn",
+      "to": "tr_gn_18",
+      "tag": "p0"
+    },
+    {
+      "severity": "info",
+      "code": "transport_branch",
+      "stage": "2_transport",
+      "message": "added connected terrain-following branch",
+      "id": "tr_gb_23",
+      "from": "tr_sp1_n",
+      "to": "tr_gn_23",
+      "tag": "p0"
+    },
+    {
+      "severity": "info",
+      "code": "transport_branch",
+      "stage": "2_transport",
+      "message": "added connected terrain-following branch",
+      "id": "tr_gb_24",
+      "from": "tr_sp1_n",
+      "to": "tr_gn_24",
+      "tag": "p0"
+    },
+    {
+      "severity": "info",
+      "code": "transport_branch",
+      "stage": "2_transport",
+      "message": "added connected terrain-following branch",
+      "id": "tr_gb_25",
+      "from": "tr_sp1_n",
+      "to": "tr_gn_25",
+      "tag": "p0"
+    },
+    {
+      "severity": "info",
+      "code": "transport_branch",
+      "stage": "2_transport",
+      "message": "added connected terrain-following branch",
+      "id": "tr_gb_26",
+      "from": "tr_sp1_n",
+      "to": "tr_gn_26",
+      "tag": "p0"
+    },
+    {
+      "severity": "info",
+      "code": "transport_branch",
+      "stage": "2_transport",
+      "message": "added connected terrain-following branch",
+      "id": "tr_gb_27",
+      "from": "tr_sp1_n",
+      "to": "tr_gn_27",
+      "tag": "p0"
+    },
+    {
+      "severity": "info",
+      "code": "transport_branch",
+      "stage": "2_transport",
+      "message": "added connected terrain-following branch",
+      "id": "tr_gb_28",
+      "from": "tr_sp1_n",
+      "to": "tr_gn_28",
+      "tag": "p0"
+    },
+    {
+      "severity": "info",
+      "code": "transport_branch",
+      "stage": "2_transport",
+      "message": "added connected terrain-following branch",
+      "id": "tr_gb_39",
+      "from": "tr_sp2_n",
+      "to": "tr_gn_39",
+      "tag": "p0"
+    },
+    {
+      "severity": "info",
+      "code": "transport_branch",
+      "stage": "2_transport",
+      "message": "added connected terrain-following branch",
+      "id": "tr_gb_40",
+      "from": "tr_sp2_n",
+      "to": "tr_gn_40",
+      "tag": "p0"
+    },
+    {
+      "severity": "info",
+      "code": "transport_branch",
+      "stage": "2_transport",
+      "message": "added connected terrain-following branch",
+      "id": "tr_gb_41",
+      "from": "tr_sp2_n",
+      "to": "tr_gn_41",
+      "tag": "p0"
+    },
+    {
+      "severity": "info",
+      "code": "transport_branch",
+      "stage": "2_transport",
+      "message": "added connected terrain-following branch",
+      "id": "tr_gb_42",
+      "from": "tr_sp2_n",
+      "to": "tr_gn_42",
+      "tag": "p0"
+    },
+    {
+      "severity": "info",
+      "code": "transport_branch",
+      "stage": "2_transport",
+      "message": "added connected terrain-following branch",
+      "id": "tr_gb_43",
+      "from": "tr_sp2_n",
+      "to": "tr_gn_43",
+      "tag": "p0"
+    },
+    {
+      "severity": "info",
+      "code": "transport_branch",
+      "stage": "2_transport",
+      "message": "added connected terrain-following branch",
+      "id": "tr_gb_44",
+      "from": "tr_sp2_n",
+      "to": "tr_gn_44",
+      "tag": "p0"
+    },
+    {
+      "severity": "info",
+      "code": "transport_branch_l",
+      "stage": "2_transport",
+      "message": "added connected terrain-following L branch",
+      "from": "tr_n_spawn",
+      "to": "tr_gn_20",
+      "via": "tr_gn_19",
+      "tag": "lp0"
+    },
+    {
+      "severity": "info",
+      "code": "transport_branch_l",
+      "stage": "2_transport",
+      "message": "added connected terrain-following L branch",
+      "from": "tr_n_spawn",
+      "to": "tr_gn_21",
+      "via": "tr_gn_7",
+      "tag": "lp0"
+    },
+    {
+      "severity": "info",
+      "code": "transport_branch_l",
+      "stage": "2_transport",
+      "message": "added connected terrain-following L branch",
+      "from": "tr_n_spawn",
+      "to": "tr_gn_22",
+      "via": "tr_gn_9",
+      "tag": "lp0"
+    },
+    {
+      "severity": "info",
+      "code": "transport_branch_l",
+      "stage": "2_transport",
+      "message": "added connected terrain-following L branch",
+      "from": "tr_sp1_n",
+      "to": "tr_gn_30",
+      "via": "tr_gn_29",
+      "tag": "lp0"
+    },
+    {
+      "severity": "info",
+      "code": "transport_branch_l",
+      "stage": "2_transport",
+      "message": "added connected terrain-following L branch",
+      "from": "tr_sp1_n",
+      "to": "tr_gn_32",
+      "via": "tr_gn_31",
+      "tag": "lp0"
+    },
+    {
+      "severity": "info",
+      "code": "transport_branch_l",
+      "stage": "2_transport",
+      "message": "added connected terrain-following L branch",
+      "from": "tr_sp1_n",
+      "to": "tr_gn_34",
+      "via": "tr_gn_33",
+      "tag": "lp0"
+    },
+    {
+      "severity": "info",
+      "code": "transport_branch_l",
+      "stage": "2_transport",
+      "message": "added connected terrain-following L branch",
+      "from": "tr_sp1_n",
+      "to": "tr_gn_36",
+      "via": "tr_gn_35",
+      "tag": "lp0"
+    },
+    {
+      "severity": "info",
+      "code": "transport_branch_l",
+      "stage": "2_transport",
+      "message": "added connected terrain-following L branch",
+      "from": "tr_sp1_n",
+      "to": "tr_gn_38",
+      "via": "tr_gn_37",
+      "tag": "lp0"
+    },
+    {
+      "severity": "info",
+      "code": "transport_bridge_profiled",
+      "stage": "2_transport",
+      "message": "segment crossing river 'river_1' bridged (deck 10.89m)",
+      "river": "river_1",
+      "deckH": 10.886788790384944
+    },
+    {
+      "severity": "info",
+      "code": "transport_connector",
+      "stage": "2_transport",
+      "message": "added terrain-following connector between existing nodes",
+      "id": "tr_gc_45",
+      "from": "tr_gn_10",
+      "to": "tr_gn_11"
+    },
+    {
+      "severity": "info",
+      "code": "transport_connector",
+      "stage": "2_transport",
+      "message": "added terrain-following connector between existing nodes",
+      "id": "tr_gc_46",
+      "from": "tr_gn_10",
+      "to": "tr_gn_12"
+    },
+    {
+      "severity": "info",
+      "code": "transport_connector",
+      "stage": "2_transport",
+      "message": "added terrain-following connector between existing nodes",
+      "id": "tr_gc_47",
+      "from": "tr_gn_10",
+      "to": "tr_gn_15"
+    },
+    {
+      "severity": "info",
+      "code": "transport_connector",
+      "stage": "2_transport",
+      "message": "added terrain-following connector between existing nodes",
+      "id": "tr_gc_48",
+      "from": "tr_gn_10",
+      "to": "tr_gn_16"
+    },
+    {
+      "severity": "info",
+      "code": "transport_connector",
+      "stage": "2_transport",
+      "message": "added terrain-following connector between existing nodes",
+      "id": "tr_gc_49",
+      "from": "tr_gn_10",
+      "to": "tr_gn_19"
+    },
+    {
+      "severity": "info",
+      "code": "transport_connector",
+      "stage": "2_transport",
+      "message": "added terrain-following connector between existing nodes",
+      "id": "tr_gc_50",
+      "from": "tr_gn_10",
+      "to": "tr_gn_20"
+    },
+    {
+      "severity": "info",
+      "code": "transport_connector",
+      "stage": "2_transport",
+      "message": "added terrain-following connector between existing nodes",
+      "id": "tr_gc_51",
+      "from": "tr_gn_10",
+      "to": "tr_gn_21"
+    },
+    {
+      "severity": "info",
+      "code": "transport_connector",
+      "stage": "2_transport",
+      "message": "added terrain-following connector between existing nodes",
+      "id": "tr_gc_52",
+      "from": "tr_gn_10",
+      "to": "tr_gn_22"
+    },
+    {
+      "severity": "info",
+      "code": "transport_connector",
+      "stage": "2_transport",
+      "message": "added terrain-following connector between existing nodes",
+      "id": "tr_gc_53",
+      "from": "tr_gn_10",
+      "to": "tr_gn_23"
+    },
+    {
+      "severity": "info",
+      "code": "transport_connector",
+      "stage": "2_transport",
+      "message": "added terrain-following connector between existing nodes",
+      "id": "tr_gc_54",
+      "from": "tr_gn_10",
+      "to": "tr_gn_24"
+    },
+    {
+      "severity": "info",
+      "code": "transport_connector",
+      "stage": "2_transport",
+      "message": "added terrain-following connector between existing nodes",
+      "id": "tr_gc_55",
+      "from": "tr_gn_10",
+      "to": "tr_gn_25"
+    },
+    {
+      "severity": "info",
+      "code": "transport_connector",
+      "stage": "2_transport",
+      "message": "added terrain-following connector between existing nodes",
+      "id": "tr_gc_56",
+      "from": "tr_gn_10",
+      "to": "tr_gn_26"
+    },
+    {
+      "severity": "info",
+      "code": "transport_connector",
+      "stage": "2_transport",
+      "message": "added terrain-following connector between existing nodes",
+      "id": "tr_gc_57",
+      "from": "tr_gn_10",
+      "to": "tr_gn_28"
+    },
+    {
+      "severity": "info",
+      "code": "transport_connector",
+      "stage": "2_transport",
+      "message": "added terrain-following connector between existing nodes",
+      "id": "tr_gc_58",
+      "from": "tr_gn_10",
+      "to": "tr_gn_32"
+    },
+    {
+      "severity": "info",
+      "code": "transport_connector",
+      "stage": "2_transport",
+      "message": "added terrain-following connector between existing nodes",
+      "id": "tr_gc_59",
+      "from": "tr_gn_10",
+      "to": "tr_gn_34"
+    },
+    {
+      "severity": "info",
+      "code": "transport_connector",
+      "stage": "2_transport",
+      "message": "added terrain-following connector between existing nodes",
+      "id": "tr_gc_60",
+      "from": "tr_gn_10",
+      "to": "tr_gn_36"
+    },
+    {
+      "severity": "info",
+      "code": "transport_connector",
+      "stage": "2_transport",
+      "message": "added terrain-following connector between existing nodes",
+      "id": "tr_gc_61",
+      "from": "tr_gn_10",
+      "to": "tr_gn_37"
+    },
+    {
+      "severity": "info",
+      "code": "transport_connector",
+      "stage": "2_transport",
+      "message": "added terrain-following connector between existing nodes",
+      "id": "tr_gc_62",
+      "from": "tr_gn_10",
+      "to": "tr_gn_39"
+    },
+    {
+      "severity": "info",
+      "code": "transport_connector",
+      "stage": "2_transport",
+      "message": "added terrain-following connector between existing nodes",
+      "id": "tr_gc_63",
+      "from": "tr_gn_10",
+      "to": "tr_gn_40"
+    },
+    {
+      "severity": "info",
+      "code": "transport_connector",
+      "stage": "2_transport",
+      "message": "added terrain-following connector between existing nodes",
+      "id": "tr_gc_64",
+      "from": "tr_gn_10",
+      "to": "tr_gn_41"
+    },
+    {
+      "severity": "info",
+      "code": "transport_connector",
+      "stage": "2_transport",
+      "message": "added terrain-following connector between existing nodes",
+      "id": "tr_gc_65",
+      "from": "tr_gn_10",
+      "to": "tr_gn_42"
+    },
+    {
+      "severity": "info",
+      "code": "transport_connector",
+      "stage": "2_transport",
+      "message": "added terrain-following connector between existing nodes",
+      "id": "tr_gc_66",
+      "from": "tr_gn_10",
+      "to": "tr_gn_43"
+    },
+    {
+      "severity": "info",
+      "code": "transport_connector",
+      "stage": "2_transport",
+      "message": "added terrain-following connector between existing nodes",
+      "id": "tr_gc_67",
+      "from": "tr_gn_10",
+      "to": "tr_gn_44"
+    },
+    {
+      "severity": "info",
+      "code": "transport_connector",
+      "stage": "2_transport",
+      "message": "added terrain-following connector between existing nodes",
+      "id": "tr_gc_68",
+      "from": "tr_gn_10",
+      "to": "tr_gn_7"
+    },
+    {
+      "severity": "info",
+      "code": "transport_coverage_branch",
+      "stage": "2_transport",
+      "message": "added coverage branch toward underserved area",
+      "id": "tr_gb_71",
+      "target": {
+        "x": 170.67,
+        "z": 0
+      },
+      "tag": "c0",
+      "from": "tr_gn_30"
+    },
+    {
+      "severity": "info",
+      "code": "transport_coverage_branch",
+      "stage": "2_transport",
+      "message": "added coverage branch toward underserved area",
+      "id": "tr_gb_72",
+      "target": {
+        "x": 170.67,
+        "z": 0
+      },
+      "tag": "c0",
+      "from": "tr_gn_47"
+    },
+    {
+      "severity": "info",
+      "code": "transport_coverage_branch",
+      "stage": "2_transport",
+      "message": "added coverage branch toward underserved area",
+      "id": "tr_gb_73",
+      "target": {
+        "x": 170.67,
+        "z": 0
+      },
+      "tag": "c0",
+      "from": "tr_gn_48"
+    },
+    {
+      "severity": "info",
+      "code": "transport_coverage_branch",
+      "stage": "2_transport",
+      "message": "added coverage branch toward underserved area",
+      "id": "tr_gb_74",
+      "target": {
+        "x": 170.67,
+        "z": -170.67
+      },
+      "tag": "c0",
+      "from": "tr_gn_47"
+    },
+    {
+      "severity": "info",
+      "code": "transport_coverage_branch",
+      "stage": "2_transport",
+      "message": "added coverage branch toward underserved area",
+      "id": "tr_gb_75",
+      "target": {
+        "x": 170.67,
+        "z": -170.67
+      },
+      "tag": "c0",
+      "from": "tr_gn_50"
+    },
+    {
+      "severity": "info",
+      "code": "transport_coverage_branch",
+      "stage": "2_transport",
+      "message": "added coverage branch toward underserved area",
+      "id": "tr_gb_76",
+      "target": {
+        "x": 213.33,
+        "z": -42.67
+      },
+      "tag": "c0s",
+      "from": "tr_gn_51"
+    },
+    {
+      "severity": "info",
+      "code": "transport_coverage_branch",
+      "stage": "2_transport",
+      "message": "added coverage branch toward underserved area",
+      "id": "tr_gb_77",
+      "target": {
+        "x": 213.33,
+        "z": 42.67
+      },
+      "tag": "c0s",
+      "from": "tr_gn_49"
+    },
+    {
+      "severity": "info",
+      "code": "transport_coverage_branch",
+      "stage": "2_transport",
+      "message": "added coverage branch toward underserved area",
+      "id": "tr_gb_78",
+      "target": {
+        "x": 234.67,
+        "z": 0
+      },
+      "tag": "c0s",
+      "from": "tr_gn_52"
+    },
+    {
+      "severity": "info",
+      "code": "transport_coverage_branch",
+      "stage": "2_transport",
+      "message": "added coverage branch toward underserved area",
+      "id": "tr_gb_79",
+      "target": {
+        "x": 213.33,
+        "z": -213.33
+      },
+      "tag": "c0s",
+      "from": "tr_gn_50"
+    },
+    {
+      "severity": "info",
+      "code": "transport_coverage_branch",
+      "stage": "2_transport",
+      "message": "added coverage branch toward underserved area",
+      "id": "tr_gb_80",
+      "target": {
+        "x": 213.33,
+        "z": -128
+      },
+      "tag": "c0s",
+      "from": "tr_gn_49"
+    },
+    {
+      "severity": "info",
+      "code": "transport_coverage_branch",
+      "stage": "2_transport",
+      "message": "added coverage branch toward underserved area",
+      "id": "tr_gb_81",
+      "target": {
+        "x": 234.67,
+        "z": -170.67
+      },
+      "tag": "c0s",
+      "from": "tr_gn_56"
+    },
+    {
+      "severity": "info",
+      "code": "transport_coverage_branch",
+      "stage": "2_transport",
+      "message": "added coverage branch toward underserved area",
+      "id": "tr_gb_82",
+      "target": {
+        "x": 170.67,
+        "z": -234.67
+      },
+      "tag": "c0s",
+      "from": "tr_gn_50"
+    },
+    {
+      "severity": "info",
+      "code": "transport_coverage_branch",
+      "stage": "2_transport",
+      "message": "added coverage branch toward underserved area",
+      "id": "tr_gb_83",
+      "target": {
+        "x": 213.33,
+        "z": -42.67
+      },
+      "tag": "c1s",
+      "from": "tr_gn_48"
+    },
+    {
+      "severity": "info",
+      "code": "transport_coverage_branch",
+      "stage": "2_transport",
+      "message": "added coverage branch toward underserved area",
+      "id": "tr_gb_84",
+      "target": {
+        "x": 213.33,
+        "z": 42.67
+      },
+      "tag": "c1s",
+      "from": "tr_gn_54"
+    },
+    {
+      "severity": "info",
+      "code": "transport_coverage_branch",
+      "stage": "2_transport",
+      "message": "added coverage branch toward underserved area",
+      "id": "tr_gb_85",
+      "target": {
+        "x": 234.67,
+        "z": 0
+      },
+      "tag": "c1s",
+      "from": "tr_gn_59"
+    },
+    {
+      "severity": "info",
+      "code": "transport_coverage_branch",
+      "stage": "2_transport",
+      "message": "added coverage branch toward underserved area",
+      "id": "tr_gb_86",
+      "target": {
+        "x": 213.33,
+        "z": -213.33
+      },
+      "tag": "c1s",
+      "from": "tr_gn_55"
+    },
+    {
+      "severity": "info",
+      "code": "transport_coverage_branch",
+      "stage": "2_transport",
+      "message": "added coverage branch toward underserved area",
+      "id": "tr_gb_87",
+      "target": {
+        "x": 213.33,
+        "z": -128
+      },
+      "tag": "c1s",
+      "from": "tr_gn_58"
+    },
+    {
+      "severity": "info",
+      "code": "transport_coverage_branch",
+      "stage": "2_transport",
+      "message": "added coverage branch toward underserved area",
+      "id": "tr_gb_88",
+      "target": {
+        "x": 234.67,
+        "z": -170.67
+      },
+      "tag": "c1s",
+      "from": "tr_gn_59"
+    },
+    {
+      "severity": "info",
+      "code": "transport_coverage_branch",
+      "stage": "2_transport",
+      "message": "added coverage branch toward underserved area",
+      "id": "tr_gb_89",
+      "target": {
+        "x": 213.33,
+        "z": 42.67
+      },
+      "tag": "c2s",
+      "from": "tr_gn_48"
+    },
+    {
+      "severity": "info",
+      "code": "transport_coverage_branch",
+      "stage": "2_transport",
+      "message": "added coverage branch toward underserved area",
+      "id": "tr_gb_90",
+      "target": {
+        "x": 234.67,
+        "z": 0
+      },
+      "tag": "c2s",
+      "from": "tr_gn_65"
+    },
+    {
+      "severity": "info",
+      "code": "transport_coverage_branch",
+      "stage": "2_transport",
+      "message": "added coverage branch toward underserved area",
+      "id": "tr_gb_91",
+      "target": {
+        "x": 213.33,
+        "z": -128
+      },
+      "tag": "c2s",
+      "from": "tr_gn_45"
+    },
+    {
+      "severity": "info",
+      "code": "transport_coverage_branch",
+      "stage": "2_transport",
+      "message": "added coverage branch toward underserved area",
+      "id": "tr_gb_92",
+      "target": {
+        "x": 213.33,
+        "z": 42.67
+      },
+      "tag": "c3s",
+      "from": "tr_gn_65"
+    },
+    {
+      "severity": "info",
+      "code": "transport_coverage_branch",
+      "stage": "2_transport",
+      "message": "added coverage branch toward underserved area",
+      "id": "tr_gb_93",
+      "target": {
+        "x": 234.67,
+        "z": 0
+      },
+      "tag": "c3s",
+      "from": "tr_gn_68"
+    },
+    {
+      "severity": "info",
+      "code": "transport_edge_branch",
+      "stage": "2_transport",
+      "message": "added edge outreach branch",
+      "id": "tr_gb_69",
+      "from": "tr_gn_29",
+      "to": "tr_gn_45"
+    },
+    {
+      "severity": "info",
+      "code": "transport_edge_branch",
+      "stage": "2_transport",
+      "message": "added edge outreach branch",
+      "id": "tr_gb_70",
+      "from": "tr_gn_20",
+      "to": "tr_gn_46"
+    },
+    {
+      "severity": "info",
+      "code": "transport_generated",
+      "stage": "2_transport",
+      "message": "stage 2 generated road network",
+      "nodes": 72,
+      "segments": 98,
+      "seed": 4181266978,
+      "branches": 91,
+      "profiled": true
+    },
+    {
+      "severity": "info",
+      "code": "transport_interchange_junction",
+      "stage": "2_transport",
+      "message": "applied junction grade-separation interchange prototype",
+      "nodeId": "tr_gn_29",
+      "elevatedPair": [
+        "tr_gb_29",
+        "tr_gb_69"
+      ],
+      "ramps": [
+        "tr_jr_tr_gn_29_a",
+        "tr_jr_tr_gn_29_b"
+      ],
+      "elevatedNode": "tr_jn_tr_gn_29_up",
+      "deckY": 15.68,
+      "clearance": 1.93,
+      "rampDist": 20,
+      "kind": "tee3"
+    },
+    {
+      "severity": "info",
+      "code": "transport_spur_loop",
+      "stage": "2_transport",
+      "message": "added local spur connector block",
+      "corner": "tr_spc1_n"
+    },
+    {
+      "severity": "info",
+      "code": "adjacency_matrix",
+      "stage": "3_districts_parcels",
+      "message": "district adjacency matrix (section 6.6)",
+      "count": 12,
+      "edges": [
+        {
+          "a": "district_0_0",
+          "b": "district_1_0",
+          "ta": "office",
+          "tb": "residential"
+        },
+        {
+          "a": "district_0_0",
+          "b": "district_0_1",
+          "ta": "office",
+          "tb": "industrial"
+        },
+        {
+          "a": "district_1_0",
+          "b": "district_2_0",
+          "ta": "residential",
+          "tb": "park"
+        },
+        {
+          "a": "district_1_0",
+          "b": "district_1_1",
+          "ta": "residential",
+          "tb": "slums"
+        },
+        {
+          "a": "district_2_0",
+          "b": "district_2_1",
+          "ta": "park",
+          "tb": "residential"
+        },
+        {
+          "a": "district_0_1",
+          "b": "district_1_1",
+          "ta": "industrial",
+          "tb": "slums"
+        },
+        {
+          "a": "district_0_1",
+          "b": "district_0_2",
+          "ta": "industrial",
+          "tb": "commercial"
+        },
+        {
+          "a": "district_1_1",
+          "b": "district_2_1",
+          "ta": "slums",
+          "tb": "residential"
+        },
+        {
+          "a": "district_1_1",
+          "b": "district_1_2",
+          "ta": "slums",
+          "tb": "market"
+        },
+        {
+          "a": "district_2_1",
+          "b": "district_2_2",
+          "ta": "residential",
+          "tb": "parking"
+        },
+        {
+          "a": "district_0_2",
+          "b": "district_1_2",
+          "ta": "commercial",
+          "tb": "market"
+        },
+        {
+          "a": "district_1_2",
+          "b": "district_2_2",
+          "ta": "market",
+          "tb": "parking"
+        }
+      ]
+    },
+    {
+      "severity": "info",
+      "code": "adjacency_repairs",
+      "stage": "3_districts_parcels",
+      "message": "section 6.6 adjacency repairs applied",
+      "count": 0,
+      "kinds": {}
+    },
+    {
+      "severity": "info",
+      "code": "blocks_split",
+      "stage": "3_districts_parcels",
+      "message": "districts split by building pressure (section 7.3)",
+      "before": 9,
+      "after": 14
+    },
+    {
+      "severity": "info",
+      "code": "buffer_strips_carved",
+      "stage": "3_districts_parcels",
+      "message": "spatial buffer strips / compatibility resolution pass (section 6.6)",
+      "carved": 0,
+      "unresolvedGeom": 0,
+      "swapResolved": 0
+    },
+    {
+      "severity": "info",
+      "code": "buffer_width_check",
+      "stage": "3_districts_parcels",
+      "message": "geometric separation check for incompatible district pairs (section 6.6, target buffer 40–80m where applicable)",
+      "incompatiblePairs": 19,
+      "touchingIncompatible": 4,
+      "edgeTouchingIncompatible": 0,
+      "cornerTouchingIncompatible": 4,
+      "minDistance": 0,
+      "industrialResidential": {
+        "pairs": 4,
+        "minDistance": 0,
+        "gapBelow40": 1,
+        "edgeTouches": 0,
+        "cornerTouches": 1,
+        "bufferSeparated": 1
+      }
+    },
+    {
+      "severity": "info",
+      "code": "district_frames_assigned",
+      "stage": "3_districts_parcels",
+      "message": "district frames assigned by dominant axis",
+      "count": 8,
+      "reasons": {
+        "slope": 8,
+        "river": 0,
+        "railway": 0,
+        "arterial": 0
+      }
+    },
+    {
+      "severity": "info",
+      "code": "district_metrics_check",
+      "stage": "3_districts_parcels",
+      "message": "district form/size metrics vs section 6.7 (typical 15-60 ha, 8-14 districts per 2000 m)",
+      "districts": 14,
+      "areaHaMin": 1.17,
+      "areaHaMedian": 1.75,
+      "areaHaMax": 2.91,
+      "areaHaTotal": 26.21,
+      "plateSizeM": 512,
+      "districtsPerKm2": 53.41,
+      "districtsPer2000m": 213.62,
+      "frames": 12,
+      "barriers": 18,
+      "edgeSnappedFraction": 0.089,
+      "planningGroups": 9,
+      "planningAreaHaMedian": 2.91,
+      "planningDistrictsPer2000m": 137.33
+    },
+    {
+      "severity": "info",
+      "code": "districts_generated",
+      "stage": "3_districts_parcels",
+      "message": "auto-generated district grid",
+      "count": 9,
+      "grid": 3,
+      "types": [
+        "commercial",
+        "forest",
+        "industrial",
+        "market",
+        "office",
+        "park",
+        "parking",
+        "residential",
+        "slums"
+      ],
+      "counts": {
+        "office": 1,
+        "park": 1,
+        "industrial": 1,
+        "luxury": 0,
+        "residential": 1,
+        "slums": 1,
+        "forest": 1,
+        "parking": 1,
+        "sports": 0,
+        "commercial": 1,
+        "suburb": 0,
+        "old_town": 0,
+        "campus": 0,
+        "market": 1
+      }
+    },
+    {
+      "severity": "info",
+      "code": "era_rings_assigned",
+      "stage": "3_districts_parcels",
+      "message": "assigned eras to districts by access-cost isolines from 2 core(s)",
+      "counts": {
+        "medieval": 2,
+        "xix": 5,
+        "industrial": 2,
+        "modern": 4,
+        "suburb": 1
+      },
+      "maxCost": 637.77
+    },
+    {
+      "severity": "info",
+      "code": "floors_contrast_check",
+      "stage": "3_districts_parcels",
+      "message": "floorsCount contrast between adjacent district profiles (section 6.6, target <= 2.5x)",
+      "adjacentPairs": 33,
+      "violations": 14,
+      "violationsExcludingGreenSeam": 8,
+      "maxRatio": 11,
+      "worst": [
+        {
+          "a": "district_0_0_0",
+          "b": "district_0_1",
+          "ta": "office",
+          "tb": "industrial",
+          "ratio": 3
+        },
+        {
+          "a": "district_0_0_1",
+          "b": "district_0_1",
+          "ta": "office",
+          "tb": "industrial",
+          "ratio": 3
+        },
+        {
+          "a": "district_0_0_1",
+          "b": "district_1_1_0",
+          "ta": "office",
+          "tb": "slums",
+          "ratio": 3
+        },
+        {
+          "a": "district_1_0_1",
+          "b": "district_2_0",
+          "ta": "residential",
+          "tb": "park",
+          "ratio": 11
+        },
+        {
+          "a": "district_2_0",
+          "b": "district_1_1_1",
+          "ta": "park",
+          "tb": "slums",
+          "ratio": 5
+        }
+      ]
+    },
+    {
+      "severity": "info",
+      "code": "floors_contrast_unresolved",
+      "stage": "3_districts_parcels",
+      "message": "floors contrast above 2.5x kept to preserve type diversity (coarse grid; seams allowed)",
+      "count": 6
+    },
+    {
+      "severity": "info",
+      "code": "green_belt_repair",
+      "stage": "3_districts_parcels",
+      "message": "net-neutral river-belt relocation of green cells towards the belt (section 6.8)",
+      "beltRelocated": 1,
+      "coverageAfter": 0.387
+    },
+    {
+      "severity": "info",
+      "code": "green_corridors_check",
+      "stage": "3_districts_parcels",
+      "message": "section 6.8 green framework morphology (share 8-15%, connected corridors, river belts, 2-3 edge wedges)",
+      "share": 0.1111,
+      "shareInRange": true,
+      "components": 1,
+      "largestComponent": 1,
+      "riverBeltCoverage": 0.387,
+      "riverBeltSamples": 62,
+      "wedgeComponents": 1
+    },
+    {
+      "severity": "info",
+      "code": "green_wedge_repair",
+      "stage": "3_districts_parcels",
+      "message": "edge wedges anchored along wedge axes (section 6.8)",
+      "wedgeFixed": 0,
+      "wedgeCells": 1
+    },
+    {
+      "severity": "info",
+      "code": "land_value_field",
+      "stage": "3_districts_parcels",
+      "message": "land value field assigned to districts (profile weights)",
+      "profile": "railway_industrial",
+      "mean": 0.4419,
+      "weights": [
+        0.35,
+        0.3,
+        0.1,
+        0.15,
+        0.1
+      ]
+    },
+    {
+      "severity": "info",
+      "code": "parcels_generated",
+      "stage": "3_districts_parcels",
+      "message": "generated parcels",
+      "districts": 14,
+      "parcels": 414,
+      "byType": {
+        "office": 2,
+        "residential": 4,
+        "park": 1,
+        "industrial": 1,
+        "slums": 2,
+        "commercial": 2,
+        "market": 1,
+        "parking": 1
+      }
+    },
+    {
+      "severity": "info",
+      "code": "parcels_reserved_by_reason",
+      "stage": "3_districts_parcels",
+      "message": "parcel reservations by terrain/hydrology/infrastructure constraints",
+      "reserved": 179,
+      "total": 414,
+      "byReason": {
+        "water": 92,
+        "road_corridor": 78,
+        "anchor": 0,
+        "reservation": 9,
+        "crossing": 0,
+        "steep_slope": 0,
+        "remote_access": 0,
+        "railway": 0
+      }
+    },
+    {
+      "severity": "info",
+      "code": "park_share",
+      "stage": "3_districts_parcels",
+      "message": "park/forest share enforced by section 6.8",
+      "before": 0.2222,
+      "after": 0.1111,
+      "min": 0.05,
+      "max": 0.08,
+      "promoted": 0,
+      "demoted": 1,
+      "bridged": 0,
+      "components": 1
+    },
+    {
+      "severity": "info",
+      "code": "pressure_area_spearman",
+      "stage": "3_districts_parcels",
+      "message": "Spearman rank correlation (D block, 1/area block) for R3.6 acceptance",
+      "rho": 0.5567,
+      "target": 0.6,
+      "ok": false,
+      "n": 14,
+      "byDistrict": [
+        {
+          "id": "district_0_0_0",
+          "type": "office",
+          "pressure": 0.475,
+          "area": 17476.27,
+          "invArea": 0.00005722
+        },
+        {
+          "id": "district_0_0_1",
+          "type": "office",
+          "pressure": 0.525,
+          "area": 11650.84,
+          "invArea": 0.00008583
+        },
+        {
+          "id": "district_1_0_0",
+          "type": "residential",
+          "pressure": 0.5047,
+          "area": 17476.27,
+          "invArea": 0.00005722
+        },
+        {
+          "id": "district_1_0_1",
+          "type": "residential",
+          "pressure": 0.5047,
+          "area": 11650.84,
+          "invArea": 0.00008583
+        },
+        {
+          "id": "district_2_0",
+          "type": "park",
+          "pressure": 0.3509,
+          "area": 29127.11,
+          "invArea": 0.00003433
+        },
+        {
+          "id": "district_0_1",
+          "type": "industrial",
+          "pressure": 0.1969,
+          "area": 29127.11,
+          "invArea": 0.00003433
+        },
+        {
+          "id": "district_1_1_0",
+          "type": "slums",
+          "pressure": 0.2359,
+          "area": 17476.27,
+          "invArea": 0.00005722
+        },
+        {
+          "id": "district_1_1_1",
+          "type": "slums",
+          "pressure": 0.4359,
+          "area": 11650.84,
+          "invArea": 0.00008583
+        },
+        {
+          "id": "district_2_1_0",
+          "type": "residential",
+          "pressure": 0.5047,
+          "area": 14927.64,
+          "invArea": 0.00006699
+        },
+        {
+          "id": "district_2_1_1",
+          "type": "residential",
+          "pressure": 0.3047,
+          "area": 14199.47,
+          "invArea": 0.00007043
+        },
+        {
+          "id": "district_0_2_0",
+          "type": "commercial",
+          "pressure": 0.5672,
+          "area": 17476.27,
+          "invArea": 0.00005722
+        },
+        {
+          "id": "district_0_2_1",
+          "type": "commercial",
+          "pressure": 0.4672,
+          "area": 11650.84,
+          "invArea": 0.00008583
+        },
+        {
+          "id": "district_1_2",
+          "type": "market",
+          "pressure": 0.2288,
+          "area": 29127.11,
+          "invArea": 0.00003433
+        },
+        {
+          "id": "district_2_2",
+          "type": "parking",
+          "pressure": 0.1575,
+          "area": 29127.11,
+          "invArea": 0.00003433
+        }
+      ]
+    },
+    {
+      "severity": "info",
+      "code": "pressure_field",
+      "stage": "3_districts_parcels",
+      "message": "building pressure prior D0 assigned to districts (section 7.3)",
+      "mean": 0.3899,
+      "bMin": 60,
+      "bMax": 260,
+      "gamma": 0.8,
+      "bands": {
+        "gt75": 0,
+        "b50_75": 5,
+        "b25_50": 5,
+        "le25": 4
+      }
+    },
+    {
+      "severity": "info",
+      "code": "stage_ok",
+      "stage": "3_districts_parcels",
+      "message": "stage 3_districts_parcels completed"
+    },
+    {
+      "severity": "info",
+      "code": "buildings_generated",
+      "stage": "4_buildings_structures",
+      "message": "generated buildings from parcels",
+      "count": 50,
+      "budget": 87,
+      "skippedConflict": 183
+    },
+    {
+      "severity": "info",
+      "code": "buildings_rebalanced_to_empty_split_districts",
+      "stage": "4_buildings_structures",
+      "message": "moved buildings to split child districts with parcels but no buildings",
+      "count": 2
+    },
+    {
+      "severity": "info",
+      "code": "enterable_share",
+      "stage": "4_buildings_structures",
+      "message": "enterable buildings share (section 9.8, target 15-25%)",
+      "total": 51,
+      "enterable": 10,
+      "share": 0.196,
+      "targetShare": 0.2,
+      "required": {
+        "min": 8,
+        "max": 12
+      }
+    },
+    {
+      "severity": "info",
+      "code": "facade_no_three_consecutive_same",
+      "stage": "4_buildings_structures",
+      "message": "three consecutive identical facades remediated (section 9.7)",
+      "swapped": 0
+    },
+    {
+      "severity": "info",
+      "code": "floors_clamp_bydist",
+      "stage": "4_buildings_structures",
+      "message": "trace byDist in clamp",
+      "iter": 0,
+      "keys": [
+        {
+          "id": "district_3_1_01",
+          "max": null
+        },
+        {
+          "id": "district_3_1_2100",
+          "max": null
+        },
+        {
+          "id": "district_3_1_201",
+          "max": null
+        }
+      ],
+      "totKeys": 14
+    },
+    {
+      "severity": "info",
+      "code": "floors_clamp_bydist",
+      "stage": "4_buildings_structures",
+      "message": "trace byDist in clamp",
+      "iter": 1,
+      "keys": [
+        {
+          "id": "district_3_1_01",
+          "max": null
+        },
+        {
+          "id": "district_3_1_2100",
+          "max": null
+        },
+        {
+          "id": "district_3_1_201",
+          "max": null
+        }
+      ],
+      "totKeys": 14
+    },
+    {
+      "severity": "info",
+      "code": "floors_contrast_built",
+      "stage": "4_buildings_structures",
+      "message": "building floors distribution (section 9.4): L-modulation, adjacency contrast <= 2.5x, 5-8 dominants per city (one per high-L district, capped/filled 2026-11-19)",
+      "clamped": 18,
+      "dominants": 5,
+      "districts": 14,
+      "adjacencyPairs": 23
+    },
+    {
+      "severity": "info",
+      "code": "stage_ok",
+      "stage": "4_buildings_structures",
+      "message": "stage 4_buildings_structures completed"
+    },
+    {
+      "severity": "info",
+      "code": "t23_5_attachment",
+      "stage": "4_buildings_structures",
+      "message": "added attachment/self-build buildings (meso residue, ADR-005)",
+      "count": 1
+    },
+    {
+      "severity": "info",
+      "code": "t23_5_facade_blank",
+      "stage": "4_buildings_structures",
+      "message": "assigned blank facade sides (meso residue, ADR-005)",
+      "count": 4
+    },
+    {
+      "severity": "info",
+      "code": "props_generated",
+      "stage": "5_infrastructure_props",
+      "message": "generated district props",
+      "count": 162,
+      "budget": 183,
+      "attempts": 970,
+      "byDistrictType": {
+        "slums": 46,
+        "park": 12,
+        "residential": 29,
+        "industrial": 7,
+        "parking": 5,
+        "office": 15,
+        "commercial": 24,
+        "market": 24
+      }
+    },
+    {
+      "severity": "info",
+      "code": "stage_ok",
+      "stage": "5_infrastructure_props",
+      "message": "stage 5_infrastructure_props completed"
+    },
+    {
+      "severity": "info",
+      "code": "street_lights_generated",
+      "stage": "5_infrastructure_props",
+      "message": "generated street lights along roads",
+      "count": 8,
+      "budget": 8,
+      "skipped": 0
+    },
+    {
+      "severity": "info",
+      "code": "t23_4_plaza_valve_emitted",
+      "stage": "5_infrastructure_props",
+      "message": "merged T23.4 plaza-valve props into infrastructure",
+      "count": 18
+    },
+    {
+      "severity": "info",
+      "code": "anchors_connected_network",
+      "stage": "6_finalize_emit",
+      "message": "spawn and exit are near a single connected road graph component",
+      "spawnDistance": 0,
+      "exitDistance": 0,
+      "roadComponents": 1
+    },
+    {
+      "severity": "info",
+      "code": "features_manifest",
+      "stage": "6_finalize_emit",
+      "message": "feature manifest: 0 applied, 0 degraded, 1 skipped, 0 planned",
+      "selected": [
+        "industrial_waterfront"
+      ],
+      "applied": 0,
+      "degraded": 0,
+      "skipped": 1,
+      "planned": 0
+    },
+    {
+      "severity": "info",
+      "code": "features_manifest",
+      "stage": "6_finalize_emit",
+      "message": "feature manifest: 0 applied, 0 degraded, 1 skipped, 0 planned",
+      "selected": [
+        "industrial_waterfront"
+      ],
+      "applied": 0,
+      "degraded": 0,
+      "skipped": 1,
+      "planned": 0
+    },
+    {
+      "severity": "info",
+      "code": "finalize_counts",
+      "stage": "6_finalize_emit",
+      "message": "generation summary",
+      "groundSize": 512,
+      "stream": {
+        "chunk": 256,
+        "keep": 1,
+        "aheadMin": 200,
+        "aheadMax": 900,
+        "budgetMs": 120
+      },
+      "chunks": {
+        "grid": 2,
+        "total": 4
+      },
+      "roadNodes": 93,
+      "roadSegments": 140,
+      "roadComponents": 1,
+      "roadGraphNodes": 93,
+      "interchanges": {
+        "segments": 2,
+        "junctions": 1,
+        "overpasses": 0
+      },
+      "districts": 14,
+      "districtTypes": [
+        "commercial",
+        "industrial",
+        "market",
+        "office",
+        "park",
+        "parking",
+        "residential",
+        "slums"
+      ],
+      "parcels": 414,
+      "reservedParcels": 179,
+      "parcelAccess": {
+        "near": 332,
+        "mid": 71,
+        "far": 11
+      },
+      "roadAccessByType": {
+        "industrial": {
+          "parcels": 16,
+          "unreserved": 16,
+          "good": 16,
+          "mid": 0,
+          "far": 0,
+          "reserved": 0,
+          "goodOrMid": 16,
+          "accessibleRatio": 1
+        },
+        "office": {
+          "parcels": 30,
+          "unreserved": 18,
+          "good": 18,
+          "mid": 0,
+          "far": 0,
+          "reserved": 12,
+          "goodOrMid": 18,
+          "accessibleRatio": 1
+        },
+        "parking": {
+          "parcels": 16,
+          "unreserved": 0,
+          "good": 0,
+          "mid": 0,
+          "far": 0,
+          "reserved": 16,
+          "goodOrMid": 0,
+          "accessibleRatio": null
+        },
+        "residential": {
+          "parcels": 128,
+          "unreserved": 32,
+          "good": 32,
+          "mid": 0,
+          "far": 0,
+          "reserved": 96,
+          "goodOrMid": 32,
+          "accessibleRatio": 1
+        },
+        "slums": {
+          "parcels": 110,
+          "unreserved": 85,
+          "good": 74,
+          "mid": 11,
+          "far": 0,
+          "reserved": 25,
+          "goodOrMid": 85,
+          "accessibleRatio": 1
+        }
+      },
+      "buildings": 51,
+      "buildingsByDistrictType": {
+        "office": 5,
+        "residential": 13,
+        "commercial": 15,
+        "parking": 1,
+        "market": 12,
+        "industrial": 2,
+        "slums": 3
+      },
+      "lights": 8,
+      "props": 180,
+      "propsByDistrictType": {
+        "slums": 46,
+        "park": 12,
+        "residential": 29,
+        "industrial": 7,
+        "parking": 5,
+        "office": 15,
+        "commercial": 24,
+        "market": 24
+      },
+      "chunkLoad": {
+        "nonEmptyChunks": 4,
+        "maxBuildings": 23,
+        "maxProps": 58,
+        "maxLights": 3,
+        "avgBuildings": 12.75,
+        "avgProps": 45
+      }
+    },
+    {
+      "severity": "info",
+      "code": "finalize_terrain_masks_applied",
+      "stage": "6_finalize_emit",
+      "message": "terrain/hydrology masks available as downstream constraints at finalize",
+      "waterBuffers": 2,
+      "floodplains": 2,
+      "crossings": 6,
+      "landmarks": 6,
+      "reservations": 13,
+      "slopeShare": {
+        "flat_lt3": 0.037109,
+        "gentle_3_8": 0.355469,
+        "moderate_8_15": 0.550781,
+        "steep_15_25": 0.056641,
+        "very_steep_gt25": 0
+      },
+      "violations": {
+        "buildingsInWaterBuffer": 0,
+        "buildingsInFloodplain": 0,
+        "propsInWaterBuffer": 0,
+        "propsInFloodplain": 0
+      }
+    },
+    {
+      "severity": "info",
+      "code": "finish_chaos_applied",
+      "stage": "6_finalize_emit",
+      "message": "chaos applied at finish stage",
+      "applied": 51,
+      "skipped": 0,
+      "lockedSkipped": 0,
+      "seams": 4,
+      "changes": [
+        {
+          "id": "b_att_1",
+          "dXZ": [
+            0.092,
+            -0.433
+          ]
+        },
+        {
+          "id": "b_district_0_0_0_1",
+          "dXZ": [
+            -0.458,
+            -0.214
+          ]
+        },
+        {
+          "id": "b_district_0_0_0_22",
+          "dXZ": [
+            0.616,
+            0.346
+          ]
+        },
+        {
+          "id": "b_district_0_0_0_34",
+          "dXZ": [
+            0.225,
+            0.035
+          ]
+        },
+        {
+          "id": "b_district_0_0_1_2",
+          "dXZ": [
+            0.223,
+            0.134
+          ]
+        },
+        {
+          "id": "b_district_0_0_1_36",
+          "dXZ": [
+            0.039,
+            0.591
+          ]
+        },
+        {
+          "id": "b_district_0_1_20",
+          "dXZ": [
+            0.106,
+            0.37
+          ]
+        },
+        {
+          "id": "b_district_0_1_21",
+          "dXZ": [
+            0.505,
+            -0.153
+          ]
+        },
+        {
+          "id": "b_district_0_2_0_17",
+          "dXZ": [
+            0.044,
+            -0.025
+          ]
+        },
+        {
+          "id": "b_district_0_2_0_23",
+          "dXZ": [
+            0.319,
+            -0.043
+          ]
+        },
+        {
+          "id": "b_district_0_2_0_24",
+          "dXZ": [
+            0.114,
+            -0.047
+          ]
+        },
+        {
+          "id": "b_district_0_2_0_30",
+          "dXZ": [
+            -0.503,
+            0.372
+          ]
+        },
+        {
+          "id": "b_district_0_2_0_31",
+          "dXZ": [
+            0.371,
+            0.131
+          ]
+        },
+        {
+          "id": "b_district_0_2_0_37",
+          "dXZ": [
+            0.204,
+            0.009
+          ]
+        },
+        {
+          "id": "b_district_0_2_0_38",
+          "dXZ": [
+            -0.491,
+            -0.236
+          ]
+        },
+        {
+          "id": "b_district_0_2_0_4",
+          "dXZ": [
+            0.01,
+            -0.472
+          ]
+        },
+        {
+          "id": "b_district_0_2_0_44",
+          "dXZ": [
+            -0.173,
+            -0.198
+          ]
+        },
+        {
+          "id": "b_district_0_2_0_5",
+          "dXZ": [
+            -0.018,
+            0.01
+          ]
+        },
+        {
+          "id": "b_district_0_2_0_6",
+          "dXZ": [
+            0.151,
+            0.223
+          ]
+        },
+        {
+          "id": "b_district_0_2_0_7",
+          "dXZ": [
+            0.342,
+            -0.06
+          ]
+        },
+        {
+          "id": "b_district_0_2_1_25",
+          "dXZ": [
+            0.403,
+            -0.112
+          ]
+        },
+        {
+          "id": "b_district_0_2_1_39",
+          "dXZ": [
+            -0.097,
+            -0.169
+          ]
+        },
+        {
+          "id": "b_district_0_2_1_45",
+          "dXZ": [
+            0.468,
+            0.073
+          ]
+        },
+        {
+          "id": "b_district_0_2_1_46",
+          "dXZ": [
+            -0.343,
+            -0.128
+          ]
+        }
+      ]
+    },
+    {
+      "severity": "info",
+      "code": "finish_chaos_macro",
+      "stage": "6_finalize_emit",
+      "message": "macro chaos (void parcel instead of building, 3-5%) applied at finish stage",
+      "eligible": 40,
+      "dropped": 1,
+      "target": 1,
+      "changes": [
+        {
+          "id": "b_district_0_2_0_7",
+          "districtId": "district_2_2"
+        }
+      ]
+    },
+    {
+      "severity": "info",
+      "code": "finish_chaos_macro_island",
+      "stage": "6_finalize_emit",
+      "message": "macro chaos (epoch enclave in the lowest-land-value district) applied at finish stage",
+      "district": "district_1_0_0",
+      "landValue": 0.3729,
+      "eligible": 8,
+      "target": "historic",
+      "converted": 8,
+      "buildings": [
+        "b_district_1_0_0_13",
+        "b_district_1_0_0_14",
+        "b_district_1_0_0_15",
+        "b_district_1_0_0_27",
+        "b_district_1_0_0_28",
+        "b_district_1_0_0_29",
+        "b_district_1_0_0_35",
+        "b_district_1_0_0_43"
+      ]
+    },
+    {
+      "severity": "info",
+      "code": "finish_chaos_macro_seam",
+      "stage": "6_finalize_emit",
+      "message": "macro chaos (out-of-axis joint at the highest-delta seam) applied at finish stage",
+      "seam": [
+        "district_0_0_0",
+        "district_0_0_1"
+      ],
+      "shifted": 2,
+      "changes": [
+        {
+          "id": "b_district_0_0_1_2",
+          "tangent": "z",
+          "d": -0.675
+        },
+        {
+          "id": "b_district_0_0_1_36",
+          "tangent": "z",
+          "d": -0.675
+        }
+      ]
+    },
+    {
+      "severity": "info",
+      "code": "finish_chaos_meso",
+      "stage": "6_finalize_emit",
+      "message": "meso chaos (epoch insert) applied at finish stage",
+      "applied": 2,
+      "changes": [
+        {
+          "id": "b_district_0_0_0_1",
+          "era": "historic_insert"
+        },
+        {
+          "id": "b_district_0_0_0_22",
+          "era": "historic_insert"
+        }
+      ]
+    },
+    {
+      "severity": "info",
+      "code": "finish_chaos_seams",
+      "stage": "6_finalize_emit",
+      "message": "seam districts selected for chaos boost",
+      "seams": [
+        {
+          "a": "district_0_0_0",
+          "b": "district_0_0_1",
+          "delta": 0.15469999999999995
+        },
+        {
+          "a": "district_1_2",
+          "b": "district_2_2",
+          "delta": 0.14299999999999996
+        }
+      ]
+    },
+    {
+      "severity": "info",
+      "code": "impression_cadence_route_enforced",
+      "stage": "6_finalize_emit",
+      "message": "retagged 1 route road segment(s) into 2 cadence bands",
+      "changedSegments": 1,
+      "routeEdges": 2,
+      "pathLength": 800,
+      "bandSpacingMeters": 200,
+      "classes": [
+        "local",
+        "collector"
+      ]
+    },
+    {
+      "severity": "info",
+      "code": "interchange_junction_candidates",
+      "stage": "6_finalize_emit",
+      "message": "identified junction nodes as grade-separation candidates",
+      "count": 7
+    },
+    {
+      "severity": "info",
+      "code": "interchange_validated",
+      "stage": "6_finalize_emit",
+      "message": "validated interchange/overpass segments",
+      "count": 2
+    },
+    {
+      "severity": "info",
+      "code": "road_conflicts_resolved",
+      "stage": "6_finalize_emit",
+      "message": "resolved detected same-layer road crossing conflicts",
+      "repairs": 21
+    },
+    {
+      "severity": "info",
+      "code": "road_crossing_repaired",
+      "stage": "6_finalize_emit",
+      "message": "repaired same-layer crossing by inserting junction 'tr_x_10'",
+      "node": "tr_x_10",
+      "segments": [
+        "tr_gb_34",
+        "tr_gc_58_b"
+      ]
+    },
+    {
+      "severity": "info",
+      "code": "road_crossing_repaired",
+      "stage": "6_finalize_emit",
+      "message": "repaired same-layer crossing by inserting junction 'tr_x_11'",
+      "node": "tr_x_11",
+      "segments": [
+        "tr_gb_36",
+        "tr_gb_42"
+      ]
+    },
+    {
+      "severity": "info",
+      "code": "road_crossing_repaired",
+      "stage": "6_finalize_emit",
+      "message": "repaired same-layer crossing by inserting junction 'tr_x_12'",
+      "node": "tr_x_12",
+      "segments": [
+        "tr_gb_36_b",
+        "tr_gc_46"
+      ]
+    },
+    {
+      "severity": "info",
+      "code": "road_crossing_repaired",
+      "stage": "6_finalize_emit",
+      "message": "repaired same-layer crossing by inserting junction 'tr_x_13'",
+      "node": "tr_x_13",
+      "segments": [
+        "tr_gb_38",
+        "tr_gb_42_a"
+      ]
+    },
+    {
+      "severity": "info",
+      "code": "road_crossing_repaired",
+      "stage": "6_finalize_emit",
+      "message": "repaired same-layer crossing by inserting junction 'tr_x_14'",
+      "node": "tr_x_14",
+      "segments": [
+        "tr_gb_39_a_a",
+        "tr_gc_47"
+      ]
+    },
+    {
+      "severity": "info",
+      "code": "road_crossing_repaired",
+      "stage": "6_finalize_emit",
+      "message": "repaired same-layer crossing by inserting junction 'tr_x_15'",
+      "node": "tr_x_15",
+      "segments": [
+        "tr_gb_42_b",
+        "tr_gc_48"
+      ]
+    },
+    {
+      "severity": "info",
+      "code": "road_crossing_repaired",
+      "stage": "6_finalize_emit",
+      "message": "repaired same-layer crossing by inserting junction 'tr_x_16'",
+      "node": "tr_x_16",
+      "segments": [
+        "tr_gb_44",
+        "tr_gc_61"
+      ]
+    },
+    {
+      "severity": "info",
+      "code": "road_crossing_repaired",
+      "stage": "6_finalize_emit",
+      "message": "repaired same-layer crossing by inserting junction 'tr_x_17'",
+      "node": "tr_x_17",
+      "segments": [
+        "tr_gb_69",
+        "tr_gb_79"
+      ]
+    },
+    {
+      "severity": "info",
+      "code": "road_crossing_repaired",
+      "stage": "6_finalize_emit",
+      "message": "repaired same-layer crossing by inserting junction 'tr_x_18'",
+      "node": "tr_x_18",
+      "segments": [
+        "tr_gb_73",
+        "tr_gb_84"
+      ]
+    },
+    {
+      "severity": "info",
+      "code": "road_crossing_repaired",
+      "stage": "6_finalize_emit",
+      "message": "repaired same-layer crossing by inserting junction 'tr_x_19'",
+      "node": "tr_x_19",
+      "segments": [
+        "tr_gb_73_a",
+        "tr_gb_85"
+      ]
+    },
+    {
+      "severity": "info",
+      "code": "road_crossing_repaired",
+      "stage": "6_finalize_emit",
+      "message": "repaired same-layer crossing by inserting junction 'tr_x_2'",
+      "node": "tr_x_2",
+      "segments": [
+        "tr_gb_7",
+        "tr_gc_56"
+      ]
+    },
+    {
+      "severity": "info",
+      "code": "road_crossing_repaired",
+      "stage": "6_finalize_emit",
+      "message": "repaired same-layer crossing by inserting junction 'tr_x_20'",
+      "node": "tr_x_20",
+      "segments": [
+        "tr_gb_75",
+        "tr_gb_87"
+      ]
+    },
+    {
+      "severity": "info",
+      "code": "road_crossing_repaired",
+      "stage": "6_finalize_emit",
+      "message": "repaired same-layer crossing by inserting junction 'tr_x_21'",
+      "node": "tr_x_21",
+      "segments": [
+        "tr_gb_75_a",
+        "tr_gb_91"
+      ]
+    },
+    {
+      "severity": "info",
+      "code": "road_crossing_repaired",
+      "stage": "6_finalize_emit",
+      "message": "repaired same-layer crossing by inserting junction 'tr_x_3'",
+      "node": "tr_x_3",
+      "segments": [
+        "tr_gb_9",
+        "tr_gc_57"
+      ]
+    },
+    {
+      "severity": "info",
+      "code": "road_crossing_repaired",
+      "stage": "6_finalize_emit",
+      "message": "repaired same-layer crossing by inserting junction 'tr_x_4'",
+      "node": "tr_x_4",
+      "segments": [
+        "tr_gb_20",
+        "tr_gc_58"
+      ]
+    },
+    {
+      "severity": "info",
+      "code": "road_crossing_repaired",
+      "stage": "6_finalize_emit",
+      "message": "repaired same-layer crossing by inserting junction 'tr_x_5'",
+      "node": "tr_x_5",
+      "segments": [
+        "tr_gb_21",
+        "tr_gc_49"
+      ]
+    },
+    {
+      "severity": "info",
+      "code": "road_crossing_repaired",
+      "stage": "6_finalize_emit",
+      "message": "repaired same-layer crossing by inserting junction 'tr_x_6'",
+      "node": "tr_x_6",
+      "segments": [
+        "tr_gb_22",
+        "tr_gb_39"
+      ]
+    },
+    {
+      "severity": "info",
+      "code": "road_crossing_repaired",
+      "stage": "6_finalize_emit",
+      "message": "repaired same-layer crossing by inserting junction 'tr_x_7'",
+      "node": "tr_x_7",
+      "segments": [
+        "tr_gb_23",
+        "tr_gb_39_a"
+      ]
+    },
+    {
+      "severity": "info",
+      "code": "road_crossing_repaired",
+      "stage": "6_finalize_emit",
+      "message": "repaired same-layer crossing by inserting junction 'tr_x_8'",
+      "node": "tr_x_8",
+      "segments": [
+        "tr_gb_23_b",
+        "tr_gc_49_a"
+      ]
+    },
+    {
+      "severity": "info",
+      "code": "road_crossing_repaired",
+      "stage": "6_finalize_emit",
+      "message": "repaired same-layer crossing by inserting junction 'tr_x_9'",
+      "node": "tr_x_9",
+      "segments": [
+        "tr_gb_24",
+        "tr_gb_40"
+      ]
+    },
+    {
+      "severity": "info",
+      "code": "road_crossing_repaired",
+      "stage": "6_finalize_emit",
+      "message": "repaired same-layer crossing by inserting junction 'tr_x'",
+      "node": "tr_x",
+      "segments": [
+        "tr_spc_b",
+        "tr_gc_45"
+      ]
+    },
+    {
+      "severity": "info",
+      "code": "stage_ok",
+      "stage": "6_finalize_emit",
+      "message": "stage 6_finalize_emit completed"
+    }
+  ],
+  "repairs": [
+    {
+      "stage": "6_finalize_emit",
+      "code": "resolve_road_crossing",
+      "node": "tr_x",
+      "segments": [
+        "tr_spc_b",
+        "tr_gc_45"
+      ]
+    },
+    {
+      "stage": "6_finalize_emit",
+      "code": "resolve_road_crossing",
+      "node": "tr_x_2",
+      "segments": [
+        "tr_gb_7",
+        "tr_gc_56"
+      ]
+    },
+    {
+      "stage": "6_finalize_emit",
+      "code": "resolve_road_crossing",
+      "node": "tr_x_3",
+      "segments": [
+        "tr_gb_9",
+        "tr_gc_57"
+      ]
+    },
+    {
+      "stage": "6_finalize_emit",
+      "code": "resolve_road_crossing",
+      "node": "tr_x_4",
+      "segments": [
+        "tr_gb_20",
+        "tr_gc_58"
+      ]
+    },
+    {
+      "stage": "6_finalize_emit",
+      "code": "resolve_road_crossing",
+      "node": "tr_x_5",
+      "segments": [
+        "tr_gb_21",
+        "tr_gc_49"
+      ]
+    },
+    {
+      "stage": "6_finalize_emit",
+      "code": "resolve_road_crossing",
+      "node": "tr_x_6",
+      "segments": [
+        "tr_gb_22",
+        "tr_gb_39"
+      ]
+    },
+    {
+      "stage": "6_finalize_emit",
+      "code": "resolve_road_crossing",
+      "node": "tr_x_7",
+      "segments": [
+        "tr_gb_23",
+        "tr_gb_39_a"
+      ]
+    },
+    {
+      "stage": "6_finalize_emit",
+      "code": "resolve_road_crossing",
+      "node": "tr_x_8",
+      "segments": [
+        "tr_gb_23_b",
+        "tr_gc_49_a"
+      ]
+    },
+    {
+      "stage": "6_finalize_emit",
+      "code": "resolve_road_crossing",
+      "node": "tr_x_9",
+      "segments": [
+        "tr_gb_24",
+        "tr_gb_40"
+      ]
+    },
+    {
+      "stage": "6_finalize_emit",
+      "code": "resolve_road_crossing",
+      "node": "tr_x_10",
+      "segments": [
+        "tr_gb_34",
+        "tr_gc_58_b"
+      ]
+    },
+    {
+      "stage": "6_finalize_emit",
+      "code": "resolve_road_crossing",
+      "node": "tr_x_11",
+      "segments": [
+        "tr_gb_36",
+        "tr_gb_42"
+      ]
+    },
+    {
+      "stage": "6_finalize_emit",
+      "code": "resolve_road_crossing",
+      "node": "tr_x_12",
+      "segments": [
+        "tr_gb_36_b",
+        "tr_gc_46"
+      ]
+    },
+    {
+      "stage": "6_finalize_emit",
+      "code": "resolve_road_crossing",
+      "node": "tr_x_13",
+      "segments": [
+        "tr_gb_38",
+        "tr_gb_42_a"
+      ]
+    },
+    {
+      "stage": "6_finalize_emit",
+      "code": "resolve_road_crossing",
+      "node": "tr_x_14",
+      "segments": [
+        "tr_gb_39_a_a",
+        "tr_gc_47"
+      ]
+    },
+    {
+      "stage": "6_finalize_emit",
+      "code": "resolve_road_crossing",
+      "node": "tr_x_15",
+      "segments": [
+        "tr_gb_42_b",
+        "tr_gc_48"
+      ]
+    },
+    {
+      "stage": "6_finalize_emit",
+      "code": "resolve_road_crossing",
+      "node": "tr_x_16",
+      "segments": [
+        "tr_gb_44",
+        "tr_gc_61"
+      ]
+    },
+    {
+      "stage": "6_finalize_emit",
+      "code": "resolve_road_crossing",
+      "node": "tr_x_17",
+      "segments": [
+        "tr_gb_69",
+        "tr_gb_79"
+      ]
+    },
+    {
+      "stage": "6_finalize_emit",
+      "code": "resolve_road_crossing",
+      "node": "tr_x_18",
+      "segments": [
+        "tr_gb_73",
+        "tr_gb_84"
+      ]
+    },
+    {
+      "stage": "6_finalize_emit",
+      "code": "resolve_road_crossing",
+      "node": "tr_x_19",
+      "segments": [
+        "tr_gb_73_a",
+        "tr_gb_85"
+      ]
+    },
+    {
+      "stage": "6_finalize_emit",
+      "code": "resolve_road_crossing",
+      "node": "tr_x_20",
+      "segments": [
+        "tr_gb_75",
+        "tr_gb_87"
+      ]
+    },
+    {
+      "stage": "6_finalize_emit",
+      "code": "resolve_road_crossing",
+      "node": "tr_x_21",
+      "segments": [
+        "tr_gb_75_a",
+        "tr_gb_91"
+      ]
+    }
+  ],
+  "drops": [
+    {
+      "stage": "6_finalize_emit",
+      "id": "b_district_0_2_0_7",
+      "reason": "finish_chaos_macro_void"
+    }
+  ],
+  "summary": {
+    "errors": 0,
+    "warnings": 5,
+    "repairs": 21,
+    "drops": 1
+  },
+  "features": {
+    "selected": [
+      "industrial_waterfront"
+    ],
+    "count": 1,
+    "applied": 0,
+    "degraded": 0,
+    "skipped": 1,
+    "planned": 0,
+    "items": [
+      {
+        "id": "feature_1_industrial_waterfront",
+        "type": "industrial_waterfront",
+        "status": "skipped",
+        "reason": "handler_not_implemented",
+        "anchor": null,
+        "emitted": {
+          "props": 0,
+          "landscapeObjects": 0,
+          "buildings": 0,
+          "districts": 0
+        }
+      }
+    ]
+  },
+  "metrics": {
+    "version": 2,
+    "partial": true,
+    "counts": {
+      "roads": 140,
+      "roadNodes": 93,
+      "districts": 14,
+      "parcels": 414,
+      "reservedParcels": 179,
+      "buildings": 50,
+      "enterableBuildings": 10,
+      "props": 180,
+      "lights": 8,
+      "rivers": 2,
+      "lakes": 0
+    },
+    "graph": {
+      "nodes": 93,
+      "edges": 140,
+      "components": 1,
+      "largestComponent": 93,
+      "deadEnds": 19,
+      "deadEndRatio": 0.204301,
+      "avgDegree": 2.989247,
+      "gamma": 0.512821
+    },
+    "roads": {
+      "totalLength": 7651.623,
+      "lengthByType": {
+        "arterial": 92.64,
+        "collector": 707.36,
+        "local": 6851.623
+      },
+      "shareByType": {
+        "arterial": 0.012107,
+        "collector": 0.092446,
+        "local": 0.895447
+      },
+      "maxSlope": 0.3,
+      "slopeByClass": {
+        "collector": {
+          "count": 1,
+          "maxSlope": 0.076531,
+          "overPolicy": 0,
+          "overAbsolute": 0
+        },
+        "arterial": {
+          "count": 1,
+          "maxSlope": 0.3,
+          "overPolicy": 1,
+          "overAbsolute": 0
+        },
+        "local": {
+          "count": 138,
+          "maxSlope": 0.13013,
+          "overPolicy": 1,
+          "overAbsolute": 0
+        }
+      },
+      "slopePolicy": {
+        "highway": 6,
+        "arterial": 8,
+        "collector": 10,
+        "local": 12
+      },
+      "classPolicyViolations": 2,
+      "classPolicyOk": 138,
+      "overAbsolute": 0,
+      "version": 2
+    },
+    "gameplay": {
+      "spawnToRoad": 0,
+      "exitToRoad": 0,
+      "enterableShare": 0.2,
+      "enterableTarget": 0.2,
+      "spawnDistrictType": "office",
+      "exitDistrictType": "parking",
+      "straightMeters": 565.7,
+      "routeMeters": 800,
+      "routeRatio": 1.414,
+      "districtsPassed": 5,
+      "exitRadius": 4,
+      "cars": {
+        "declared": 1,
+        "spots": 1,
+        "onRoad": 0,
+        "misaligned": 0,
+        "nearJunction": 1
+      },
+      "enemies": {
+        "count": 4,
+        "alienCount": 2,
+        "available": false,
+        "note": "runtime placement via nav graph; D-scaling/spawn-distance enforced by engine constraints (not implemented in generator)"
+      }
+    },
+    "districts": {
+      "plateArea": 262144,
+      "knownArea": 262144,
+      "areaByType": {
+        "commercial": 29127.111,
+        "industrial": 29127.111,
+        "market": 29127.111,
+        "office": 29127.111,
+        "park": 29127.111,
+        "parking": 29127.111,
+        "residential": 58254.222,
+        "slums": 29127.111
+      },
+      "shareByType": {
+        "commercial": 0.111111,
+        "industrial": 0.111111,
+        "market": 0.111111,
+        "office": 0.111111,
+        "park": 0.111111,
+        "parking": 0.111111,
+        "residential": 0.222222,
+        "slums": 0.111111
+      },
+      "parkShare": 0.111111
+    },
+    "parcels": {
+      "reservedShare": 0.432367,
+      "byDistrictCount": {
+        "district_0_0_0": 18,
+        "district_0_0_1": 12,
+        "district_1_0_0": 40,
+        "district_1_0_1": 24,
+        "district_2_0": 16,
+        "district_0_1": 16,
+        "district_1_1_0": 66,
+        "district_1_1_1": 44,
+        "district_2_1_0": 32,
+        "district_2_1_1": 32,
+        "district_0_2_0": 28,
+        "district_0_2_1": 21,
+        "district_1_2": 49,
+        "district_2_2": 16
+      }
+    },
+    "terrain": {
+      "slope": {
+        "step": 16,
+        "grid": 32,
+        "cells": 1024,
+        "maxSlope": 0.168561,
+        "share": {
+          "flat_lt3": 0.037109,
+          "gentle_3_8": 0.355469,
+          "moderate_8_15": 0.550781,
+          "steep_15_25": 0.056641,
+          "very_steep_gt25": 0
+        },
+        "counts": {
+          "flat_lt3": 38,
+          "gentle_3_8": 364,
+          "moderate_8_15": 564,
+          "steep_15_25": 58,
+          "very_steep_gt25": 0
+        }
+      },
+      "crossings": 6,
+      "reservations": 13,
+      "landmarks": 6,
+      "waterBuffers": 2,
+      "floodplains": 2
+    },
+    "reliefCeiling": {
+      "engineHillMaxSlope": 0.06,
+      "engineMaxSlope": 0.12,
+      "terrainMaxSlope": 0.168561,
+      "overEngineCapExceeds": true
+    },
+    "landmarkVisibility": {
+      "partial": true,
+      "method": "terrain_los_sample",
+      "landmarks": 6,
+      "crossings": 6,
+      "cores": 0,
+      "total": 12,
+      "observers": 12,
+      "totalPairs": 132,
+      "visiblePairs": 57,
+      "visibleApprox": 11,
+      "visibleFraction": 0.431818,
+      "visibleTargets": 11
+    },
+    "impressionCadence": {
+      "partial": true,
+      "method": "spawn_exit_path_geometry_25m_district_roadclass",
+      "samples": 32,
+      "changes": 5,
+      "pathLength": 800,
+      "avgSpacingMeters": 133.3,
+      "minSpacingMeters": 25,
+      "targetMin": 150,
+      "targetMax": 300,
+      "ok": false
+    },
+    "impressionAnchors": {
+      "method": "spawn_exit_anchors_spacing_path",
+      "spacingMeters": 200,
+      "anchors": [
+        {
+          "d": 200,
+          "x": -200,
+          "z": 0
+        },
+        {
+          "d": 400,
+          "x": -200,
+          "z": 200
+        },
+        {
+          "d": 600,
+          "x": 0,
+          "z": 200
+        },
+        {
+          "d": 800,
+          "x": 200,
+          "z": 200
+        }
+      ],
+      "anchorsCount": 4,
+      "pathLength": 800
+    },
+    "falseDeadEnds": {
+      "count": 0,
+      "share": 0,
+      "deadEndRatio": null,
+      "target": 0.1,
+      "ok": true,
+      "partial": true,
+      "note": "no false dead-ends emitted by design; metric scaffold until false-pass semantics are implemented"
+    },
+    "blockDensityCorrelation": {
+      "rho": 0.556676,
+      "n": 14,
+      "target": 0.6,
+      "ok": false,
+      "partial": false
+    },
+    "chunkBuild": {
+      "partial": true,
+      "buildTimeMs": null
+    },
+    "stream": {
+      "chunk": 256,
+      "keep": 1,
+      "aheadMin": 200,
+      "aheadMax": 900,
+      "budgetMs": 120,
+      "dividesPlate": true
+    },
+    "determinism": {
+      "generatorVersion": "0.90.0",
+      "seed": 38,
+      "deterministic": true
+    },
+    "report": {
+      "diagnosticsErrors": 0,
+      "diagnosticsWarnings": 5,
+      "repairs": 21,
+      "drops": 1
+    }
+  },
+  "rules": {
+    "version": 1,
+    "partial": true,
+    "violations": [
+      {
+        "severity": "warn",
+        "code": "cars_spot_near_junction",
+        "stage": "rules",
+        "message": "cars.spots must be >=15m from junctions",
+        "nearJunction": 1
+      },
+      {
+        "severity": "warn",
+        "code": "cars_spot_off_road",
+        "stage": "rules",
+        "message": "cars.spots must be near road network (<=8m)",
+        "spots": 1,
+        "onRoad": 0
+      },
+      {
+        "severity": "warn",
+        "code": "relief_ceiling_advisory",
+        "stage": "rules",
+        "message": "terrain analysis maxSlope exceeds engine field capability (CONFIG.jsonMap.relief.maxSlope / CONFIG.relief.maxSlope) — advisory only (hills legal); autoring cap for a single capsule is relief.hillMaxSlope",
+        "maxSlope": 0.168561,
+        "engineMaxSlope": 0.12,
+        "hillCapsuleCap": 0.06,
+        "excess": 0.048561
+      },
+      {
+        "severity": "warn",
+        "code": "road_slope_over_class_policy",
+        "stage": "rules",
+        "message": "road segments exceed class slope policy (see policies.slopeLimitPct)",
+        "segments": 2,
+        "maxSlope": 0.3
+      },
+      {
+        "severity": "warn",
+        "code": "soft_target_out_range",
+        "stage": "rules",
+        "message": "block density correlation below target (soft target, informational)",
+        "metric": "blockDensityCorrelation",
+        "rho": 0.556676,
+        "target": 0.6,
+        "n": 14
+      },
+      {
+        "severity": "warn",
+        "code": "soft_target_out_range",
+        "stage": "rules",
+        "message": "impression cadence outside target range [150,300]m (soft target, informational)",
+        "metric": "impressionCadence",
+        "avgSpacingMeters": 133.3,
+        "target": [
+          150,
+          300
+        ],
+        "pathLength": 800,
+        "changes": 5
+      },
+      {
+        "severity": "info",
+        "code": "spawn_district_unusual",
+        "stage": "rules",
+        "message": "gameplay.spawn is not in a typical calm residential district",
+        "districtType": "office"
+      }
+    ],
+    "summary": {
+      "errors": 0,
+      "warnings": 6,
+      "infos": 1
+    }
+  }
+}

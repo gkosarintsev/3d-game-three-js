@@ -1,0 +1,169 @@
+{
+  "$schema": "./level-v4.schema.json",
+  "kind": "cityforge",
+  "schemaVersion": 4,
+  "metadata": {
+    "levelName": "level-23",
+    "name": "Глава 23. Индустриальный узел",
+    "hint": "Разнообразный процедурный город: железная дорога, промышленные и жилые районы, холмы. Доберитесь до маяка.",
+    "units": "meters",
+    "notes": "Pilot v4 (railway_industrial, seed 38), 512×512 м, стриминг 2×2×256. Процедурный рельеф, транспорт и разнообразная застройка."
+  },
+  "ground": {
+    "y": 0,
+    "size": 512,
+    "color": 7322954
+  },
+  "windows": {
+    "spacing": 12
+  },
+  "gameplay": {
+    "goal": "exit",
+    "spawn": {
+      "x": -200,
+      "z": -200
+    },
+    "exit": {
+      "x": 200,
+      "z": 200
+    },
+    "exitRadius": 4,
+    "enemies": {
+      "count": 4
+    },
+    "alienEnemies": {
+      "count": 2
+    },
+    "cars": {
+      "count": 1,
+      "spots": [
+        {
+          "x": -210,
+          "z": -230,
+          "yaw": 90
+        }
+      ]
+    }
+  },
+  "stream": {
+    "chunk": 256,
+    "keep": 1,
+    "aheadMin": 200,
+    "aheadMax": 900,
+    "budgetMs": 120
+  },
+  "cityforge": {
+    "format": "cityforge",
+    "version": "0.1",
+    "world": {
+      "units": "meters",
+      "coordinateSystem": {
+        "type": "local",
+        "handedness": "right",
+        "up": "Y"
+      },
+      "origin": [
+        0,
+        0,
+        0
+      ],
+      "bounds": {
+        "min": [
+          -256,
+          -256,
+          -80
+        ],
+        "max": [
+          256,
+          256,
+          160
+        ]
+      }
+    },
+    "assets": [
+      {
+        "id": "ground.placeholder",
+        "kind": "procedural",
+        "generator": "placeholder.flat",
+        "bounds": [
+          512,
+          512,
+          1
+        ]
+      }
+    ],
+    "terrain": {
+      "base": {
+        "type": "heightfield",
+        "source": "procedural",
+        "resolution": 4
+      },
+      "modifiers": [
+        {
+          "id": "seed_hill",
+          "type": "mountain",
+          "center": [
+            0,
+            0
+          ],
+          "radius": 120,
+          "height": 8,
+          "falloff": "smooth",
+          "operation": "add",
+          "sourceRef": "terrain.base",
+          "parameters": {}
+        }
+      ]
+    },
+    "hydrology": {
+      "rivers": [],
+      "lakes": []
+    },
+    "networks": {
+      "roads": {
+        "nodes": [],
+        "segments": [],
+        "junctions": []
+      },
+      "railways": {
+        "nodes": [],
+        "segments": [],
+        "junctions": []
+      },
+      "paths": {
+        "nodes": [],
+        "segments": [],
+        "junctions": []
+      }
+    },
+    "structures": {
+      "bridges": [],
+      "tunnels": []
+    },
+    "instances": [],
+    "chunks": []
+  },
+  "generator": {
+    "generatorVersion": "0.90.0",
+    "seed": 38,
+    "deterministic": true,
+    "profile": "railway_industrial",
+    "stages": [],
+    "layers": [],
+    "budgets": {},
+    "districts": [],
+    "profiles": {},
+    "catalogs": {},
+    "refs": {},
+    "policies": {},
+    "landscape": {
+      "generate": true,
+      "profileDriven": true
+    },
+    "transport": {
+      "generate": true
+    }
+  },
+  "navEdgeProbe": 1.2,
+  "bodyProbe": 1.2
+}
