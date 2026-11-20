@@ -1,0 +1,174 @@
+{
+  "$schema": "./level-v4.schema.json",
+  "kind": "cityforge",
+  "schemaVersion": 4,
+  "metadata": {
+    "levelName": "level-23",
+    "name": "Глава 23. Разнообразный речной город",
+    "hint": "Разнообразный процедурный город: река, холмистый рельеф, разные районы и дороги. Доберитесь до маяка.",
+    "units": "meters",
+    "notes": "Профильный pilot v4 (river_trade), 1280×1280 м, стриминг 5×5×256. Разнообразие за счёт профиля (река, торговые/смешанные районы), процедурного рельефа, транспорта и застройки."
+  },
+  "ground": {
+    "y": 0,
+    "size": 1280,
+    "color": 7322954
+  },
+  "windows": {
+    "spacing": 12
+  },
+  "gameplay": {
+    "goal": "exit",
+    "spawn": {
+      "x": -520,
+      "z": -520
+    },
+    "exit": {
+      "x": 520,
+      "z": 520
+    },
+    "exitRadius": 4,
+    "enemies": {
+      "count": 7
+    },
+    "alienEnemies": {
+      "count": 3
+    },
+    "cars": {
+      "count": 2,
+      "spots": [
+        {
+          "x": -560,
+          "z": -520,
+          "yaw": 90
+        },
+        {
+          "x": 480,
+          "z": 560,
+          "yaw": 180
+        }
+      ]
+    }
+  },
+  "stream": {
+    "chunk": 256,
+    "keep": 1,
+    "aheadMin": 200,
+    "aheadMax": 900,
+    "budgetMs": 120
+  },
+  "cityforge": {
+    "format": "cityforge",
+    "version": "0.1",
+    "world": {
+      "units": "meters",
+      "coordinateSystem": {
+        "type": "local",
+        "handedness": "right",
+        "up": "Y"
+      },
+      "origin": [
+        0,
+        0,
+        0
+      ],
+      "bounds": {
+        "min": [
+          -640,
+          -640,
+          -80
+        ],
+        "max": [
+          640,
+          640,
+          160
+        ]
+      }
+    },
+    "assets": [
+      {
+        "id": "ground.placeholder",
+        "kind": "procedural",
+        "generator": "placeholder.flat",
+        "bounds": [
+          1280,
+          1280,
+          1
+        ]
+      }
+    ],
+    "terrain": {
+      "base": {
+        "type": "heightfield",
+        "source": "procedural",
+        "resolution": 4
+      },
+      "modifiers": [
+        {
+          "id": "seed_hill",
+          "type": "mountain",
+          "center": [
+            0,
+            0
+          ],
+          "radius": 120,
+          "height": 8,
+          "falloff": "smooth",
+          "operation": "add",
+          "sourceRef": "terrain.base",
+          "parameters": {}
+        }
+      ]
+    },
+    "hydrology": {
+      "rivers": [],
+      "lakes": []
+    },
+    "networks": {
+      "roads": {
+        "nodes": [],
+        "segments": [],
+        "junctions": []
+      },
+      "railways": {
+        "nodes": [],
+        "segments": [],
+        "junctions": []
+      },
+      "paths": {
+        "nodes": [],
+        "segments": [],
+        "junctions": []
+      }
+    },
+    "structures": {
+      "bridges": [],
+      "tunnels": []
+    },
+    "instances": [],
+    "chunks": []
+  },
+  "generator": {
+    "generatorVersion": "0.83.0",
+    "seed": 23,
+    "deterministic": true,
+    "profile": "river_trade",
+    "stages": [],
+    "layers": [],
+    "budgets": {},
+    "districts": [],
+    "profiles": {},
+    "catalogs": {},
+    "refs": {},
+    "policies": {},
+    "landscape": {
+      "generate": true,
+      "profileDriven": true
+    },
+    "transport": {
+      "generate": true
+    }
+  },
+  "navEdgeProbe": 1.2,
+  "bodyProbe": 1.2
+}
