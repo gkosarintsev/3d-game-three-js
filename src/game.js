@@ -82,8 +82,9 @@ export class Game {
     this._initialLevel = Number.isInteger(initialLevel) && initialLevel >= 0 && initialLevel < LEVELS.length
       ? initialLevel
       : 0;
-    this._previewLevel(this._initialLevel);
+    this._previewRequest = 0;
     this.hud.showCharacterSelect(role => this._startRole(role));
+    void this._previewLevel(this._initialLevel);
   }
 
   /** Выбор роли: создаёт персонажа при каждой загрузке главы, затем выбранная глава. */
@@ -239,12 +240,28 @@ export class Game {
   }
 
   /** Сцена без сущностей — только для обзора за экраном выбора роли. */
-  _previewLevel(index) {
+  async _previewLevel(index) {
+    const req = ++this._previewRequest;
+    const level = LEVELS[index];
+    if (!level) return;
+    // Превью стартовой главы может быть open/asset-уровнем (например ?level=23):
+    // без предзагрузки ассета/клеток сборка даёт пустой/неполный обзор. Ждём те же
+    // данные, что и реальная загрузка, но остаёмся в меню без сущностей.
+    try {
+      await Promise.all([preloadMapAsset(level.map), preloadWorldCells(level.map)]);
+    } catch (e) {
+      if (req !== this._previewRequest || this.state !== 'menu') return;
+      console.error(e);
+      return;
+    }
+    if (req !== this._previewRequest || this.state !== 'menu') return;
     this.map?.dispose?.();
-    this.map = this.createMap(LEVELS[index].map);
-    this._initScene(LEVELS[index].sky);
+    this.map = this.createMap(level.map);
+    this._initScene(level.sky);
     this.map.build(this.scene);
     this._setOverviewCamera();
+    // превью open/stream-карт: показать тени/картинку после асинхронной сборки
+    this.renderer.shadowMap.needsUpdate = true;
   }
 
   _initRenderer() {
