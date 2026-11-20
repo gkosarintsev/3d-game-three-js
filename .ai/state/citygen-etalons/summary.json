@@ -16,9 +16,9 @@
     "hill_town": {
       "runs": 3,
       "hashes": [
-        "b55b7e294d514859b8f322338815f5e9803569f60765eac6bbf6b3d30c105e71",
-        "27cd26df49dae2d58cab5a8a494c06ae75b61997d21b2b50290d84919b512b2f",
-        "3530ba5709382c2cd221e329c4d30a8e5f2cbf10eb772a2373e0b291e5f0c2ff"
+        "96d13d334d771f974c9d25dcca67eacb251220056c916df27064bd04dd7d533f",
+        "9a7750d1e27a1c4f1796b414a775425ac1042ca5e9087585babd3a8f11b1180f",
+        "848f9000d68a8ca1359f01c56a33e8142466d73ea299f5e9fba9fc117e64f33b"
       ],
       "errors": {
         "count": 3,
@@ -46,17 +46,17 @@
       },
       "buildings": {
         "count": 3,
-        "min": 395,
-        "max": 400,
-        "mean": 397
+        "min": 393,
+        "max": 398,
+        "mean": 395.666667
       }
     },
     "railway_industrial": {
       "runs": 3,
       "hashes": [
-        "cb5c3f48ab26479a1f80996b4f972aa8014517fee3336ff28576fb3752aec6c9",
-        "65249bf8dda3649cfd6c8bab944b6396ddf46406ce2885c9c8fe532eabfccc18",
-        "e97657ce8480cea1900f6a49af8d08e0bcce58f376f981b9a1d95c437e489311"
+        "868982b1a461ad4e4483cd7b9f61ef36fb66c8163d17355ed5d858ddc8c0793e",
+        "c1e2cbfc3928228e05ab82507b5054082700a71cb26e5cbf7039ade72f247d34",
+        "f441b7c3e7344f527d5a238d839b5ffead15858020cb0ac46212a952ba5920c9"
       ],
       "errors": {
         "count": 3,
@@ -86,15 +86,15 @@
         "count": 3,
         "min": 393,
         "max": 401,
-        "mean": 396.333333
+        "mean": 396
       }
     },
     "river_trade": {
       "runs": 3,
       "hashes": [
-        "eed9b3252161260b641fff86f709b1370d42e8dd736914690a6fe88c56ffe114",
-        "fac303b49ff35ff0549a0f7ae7de0c3f9008d8e14f1f3c56f0a2f6937805c0f2",
-        "2227d6bb184a4846dba8f817e83beca2f6488512a6ec552d283887e0c9a2d0f5"
+        "12da4bc2ed49e5e12913f298a1b7a5eae5c3eef093b7bc9597382a91e0a29de1",
+        "159321ee123d4b41c97131afdcc2568f189d9c8741c0c9909cb327ed1b2b70cc",
+        "99573cdb76935090e2500a0bb6bf716ac2c397527c3d22af0ca33181ffe77328"
       ],
       "errors": {
         "count": 3,
@@ -123,8 +123,8 @@
       "buildings": {
         "count": 3,
         "min": 394,
-        "max": 397,
-        "mean": 396
+        "max": 399,
+        "mean": 395.666667
       }
     }
   }

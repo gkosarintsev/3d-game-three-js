@@ -8,7 +8,7 @@ import { mergeGeometries } from 'three/addons/utils/BufferGeometryUtils.js';
  */
 
 class Batcher {
-  constructor(){ this.b={wall:[],roof:[],trim:[],door:[],foundation:[],stoneStep:[],glass:[],metalAccent:[],timberAccent:[],barrierOrange:[],boomRed:[],boomWhite:[],hazardYellow:[],ledCyan:[],signalLight:[],signBlue:[]};
+  constructor(){ this.b={wall:[],roof:[],trim:[],door:[],foundation:[],stoneStep:[],glass:[],glassBacking:[],metalAccent:[],timberAccent:[],barrierOrange:[],boomRed:[],boomWhite:[],hazardYellow:[],ledCyan:[],signalLight:[],signBlue:[]};
     this.box=new THREE.BoxGeometry(1,1,1); this.cyl=new THREE.CylinderGeometry(1,1,1,14); this.sph=new THREE.SphereGeometry(1,12,10);
     this.m4=new THREE.Matrix4(); this.p=new THREE.Vector3(); this.q=new THREE.Quaternion(); this.sc=new THREE.Vector3(); this.e=new THREE.Euler(); }
   addBox(k,w,h,d,x,y,z,rx=0,ry=0,rz=0){const g=this.box.clone().toNonIndexed(); this.p.set(x,y,z); this.e.set(rx,ry,rz); this.q.setFromEuler(this.e); this.sc.set(w,h,d); this.m4.compose(this.p,this.q,this.sc); g.applyMatrix4(this.m4); this.b[k].push(g);} 
@@ -100,5 +100,5 @@ export function buildDetailedParkingBooth(config, materials){
 
 export function makeParkingBoothMaterials(wallColorHex = '#dde3ea'){
   const mk=(c,r=0.7,m=0.1,e={})=>new THREE.MeshStandardMaterial({color:c,roughness:r,metalness:m,...e});
-  return { wall: mk(new THREE.Color(wallColorHex),0.72,0.08), roof: mk(0x5f6770,0.6,0.2), trim: mk(0xd9dde3,0.45,0.2), door: mk(0x4b5563,0.5,0.2), foundation: mk(0x808890,0.88,0.03), stoneStep: mk(0xa0a6ad,0.8,0.04), glass: new THREE.MeshPhysicalMaterial({color:0x9fd3ff,transparent:true,opacity:0.38,roughness:0.05,metalness:0,transmission:0.18}), metalAccent: mk(0x50565d,0.4,0.55), timberAccent: mk(0x7a5435,0.7,0.04), barrierOrange: mk(0xea580c,0.36,0.35), boomRed: mk(0xdc2626,0.35,0.15), boomWhite: mk(0xf8fafc,0.35,0.1), hazardYellow: mk(0xeab308,0.42,0.25), ledCyan: mk(0xbae6fd,0.25,0.1,{emissive:0x0ea5e9,emissiveIntensity:0.9}), signalLight: mk(0xbbf7d0,0.22,0,{emissive:0x22c55e,emissiveIntensity:1.2}), signBlue: mk(0x1d4ed8,0.38,0.12) };
+  return { wall: mk(new THREE.Color(wallColorHex),0.72,0.08), roof: mk(0x5f6770,0.6,0.2), trim: mk(0xd9dde3,0.45,0.2), door: mk(0x4b5563,0.5,0.2), foundation: mk(0x808890,0.88,0.03), stoneStep: mk(0xa0a6ad,0.8,0.04), glass: new THREE.MeshPhysicalMaterial({color:0x9fd3ff,transparent:true,opacity:0.38,roughness:0.05,metalness:0,transmission:0.18}), glassBacking: mk(0xc7d0d8,0.6,0.05), metalAccent: mk(0x50565d,0.4,0.55), timberAccent: mk(0x7a5435,0.7,0.04), barrierOrange: mk(0xea580c,0.36,0.35), boomRed: mk(0xdc2626,0.35,0.15), boomWhite: mk(0xf8fafc,0.35,0.1), hazardYellow: mk(0xeab308,0.42,0.25), ledCyan: mk(0xbae6fd,0.25,0.1,{emissive:0x0ea5e9,emissiveIntensity:0.9}), signalLight: mk(0xbbf7d0,0.22,0,{emissive:0x22c55e,emissiveIntensity:1.2}), signBlue: mk(0x1d4ed8,0.38,0.12) };
 }

@@ -6,7 +6,7 @@
     "seed": 21,
     "deterministic": true
   },
-  "reportHash": "a219317966cbfe00fb269067a383fcb2ecf16f96b09eec36a405239d07593204",
+  "reportHash": "c77d082e791a6e96d271859e6a65936190d0d86449825fd24bc9d80303666b73",
   "stages": 7,
   "summary": {
     "errors": 0,
@@ -22,42 +22,42 @@
   "metrics": {
     "partial": true,
     "counts": {
-      "roads": 160,
-      "roadNodes": 129,
+      "roads": 158,
+      "roadNodes": 127,
       "districts": 47,
       "parcels": 2407,
       "reservedParcels": 492,
-      "buildings": 399,
-      "enterableBuildings": 82,
+      "buildings": 400,
+      "enterableBuildings": 83,
       "props": 386,
       "lights": 8,
       "rivers": 2,
       "lakes": 0
     },
     "graph": {
-      "nodes": 129,
-      "edges": 160,
+      "nodes": 127,
+      "edges": 158,
       "components": 1,
-      "largestComponent": 129,
-      "deadEnds": 37,
-      "deadEndRatio": 0.286822,
-      "avgDegree": 2.465116,
-      "gamma": 0.419948
+      "largestComponent": 127,
+      "deadEnds": 36,
+      "deadEndRatio": 0.283465,
+      "avgDegree": 2.472441,
+      "gamma": 0.421333
     },
     "roads": {
-      "totalLength": 13668.297,
+      "totalLength": 13566.297,
       "lengthByType": {
         "arterial": 360.83,
-        "local": 13307.467
+        "local": 13205.467
       },
       "shareByType": {
-        "arterial": 0.026399,
-        "local": 0.973601
+        "arterial": 0.026598,
+        "local": 0.973402
       },
       "maxSlope": 0.297561,
       "slopeByClass": {
         "local": {
-          "count": 158,
+          "count": 156,
           "maxSlope": 0.1,
           "overPolicy": 0,
           "overAbsolute": 0
@@ -76,14 +76,14 @@
         "local": 12
       },
       "classPolicyViolations": 1,
-      "classPolicyOk": 159,
+      "classPolicyOk": 157,
       "overAbsolute": 0,
       "version": 2
     },
     "gameplay": {
       "spawnToRoad": 0,
       "exitToRoad": 0,
-      "enterableShare": 0.205514,
+      "enterableShare": 0.2075,
       "enterableTarget": 0.2,
       "spawnDistrictType": "office",
       "exitDistrictType": "commercial",

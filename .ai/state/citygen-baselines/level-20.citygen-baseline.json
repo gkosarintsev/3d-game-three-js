@@ -6,13 +6,13 @@
     "seed": 20,
     "deterministic": true
   },
-  "reportHash": "c90f28154037a7c5555d71d9fe11781d0b6c86cd839f8ca2ec63462b6b95feec",
+  "reportHash": "e6ce4d871b3d318c89c3f43b56deee42f81fd4e7bb09877a9518e395135b4099",
   "stages": 7,
   "summary": {
     "errors": 0,
     "warnings": 7,
     "repairs": 10,
-    "drops": 13
+    "drops": 12
   },
   "rules": {
     "errors": 0,
@@ -22,37 +22,37 @@
   "metrics": {
     "partial": true,
     "counts": {
-      "roads": 157,
-      "roadNodes": 128,
+      "roads": 158,
+      "roadNodes": 129,
       "districts": 40,
       "parcels": 2381,
       "reservedParcels": 182,
-      "buildings": 407,
-      "enterableBuildings": 84,
+      "buildings": 403,
+      "enterableBuildings": 83,
       "props": 390,
       "lights": 8,
       "rivers": 0,
       "lakes": 0
     },
     "graph": {
-      "nodes": 128,
-      "edges": 157,
+      "nodes": 129,
+      "edges": 158,
       "components": 1,
-      "largestComponent": 128,
+      "largestComponent": 129,
       "deadEnds": 33,
-      "deadEndRatio": 0.257813,
-      "avgDegree": 2.453125,
-      "gamma": 0.415344
+      "deadEndRatio": 0.255814,
+      "avgDegree": 2.449612,
+      "gamma": 0.414698
     },
     "roads": {
-      "totalLength": 13928.786,
+      "totalLength": 14022.586,
       "lengthByType": {
         "collector": 2080,
-        "local": 11848.786
+        "local": 11942.586
       },
       "shareByType": {
-        "collector": 0.149331,
-        "local": 0.850669
+        "collector": 0.148332,
+        "local": 0.851668
       },
       "maxSlope": 0.3,
       "slopeByClass": {
@@ -63,7 +63,7 @@
           "overAbsolute": 0
         },
         "local": {
-          "count": 156,
+          "count": 157,
           "maxSlope": 0.3,
           "overPolicy": 16,
           "overAbsolute": 0
@@ -76,14 +76,14 @@
         "local": 12
       },
       "classPolicyViolations": 16,
-      "classPolicyOk": 141,
+      "classPolicyOk": 142,
       "overAbsolute": 0,
       "version": 2
     },
     "gameplay": {
       "spawnToRoad": 0,
       "exitToRoad": 0,
-      "enterableShare": 0.206388,
+      "enterableShare": 0.205955,
       "enterableTarget": 0.2,
       "spawnDistrictType": "office",
       "exitDistrictType": "campus",
