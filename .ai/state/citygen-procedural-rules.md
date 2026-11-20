@@ -390,8 +390,7 @@
 **Статус:** §10.4 признаётся accepted deviation; сигнал в отчёте остаётся (`impressionCadence` в `report.metrics`), принуждения нет. Следующий этап — отдельный план.
 
 ### S2 — L17/L20/L21 регистрация в `src/levels/index.js`
-**Выбрано: оставить вне реестра (2B).** Основание: profile-driven пилоты существуют и воспроизводимы, эталоны помечены, но perf-бюджеты для сложных глав не подтверждены; регистрация ухудшит invariant «registry ⊂ green CI browser gates + perf» или потребует архитектурного вмешательства. 2C («experimental outside budgets») противоречит правилу согласованных бюджетов — отвергнуто. 2A (регистрация + perf-ремонт) — цепочка заранее не гарантарует сходимость в рамках плана 21; требует отдельного плана perf-платформы.
-**Статус:** L17/L20/L21 официально остаются вне `src/levels/index.js` до отдельного perf plan/решения владельца. Они покрываются `tools/check-levels.mjs` + etalon-регрессом и не доступны игроку как главы 17/20/21.
+**Историческое решение (2B, 2026-11-19):** оставить вне реестра до подтверждённых perf-бюджетов. **Reconciliation (2026-11-20, T23.2):** на `origin/main` L17/L20/L21 (и 18/19/22) присутствуют в `src/levels/index.js`/`LEVEL_NUMBERS`. Зелёный full push CI run [44646615819](https://github.com/gkosarintsev/3d-game-three-js/actions/runs/44646615819) (merge `4686b472`, PR #71) подтвердил browser/contract gates при зарегистрированных главах (`browser / open-world`, `browser / level-contract-lifecycle`, `browser / misc`, `browser / alien`, `browser / stream-vehicle-rotated-solid` — success) и rebuild/check для `levels-17-18-19`, `levels-20-21-22` — success. С учётом решения владельца 2026-11-16 о выносе perf-hard бюджетов (reload-scene-budget/picture-ground-geo) из DoD, текущее состояние соответствует T23.2: главы зарегистрированы и покрыты зелёными CI gates. При регрессии browser/perf-поведения — чинить в CI (self-heal ≤4) или откатывать/ADR по решению владельца; "молчаливый hold" не применяется.
 
 ### S3 — §11.2 features / IR-манифест (остров на реке, холм-цитадель, стадион и т. д.)
 **Выбрано: report-only как accepted residual (3C).** Основание: IR `building` schema закрыта (`additionalProperties=false`) — features физически не могут быть представлены IR как «стадион/цитадель» без размывания закрытого контракта всех потребителей (json-map/solids/nav/tools-check). 3A требует ADR+схема и длительной revalidation — следующий план, не часть закрытия. 3B (эмиссия как props/tags) — возможна, но тоже новый план с нужной проработкой. Делать «манифестами в diagnostics» уже и есть 3C.
@@ -443,5 +442,5 @@
 ### Evidence
 - Последние 20 PR (#16–#39): все зелёные по merge-gate aggregate; 100×3 seed-series green на merges PRs #37, #38, #39 (plain + transport).
 - `node --test tools/citygen.test.mjs` — **65/65**; `chunk tools/chunk.test.mjs` — **17/17**; `citygen-etalon-check` — **16/16** (gv 0.77.0).
-- Browser gates зелёные на главах в реестре (`open-world`, `level-contract-lifecycle`, `alien`, `misc`, `stream-vehicle-rotated-solid`).
-- L17/L20/L21 остаются вне реестра (perf), зафиксировано выше.
+- Browser gates зелёные на главах в реестре (`open-world`, `level-contract-lifecycle`, `alien`, `misc`, `stream-vehicle-rotated-solid`), включая зарегистрированные L17/L20/L21 по evidence CI run 44646615819 (main, 4686b472).
+- T23.2 reconciled 2026-11-20: L17/L20/L21 в реестре на main; stale статус "вне реестра" снят (см. запись выше).
