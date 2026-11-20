@@ -22,7 +22,7 @@ let state = {
   selectedKind: null,
 };
 
-let registry = { numbers: [7,8,9,10,15,16,17,18,19] };
+let registry = { numbers: [7, 8, 9, 10, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24] };
 let raw = { source: null, compiledIndex: null, decodedCells: null, report: null };
 let model = null;
 let renderer = null;
