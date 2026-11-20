@@ -37,7 +37,7 @@
     {
       "id": "4_buildings_structures",
       "status": "ok",
-      "diagnostics": 10,
+      "diagnostics": 11,
       "repairs": 0,
       "drops": 0
     },
@@ -1979,9 +1979,9 @@
       "code": "buildings_generated",
       "stage": "4_buildings_structures",
       "message": "generated buildings from parcels",
-      "count": 50,
+      "count": 51,
       "budget": 87,
-      "skippedConflict": 183
+      "skippedConflict": 182
     },
     {
       "severity": "info",
@@ -1995,13 +1995,13 @@
       "code": "enterable_share",
       "stage": "4_buildings_structures",
       "message": "enterable buildings share (section 9.8, target 15-25%)",
-      "total": 51,
+      "total": 52,
       "enterable": 10,
-      "share": 0.196,
+      "share": 0.192,
       "targetShare": 0.2,
       "required": {
         "min": 8,
-        "max": 12
+        "max": 13
       }
     },
     {
@@ -2057,10 +2057,32 @@
     },
     {
       "severity": "info",
+      "code": "floors_clamp_bydist",
+      "stage": "4_buildings_structures",
+      "message": "trace byDist in clamp",
+      "iter": 2,
+      "keys": [
+        {
+          "id": "district_3_1_01",
+          "max": null
+        },
+        {
+          "id": "district_3_1_2100",
+          "max": null
+        },
+        {
+          "id": "district_3_1_201",
+          "max": null
+        }
+      ],
+      "totKeys": 14
+    },
+    {
+      "severity": "info",
       "code": "floors_contrast_built",
       "stage": "4_buildings_structures",
       "message": "building floors distribution (section 9.4): L-modulation, adjacency contrast <= 2.5x, 5-8 dominants per city (one per high-L district, capped/filled 2026-11-19)",
-      "clamped": 18,
+      "clamped": 13,
       "dominants": 5,
       "districts": 14,
       "adjacencyPairs": 23
@@ -2090,18 +2112,18 @@
       "code": "props_generated",
       "stage": "5_infrastructure_props",
       "message": "generated district props",
-      "count": 162,
+      "count": 159,
       "budget": 183,
-      "attempts": 970,
+      "attempts": 981,
       "byDistrictType": {
-        "slums": 46,
+        "slums": 48,
         "park": 12,
-        "residential": 29,
-        "industrial": 7,
-        "parking": 5,
+        "residential": 23,
+        "industrial": 6,
+        "parking": 6,
         "office": 15,
-        "commercial": 24,
-        "market": 24
+        "commercial": 23,
+        "market": 26
       }
     },
     {
@@ -2257,35 +2279,35 @@
           "accessibleRatio": 1
         }
       },
-      "buildings": 51,
+      "buildings": 52,
       "buildingsByDistrictType": {
         "office": 5,
         "residential": 13,
-        "commercial": 15,
+        "commercial": 17,
         "parking": 1,
-        "market": 12,
-        "industrial": 2,
+        "market": 9,
+        "industrial": 4,
         "slums": 3
       },
       "lights": 8,
-      "props": 180,
+      "props": 177,
       "propsByDistrictType": {
-        "slums": 46,
+        "slums": 48,
         "park": 12,
-        "residential": 29,
-        "industrial": 7,
-        "parking": 5,
+        "residential": 23,
+        "industrial": 6,
+        "parking": 6,
         "office": 15,
-        "commercial": 24,
-        "market": 24
+        "commercial": 23,
+        "market": 26
       },
       "chunkLoad": {
         "nonEmptyChunks": 4,
-        "maxBuildings": 23,
-        "maxProps": 58,
+        "maxBuildings": 25,
+        "maxProps": 53,
         "maxLights": 3,
-        "avgBuildings": 12.75,
-        "avgProps": 45
+        "avgBuildings": 13,
+        "avgProps": 44.25
       }
     },
     {
@@ -2317,7 +2339,7 @@
       "code": "finish_chaos_applied",
       "stage": "6_finalize_emit",
       "message": "chaos applied at finish stage",
-      "applied": 51,
+      "applied": 52,
       "skipped": 0,
       "lockedSkipped": 0,
       "seams": 4,
@@ -2337,14 +2359,14 @@
           ]
         },
         {
-          "id": "b_district_0_0_0_22",
+          "id": "b_district_0_0_0_13",
           "dXZ": [
             0.616,
             0.346
           ]
         },
         {
-          "id": "b_district_0_0_0_34",
+          "id": "b_district_0_0_0_33",
           "dXZ": [
             0.225,
             0.035
@@ -2358,7 +2380,7 @@
           ]
         },
         {
-          "id": "b_district_0_0_1_36",
+          "id": "b_district_0_0_1_22",
           "dXZ": [
             0.039,
             0.591
@@ -2379,112 +2401,112 @@
           ]
         },
         {
-          "id": "b_district_0_2_0_17",
+          "id": "b_district_0_1_46",
           "dXZ": [
-            0.044,
-            -0.025
+            -0.464,
+            0.044
           ]
         },
         {
-          "id": "b_district_0_2_0_23",
+          "id": "b_district_0_1_47",
           "dXZ": [
-            0.319,
-            -0.043
+            -0.398,
+            0.319
           ]
         },
         {
-          "id": "b_district_0_2_0_24",
+          "id": "b_district_0_2_0_18",
           "dXZ": [
             0.114,
             -0.047
           ]
         },
         {
-          "id": "b_district_0_2_0_30",
+          "id": "b_district_0_2_0_23",
           "dXZ": [
             -0.503,
             0.372
           ]
         },
         {
-          "id": "b_district_0_2_0_31",
+          "id": "b_district_0_2_0_29",
           "dXZ": [
             0.371,
             0.131
           ]
         },
         {
-          "id": "b_district_0_2_0_37",
+          "id": "b_district_0_2_0_30",
           "dXZ": [
-            0.204,
-            0.009
+            0.489,
+            0.204
           ]
         },
         {
-          "id": "b_district_0_2_0_38",
+          "id": "b_district_0_2_0_31",
           "dXZ": [
-            -0.491,
-            -0.236
+            -0.025,
+            -0.491
           ]
         },
         {
-          "id": "b_district_0_2_0_4",
+          "id": "b_district_0_2_0_34",
           "dXZ": [
             0.01,
             -0.472
           ]
         },
         {
-          "id": "b_district_0_2_0_44",
+          "id": "b_district_0_2_0_35",
           "dXZ": [
             -0.173,
             -0.198
           ]
         },
         {
-          "id": "b_district_0_2_0_5",
+          "id": "b_district_0_2_0_36",
           "dXZ": [
-            -0.018,
-            0.01
+            0.01,
+            -0.134
           ]
         },
         {
-          "id": "b_district_0_2_0_6",
+          "id": "b_district_0_2_0_4",
           "dXZ": [
             0.151,
             0.223
           ]
         },
         {
-          "id": "b_district_0_2_0_7",
+          "id": "b_district_0_2_0_42",
           "dXZ": [
-            0.342,
-            -0.06
+            0.208,
+            0.287
           ]
         },
         {
-          "id": "b_district_0_2_1_25",
+          "id": "b_district_0_2_0_43",
           "dXZ": [
-            0.403,
-            -0.112
+            -0.05,
+            0.266
           ]
         },
         {
-          "id": "b_district_0_2_1_39",
+          "id": "b_district_0_2_0_48",
           "dXZ": [
-            -0.097,
-            -0.169
+            -0.112,
+            -0.097
           ]
         },
         {
-          "id": "b_district_0_2_1_45",
+          "id": "b_district_0_2_0_5",
           "dXZ": [
             0.468,
             0.073
           ]
         },
         {
-          "id": "b_district_0_2_1_46",
+          "id": "b_district_0_2_0_6",
           "dXZ": [
             -0.343,
             -0.128
@@ -2497,7 +2519,7 @@
       "code": "finish_chaos_macro",
       "stage": "6_finalize_emit",
       "message": "macro chaos (void parcel instead of building, 3-5%) applied at finish stage",
-      "eligible": 40,
+      "eligible": 41,
       "dropped": 1,
       "target": 1,
       "changes": [
@@ -2515,17 +2537,17 @@
       "district": "district_1_0_0",
       "landValue": 0.3729,
       "eligible": 8,
-      "target": "historic",
+      "target": "modern",
       "converted": 8,
       "buildings": [
-        "b_district_1_0_0_13",
         "b_district_1_0_0_14",
         "b_district_1_0_0_15",
+        "b_district_1_0_0_16",
         "b_district_1_0_0_27",
         "b_district_1_0_0_28",
-        "b_district_1_0_0_29",
-        "b_district_1_0_0_35",
-        "b_district_1_0_0_43"
+        "b_district_1_0_0_32",
+        "b_district_1_0_0_40",
+        "b_district_1_0_0_41"
       ]
     },
     {
@@ -2545,7 +2567,7 @@
           "d": -0.675
         },
         {
-          "id": "b_district_0_0_1_36",
+          "id": "b_district_0_0_1_22",
           "tangent": "z",
           "d": -0.675
         }
@@ -2563,7 +2585,7 @@
           "era": "historic_insert"
         },
         {
-          "id": "b_district_0_0_0_22",
+          "id": "b_district_0_0_0_13",
           "era": "historic_insert"
         }
       ]
@@ -3097,9 +3119,9 @@
       "districts": 14,
       "parcels": 414,
       "reservedParcels": 179,
-      "buildings": 50,
+      "buildings": 51,
       "enterableBuildings": 10,
-      "props": 180,
+      "props": 177,
       "lights": 8,
       "rivers": 2,
       "lakes": 0
@@ -3161,7 +3183,7 @@
     "gameplay": {
       "spawnToRoad": 0,
       "exitToRoad": 0,
-      "enterableShare": 0.2,
+      "enterableShare": 0.196078,
       "enterableTarget": 0.2,
       "spawnDistrictType": "office",
       "exitDistrictType": "parking",
