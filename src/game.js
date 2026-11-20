@@ -556,7 +556,8 @@ export class Game {
     // пул огней следит за камерой: так свет есть и за интертитром главы, где
     // игрока ещё нет, и на крыше, до которой уличный фонарь не дотягивается
     this.nightLights?.update(this.camera.position);
-    this.renderer.render(this.scene, this.camera);
+    // при async-превью open/asset главы сцена может ещё не быть создана; тик уже идёт
+    if (this.scene) this.renderer.render(this.scene, this.camera);
   }
 
   static _fmtTime(seconds) {
