@@ -34,7 +34,7 @@ import { LEVEL_23 } from './level-23/index.js';
 import { LEVEL_24 } from './level-24/index.js';
 
 export const LEVELS = [
-  LEVEL_07, LEVEL_08, LEVEL_09, LEVEL_10, LEVEL_15, LEVEL_16, LEVEL_17, LEVEL_18, LEVEL_19, LEVEL_20, LEVEL_21, LEVEL_22, LEVEL_23,
+  LEVEL_07, LEVEL_08, LEVEL_09, LEVEL_10, LEVEL_15, LEVEL_16, LEVEL_17, LEVEL_18, LEVEL_19, LEVEL_20, LEVEL_21, LEVEL_22, LEVEL_23, LEVEL_24,
 ];
 
 /** Номер главы для каждой позиции `LEVELS` (файлы/каталоги `level-NN`). */
