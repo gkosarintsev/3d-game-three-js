@@ -207,7 +207,7 @@ test('integration: level 16 counts and auto-districts', async () => {
   const levelDef = await importCatalog(n);
   const decodedCells = decodeCellsFromCatalog(levelDef, dir);
   const model = buildModel({ level: n, mode: 'compiled', source, compiledIndex: levelDef.map, decodedCells, report });
-  assert.equal(model.entities.buildings.size, 354);
+  assert.equal(model.entities.buildings.size, 356);
   assert.equal(model.entities.roads.size, 195);
   assert.equal(model.entities.props.size, 572);
   assert.equal((model.entities.lights || new Map()).size, 8);
@@ -216,7 +216,7 @@ test('integration: level 16 counts and auto-districts', async () => {
   assert.equal(model.skeleton.edges.length, 5073);
   assert.equal(model.stats.duplicates, 106);
   assert.equal(model.stats.instances.roads, 248);
-  assert.equal(model.stats.instances.buildings, 394);
+  assert.equal(model.stats.instances.buildings, 396);
   assert.equal(model.stats.instances.props, 581);
   assert.equal(model.stats.instances.lights, 8);
   assert.equal(model.stats.instances.channels, 5);

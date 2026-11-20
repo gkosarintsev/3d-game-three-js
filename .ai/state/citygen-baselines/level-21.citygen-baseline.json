@@ -2,11 +2,11 @@
   "file": "src/levels/level-21.json",
   "levelName": "level-21",
   "generator": {
-    "generatorVersion": "0.89.0",
+    "generatorVersion": "0.90.0",
     "seed": 21,
     "deterministic": true
   },
-  "reportHash": "f2140a7ae8d5e75cd696810297dadc7019a1c141d7d966c4b33c4e14d9eb1a29",
+  "reportHash": "a219317966cbfe00fb269067a383fcb2ecf16f96b09eec36a405239d07593204",
   "stages": 7,
   "summary": {
     "errors": 0,
@@ -27,7 +27,7 @@
       "districts": 47,
       "parcels": 2407,
       "reservedParcels": 492,
-      "buildings": 397,
+      "buildings": 399,
       "enterableBuildings": 82,
       "props": 386,
       "lights": 8,
@@ -83,7 +83,7 @@
     "gameplay": {
       "spawnToRoad": 0,
       "exitToRoad": 0,
-      "enterableShare": 0.206549,
+      "enterableShare": 0.205514,
       "enterableTarget": 0.2,
       "spawnDistrictType": "office",
       "exitDistrictType": "commercial",

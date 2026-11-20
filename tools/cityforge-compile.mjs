@@ -334,7 +334,8 @@ export function compileCityforge(raw) {
   SUPPORTED_EMPTY(cf.parcels, 'cityforge.parcels', errors);
   SUPPORTED_EMPTY(cf.caves?.systems ?? cf.caves, 'cityforge.caves', errors);
   SUPPORTED_NONE(cf.networks?.railways, 'cityforge.networks.railways', errors);
-  SUPPORTED_NONE(cf.networks?.paths, 'cityforge.networks.paths', errors);
+  // T23.5 (ADR-005): networks.paths — meso residue "проходные дворы", пробрасываем в IR без отклонения (silent).
+  void cf.networks?.paths;
   // формальные CF-мосты (decks/spans) компилятор не разворачивает; мосты главы
   // задаются как приподнятые сегменты roads (type bridge по высоте) с плавными
   // стыками — их compileRoads обрабатывает. Непустые структуры пропускаем с

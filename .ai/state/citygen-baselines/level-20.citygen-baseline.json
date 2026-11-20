@@ -2,11 +2,11 @@
   "file": "src/levels/level-20.json",
   "levelName": "level-20",
   "generator": {
-    "generatorVersion": "0.89.0",
+    "generatorVersion": "0.90.0",
     "seed": 20,
     "deterministic": true
   },
-  "reportHash": "d5ab1d8d35120ede9e43335a4a6b5ac3c0392924555196b49d51df815b9cd566",
+  "reportHash": "c90f28154037a7c5555d71d9fe11781d0b6c86cd839f8ca2ec63462b6b95feec",
   "stages": 7,
   "summary": {
     "errors": 0,
@@ -27,7 +27,7 @@
       "districts": 40,
       "parcels": 2381,
       "reservedParcels": 182,
-      "buildings": 405,
+      "buildings": 407,
       "enterableBuildings": 84,
       "props": 390,
       "lights": 8,
@@ -83,7 +83,7 @@
     "gameplay": {
       "spawnToRoad": 0,
       "exitToRoad": 0,
-      "enterableShare": 0.207407,
+      "enterableShare": 0.206388,
       "enterableTarget": 0.2,
       "spawnDistrictType": "office",
       "exitDistrictType": "campus",

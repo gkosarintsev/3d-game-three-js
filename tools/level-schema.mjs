@@ -328,6 +328,20 @@ const OPEN_BUILDINGS = arr(obj({
   detailedVisual: str({ doc: 'детальная визуальная модель' }),
   windowDensity: num({ min: 1, max: 3, doc: 'плотность окон' }),
   windowScale: num({ min: 0.5, max: 2, doc: 'масштаб окон' }),
+  // T23.5 meso residue (ADR-005): пристройка — отдельное здание, привязанное к хосту
+  attachment: obj({
+    hostId: str({ req: true, doc: 'id здания-хоста' }),
+    offset: obj({
+      x: num({ doc: 'м: плановый сдвиг по X (IR-метаданные)' }),
+      z: num({ doc: 'м: плановый сдвиг по Z (IR-метаданные)' }),
+    }, { doc: 'опциональный плановый сдвиг относительно хоста' }),
+  }, { doc: 'пристройка/самострой: отдельное здание, привязанное к hostId (ADR-005)' }),
+  // T23.5 meso residue (ADR-005): глухие фасады без окон (двери приоритетнее)
+  facadeBlankSides: arr(str({ enum: ['north', 'south', 'east', 'west'], doc: 'сторона локального фасада без окон' }), {
+    minItems: 1,
+    maxItems: 4,
+    doc: 'список глухих фасадов без оконных квадов (ADR-005)',
+  }),
   roofMaterial: str({ doc: 'материал кровли' }),
   roofColor: str({ doc: 'цвет кровли' }),
   trimFinish: str({ doc: 'отделка' }),

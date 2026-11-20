@@ -134,6 +134,51 @@
             "maximum": 2,
             "description": "масштаб окон"
           },
+          "attachment": {
+            "type": "object",
+            "properties": {
+              "hostId": {
+                "type": "string",
+                "description": "id здания-хоста"
+              },
+              "offset": {
+                "type": "object",
+                "properties": {
+                  "x": {
+                    "type": "number",
+                    "description": "м: плановый сдвиг по X (IR-метаданные)"
+                  },
+                  "z": {
+                    "type": "number",
+                    "description": "м: плановый сдвиг по Z (IR-метаданные)"
+                  }
+                },
+                "additionalProperties": false,
+                "description": "опциональный плановый сдвиг относительно хоста"
+              }
+            },
+            "required": [
+              "hostId"
+            ],
+            "additionalProperties": false,
+            "description": "пристройка/самострой: отдельное здание, привязанное к hostId (ADR-005)"
+          },
+          "facadeBlankSides": {
+            "type": "array",
+            "minItems": 1,
+            "maxItems": 4,
+            "items": {
+              "type": "string",
+              "enum": [
+                "north",
+                "south",
+                "east",
+                "west"
+              ],
+              "description": "сторона локального фасада без окон"
+            },
+            "description": "список глухих фасадов без оконных квадов (ADR-005)"
+          },
           "roofMaterial": {
             "type": "string",
             "description": "материал кровли"

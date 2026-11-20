@@ -1,5 +1,5 @@
 {
-  "generatorVersion": "0.89.0",
+  "generatorVersion": "0.90.0",
   "profiles": [
     "hill_town",
     "railway_industrial",
@@ -16,9 +16,9 @@
     "hill_town": {
       "runs": 3,
       "hashes": [
-        "da45bb628f929bfe9cab3de3a466e2eba996c733372b67a93ca9734b26d2956e",
-        "cefc9ec08d6ba94da9722c5bc7fe0691cd099a4a61cd1ef27079dc9869178143",
-        "2fd3846126b6c195d297e21c3f57c3d25ded92f790649fcb18b7ad3d3626466f"
+        "b55b7e294d514859b8f322338815f5e9803569f60765eac6bbf6b3d30c105e71",
+        "27cd26df49dae2d58cab5a8a494c06ae75b61997d21b2b50290d84919b512b2f",
+        "3530ba5709382c2cd221e329c4d30a8e5f2cbf10eb772a2373e0b291e5f0c2ff"
       ],
       "errors": {
         "count": 3,
@@ -54,9 +54,9 @@
     "railway_industrial": {
       "runs": 3,
       "hashes": [
-        "ca15c423d099ab65fc85e717a612c2f09cca855e1c3f1cd461fd64011d080aa8",
-        "d42940ab191458c2bad19d04b3f5a918f2cd874ddf096873e79bd5d4fc6e53eb",
-        "440e0fafdfd3a153d56bc901ad9491e88d7dcd52535f82c386fed288dea8f92f"
+        "cb5c3f48ab26479a1f80996b4f972aa8014517fee3336ff28576fb3752aec6c9",
+        "65249bf8dda3649cfd6c8bab944b6396ddf46406ce2885c9c8fe532eabfccc18",
+        "e97657ce8480cea1900f6a49af8d08e0bcce58f376f981b9a1d95c437e489311"
       ],
       "errors": {
         "count": 3,
@@ -92,9 +92,9 @@
     "river_trade": {
       "runs": 3,
       "hashes": [
-        "bf12e273840f29a14cc59685e6d2836644b6d557a06a5b9518297268279a1550",
-        "e94fa87b5d142797b82de16f3853d155a1aaf331f70f3e51bcb21cb41215f20a",
-        "5574f46b2ad107f655de208d84f43558319ac25c4546df376d73497772faf2d4"
+        "eed9b3252161260b641fff86f709b1370d42e8dd736914690a6fe88c56ffe114",
+        "fac303b49ff35ff0549a0f7ae7de0c3f9008d8e14f1f3c56f0a2f6937805c0f2",
+        "2227d6bb184a4846dba8f817e83beca2f6488512a6ec552d283887e0c9a2d0f5"
       ],
       "errors": {
         "count": 3,

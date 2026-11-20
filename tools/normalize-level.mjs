@@ -396,6 +396,27 @@ function normalizeBuilding(b, ground, warnings) {
   if (b.windowDensity != null) houseStyle.windowDensity = +b.windowDensity;
   if (b.windowScale != null) houseStyle.windowScale = +b.windowScale;
   if (b.houseFeatures && typeof b.houseFeatures === 'object') houseStyle.houseFeatures = b.houseFeatures;
+  // T23.5 meso residue (ADR-005): IR metadata, optional
+  if (b.attachment && typeof b.attachment === 'object' && b.attachment.hostId != null) {
+    const off = b.attachment.offset && typeof b.attachment.offset === 'object' ? b.attachment.offset : null;
+    houseStyle.attachment = {
+      hostId: String(b.attachment.hostId),
+      ...(off && (Number.isFinite(+off.x) || Number.isFinite(+off.z)) ? {
+        offset: {
+          ...(Number.isFinite(+off.x) ? { x: r3(+off.x) } : {}),
+          ...(Number.isFinite(+off.z) ? { z: r3(+off.z) } : {}),
+        },
+      } : {}),
+    };
+  }
+  if (Array.isArray(b.facadeBlankSides) && b.facadeBlankSides.length) {
+    const allowed = new Set(['north', 'south', 'east', 'west']);
+    const sides = [...new Set(b.facadeBlankSides.map(s => String(s)).filter(s => allowed.has(s)))].sort();
+    if (sides.length) houseStyle.facadeBlankSides = sides;
+  }
+  if (b.district != null) houseStyle.district = String(b.district);
+  if (b.districtFrame && typeof b.districtFrame === 'object') houseStyle.districtFrame = b.districtFrame;
+  if (b.archetype != null) houseStyle.archetype = String(b.archetype);
 
   return {
     id: b.id,

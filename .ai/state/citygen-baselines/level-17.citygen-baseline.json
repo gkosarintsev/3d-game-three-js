@@ -2,11 +2,11 @@
   "file": "src/levels/level-17.json",
   "levelName": "level-17",
   "generator": {
-    "generatorVersion": "0.89.0",
+    "generatorVersion": "0.90.0",
     "seed": 16,
     "deterministic": true
   },
-  "reportHash": "c543f00309288068ceb3ed4bc07135cb41328d9b2dcea7b3fbc8fc1a598ab9a3",
+  "reportHash": "5e5366e1462f6315b0ceae6030e9462dedc822718e94e02966362fffaed38d0f",
   "stages": 7,
   "summary": {
     "errors": 0,
@@ -27,8 +27,8 @@
       "districts": 52,
       "parcels": 1955,
       "reservedParcels": 503,
-      "buildings": 394,
-      "enterableBuildings": 81,
+      "buildings": 396,
+      "enterableBuildings": 82,
       "props": 390,
       "lights": 8,
       "rivers": 2,
@@ -91,7 +91,7 @@
     "gameplay": {
       "spawnToRoad": 0,
       "exitToRoad": 0,
-      "enterableShare": 0.205584,
+      "enterableShare": 0.207071,
       "enterableTarget": 0.2,
       "spawnDistrictType": "office",
       "exitDistrictType": "suburb",

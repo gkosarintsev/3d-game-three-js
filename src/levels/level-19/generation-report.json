@@ -1,7 +1,7 @@
 {
   "version": 1,
   "generator": {
-    "generatorVersion": "0.89.0",
+    "generatorVersion": "0.90.0",
     "seed": 19,
     "deterministic": true
   },
@@ -37,7 +37,7 @@
     {
       "id": "4_buildings_structures",
       "status": "ok",
-      "diagnostics": 7,
+      "diagnostics": 8,
       "repairs": 0,
       "drops": 0
     },
@@ -584,6 +584,13 @@
       "code": "stage_ok",
       "stage": "4_buildings_structures",
       "message": "stage 4_buildings_structures completed"
+    },
+    {
+      "severity": "info",
+      "code": "t23_5_attachment_skipped",
+      "stage": "4_buildings_structures",
+      "message": "no safe attachment placement (meso residue, ADR-005)",
+      "candidates": 0
     },
     {
       "severity": "info",
@@ -1224,7 +1231,7 @@
       "dividesPlate": true
     },
     "determinism": {
-      "generatorVersion": "0.89.0",
+      "generatorVersion": "0.90.0",
       "seed": 19,
       "deterministic": true
     },
