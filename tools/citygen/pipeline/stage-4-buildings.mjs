@@ -560,21 +560,31 @@ function materialFor(profile, kind, rng, districtType = null) {
     aframe: ['painted_brick', 'concrete'],
     chalet: ['stone_base', 'painted_brick'],
     mansard_house: ['painted_brick', 'stone_base'],
+    early_20c_house: ['painted_brick', 'stone_base'],
+    academic_building: ['stone_base', 'painted_brick', 'concrete'],
     villa: ['stone_base', 'glass_and_concrete', 'painted_brick'],
     historic_block: ['stone_base', 'painted_brick'],
     shop_row: ['painted_brick', 'concrete', 'glass_and_concrete'],
+    market_row: ['painted_brick', 'concrete', 'rusted_metal'],
     mall: ['concrete', 'glass_and_concrete'],
+    shopping_mall: ['concrete', 'glass_and_concrete'],
     market_hall: ['painted_brick', 'rusted_metal', 'concrete'],
+    market_pavilion: ['painted_brick', 'concrete', 'rusted_metal'],
     modern_pavilion: ['glass_and_concrete', 'concrete'],
     warehouse: ['concrete', 'rusted_metal'],
     factory: ['concrete', 'rusted_metal'],
+    blast_furnace: ['concrete', 'rusted_metal'],
     workshop: ['concrete', 'rusted_metal', 'painted_brick'],
     sports_hall: ['concrete', 'glass_and_concrete'],
+    stadium: ['concrete', 'glass_and_concrete'],
+    sports_ground: ['concrete', 'painted_brick'],
     pavilion: ['painted_brick', 'concrete'],
+    park_pavilion: ['painted_brick', 'stone_base', 'concrete'],
     campus_hall: ['concrete', 'painted_brick', 'glass_and_concrete'],
     shack: ['rusted_metal', 'painted_brick'],
     slum_shack: ['rusted_metal', 'painted_brick'],
     booth: ['concrete', 'painted_brick'],
+    parking_booth: ['concrete', 'painted_brick', 'glass_and_concrete'],
   };
 
   const profMats = Array.isArray(profile?.buildings?.materials) ? profile.buildings.materials.filter(Boolean) : [];
@@ -646,12 +656,18 @@ function materialFor(profile, kind, rng, districtType = null) {
       dMin = 2; dMax = 3; sMin = 0.95; sMax = 1.25;
     } else if (kind === 'panelka' || kind === 'apartment') {
       dMin = 2; dMax = 3; sMin = 0.9; sMax = 1.15;
-    } else if (kind === 'warehouse' || kind === 'factory' || kind === 'hangar' || districtType === 'industrial') {
+    } else if (kind === 'warehouse' || kind === 'factory' || kind === 'hangar' || kind === 'blast_furnace' || districtType === 'industrial') {
       dMin = 1; dMax = 2; sMin = 0.85; sMax = 1.05;
     } else if (kind === 'slum_shack') {
       dMin = 1; dMax = 2; sMin = 0.8; sMax = 0.95;
-    } else if (kind === 'classic_cottage' || kind === 'barn_house' || kind === 'aframe' || kind === 'chalet' || kind === 'mansard_house' || kind === 'modern_pavilion') {
+    } else if (kind === 'classic_cottage' || kind === 'barn_house' || kind === 'aframe' || kind === 'chalet' || kind === 'mansard_house' || kind === 'modern_pavilion' || kind === 'early_20c_house' || kind === 'villa' || kind === 'park_pavilion') {
       dMin = 1; dMax = 2; sMin = 0.9; sMax = 1.1;
+    } else if (kind === 'academic_building' || kind === 'shopping_mall') {
+      dMin = 2; dMax = 3; sMin = 0.95; sMax = 1.2;
+    } else if (kind === 'market_pavilion' || kind === 'market_row' || kind === 'market_hall' || kind === 'shop_row') {
+      dMin = 1; dMax = 2; sMin = 0.95; sMax = 1.15;
+    } else if (kind === 'stadium' || kind === 'sports_ground' || kind === 'parking_booth' || kind === 'booth') {
+      dMin = 1; dMax = 1; sMin = 0.8; sMax = 1.0;
     } else if (districtType === 'commercial' || districtType === 'retail') {
       dMin = 2; dMax = 3; sMin = 0.95; sMax = 1.2;
     }
@@ -664,15 +680,27 @@ function materialFor(profile, kind, rng, districtType = null) {
   function pickRoofAppearance(kind, facadeMaterial, floors, rng, districtType = null) {
     let mats = ['concrete_slab', 'bitumen'];
     let colors = ['#5f6770', '#4b5563', '#6b7280', '#8d949b'];
-    if (kind === 'skyscraper' || kind === 'office_block' || kind === 'office' || kind === 'megablock') {
+    if (kind === 'skyscraper' || kind === 'office_block' || kind === 'office' || kind === 'megablock' || kind === 'shopping_mall') {
       mats = ['concrete_slab', 'metal_sheet', 'composite'];
       colors = ['#4b5563', '#5f6770', '#6b7280', '#77808a'];
-    } else if (kind === 'warehouse' || kind === 'factory' || kind === 'hangar' || facadeMaterial === 'industrial_metal' || facadeMaterial === 'industrial_metal_rusted') {
+    } else if (kind === 'warehouse' || kind === 'factory' || kind === 'hangar' || kind === 'blast_furnace' || facadeMaterial === 'industrial_metal' || facadeMaterial === 'industrial_metal_rusted') {
       mats = ['metal_sheet', 'corrugated_metal', 'bitumen'];
       colors = ['#6b7280', '#7a6a58', '#5f6770', '#8b7355'];
-    } else if (kind === 'classic_cottage' || kind === 'barn_house' || kind === 'aframe' || kind === 'chalet' || kind === 'mansard_house' || kind === 'modern_pavilion') {
+    } else if (kind === 'classic_cottage' || kind === 'barn_house' || kind === 'aframe' || kind === 'chalet' || kind === 'mansard_house' || kind === 'modern_pavilion' || kind === 'early_20c_house' || kind === 'villa' || kind === 'park_pavilion') {
       mats = ['tile', 'metal_sheet', 'shingles'];
       colors = ['#7a4a3a', '#6b5b4b', '#5f6770', '#8b7355', '#4f5d4a'];
+    } else if (kind === 'academic_building') {
+      mats = ['metal_sheet', 'concrete_slab', 'tile'];
+      colors = ['#4b5563', '#5f6770', '#6b5b4b', '#77808a'];
+    } else if (kind === 'market_pavilion' || kind === 'market_row' || kind === 'market_hall' || kind === 'shop_row') {
+      mats = ['metal_sheet', 'tile', 'bitumen'];
+      colors = ['#6b4a3a', '#6b7280', '#7a6a58', '#5f6770'];
+    } else if (kind === 'stadium' || kind === 'sports_ground') {
+      mats = ['metal_sheet', 'concrete_slab', 'composite'];
+      colors = ['#6b7280', '#5f6770', '#77808a'];
+    } else if (kind === 'parking_booth' || kind === 'booth') {
+      mats = ['metal_sheet', 'bitumen'];
+      colors = ['#6b7280', '#5f6770', '#7a6a58'];
     } else if (kind === 'slum_shack') {
       mats = ['corrugated_metal', 'bitumen', 'patchwork'];
       colors = ['#7a6a58', '#6b7280', '#8d949b', '#5f6770'];
@@ -751,23 +779,43 @@ const ARCHETYPES = {
   chalet:          { floors: [2, 3],   floorHeight: [2.8, 3.2], scale: [0.42, 0.62], aspect: [0.8, 1.3] },
   // Мансардный дом (docs/houses mansard-house)
   mansard_house:   { floors: [2, 4],   floorHeight: [2.8, 3.2], scale: [0.44, 0.64], aspect: [0.8, 1.3] },
+  // Дом нач. XX века (docs/houses2 early-20c-house): городской кирпичный дом
+  early_20c_house: { floors: [2, 4],   floorHeight: [3.2, 3.6], scale: [0.46, 0.66], aspect: [0.9, 1.4] },
+  // Учебный корпус (docs/houses2 academic-building): крупный П-образный корпус
+  academic_building:{ floors: [2, 4],  floorHeight: [3.6, 4.2], scale: [0.58, 0.82], aspect: [1.4, 2.4] },
   villa:           { floors: [1, 3],   floorHeight: [3.2, 3.6], scale: [0.4, 0.6],   aspect: [0.8, 1.25] },
   historic_block:  { floors: [2, 5],   floorHeight: [3.2, 3.5], scale: [0.52, 0.72], aspect: [0.7, 1.2] },
   shop_row:        { floors: [1, 3],   floorHeight: [3.4, 3.8], scale: [0.55, 0.78], aspect: [1.4, 2.4] },
+  // Лавки/ряд магазинов (docs/houses2 market-row): вытянутый одноэтажный ряд
+  market_row:      { floors: [1, 2],   floorHeight: [3.0, 3.6], scale: [0.55, 0.78], aspect: [1.8, 3.0] },
   mall:            { floors: [1, 3],   floorHeight: [4.0, 5.0], scale: [0.68, 0.86], aspect: [0.9, 1.6] },
+  // Торговый молл (docs/houses2 shopping-mall)
+  shopping_mall:   { floors: [1, 3],   floorHeight: [4.2, 5.2], scale: [0.62, 0.84], aspect: [1.0, 1.6] },
   market_hall:     { floors: [1, 2],   floorHeight: [3.8, 4.6], scale: [0.58, 0.8],  aspect: [0.9, 1.5] },
+  // Рыночный павильон (docs/houses2 market-pavilion)
+  market_pavilion: { floors: [1, 1],   floorHeight: [3.8, 4.6], scale: [0.42, 0.64], aspect: [1.1, 1.8] },
   // Модерн-павильон (docs/houses modern-pavilion): широкий низкий павильон
   modern_pavilion: { floors: [1, 2],   floorHeight: [3.2, 4.0], scale: [0.5, 0.72],  aspect: [1.1, 1.8] },
   warehouse:       { floors: [1, 2],   floorHeight: [4.5, 6.0], scale: [0.65, 0.86], aspect: [1.0, 1.8] },
   factory:         { floors: [1, 3],   floorHeight: [4.5, 6.5], scale: [0.66, 0.86], aspect: [1.0, 1.9] },
+  // Доменная печь (docs/houses2 blast-furnace): компактный тяжпром-объект
+  blast_furnace:   { floors: [2, 4],   floorHeight: [4.8, 6.0], scale: [0.5, 0.72],  aspect: [0.9, 1.4] },
   workshop:        { floors: [1, 2],   floorHeight: [3.8, 4.8], scale: [0.5, 0.74],  aspect: [0.8, 1.5] },
   sports_hall:     { floors: [1, 2],   floorHeight: [5.0, 7.0], scale: [0.62, 0.84], aspect: [0.9, 1.5] },
+  // Стадион (docs/houses2 stadium): крупная чаша
+  stadium:         { floors: [1, 2],   floorHeight: [4.0, 6.0], scale: [0.72, 0.9],  aspect: [1.1, 1.7] },
+  // Спортплощадка (docs/houses2 sports-ground): открытая площадка
+  sports_ground:   { floors: [1, 1],   floorHeight: [3.0, 3.6], scale: [0.6, 0.84],  aspect: [1.1, 1.8] },
   pavilion:        { floors: [1, 1],   floorHeight: [3.2, 4.0], scale: [0.35, 0.55], aspect: [0.8, 1.3] },
+  // Парк-павильон (docs/houses2 park-pavilion): ротонда/беседка
+  park_pavilion:   { floors: [1, 1],   floorHeight: [3.0, 3.8], scale: [0.28, 0.46], aspect: [1.0, 1.6] },
   campus_hall:     { floors: [2, 5],   floorHeight: [3.6, 4.2], scale: [0.58, 0.8],  aspect: [0.9, 1.7] },
   shack:           { floors: [1, 2],   floorHeight: [2.8, 3.2], scale: [0.38, 0.58], aspect: [0.7, 1.5] },
   // Трущобы (docs/houses slum-shack): самострой/фавела
   slum_shack:      { floors: [1, 4],   floorHeight: [2.4, 3.0], scale: [0.34, 0.56], aspect: [0.7, 1.5] },
   booth:           { floors: [1, 1],   floorHeight: [2.8, 3.2], scale: [0.18, 0.32], aspect: [0.7, 1.4] },
+  // КПП/будка парковки (docs/houses2 parking-booth)
+  parking_booth:   { floors: [1, 1],   floorHeight: [2.6, 3.2], scale: [0.16, 0.28], aspect: [0.8, 1.3] },
 };
 
 function rangePick([a, b], rng) { return a + rng() * (b - a); }
@@ -1078,7 +1126,7 @@ export function makeStage4() {
         }
         const isL17Panelka = panelkaL17;
         if (isL17Panelka) entrances = 3;
-        // Детальная визуальная модель (docs/houses): назначаем по houseKind.
+        // Детальная визуальная модель (docs/houses, docs/houses2): назначаем по houseKind.
         const DETAILED_VISUAL_BY_KIND = {
           panelka: 'soviet_panel',
           skyscraper: 'skyscraper',
@@ -1091,6 +1139,19 @@ export function makeStage4() {
           chalet: 'alpine-chalet',
           mansard_house: 'mansard-house',
           modern_pavilion: 'modern-pavilion',
+          early_20c_house: 'early-20c-house',
+          academic_building: 'academic-building',
+          market_pavilion: 'market-pavilion',
+          market_row: 'market-row',
+          shopping_mall: 'shopping-mall',
+          warehouse: 'warehouse',
+          factory: 'factory',
+          blast_furnace: 'blast-furnace',
+          park_pavilion: 'park-pavilion',
+          villa: 'villa',
+          stadium: 'stadium',
+          parking_booth: 'parking-booth',
+          sports_ground: 'sports-ground',
         };
         const detailedVisual = isL17Panelka ? 'soviet_panel' : (DETAILED_VISUAL_BY_KIND[kind] || null);
         // R4.4 §9.7 (partial): typological windows + deterministic roof material/color/parapet metadata.
@@ -1232,6 +1293,19 @@ export function makeStage4() {
               chalet: 'alpine-chalet',
               mansard_house: 'mansard-house',
               modern_pavilion: 'modern-pavilion',
+              early_20c_house: 'early-20c-house',
+              academic_building: 'academic-building',
+              market_pavilion: 'market-pavilion',
+              market_row: 'market-row',
+              shopping_mall: 'shopping-mall',
+              warehouse: 'warehouse',
+              factory: 'factory',
+              blast_furnace: 'blast-furnace',
+              park_pavilion: 'park-pavilion',
+              villa: 'villa',
+              stadium: 'stadium',
+              parking_booth: 'parking-booth',
+              sports_ground: 'sports-ground',
             };
             const detailedVisual = isL17PanelkaFallback ? 'soviet_panel' : (DETAILED_VISUAL_BY_KIND[kind] || null);
             const win = pickWindowParams(kind, d.type ?? null, floors, () => 0);

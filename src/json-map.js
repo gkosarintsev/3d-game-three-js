@@ -17,6 +17,19 @@ import { buildDetailedOfficeBuilding, makeOfficeBuildingMaterials } from './offi
 import { buildDetailedMegabuilding, makeMegabuildingMaterials } from './megabuilding-detail.js';
 import { buildDetailedSlumShack, makeSlumShackMaterials } from './slum-shack-detail.js';
 import { buildDetailedGenericHouse, makeGenericHouseMaterials } from './generic-house-detail.js';
+import { buildDetailedEarly20cHouse, makeEarly20cHouseMaterials } from './early-20c-house-detail.js';
+import { buildDetailedAcademicBuilding, makeAcademicBuildingMaterials } from './academic-building-detail.js';
+import { buildDetailedMarketPavilion, makeMarketPavilionMaterials } from './market-pavilion-detail.js';
+import { buildDetailedMarketRow, makeMarketRowMaterials } from './market-row-detail.js';
+import { buildDetailedShoppingMall, makeShoppingMallMaterials } from './shopping-mall-detail.js';
+import { buildDetailedWarehouse, makeWarehouseMaterials } from './warehouse-detail.js';
+import { buildDetailedFactory, makeFactoryMaterials } from './factory-detail.js';
+import { buildDetailedBlastFurnace, makeBlastFurnaceMaterials } from './blast-furnace-detail.js';
+import { buildDetailedParkPavilion, makeParkPavilionMaterials } from './park-pavilion-detail.js';
+import { buildDetailedVilla, makeVillaMaterials } from './villa-detail.js';
+import { buildDetailedStadium, makeStadiumMaterials } from './stadium-detail.js';
+import { buildDetailedParkingBooth, makeParkingBoothMaterials } from './parking-booth-detail.js';
+import { buildDetailedSportsGround, makeSportsGroundMaterials } from './sports-ground-detail.js';
 import { applyGrass } from './grass-material.js';
 
 const J = CONFIG.jsonMap;
@@ -2688,6 +2701,123 @@ export class JsonMap extends SurfaceField {
           },
         }, mats);
         yOffset = b.baseY - fndH;
+      } else if (b.detailedVisual === 'early-20c-house') {
+        const fndH = 0.85;
+        meshes = buildDetailedEarly20cHouse({
+          width: bw, depth: bd, floorHeight: b.floorHeight || 3.5, floors: b.floorsCount || 3,
+          foundationHeight: fndH, roofPitchDeg: 30, roofOverhang: 0.5, roofType: 'hip',
+          windowDensity: b.windowDensity || 2, windowScale: b.windowScale || 1.05,
+          hasPorch: true, hasChimney: true, hasCornerAccents: true, hasBalcony: true,
+        }, makeEarly20cHouseMaterials(b.wallColor || '#a6523e'));
+        yOffset = b.baseY - fndH;
+      } else if (b.detailedVisual === 'academic-building') {
+        const fndH = 1.0;
+        meshes = buildDetailedAcademicBuilding({
+          width: bw, depth: bd, floorHeight: b.floorHeight || 3.9, floors: b.floorsCount || 3,
+          foundationHeight: fndH, roofPitchDeg: 20, roofOverhang: 0.55, roofType: 'hip',
+          windowDensity: b.windowDensity || 2, windowScale: b.windowScale || 1.08,
+          hasPorch: true, hasChimney: false, hasCornerAccents: true, hasBalcony: false,
+        }, makeAcademicBuildingMaterials(b.wallColor || '#d5cbb8'));
+        yOffset = b.baseY - fndH;
+      } else if (b.detailedVisual === 'market-pavilion') {
+        const fndH = 0.5;
+        meshes = buildDetailedMarketPavilion({
+          width: bw, depth: bd, floorHeight: b.floorHeight || 4.2, floors: b.floorsCount || 1,
+          foundationHeight: fndH, roofPitchDeg: 22, roofOverhang: 0.7, roofType: 'hip',
+          windowDensity: b.windowDensity || 2, windowScale: b.windowScale || 1.1,
+          hasPorch: true, hasChimney: true, hasCornerAccents: true, hasBalcony: true,
+        }, makeMarketPavilionMaterials(b.wallColor || '#d8c8ad'));
+        yOffset = b.baseY - fndH;
+      } else if (b.detailedVisual === 'market-row') {
+        const fndH = 0.25;
+        meshes = buildDetailedMarketRow({
+          width: bw, depth: bd, floorHeight: b.floorHeight || 3.2, floors: b.floorsCount || 1,
+          foundationHeight: fndH, roofPitchDeg: 18, roofOverhang: 0.5, roofType: 'shed',
+          windowDensity: b.windowDensity || 2, windowScale: b.windowScale || 1.0,
+          hasPorch: true, hasChimney: true, hasCornerAccents: true, hasBalcony: false,
+        }, makeMarketRowMaterials(b.wallColor || '#d4c6b0'));
+        yOffset = b.baseY - fndH;
+      } else if (b.detailedVisual === 'shopping-mall') {
+        const fndH = 0.6;
+        meshes = buildDetailedShoppingMall({
+          width: bw, depth: bd, floorHeight: b.floorHeight || 4.8, floors: b.floorsCount || 2,
+          foundationHeight: fndH, roofPitchDeg: 18, roofOverhang: 0.8, roofType: 'flat',
+          windowDensity: b.windowDensity || 2, windowScale: b.windowScale || 1.1,
+          hasPorch: true, hasChimney: true, hasCornerAccents: true, hasBalcony: true,
+        }, makeShoppingMallMaterials(b.wallColor || '#d9dde3'));
+        yOffset = b.baseY - fndH;
+      } else if (b.detailedVisual === 'warehouse') {
+        const fndH = 0.45;
+        meshes = buildDetailedWarehouse({
+          width: bw, depth: bd, floorHeight: b.floorHeight || 5.0, floors: b.floorsCount || 1,
+          foundationHeight: fndH, roofPitchDeg: 18, roofOverhang: 0.6, roofType: 'shed',
+          windowDensity: b.windowDensity || 2, windowScale: b.windowScale || 1.0,
+          hasPorch: true, hasChimney: true, hasCornerAccents: true, hasBalcony: true,
+        }, makeWarehouseMaterials(b.wallColor || '#b8c0c8'));
+        yOffset = b.baseY - fndH;
+      } else if (b.detailedVisual === 'factory') {
+        const fndH = 0.7;
+        meshes = buildDetailedFactory({
+          width: bw, depth: bd, floorHeight: b.floorHeight || 5.0, floors: b.floorsCount || 2,
+          foundationHeight: fndH, roofPitchDeg: 16, roofOverhang: 0.55, roofType: 'stepped',
+          windowDensity: b.windowDensity || 2, windowScale: b.windowScale || 1.0,
+          hasPorch: true, hasChimney: true, hasCornerAccents: true, hasBalcony: true,
+        }, makeFactoryMaterials(b.wallColor || '#9aa3ad'));
+        yOffset = b.baseY - fndH;
+      } else if (b.detailedVisual === 'blast-furnace') {
+        const fndH = 1.2;
+        meshes = buildDetailedBlastFurnace({
+          width: bw, depth: bd, floorHeight: b.floorHeight || 5.5, floors: b.floorsCount || 3,
+          foundationHeight: fndH, roofPitchDeg: 14, roofOverhang: 0.5, roofType: 'stepped',
+          windowDensity: b.windowDensity || 2, windowScale: b.windowScale || 1.0,
+          hasPorch: true, hasChimney: true, hasCornerAccents: true, hasBalcony: true,
+        }, makeBlastFurnaceMaterials(b.wallColor || '#7a6a58'));
+        yOffset = b.baseY - fndH;
+      } else if (b.detailedVisual === 'park-pavilion') {
+        const fndH = 0.35;
+        meshes = buildDetailedParkPavilion({
+          width: bw, depth: bd, floorHeight: b.floorHeight || 3.4, floors: b.floorsCount || 1,
+          foundationHeight: fndH, roofPitchDeg: 24, roofOverhang: 0.7, roofType: 'hip',
+          windowDensity: b.windowDensity || 2, windowScale: b.windowScale || 1.0,
+          hasPorch: true, hasChimney: true, hasCornerAccents: true, hasBalcony: true,
+        }, makeParkPavilionMaterials(b.wallColor || '#e8e1d4'));
+        yOffset = b.baseY - fndH;
+      } else if (b.detailedVisual === 'villa') {
+        const fndH = 0.45;
+        meshes = buildDetailedVilla({
+          width: bw, depth: bd, floorHeight: b.floorHeight || 3.4, floors: b.floorsCount || 2,
+          foundationHeight: fndH, roofPitchDeg: 22, roofOverhang: 0.7, roofType: 'hip',
+          windowDensity: b.windowDensity || 2, windowScale: b.windowScale || 1.1,
+          hasPorch: true, hasChimney: true, hasCornerAccents: true, hasBalcony: true,
+        }, makeVillaMaterials(b.wallColor || '#e9e2d6'));
+        yOffset = b.baseY - fndH;
+      } else if (b.detailedVisual === 'stadium') {
+        const fndH = 0.8;
+        meshes = buildDetailedStadium({
+          width: bw, depth: bd, floorHeight: b.floorHeight || 4.0, floors: b.floorsCount || 2,
+          foundationHeight: fndH, roofPitchDeg: 14, roofOverhang: 1.2, roofType: 'stepped',
+          windowDensity: b.windowDensity || 2, windowScale: b.windowScale || 1.0,
+          hasPorch: true, hasChimney: true, hasCornerAccents: true, hasBalcony: true,
+        }, makeStadiumMaterials(b.wallColor || '#9aa3ad'));
+        yOffset = b.baseY - fndH;
+      } else if (b.detailedVisual === 'parking-booth') {
+        const fndH = 0.22;
+        meshes = buildDetailedParkingBooth({
+          width: bw, depth: bd, floorHeight: b.floorHeight || 2.8, floors: b.floorsCount || 1,
+          foundationHeight: fndH, roofPitchDeg: 12, roofOverhang: 0.4, roofType: 'flat',
+          windowDensity: b.windowDensity || 2, windowScale: b.windowScale || 1.0,
+          hasPorch: true, hasChimney: true, hasCornerAccents: true, hasBalcony: false,
+        }, makeParkingBoothMaterials(b.wallColor || '#dde3ea'));
+        yOffset = b.baseY - fndH;
+      } else if (b.detailedVisual === 'sports-ground') {
+        const fndH = 0.12;
+        meshes = buildDetailedSportsGround({
+          width: bw, depth: bd, floorHeight: b.floorHeight || 3.2, floors: b.floorsCount || 1,
+          foundationHeight: fndH, roofPitchDeg: 14, roofOverhang: 0.6, roofType: 'flat',
+          windowDensity: b.windowDensity || 2, windowScale: b.windowScale || 1.0,
+          hasPorch: true, hasChimney: true, hasCornerAccents: true, hasBalcony: true,
+        }, makeSportsGroundMaterials(b.wallColor || '#2f7d32'));
+        yOffset = b.baseY - fndH;
       } else {
         continue;
       }
@@ -2947,8 +3077,8 @@ export class JsonMap extends SurfaceField {
     // стен/окон/декора. Коллизии собраны в surfaces (geo muted).
     const detailed = drawableBuildings.filter(b => b.detailedVisual);
     if (detailed.length) this._buildDetailedBuildings(scene, detailed, objs);
-    // Декор панелек (балконы, швы, карниз) — только для недетальных панелек.
-    const decorBuildings = drawableBuildings.filter(b => b.detailedVisual !== 'soviet_panel');
+    // Декор панелек (балконы, швы, карниз) — только для зданий без детальной визуальной модели.
+    const decorBuildings = drawableBuildings.filter(b => !b.detailedVisual);
     const panelka = buildPanelkaDecor(scene, decorBuildings);
     for (const m of panelka) objs.push(m);
     const windows = this._buildWindows(scene, objs);

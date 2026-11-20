@@ -649,8 +649,8 @@ export class WorldMap extends JsonMap {
         }, entry.owned);
       } });
     }
-    const panelka = ownedBuildingsAll.filter(b => b.detailedVisual !== 'soviet_panel');
-    for (const b of panelka) {
+    const panelkaBuildings = ownedBuildingsAll.filter(b => !b.detailedVisual);
+    for (const b of panelkaBuildings) {
       slices.push({ label: 'picture-details-decor', run: () => {
         this._drawOwnersOnly(() => {
           for (const m of buildPanelkaDecor(this.scene, [b])) pic.objs.push(m);
