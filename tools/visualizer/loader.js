@@ -12,7 +12,7 @@ export async function loadRegistry() {
     const nums = parseLevelNumbers(text);
     if (nums?.length) return { numbers: nums, source: 'index.js' };
   } catch {}
-  return { numbers: [7, 8, 9, 10, 15, 16, 17, 18, 19], source: 'fallback' };
+  return { numbers: [7, 8, 9, 10, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24], source: 'fallback' };
 }
 
 async function fetchJson(url, { optional = false, cacheBust = 0 } = {}) {
