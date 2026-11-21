@@ -81,6 +81,22 @@ function makeDraw(seed) {
 }
 
 /**
+ * Локальные размеры детального здания: `bounds` — мировая AABB,
+ * `rotation` — 0/90/180/270. При 90/270 ширина и глубина меняются местами,
+ * иначе деталь строится с перевёрнутыми пропорциями (фасад/глубина).
+ * @param {{minX:number,maxX:number,minZ:number,maxZ:number}} bounds
+ * @param {number} [rotation=0]
+ * @returns {{bw:number,bd:number,rot:number}}
+ */
+export function detailedLocalDims(bounds, rotation = 0) {
+  const bw0 = bounds.maxX - bounds.minX;
+  const bd0 = bounds.maxZ - bounds.minZ;
+  const rot = ((rotation || 0) % 360 + 360) % 360;
+  const swap = rot === 90 || rot === 270;
+  return { bw: swap ? bd0 : bw0, bd: swap ? bw0 : bd0, rot };
+}
+
+/**
  * Карта уровня, собранного из брифа: дома с комнатами и этажами, три
  * типа дорог, лестницы трёх видов, двери, насыпи и откосы.
  *
@@ -2608,18 +2624,10 @@ export class JsonMap extends SurfaceField {
     const rad = d => d * Math.PI / 180;
     for (const b of buildings) {
       if (!b.bounds) continue;
-      const bw0 = b.bounds.maxX - b.bounds.minX;
-      const bd0 = b.bounds.maxZ - b.bounds.minZ;
-      if (!(bw0 > 0) || !(bd0 > 0)) continue;
+      const { bw, bd, rot } = detailedLocalDims(b.bounds, b.rotation);
+      if (!(bw > 0) || !(bd > 0)) continue;
       const cx = (b.bounds.minX + b.bounds.maxX) / 2;
       const cz = (b.bounds.minZ + b.bounds.maxZ) / 2;
-      const rot = ((b.rotation || 0) % 360 + 360) % 360;
-      // bounds — мировая AABB; при повороте 90/270 локальные ширина/глубина
-      // меняются местами относительно осей мира, иначе деталь строится с
-      // перевёрнутыми пропорциями и не совпадает с коллизией/футпринтом.
-      const swap = rot === 90 || rot === 270;
-      const bw = swap ? bd0 : bw0;
-      const bd = swap ? bw0 : bd0;
       const ry = rot ? -rad(rot) : 0;
       let meshes = null;
       let yOffset = 0;

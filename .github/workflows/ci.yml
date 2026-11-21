@@ -270,7 +270,7 @@ jobs:
             suites: "alien-climb,alien-enemy"
             extra_args: ""
           - group: misc
-            suites: "night-lights,relief-city,relief-terrain,rotated-house,rotated-road,rotated-sweep"
+            suites: "night-lights,relief-city,relief-terrain,rotated-house,rotated-road,rotated-sweep,detailed-rotation"
             extra_args: ""
     steps:
       - uses: actions/checkout@v4
