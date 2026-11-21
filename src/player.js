@@ -20,6 +20,7 @@ export class Player {
     this.verticalVelocity = 0;
     this.feetY = 0; // высота ног (по поверхности рельефа)
     this.bob = 0;
+    this._camY = camera.position.y; // сглаженная высота камеры (убирает скачки при беге)
 
     // здоровье и состояние боя
     this.maxHealth = CONFIG.health.max;
@@ -84,6 +85,7 @@ export class Player {
     const ground = this.map.groundHeightAt(point.x, point.z, point.y || 0);
     this.feetY = isFinite(ground) ? ground : 0;
     this.camera.position.set(point.x, this.feetY + CONFIG.eyeHeight, point.z);
+    this._camY = this.camera.position.y;
     this.verticalVelocity = 0;
     this.velocity.set(0, 0, 0);
   }
@@ -163,7 +165,12 @@ export class Player {
     // покачивание головы
     const sp = Math.hypot(this.velocity.x, this.velocity.z);
     this.bob += dt * sp * 1.7;
-    camera.position.y = this.feetY + cfg.eyeHeight + Math.sin(this.bob * 2) * 0.035 * Math.min(sp / 4, 1);
+    const targetY = this.feetY + cfg.eyeHeight + Math.sin(this.bob * 2) * 0.035 * Math.min(sp / 4, 1);
+    // Сглаживание Y убирает визуальные скачки при беге по ступеням/неровностям:
+    // физика (feetY, коллизии) остаётся дискретной, камера догоняет экспонентой.
+    const ky = 1 - Math.exp(-18 * dt);
+    this._camY += (targetY - this._camY) * ky;
+    camera.position.y = this._camY;
 
     // заживление после затишья и затухание вспышки урона
     this._heal(dt);
