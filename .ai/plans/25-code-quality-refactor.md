@@ -28,9 +28,10 @@ Improve maintainability and reliability of the codebase through targeted refacto
   - Audited `JsonMap.dispose/_release` (objs, lights, houseTex, shared-material guard), `WorldMap` chunk unload/release, `night-lights` and `weapon` disposers — no new obvious leak found in this pass.
   - Remaining: deeper texture ownership audit on unique material maps and TEST-003 extension.
 
-- [ ] [BUG-003] **Streaming/chunk boundary invariants**
-  - Audit edge cases around chunk ownership, AABB vs footprint, rotated solids, detailed visuals, rivers/roads crossing chunk boundaries.
-  - Verify no visual/collision mismatch after chunk load/unload/revisit; confirm deterministic rebuild/check output unchanged for data-only refactors.
+- [x] [BUG-003] **Streaming/chunk boundary invariants** (first pass, 2026-11-21, `agent/plan25-bug003-chunk-boundaries`)
+  - Audited chunk ownership/AABB/footprint/rotated solids/detailed visuals/roads/channels crossing boundaries in `tools/chunk-level.mjs`, `src/world-map.js`, `src/surfaces.js`.
+  - Fixed build-time boundary visual/collision mismatch: when an owner chunk is not loaded at participant build time, WorldMap draws fallback picture for non-owner records in the first loaded `coverageChunks` participant.
+  - Remaining: owner load/unload handover rebuild (disabled for perf, caused level-contract 420s timeout), dedicated browser regression for boundary fallback handover/revisit, and continue audit for nav-node accumulation on unload.
 
 - [x] [BUG-004] **Determinism and ordering audit** (first pass, 2026-11-21, `agent/plan25-bug004-determinism`)
   - Audited tools for `Math.random`/time-based output in generation: none found in `tools/*.mjs, tools/citygen/*.mjs` (Date.now only in CI/runner/editor tooling).
