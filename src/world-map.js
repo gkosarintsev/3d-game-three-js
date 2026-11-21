@@ -538,7 +538,8 @@ export class WorldMap extends JsonMap {
     //    чтобы тяжёлые этапы (merge/ground/ряды) не образовывали один большой атом.
     slices.push({ label: 'geometry', run: () => {
       const groups = this._geoGroups();
-      const pass = this.collectPass(data, { sinks: ['waterRects'], geo: groups, owners: true, own: entry.owned });
+      const drawSet = this._expandedDrawSet(id, entry.owned, data);
+      const pass = this.collectPass(data, { sinks: ['waterRects'], geo: groups, owners: true, own: drawSet });
       entry.groups = groups;
       entry.waterRects = pass.waterRects;
     } });
@@ -642,12 +643,10 @@ export class WorldMap extends JsonMap {
         }
       }, entry.owned);
     } });
-    // Владельцы клетки известны по флагу `owner` записей чанка (entry.owned
-    // наполняется срезом `data` при выполнении, поэтому здесь — не Set, а флаг:
-    // иначе фильтр в момент построения срезов видел бы пустой owned и детальные
-    // модели/декор не попали бы в сцену).
-    const ownedBuildingsAll = (entry.data?.buildings ?? []).filter(b => b.owner === true);
-    const detailed = ownedBuildingsAll.filter(b => b.detailedVisual);
+    // Владельцы + fallback (BUG-003): если owner-чанк не загружен, рисует первый загруженный coverage-участник.
+    const isDrawnBuilding = (b) => b.owner === true || this._isFallbackDraw(b, id);
+    const drawnBuildingsAll = (entry.data?.buildings ?? []).filter(isDrawnBuilding);
+    const detailed = drawnBuildingsAll.filter(b => b.detailedVisual);
     for (const b of detailed) {
       slices.push({ label: 'picture-details-detailed', run: () => {
         this._drawOwnersOnly(() => {
@@ -655,7 +654,7 @@ export class WorldMap extends JsonMap {
         }, entry.owned);
       } });
     }
-    const panelkaBuildings = ownedBuildingsAll.filter(b => !b.detailedVisual);
+    const panelkaBuildings = drawnBuildingsAll.filter(b => !b.detailedVisual);
     for (const b of panelkaBuildings) {
       slices.push({ label: 'picture-details-decor', run: () => {
         this._drawOwnersOnly(() => {
@@ -748,6 +747,177 @@ export class WorldMap extends JsonMap {
     // браковка по нулевой степени — такого случая не отличает вовсе)
     out.push({ label: 'reach', run: () => this._markReachable({ mode: 'unload' }) });
     return out;
+  }
+
+  /**
+   * Владельцы + fallback для выводаимых рядов (BUG-003): объект на шве чанков
+   * рисует владеющая клетка. Если владелец не загружен, но участник загружен,
+   * без fallback получаем коллизию без картинки. Рисуем в первом загруженном
+   * участнике по coverageChunks (детерминированно), только когда homeChunk не загружен.
+   */
+  _drawOwnersOnly(fn, own) {
+    if (!own) return super._drawOwnersOnly(fn, own);
+    const cid = this._picRebuildId ?? this.pump?.task?.id ?? null;
+    const draw = new Set(own);
+    if (cid) {
+      const data = this.loaded.get(cid)?.data;
+      if (data) {
+        for (const key of DRAWN_INPUTS) {
+          for (const rec of data[key] ?? []) {
+            if (!rec || rec.owner) continue;
+            const home = rec.homeChunk;
+            if (home && this.loaded.has(home)) continue;
+            const cov = rec.coverageChunks;
+            const drawer = Array.isArray(cov) ? cov.find(c => this.loaded.has(c)) : null;
+            if (drawer === cid) draw.add(rec);
+          }
+        }
+      }
+    }
+    return super._drawOwnersOnly(fn, draw);
+  }
+
+  /** Пересборка картинки загруженной клетки (для fallback-handover при load/unload). */
+  _rebuildPicture(id) {
+    const entry = this.loaded.get(id);
+    if (!entry || !entry.pic) return;
+    this._picRebuildId = id;
+    try {
+      this._release(entry.pic.objs, entry.pic.lights);
+      const pic = { objs: [], lights: [], windows: 0, signage: 0, clutter: 0, clutterItems: null };
+      const groups = this._geoGroups();
+      const drawSet = this._expandedDrawSet(id, entry.owned, entry.data);
+      const pass = this.collectPass(entry.data, { sinks: ['waterRects'], geo: groups, owners: true, own: drawSet });
+      entry.groups = groups;
+      entry.waterRects = pass.waterRects;
+
+      this._drawOwnersOnly(() => {
+        const r = entry.cell.rect;
+        const baked = entry.data?.groundBaked ?? entry.groundBaked ?? null;
+        const groundGeo = baked && typeof this._geoFromGroundData === 'function'
+          ? this._geoFromGroundData(baked)
+          : ((r || this.holes.length || (this.tunnelHoles?.length) || this.relief)
+            ? this._groundGeo(r)
+            : new THREE.PlaneGeometry(this.width, this.depth));
+        const groundMat = new THREE.MeshStandardMaterial({ color: this.groundColor, roughness: 1, metalness: 0 });
+        if (this.relief) applyGrass(groundMat, { scale: 0.38, strength: 0.22, dark: 0.18, slopeFade: false });
+        const ground = new THREE.Mesh(groundGeo, groundMat);
+        ground.rotation.x = -Math.PI / 2;
+        ground.position.y = this.groundY;
+        ground.receiveShadow = true;
+        this.scene.add(ground);
+        pic.objs.push(ground);
+      }, entry.owned);
+
+      this._drawOwnersOnly(() => {
+        const objs = pic.objs;
+        const g = entry.groups;
+        const earthMat = new THREE.MeshStandardMaterial({ color: J.earth, roughness: 1, metalness: 0 });
+        if (this.relief) applyGrass(earthMat, { scale: 0.4, strength: 0.18, dark: 0.15, slopeFade: true });
+        const mats = {
+          walls: new THREE.MeshStandardMaterial({ color: J.walls, roughness: 0.85, metalness: 0.05 }),
+          slabs: new THREE.MeshStandardMaterial({ color: J.slabs, roughness: 0.9, metalness: 0.05 }),
+          stairs: new THREE.MeshStandardMaterial({ color: J.stairs, roughness: 0.9, metalness: 0.05 }),
+          decks: new THREE.MeshStandardMaterial({ color: J.asphalt, roughness: 0.95, metalness: 0 }),
+          earth: earthMat,
+          rails: new THREE.MeshStandardMaterial({ color: J.railColor, roughness: 0.55, metalness: 0.5 }),
+          ceilings: new THREE.MeshStandardMaterial({ color: J.slabs, roughness: 0.95, metalness: 0.05 }),
+        };
+        for (const key of Object.keys(g)) {
+          if (key === '_wallMats') continue;
+          const geos = g[key];
+          if (!geos || !geos.length) continue;
+          const merged = mergeGeometries(geos, false);
+          for (const geo of geos) geo.dispose();
+          if (!merged) continue;
+          const mesh = new THREE.Mesh(merged, mats[key]);
+          mesh.castShadow = true; mesh.receiveShadow = true;
+          this.scene.add(mesh); objs.push(mesh);
+        }
+        const wallMats = g._wallMats;
+        if (wallMats && wallMats.size) {
+          if (!this.houseTex) this.houseTex = new HouseTextureLibrary(4);
+          for (const [matKey, geos] of wallMats) {
+            if (!geos.length) continue;
+            const { material } = makeFacadeMaterial(matKey, this.houseTex, J.walls);
+            const merged = mergeGeometries(geos, false);
+            for (const geo of geos) geo.dispose();
+            if (!merged) continue;
+            const mesh = new THREE.Mesh(merged, material);
+            mesh.castShadow = true; mesh.receiveShadow = true;
+            this.scene.add(mesh); objs.push(mesh);
+          }
+        }
+      }, entry.owned);
+
+      this._drawOwnersOnly(() => {
+        this._buildWater(this.scene, entry.waterRects, pic.objs);
+        const clutter = this._clutterItems();
+        pic.clutterItems = clutter;
+        pic.clutter = clutter.length;
+        for (const mesh of buildProps(this.scene, this._drawable(this.props).concat(clutter))) {
+          mesh.userData.sharedMaterial = true;
+          pic.objs.push(mesh);
+        }
+      }, entry.owned);
+
+      const ownedBuildingsAll = (entry.data?.buildings ?? []).filter(b => b.owner === true || this._isFallbackDraw(b, id));
+      const detailed = ownedBuildingsAll.filter(b => b.detailedVisual);
+      for (const b of detailed) this._drawOwnersOnly(() => this._buildDetailedBuildings(this.scene, [b], pic.objs), entry.owned);
+      const panelkaBuildings = ownedBuildingsAll.filter(b => !b.detailedVisual);
+      for (const b of panelkaBuildings) this._drawOwnersOnly(() => { for (const m of buildPanelkaDecor(this.scene, [b])) pic.objs.push(m); }, entry.owned);
+
+      this._drawOwnersOnly(() => {
+        pic.windows = this._buildWindows(this.scene, pic.objs);
+        pic.signage = this._buildSignage(this.scene, pic.objs);
+        pic.lights = this._buildLights(this.scene, pic.objs);
+      }, entry.owned);
+
+      entry.pic = { objs: pic.objs, lights: pic.lights, windows: pic.windows, signage: pic.signage, clutter: pic.clutter };
+      entry.counts = { windows: pic.windows, signage: pic.signage, clutter: pic.clutter };
+      this._sumCounters();
+    } finally {
+      this._picRebuildId = null;
+    }
+  }
+
+  _isFallbackDraw(rec, cid) {
+    if (!rec || rec.owner) return false;
+    const home = rec.homeChunk;
+    if (home && this.loaded.has(home)) return false;
+    const cov = rec.coverageChunks;
+    return Array.isArray(cov) && cov.find(c => this.loaded.has(c)) === cid;
+  }
+
+  /** Набор для картинки: владельцы + fallback-записи (owner не загружен, этот чанк — первый загруженный coverage). */
+  _expandedDrawSet(cid, owned, data) {
+    const draw = new Set(owned);
+    if (!cid || !data) return draw;
+    for (const key of DRAWN_INPUTS) {
+      for (const rec of data[key] ?? []) {
+        if (!rec || rec.owner) continue;
+        if (this._isFallbackDraw(rec, cid)) draw.add(rec);
+      }
+    }
+    return draw;
+  }
+
+  /** При смене загрузки owner-чанка пересобираем картинки соседей, где fallback изменился. */
+  _rebuildFallbackPictures(changedId) {
+    if (!changedId) return;
+    for (const [id, entry] of this.loaded.entries()) {
+      if (id === changedId || !entry?.pic || !entry?.data) continue;
+      let affected = false;
+      for (const key of DRAWN_INPUTS) {
+        for (const rec of entry.data[key] ?? []) {
+          if (!rec || rec.owner) continue;
+          if (rec.homeChunk === changedId) { affected = true; break; }
+          if (Array.isArray(rec.coverageChunks) && rec.coverageChunks.includes(changedId)) { affected = true; break; }
+        }
+        if (affected) break;
+      }
+      if (affected) this._rebuildPicture(id);
+    }
   }
 
   /**
@@ -1478,6 +1648,7 @@ export class WorldMap extends JsonMap {
         this._rebuildAnchors();
         this._sumCounters();
       }
+      if ((mode === 'build' || mode === 'unload') && id) this._rebuildFallbackPictures(id);
     } });
     return slices;
   }
