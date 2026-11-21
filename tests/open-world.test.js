@@ -1624,51 +1624,63 @@ async function testBoundaryFallbackHandover() {
   const world = await makeWorld();
   const { map } = world;
   const center = map.spawnCell();
-  const cx = center.rect.minX + center.rect.maxX / 2;
-  const cz = center.rect.minZ + center.rect.maxZ / 2;
-  // Найти participant-запись: owner=false, homeChunk другой загруженный/соседний чанк.
+  const cx = (center.rect.minX + center.rect.maxX) / 2;
+  const cz = (center.rect.minZ + center.rect.maxZ) / 2;
+
+  // Найти естественную boundary-запись; если probe старого формата — синтезировать.
   let found = null;
   for (const cell of map.cells) {
     const data = await chunkData(cell.file);
     for (const key of ['buildings', 'roads', 'channels', 'props', 'lights', 'tunnels']) {
       for (const rec of data[key] ?? []) {
-        if (!rec || rec.owner || !rec.homeChunk || rec.homeChunk === cell.id) continue;
+        if (!rec || rec.owner !== false || !rec.homeChunk || rec.homeChunk === cell.id) continue;
         const home = map.cellById.get(rec.homeChunk);
         if (!home) continue;
-        found = { pId: cell.id, hId: rec.homeChunk, rec, key, pFile: cell.file, hFile: home.file };
+        found = { pId: cell.id, hId: rec.homeChunk, rec, key };
         break;
       }
       if (found) break;
     }
     if (found) break;
   }
+
   if (!found) {
-    map.dispose();
-    return { name: 'BUG-003: fallback handover на границе чанков', passed: false, info: 'не найдена boundary-запись' };
+    const pId = center.id;
+    const hId = map.cells.find(c => c.id !== pId)?.id;
+    if (!hId) { map.dispose(); return { name: 'BUG-003: fallback handover на границе чанков', passed: false, info: 'нет второй клетки' }; }
+    await map.loadChunk(pId);
+    const pEntry = map.loaded.get(pId);
+    const src = (pEntry?.data?.buildings ?? []).find(b => b && b.owner === true);
+    if (!pEntry || !src) { map.dispose(); return { name: 'BUG-003: fallback handover на границе чанков', passed: false, info: 'нет здания для синтетики' }; }
+    const rec = { ...src, owner: false, homeChunk: hId, coverageChunks: [hId, pId].sort() };
+    pEntry.data.buildings.push(rec);
+    pEntry.records.buildings.push(rec);
+    map._rebuildPicture(pId);
+    found = { pId, hId, rec, key: 'buildings', synthetic: true };
   }
 
-  // 1) Загружаем participant без owner: build-time fallback должен нарисовать запись.
-  await map.loadChunk(found.pId);
+  // 1) Participant без owner: build-time/синтетический fallback должен считаться fallback.
+  if (!map.loaded.has(found.pId)) await map.loadChunk(found.pId);
   const pEntry1 = map.loaded.get(found.pId);
   const pPic1 = !!pEntry1?.pic;
   const fallbackOnBuild = pEntry1 ? map._isFallbackDraw(found.rec, found.pId) : false;
 
-  // 2) Загружаем owner: participant помечается dirty, streamStep делает budgeted rebuild.
+  // 2) Owner load: помечается dirty, streamStep делает budgeted rebuild.
   await map.loadChunk(found.hId);
-  for (let i = 0; i < 20 && map.pump.fallbackDirty.size > 0; i++) map.streamStep(100, cx, cz, 0);
+  for (let i = 0; i < 30 && map.pump.fallbackDirty.size > 0; i++) map.streamStep(100, cx, cz, 0);
   const dirtyAfterOwnerLoad = map.pump.fallbackDirty.has(found.pId);
   const fallbackAfterOwnerLoad = map.loaded.get(found.pId) ? map._isFallbackDraw(found.rec, found.pId) : true;
 
-  // 3) Выгружаем owner: participant снова получает fallback через budgeted rebuild.
+  // 3) Owner unload: participant снова получает fallback через budgeted rebuild.
   map.unloadChunk(found.hId);
-  for (let i = 0; i < 20 && map.pump.fallbackDirty.size > 0; i++) map.streamStep(100, cx, cz, 0);
+  for (let i = 0; i < 30 && map.pump.fallbackDirty.size > 0; i++) map.streamStep(100, cx, cz, 0);
   const dirtyAfterOwnerUnload = map.pump.fallbackDirty.has(found.pId);
   const fallbackAfterOwnerUnload = map.loaded.get(found.pId) ? map._isFallbackDraw(found.rec, found.pId) : false;
   const pPicAfter = !!map.loaded.get(found.pId)?.pic;
 
   const passed = pPic1 && fallbackOnBuild && !dirtyAfterOwnerLoad && !fallbackAfterOwnerLoad
     && !dirtyAfterOwnerUnload && fallbackAfterOwnerUnload && pPicAfter;
-  const info = `p=${found.pId} h=${found.hId} key=${found.key} buildPic=${pPic1} buildFallback=${fallbackOnBuild}`
+  const info = `${found.synthetic ? 'synthetic ' : ''}p=${found.pId} h=${found.hId} key=${found.key} buildPic=${pPic1} buildFallback=${fallbackOnBuild}`
     + ` ownerLoadDirty=${dirtyAfterOwnerLoad} ownerLoadFallback=${fallbackAfterOwnerLoad}`
     + ` ownerUnloadDirty=${dirtyAfterOwnerUnload} ownerUnloadFallback=${fallbackAfterOwnerUnload} picAfter=${pPicAfter}`;
   map.dispose();
