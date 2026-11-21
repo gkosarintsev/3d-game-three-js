@@ -20,10 +20,13 @@
 
 - Источник правды — DSL в `tools/level-schema.mjs`. JSON Schema draft-07
   экспортируется из него: `node tools/export-schema.mjs` →
-  `src/levels/level-v3.schema.json`, `src/levels/level-common.schema.json`,
-  `src/levels/level-v4.schema.json`. Рукописного `.schema.json` нет.
+  `src/levels/level-open.schema.json`, `src/levels/level-v3.schema.json`,
+  `src/levels/level-common.schema.json`, `src/levels/level-v4.schema.json`.
+  Рукописного `.schema.json` нет.
 - Экспортёр обязан сходиться побайтово (`node tools/export-schema.mjs --check`).
-- Каждый бриф начинается с `$schema` своей версии (`./level-v3.schema.json` или `./level-v4.schema.json`; у v4 дополнительно `schemaVersion: 4`).
+- Каждый бриф начинается с `$schema` своей версии (`./level-open.schema.json`,
+  `./level-v3.schema.json` или `./level-v4.schema.json`; у v4 дополнительно
+  `schemaVersion: 4`).
 - Версии — разные корни (не `allOf`), т.к. `additionalProperties: false` в ветке
   draft-07 не видит внешние `properties`.
 - `default` в DSL берётся из того же объекта, который его применяет

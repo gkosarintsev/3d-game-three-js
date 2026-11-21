@@ -1,0 +1,370 @@
+{
+  "$schema": "./level-open.schema.json",
+  "kind": "open",
+  "metadata": {
+    "levelName": "level-castle",
+    "name": "Medieval castle (authoring sample)",
+    "hint": "Enter through the gate, cross the courtyard, climb the keep and reach the beacon on its roof.",
+    "engine": "external-authoring",
+    "units": "meters",
+    "notes": "Worked example for the external-LLM contract: curtain walls are thin non-enterable buildings, the gate is a real gap between wall segments, the courtyard is a ground road, and the keep is a normal enterable building with rooms, two straight stairs and a ladder to a walkable roof. Collision and navigation are 100% data-driven; castle-detail.js only replaces the picture of the non-enterable walls and towers."
+  },
+  "ground": {
+    "y": 0,
+    "size": 320,
+    "color": "#2f3238"
+  },
+  "sky": {
+    "sky": "#7d8a99",
+    "fog": {
+      "color": "#8b94a0",
+      "near": 90,
+      "far": 300
+    },
+    "sun": {
+      "color": "#fff2d5",
+      "intensity": 1.4,
+      "position": [120, 180, 60]
+    },
+    "hemi": {
+      "sky": "#b8c4d6",
+      "ground": "#4a4438",
+      "intensity": 0.55
+    }
+  },
+  "stream": {
+    "chunk": 160,
+    "keep": 1,
+    "aheadMin": 120,
+    "aheadMax": 400,
+    "budgetMs": 80
+  },
+  "gameplay": {
+    "goal": "exit",
+    "spawn": { "x": 0, "z": 44 },
+    "exit": { "x": 0, "z": -4 },
+    "exitRadius": 3,
+    "enemies": { "count": 0 },
+    "alienEnemies": { "count": 0 },
+    "cars": { "count": 0, "spots": [] }
+  },
+  "roads": [
+    {
+      "id": "rd_court",
+      "type": "ground",
+      "width": 10,
+      "lamps": false,
+      "points": [
+        { "x": 0, "y": 0.12, "z": 44 },
+        { "x": 0, "y": 0.12, "z": 4.3 }
+      ]
+    }
+  ],
+  "buildings": [
+    {
+      "id": "cw_north",
+      "name": "North curtain wall",
+      "isEnterable": false,
+      "floorsCount": 1,
+      "floorHeight": 8,
+      "foundation": "terrain",
+      "facadeMaterial": "stone_base",
+      "wallColor": "#8a857b",
+      "detailedVisual": "castle-wall",
+      "footprint": [
+        { "x": -36, "z": -40 },
+        { "x": 36, "z": -40 },
+        { "x": 36, "z": -36 },
+        { "x": -36, "z": -36 }
+      ],
+      "rooms": [],
+      "stairs": []
+    },
+    {
+      "id": "cw_west",
+      "name": "West curtain wall",
+      "isEnterable": false,
+      "floorsCount": 1,
+      "floorHeight": 8,
+      "foundation": "terrain",
+      "facadeMaterial": "stone_base",
+      "wallColor": "#8a857b",
+      "detailedVisual": "castle-wall",
+      "footprint": [
+        { "x": -40, "z": -36 },
+        { "x": -36, "z": -36 },
+        { "x": -36, "z": 36 },
+        { "x": -40, "z": 36 }
+      ],
+      "rooms": [],
+      "stairs": []
+    },
+    {
+      "id": "cw_east",
+      "name": "East curtain wall",
+      "isEnterable": false,
+      "floorsCount": 1,
+      "floorHeight": 8,
+      "foundation": "terrain",
+      "facadeMaterial": "stone_base",
+      "wallColor": "#8a857b",
+      "detailedVisual": "castle-wall",
+      "footprint": [
+        { "x": 36, "z": -36 },
+        { "x": 40, "z": -36 },
+        { "x": 40, "z": 36 },
+        { "x": 36, "z": 36 }
+      ],
+      "rooms": [],
+      "stairs": []
+    },
+    {
+      "id": "cw_south_w",
+      "name": "South curtain wall, west of gate",
+      "isEnterable": false,
+      "floorsCount": 1,
+      "floorHeight": 8,
+      "foundation": "terrain",
+      "facadeMaterial": "stone_base",
+      "wallColor": "#8a857b",
+      "detailedVisual": "castle-wall",
+      "footprint": [
+        { "x": -36, "z": 36 },
+        { "x": -12, "z": 36 },
+        { "x": -12, "z": 40 },
+        { "x": -36, "z": 40 }
+      ],
+      "rooms": [],
+      "stairs": []
+    },
+    {
+      "id": "cw_south_e",
+      "name": "South curtain wall, east of gate",
+      "isEnterable": false,
+      "floorsCount": 1,
+      "floorHeight": 8,
+      "foundation": "terrain",
+      "facadeMaterial": "stone_base",
+      "wallColor": "#8a857b",
+      "detailedVisual": "castle-wall",
+      "footprint": [
+        { "x": 12, "z": 36 },
+        { "x": 36, "z": 36 },
+        { "x": 36, "z": 40 },
+        { "x": 12, "z": 40 }
+      ],
+      "rooms": [],
+      "stairs": []
+    },
+    {
+      "id": "tw_nw",
+      "name": "North-west corner tower",
+      "isEnterable": false,
+      "floorsCount": 3,
+      "floorHeight": 4,
+      "foundation": "terrain",
+      "facadeMaterial": "stone_base",
+      "wallColor": "#827d73",
+      "detailedVisual": "castle-tower",
+      "footprint": [
+        { "x": -44, "z": -44 },
+        { "x": -36, "z": -44 },
+        { "x": -36, "z": -36 },
+        { "x": -44, "z": -36 }
+      ],
+      "rooms": [],
+      "stairs": []
+    },
+    {
+      "id": "tw_ne",
+      "name": "North-east corner tower",
+      "isEnterable": false,
+      "floorsCount": 3,
+      "floorHeight": 4,
+      "foundation": "terrain",
+      "facadeMaterial": "stone_base",
+      "wallColor": "#827d73",
+      "detailedVisual": "castle-tower",
+      "footprint": [
+        { "x": 36, "z": -44 },
+        { "x": 44, "z": -44 },
+        { "x": 44, "z": -36 },
+        { "x": 36, "z": -36 }
+      ],
+      "rooms": [],
+      "stairs": []
+    },
+    {
+      "id": "tw_sw",
+      "name": "South-west corner tower",
+      "isEnterable": false,
+      "floorsCount": 3,
+      "floorHeight": 4,
+      "foundation": "terrain",
+      "facadeMaterial": "stone_base",
+      "wallColor": "#827d73",
+      "detailedVisual": "castle-tower",
+      "footprint": [
+        { "x": -44, "z": 36 },
+        { "x": -36, "z": 36 },
+        { "x": -36, "z": 44 },
+        { "x": -44, "z": 44 }
+      ],
+      "rooms": [],
+      "stairs": []
+    },
+    {
+      "id": "tw_se",
+      "name": "South-east corner tower",
+      "isEnterable": false,
+      "floorsCount": 3,
+      "floorHeight": 4,
+      "foundation": "terrain",
+      "facadeMaterial": "stone_base",
+      "wallColor": "#827d73",
+      "detailedVisual": "castle-tower",
+      "footprint": [
+        { "x": 36, "z": 36 },
+        { "x": 44, "z": 36 },
+        { "x": 44, "z": 44 },
+        { "x": 36, "z": 44 }
+      ],
+      "rooms": [],
+      "stairs": []
+    },
+    {
+      "id": "tw_gate_w",
+      "name": "West gate tower",
+      "isEnterable": false,
+      "floorsCount": 3,
+      "floorHeight": 4,
+      "foundation": "terrain",
+      "facadeMaterial": "stone_base",
+      "wallColor": "#8d877c",
+      "detailedVisual": "castle-tower",
+      "footprint": [
+        { "x": -12, "z": 34 },
+        { "x": -6, "z": 34 },
+        { "x": -6, "z": 44 },
+        { "x": -12, "z": 44 }
+      ],
+      "rooms": [],
+      "stairs": []
+    },
+    {
+      "id": "tw_gate_e",
+      "name": "East gate tower",
+      "isEnterable": false,
+      "floorsCount": 3,
+      "floorHeight": 4,
+      "foundation": "terrain",
+      "facadeMaterial": "stone_base",
+      "wallColor": "#8d877c",
+      "detailedVisual": "castle-tower",
+      "footprint": [
+        { "x": 6, "z": 34 },
+        { "x": 12, "z": 34 },
+        { "x": 12, "z": 44 },
+        { "x": 6, "z": 44 }
+      ],
+      "rooms": [],
+      "stairs": []
+    },
+    {
+      "id": "keep",
+      "name": "The keep",
+      "isEnterable": true,
+      "floorsCount": 3,
+      "floorHeight": 4,
+      "foundation": "terrain",
+      "facadeMaterial": "stone_base",
+      "wallColor": "#948f85",
+      "roof": {
+        "walkable": true,
+        "parapet": 0.9
+      },
+      "footprint": [
+        { "x": -10, "z": -12 },
+        { "x": 10, "z": -12 },
+        { "x": 10, "z": 4 },
+        { "x": -10, "z": 4 }
+      ],
+      "rooms": [
+        {
+          "id": "hall",
+          "floor": 0,
+          "type": "hall",
+          "polygon": [
+            { "x": -10, "z": -12 },
+            { "x": 10, "z": -12 },
+            { "x": 10, "z": 4 },
+            { "x": -10, "z": 4 }
+          ],
+          "connections": [
+            {
+              "target": "rd_court",
+              "portalPosition": { "x": 0, "y": 0, "z": 4 },
+              "linkType": "main_entrance"
+            }
+          ]
+        },
+        {
+          "id": "great_hall",
+          "floor": 1,
+          "type": "hall",
+          "polygon": [
+            { "x": -10, "z": -12 },
+            { "x": 10, "z": -12 },
+            { "x": 10, "z": 4 },
+            { "x": -10, "z": 4 }
+          ]
+        },
+        {
+          "id": "solar",
+          "floor": 2,
+          "type": "room",
+          "polygon": [
+            { "x": -10, "z": -12 },
+            { "x": 10, "z": -12 },
+            { "x": 10, "z": 4 },
+            { "x": -10, "z": 4 }
+          ]
+        }
+      ],
+      "stairs": [
+        {
+          "id": "st_hall_to_great",
+          "connectsFloors": [0, 1],
+          "type": "straight",
+          "position": { "x": 4, "z": -8 },
+          "rotation": 0,
+          "dimensions": { "width": 4, "length": 8 }
+        },
+        {
+          "id": "st_great_to_solar",
+          "connectsFloors": [1, 2],
+          "type": "straight",
+          "position": { "x": 4, "z": 0 },
+          "rotation": 0,
+          "dimensions": { "width": 4, "length": 8 }
+        },
+        {
+          "id": "st_solar_to_roof",
+          "connectsFloors": [2, 3],
+          "type": "ladder",
+          "position": { "x": -6, "z": 0 }
+        }
+      ]
+    }
+  ],
+  "landscapeObjects": [
+    { "id": "tree_out_w", "model": "tree", "position": { "x": -20, "y": 0, "z": 52 }, "scale": { "x": 1, "y": 1.2, "z": 1 } },
+    { "id": "tree_out_e", "model": "tree", "position": { "x": 20, "y": 0, "z": 52 }, "scale": { "x": 0.9, "y": 1.05, "z": 0.9 } },
+    { "id": "tree_court_w", "model": "tree", "position": { "x": -24, "y": 0, "z": 20 }, "scale": { "x": 0.8, "y": 0.95, "z": 0.8 } },
+    { "id": "tree_court_e", "model": "tree", "position": { "x": 24, "y": 0, "z": 20 }, "scale": { "x": 0.8, "y": 0.95, "z": 0.8 } }
+  ],
+  "lights": [
+    { "id": "gate_brazier_w", "type": "point", "position": { "x": -4, "y": 3, "z": 34 }, "color": "#ffb066", "intensity": 40, "distance": 24 },
+    { "id": "gate_brazier_e", "type": "point", "position": { "x": 4, "y": 3, "z": 34 }, "color": "#ffb066", "intensity": 40, "distance": 24 }
+  ]
+}

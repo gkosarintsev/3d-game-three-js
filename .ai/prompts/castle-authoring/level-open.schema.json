@@ -1,0 +1,2412 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Level brief open (kind: open)",
+  "type": "object",
+  "properties": {
+    "$schema": {
+      "type": "string",
+      "description": "путь к JSON Schema этого брифа"
+    },
+    "kind": {
+      "type": "string",
+      "enum": [
+        "open"
+      ],
+      "description": "open — разрезаемый на чанки открытый мир (каталог)"
+    },
+    "metadata": {
+      "type": "object",
+      "properties": {
+        "levelName": {
+          "type": "string",
+          "description": "имя главы для пайплайна (например, level-16)"
+        },
+        "name": {
+          "type": "string",
+          "description": "заголовок главы в HUD"
+        },
+        "hint": {
+          "type": "string",
+          "description": "подсказка игроку о пути A→B"
+        },
+        "engine": {
+          "type": "string",
+          "description": "служебная подпись исходника, движок не читает"
+        },
+        "units": {
+          "type": "string",
+          "enum": [
+            "meters"
+          ],
+          "description": "единицы брифа: длины/высоты — метры, углы — градусы"
+        },
+        "notes": {
+          "type": "string",
+          "description": "rationale главы; движок не читает"
+        }
+      },
+      "required": [
+        "levelName",
+        "name",
+        "hint",
+        "units"
+      ],
+      "additionalProperties": false,
+      "description": "шапка брифа"
+    },
+    "ground": {
+      "type": "object",
+      "properties": {
+        "y": {
+          "type": "number",
+          "description": "отметка пола мира; с relief гасится",
+          "default": 0
+        },
+        "size": {
+          "type": "number",
+          "minimum": 20,
+          "description": "сторона квадратной плиты грунта в метрах"
+        },
+        "color": {
+          "oneOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "string",
+              "pattern": "^#[0-9a-fA-F]{6}$"
+            }
+          ],
+          "description": "цвет грунта",
+          "default": 2764083
+        }
+      },
+      "required": [
+        "size"
+      ],
+      "additionalProperties": false,
+      "description": "плита мира"
+    },
+    "roads": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "уникальный id"
+          },
+          "type": {
+            "type": "string",
+            "enum": [
+              "ground",
+              "bridge",
+              "embankment",
+              "skybridge"
+            ],
+            "description": "тип настила"
+          },
+          "width": {
+            "type": "number",
+            "minimum": 2,
+            "maximum": 30,
+            "description": "м: ширина полотна (для polyline-дорог)"
+          },
+          "lamps": {
+            "type": "boolean",
+            "description": "фонари вдоль улицы",
+            "default": false
+          },
+          "points": {
+            "type": "array",
+            "minItems": 2,
+            "items": {
+              "type": "object",
+              "properties": {
+                "x": {
+                  "type": "number",
+                  "description": "м: мировая координата X"
+                },
+                "y": {
+                  "type": "number",
+                  "description": "м: мировая отметка"
+                },
+                "z": {
+                  "type": "number",
+                  "description": "м: мировая координата Z"
+                }
+              },
+              "required": [
+                "x",
+                "y",
+                "z"
+              ],
+              "additionalProperties": false,
+              "description": "точка в мире (метры)"
+            },
+            "description": "осевая polyline (альтернатива elements)"
+          },
+          "elements": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "type": "object",
+              "properties": {
+                "plate": {
+                  "type": "object",
+                  "properties": {
+                    "x": {
+                      "type": "number",
+                      "description": "м: мировой центр осевой линии пластины"
+                    },
+                    "z": {
+                      "type": "number",
+                      "description": "м: мировой центр осевой линии пластины"
+                    },
+                    "yaw": {
+                      "type": "number",
+                      "minimum": -360,
+                      "maximum": 360,
+                      "description": "град: поворот вокруг центра; `connect: tangent` переносит только угол, позицию автор задаёт сам",
+                      "default": 0
+                    },
+                    "length": {
+                      "type": "number",
+                      "minimum": 1,
+                      "description": "м: длина вдоль собственной оси (ось от −length/2 до +length/2)"
+                    },
+                    "width": {
+                      "type": "number",
+                      "minimum": 2,
+                      "maximum": 30,
+                      "description": "м: ширина полотна поперёк оси (на начале u = −L/2; или постоянная)"
+                    },
+                    "widthEnd": {
+                      "type": "number",
+                      "minimum": 2,
+                      "maximum": 30,
+                      "description": "м: ширина полотна на конце (u = +L/2); при отличии от width пластина становится трапециевидной (плавный переход)"
+                    },
+                    "crossStart": {
+                      "type": "number",
+                      "minimum": -30,
+                      "maximum": 30,
+                      "description": "м: поперечный сдвиг центра полотна на начале (u = −L/2) в локальной оси поперёк",
+                      "default": 0
+                    },
+                    "crossEnd": {
+                      "type": "number",
+                      "minimum": -30,
+                      "maximum": 30,
+                      "description": "м: поперечный сдвиг центра полотна на конце (u = +L/2); по умолчанию равен crossStart"
+                    },
+                    "y": {
+                      "type": "number",
+                      "description": "м: верх нa **локальном начале** (u = −length/2), не в мировом minX; при yaw = −180 начало смотрит на восток"
+                    },
+                    "rise": {
+                      "type": "number",
+                      "description": "м: перепад верха от начала к концу; уклон = rise / length, предел J.maxSlope",
+                      "default": 0
+                    },
+                    "rails": {
+                      "type": "boolean",
+                      "description": "перила по обеим кромкам; `railSide` сознательно не вводится",
+                      "default": false
+                    }
+                  },
+                  "required": [
+                    "x",
+                    "z",
+                    "length",
+                    "width",
+                    "y"
+                  ],
+                  "additionalProperties": false,
+                  "description": "прямая (или трапециевидная) пластина настила v2"
+                },
+                "arc": {
+                  "type": "object",
+                  "properties": {
+                    "cx": {
+                      "type": "number",
+                      "description": "м: мировой центр окружности дуги"
+                    },
+                    "cz": {
+                      "type": "number",
+                      "description": "м: мировой центр окружности дуги"
+                    },
+                    "radius": {
+                      "type": "number",
+                      "minimum": 2,
+                      "description": "м: радиус осевой дуги; при ширине полотна 8 м радиус < 4 м даёт отрицательную внутреннюю кромку и бракуется схемой"
+                    },
+                    "from": {
+                      "type": "number",
+                      "minimum": -360,
+                      "maximum": 360,
+                      "description": "град: начало обхода"
+                    },
+                    "to": {
+                      "type": "number",
+                      "minimum": -360,
+                      "maximum": 360,
+                      "description": "град: конец обхода"
+                    },
+                    "width": {
+                      "type": "number",
+                      "minimum": 2,
+                      "maximum": 30,
+                      "description": "м: ширина полотна"
+                    },
+                    "y": {
+                      "type": "array",
+                      "minItems": 2,
+                      "maxItems": 2,
+                      "items": {
+                        "type": "number"
+                      },
+                      "description": "м: [верх на from, верх на to]; продольный уклон — перепад / длина дуги"
+                    },
+                    "bank": {
+                      "type": "number",
+                      "minimum": -30,
+                      "maximum": 30,
+                      "description": "град: крен в середине сектора, ноль на обоих срезах, переход — половиной косинуса; длина перехода считается из двух пределов (остаток J.maxSlope после продольного уклона и сам продольный уклон)",
+                      "default": 0
+                    },
+                    "rails": {
+                      "type": "boolean",
+                      "description": "перила по обеим кромкам",
+                      "default": false
+                    }
+                  },
+                  "required": [
+                    "cx",
+                    "cz",
+                    "radius",
+                    "from",
+                    "to",
+                    "width",
+                    "y"
+                  ],
+                  "additionalProperties": false,
+                  "description": "дуга-настил: точная поверхность по углу, радиусу и крену"
+                },
+                "connect": {
+                  "type": "string",
+                  "enum": [
+                    "tangent"
+                  ],
+                  "description": "маркер касательной"
+                }
+              },
+              "additionalProperties": false,
+              "description": "элемент цепочки: plate или arc или connect"
+            },
+            "description": "цепочка пластин/дуг"
+          },
+          "district": {
+            "type": "string",
+            "description": "служебное поле генератора"
+          },
+          "grade": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 0.3,
+            "description": "служебное поле генератора"
+          },
+          "crossing": {
+            "type": "boolean",
+            "description": "служебное поле генератора",
+            "default": false
+          },
+          "trackRole": {
+            "type": "string",
+            "enum": [
+              "ring",
+              "entry"
+            ],
+            "description": "служебное поле трассы"
+          },
+          "trackId": {
+            "type": "string",
+            "description": "служебное поле трассы"
+          },
+          "filletRadius": {
+            "type": "number",
+            "minimum": 0,
+            "description": "м: радиус скругления path-дороги"
+          },
+          "fillet": {
+            "type": "number",
+            "minimum": 0,
+            "description": "псевдоним filletRadius"
+          }
+        },
+        "required": [
+          "id",
+          "type"
+        ],
+        "additionalProperties": false,
+        "description": "дорога/настил"
+      },
+      "description": "дороги"
+    },
+    "waterways": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "id русла"
+          },
+          "width": {
+            "type": "number",
+            "minimum": 2,
+            "maximum": 120,
+            "description": "м: ширина"
+          },
+          "bedY": {
+            "type": "number",
+            "description": "м: отметка дна"
+          },
+          "surfaceY": {
+            "type": "number",
+            "description": "м: отметка зеркала"
+          },
+          "bank": {
+            "type": "string",
+            "enum": [
+              "quay",
+              "slope"
+            ],
+            "description": "тип берега"
+          },
+          "bankRun": {
+            "type": "number",
+            "minimum": 1,
+            "description": "м: заложение откоса"
+          },
+          "wade": {
+            "type": "boolean",
+            "description": "брод",
+            "default": true
+          },
+          "ramps": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "at": {
+                  "type": "object",
+                  "properties": {
+                    "x": {
+                      "type": "number"
+                    },
+                    "z": {
+                      "type": "number"
+                    }
+                  },
+                  "required": [
+                    "x",
+                    "z"
+                  ],
+                  "additionalProperties": false
+                },
+                "width": {
+                  "type": "number",
+                  "minimum": 2,
+                  "maximum": 12,
+                  "default": 4
+                }
+              },
+              "required": [
+                "at"
+              ],
+              "additionalProperties": false,
+              "description": "сход"
+            },
+            "description": "сходы"
+          },
+          "points": {
+            "type": "array",
+            "minItems": 2,
+            "items": {
+              "type": "object",
+              "properties": {
+                "x": {
+                  "type": "number",
+                  "description": "м: мировая координата X"
+                },
+                "z": {
+                  "type": "number",
+                  "description": "м: мировая координата Z"
+                }
+              },
+              "required": [
+                "x",
+                "z"
+              ],
+              "additionalProperties": false,
+              "description": "точка в плане (метры)"
+            },
+            "description": "осевая в плане"
+          }
+        },
+        "required": [
+          "id",
+          "width",
+          "bedY",
+          "surfaceY",
+          "bank",
+          "points"
+        ],
+        "additionalProperties": false,
+        "description": "русло"
+      },
+      "description": "русла"
+    },
+    "buildings": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "уникальный id дома"
+          },
+          "name": {
+            "type": "string",
+            "description": "название для метки debugIds"
+          },
+          "archetype": {
+            "type": "string",
+            "enum": [
+              "box",
+              "slab",
+              "l",
+              "u",
+              "t",
+              "cross",
+              "bar_pair",
+              "stepped2",
+              "stepped3",
+              "podium_tower"
+            ],
+            "description": "форма корпуса (служебное, генератор)"
+          },
+          "buildingType": {
+            "type": "string",
+            "description": "тип дома"
+          },
+          "district": {
+            "type": "string",
+            "description": "id района (служебное, генератор)"
+          },
+          "isEnterable": {
+            "type": "boolean",
+            "description": "false — только фасадный декор",
+            "default": true
+          },
+          "floorsCount": {
+            "type": "number",
+            "minimum": 1,
+            "maximum": 60,
+            "description": "эт: число этажей"
+          },
+          "floorHeight": {
+            "type": "number",
+            "minimum": 2.4,
+            "maximum": 8,
+            "description": "м: высота этажа"
+          },
+          "baseY": {
+            "type": "number",
+            "description": "м: пол первого этажа"
+          },
+          "foundation": {
+            "type": "string",
+            "enum": [
+              "podium",
+              "terrain"
+            ],
+            "description": "вариант фундамента"
+          },
+          "facadeMaterial": {
+            "type": "string",
+            "description": "материал фасада",
+            "default": "concrete"
+          },
+          "wallColor": {
+            "type": "string",
+            "description": "hex-цвет фасада"
+          },
+          "houseKind": {
+            "type": "string",
+            "description": "вид/архетип дома"
+          },
+          "houseStyleId": {
+            "type": "string",
+            "description": "стиль дома"
+          },
+          "entrances": {
+            "type": "number",
+            "minimum": 1,
+            "maximum": 8,
+            "description": "число подъездов/секций"
+          },
+          "detailedVisual": {
+            "type": "string",
+            "description": "детальная визуальная модель"
+          },
+          "windowDensity": {
+            "type": "number",
+            "minimum": 1,
+            "maximum": 3,
+            "description": "плотность окон"
+          },
+          "windowScale": {
+            "type": "number",
+            "minimum": 0.5,
+            "maximum": 2,
+            "description": "масштаб окон"
+          },
+          "attachment": {
+            "type": "object",
+            "properties": {
+              "hostId": {
+                "type": "string",
+                "description": "id здания-хоста"
+              },
+              "offset": {
+                "type": "object",
+                "properties": {
+                  "x": {
+                    "type": "number",
+                    "description": "м: плановый сдвиг по X (IR-метаданные)"
+                  },
+                  "z": {
+                    "type": "number",
+                    "description": "м: плановый сдвиг по Z (IR-метаданные)"
+                  }
+                },
+                "additionalProperties": false,
+                "description": "опциональный плановый сдвиг относительно хоста"
+              }
+            },
+            "required": [
+              "hostId"
+            ],
+            "additionalProperties": false,
+            "description": "пристройка/самострой: отдельное здание, привязанное к hostId (ADR-005)"
+          },
+          "facadeBlankSides": {
+            "type": "array",
+            "minItems": 1,
+            "maxItems": 4,
+            "items": {
+              "type": "string",
+              "enum": [
+                "north",
+                "south",
+                "east",
+                "west"
+              ],
+              "description": "сторона локального фасада без окон"
+            },
+            "description": "список глухих фасадов без оконных квадов (ADR-005)"
+          },
+          "roofMaterial": {
+            "type": "string",
+            "description": "материал кровли"
+          },
+          "roofColor": {
+            "type": "string",
+            "description": "цвет кровли"
+          },
+          "trimFinish": {
+            "type": "string",
+            "description": "отделка"
+          },
+          "houseFeatures": {
+            "type": "object",
+            "properties": {},
+            "additionalProperties": false,
+            "description": "фичи дома"
+          },
+          "roof": {
+            "type": "object",
+            "properties": {
+              "walkable": {
+                "type": "boolean",
+                "description": "ходовая ли кровля",
+                "default": false
+              },
+              "parapet": {
+                "type": "number",
+                "minimum": 0,
+                "maximum": 1.5,
+                "description": "м: парапет",
+                "default": 0.9
+              }
+            },
+            "additionalProperties": false,
+            "description": "кровля"
+          },
+          "footprint": {
+            "type": "array",
+            "minItems": 4,
+            "items": {
+              "type": "object",
+              "properties": {
+                "x": {
+                  "type": "number",
+                  "description": "м: мировая координата X"
+                },
+                "z": {
+                  "type": "number",
+                  "description": "м: мировая координата Z"
+                }
+              },
+              "required": [
+                "x",
+                "z"
+              ],
+              "additionalProperties": false,
+              "description": "точка в плане (метры)"
+            },
+            "description": "м: полигон плана дома"
+          },
+          "rooms": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string",
+                  "description": "id комнаты"
+                },
+                "floor": {
+                  "type": "number",
+                  "minimum": 0,
+                  "description": "этаж"
+                },
+                "type": {
+                  "type": "string",
+                  "enum": [
+                    "office",
+                    "corridor",
+                    "hall",
+                    "room",
+                    "cafe",
+                    "utility",
+                    "lobby",
+                    "market",
+                    "warehouse"
+                  ],
+                  "description": "назначение"
+                },
+                "polygon": {
+                  "type": "array",
+                  "minItems": 4,
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "x": {
+                        "type": "number",
+                        "description": "м: мировая координата X"
+                      },
+                      "z": {
+                        "type": "number",
+                        "description": "м: мировая координата Z"
+                      }
+                    },
+                    "required": [
+                      "x",
+                      "z"
+                    ],
+                    "additionalProperties": false,
+                    "description": "точка в плане (метры)"
+                  },
+                  "description": "м: план комнаты"
+                },
+                "connections": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "target": {
+                        "type": "string",
+                        "description": "id цели за проёмом"
+                      },
+                      "portalPosition": {
+                        "type": "object",
+                        "properties": {
+                          "x": {
+                            "type": "number",
+                            "description": "м: мировая координата X"
+                          },
+                          "y": {
+                            "type": "number",
+                            "description": "м: мировая отметка"
+                          },
+                          "z": {
+                            "type": "number",
+                            "description": "м: мировая координата Z"
+                          }
+                        },
+                        "required": [
+                          "x",
+                          "y",
+                          "z"
+                        ],
+                        "additionalProperties": false,
+                        "description": "точка в мире (метры)"
+                      },
+                      "linkType": {
+                        "type": "string",
+                        "enum": [
+                          "main_entrance",
+                          "door",
+                          "back_entrance"
+                        ],
+                        "description": "тип связки"
+                      }
+                    },
+                    "required": [
+                      "target"
+                    ],
+                    "additionalProperties": false,
+                    "description": "дверь/проём"
+                  },
+                  "description": "двери комнаты"
+                }
+              },
+              "required": [
+                "id",
+                "floor",
+                "type",
+                "polygon"
+              ],
+              "additionalProperties": false,
+              "description": "комната"
+            },
+            "description": "комнаты дома"
+          },
+          "stairs": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string",
+                  "description": "id марша"
+                },
+                "connectsFloors": {
+                  "type": "array",
+                  "minItems": 2,
+                  "maxItems": 2,
+                  "items": {
+                    "type": "number",
+                    "minimum": 0
+                  },
+                  "description": "[с, по]"
+                },
+                "type": {
+                  "type": "string",
+                  "enum": [
+                    "straight",
+                    "l_shape",
+                    "spiral",
+                    "ladder"
+                  ],
+                  "description": "тип марша"
+                },
+                "position": {
+                  "type": "object",
+                  "properties": {
+                    "x": {
+                      "type": "number",
+                      "description": "м: мировая координата X"
+                    },
+                    "z": {
+                      "type": "number",
+                      "description": "м: мировая координата Z"
+                    }
+                  },
+                  "required": [
+                    "x",
+                    "z"
+                  ],
+                  "additionalProperties": false,
+                  "description": "точка в плане (метры)"
+                },
+                "rotation": {
+                  "type": "number",
+                  "description": "град",
+                  "default": 0
+                },
+                "dimensions": {
+                  "type": "object",
+                  "properties": {
+                    "width": {
+                      "type": "number",
+                      "minimum": 1,
+                      "description": "м"
+                    },
+                    "length": {
+                      "type": "number",
+                      "minimum": 1,
+                      "description": "м"
+                    },
+                    "height": {
+                      "type": "number",
+                      "description": "м"
+                    }
+                  },
+                  "required": [
+                    "width",
+                    "length"
+                  ],
+                  "additionalProperties": false,
+                  "description": "габарит марша"
+                }
+              },
+              "required": [
+                "id",
+                "connectsFloors",
+                "type"
+              ],
+              "additionalProperties": false,
+              "description": "марш"
+            },
+            "description": "марши дома"
+          },
+          "rotation": {
+            "type": "number",
+            "minimum": -360,
+            "maximum": 360,
+            "description": "град: поворот дома вокруг центра габарита footprint",
+            "default": 0
+          },
+          "districtFrame": {
+            "type": "object",
+            "properties": {
+              "cx": {
+                "type": "number",
+                "description": "м"
+              },
+              "cz": {
+                "type": "number",
+                "description": "м"
+              },
+              "yaw": {
+                "type": "number",
+                "minimum": -180,
+                "maximum": 180,
+                "description": "град"
+              }
+            },
+            "required": [
+              "cx",
+              "cz",
+              "yaw"
+            ],
+            "additionalProperties": false,
+            "description": "кадр косого района (служебное, генератор)"
+          }
+        },
+        "required": [
+          "id",
+          "floorsCount",
+          "floorHeight",
+          "footprint",
+          "rooms"
+        ],
+        "additionalProperties": false,
+        "description": "дом"
+      },
+      "description": "дома"
+    },
+    "landscapeObjects": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "id"
+          },
+          "model": {
+            "type": "string",
+            "enum": [
+              "concrete_pillar",
+              "lamp_post",
+              "tree",
+              "bench",
+              "bollard",
+              "vent",
+              "ac_unit",
+              "antenna",
+              "water_tank",
+              "wire_spool",
+              "barrier",
+              "container",
+              "market_stall",
+              "av_pad"
+            ],
+            "description": "модель"
+          },
+          "position": {
+            "type": "object",
+            "properties": {
+              "x": {
+                "type": "number",
+                "description": "м: мировая координата X"
+              },
+              "y": {
+                "type": "number",
+                "description": "м: мировая отметка"
+              },
+              "z": {
+                "type": "number",
+                "description": "м: мировая координата Z"
+              }
+            },
+            "required": [
+              "x",
+              "y",
+              "z"
+            ],
+            "additionalProperties": false,
+            "description": "точка в мире (метры)"
+          },
+          "rotation": {
+            "type": "object",
+            "properties": {
+              "x": {
+                "type": "number",
+                "default": 0
+              },
+              "y": {
+                "type": "number",
+                "default": 0
+              },
+              "z": {
+                "type": "number",
+                "default": 0
+              }
+            },
+            "additionalProperties": false,
+            "description": "град"
+          },
+          "scale": {
+            "type": "object",
+            "properties": {
+              "x": {
+                "type": "number",
+                "minimum": 0.05,
+                "default": 1
+              },
+              "y": {
+                "type": "number",
+                "minimum": 0.05,
+                "default": 1
+              },
+              "z": {
+                "type": "number",
+                "minimum": 0.05,
+                "default": 1
+              }
+            },
+            "additionalProperties": false,
+            "description": "масштаб"
+          }
+        },
+        "required": [
+          "id",
+          "model"
+        ],
+        "additionalProperties": false,
+        "description": "объект ландшафта"
+      },
+      "description": "ландшафтные объекты"
+    },
+    "lights": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "id"
+          },
+          "type": {
+            "type": "string",
+            "enum": [
+              "point",
+              "spot",
+              "directional"
+            ],
+            "description": "тип"
+          },
+          "position": {
+            "type": "object",
+            "properties": {
+              "x": {
+                "type": "number",
+                "description": "м: мировая координата X"
+              },
+              "y": {
+                "type": "number",
+                "description": "м: мировая отметка"
+              },
+              "z": {
+                "type": "number",
+                "description": "м: мировая координата Z"
+              }
+            },
+            "required": [
+              "x",
+              "y",
+              "z"
+            ],
+            "additionalProperties": false,
+            "description": "точка в мире (метры)"
+          },
+          "target": {
+            "type": "object",
+            "properties": {
+              "x": {
+                "type": "number",
+                "description": "м: мировая координата X"
+              },
+              "y": {
+                "type": "number",
+                "description": "м: мировая отметка"
+              },
+              "z": {
+                "type": "number",
+                "description": "м: мировая координата Z"
+              }
+            },
+            "required": [
+              "x",
+              "y",
+              "z"
+            ],
+            "additionalProperties": false,
+            "description": "точка в мире (метры)"
+          },
+          "color": {
+            "oneOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "string",
+                "pattern": "^#[0-9a-fA-F]{6}$"
+              }
+            ],
+            "description": "цвет",
+            "default": 16764826
+          },
+          "intensity": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 400,
+            "description": "яркость",
+            "default": 60
+          },
+          "distance": {
+            "type": "number",
+            "minimum": 0,
+            "description": "м",
+            "default": 60
+          },
+          "angle": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 1.57,
+            "description": "рад (spot)",
+            "default": 0.7
+          }
+        },
+        "required": [
+          "id",
+          "type"
+        ],
+        "additionalProperties": false,
+        "description": "источник света"
+      },
+      "description": "источники света"
+    },
+    "windows": {
+      "type": "object",
+      "properties": {
+        "spacing": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 12,
+          "description": "м: ритм окон вдоль грани",
+          "default": 3
+        },
+        "width": {
+          "type": "number",
+          "minimum": 0.2,
+          "maximum": 6,
+          "description": "м: ширина квада",
+          "default": 1.15
+        },
+        "height": {
+          "type": "number",
+          "minimum": 0.2,
+          "maximum": 6,
+          "description": "м: высота квада",
+          "default": 1.6
+        },
+        "sill": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 3,
+          "description": "м: подоконник от пола этажа",
+          "default": 0.9
+        },
+        "offset": {
+          "type": "number",
+          "minimum": 0.01,
+          "maximum": 1,
+          "description": "м: вынос квада за грань стены",
+          "default": 0.06
+        },
+        "lit": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1,
+          "description": "доля окон светящимися",
+          "default": 0.4
+        }
+      },
+      "additionalProperties": false,
+      "description": "включатель + переопределение ряда окон"
+    },
+    "clutter": {
+      "type": "object",
+      "properties": {
+        "tall": {
+          "type": "number",
+          "minimum": 3,
+          "maximum": 200,
+          "description": "м",
+          "default": 26
+        },
+        "head": {
+          "type": "number",
+          "minimum": 1.5,
+          "maximum": 12,
+          "description": "м",
+          "default": 3.2
+        },
+        "roof": {
+          "type": "object",
+          "properties": {
+            "edge": {
+              "type": "number",
+              "minimum": 0.4,
+              "maximum": 8,
+              "default": 1.2
+            },
+            "step": {
+              "type": "number",
+              "minimum": 1,
+              "maximum": 20,
+              "default": 5
+            },
+            "keep": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 1,
+              "default": 0.5
+            },
+            "perHouse": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 12,
+              "default": 3
+            }
+          },
+          "additionalProperties": false,
+          "description": "мусор на кровле"
+        },
+        "street": {
+          "type": "object",
+          "properties": {
+            "every": {
+              "type": "number",
+              "minimum": 4,
+              "maximum": 60,
+              "default": 30
+            },
+            "inset": {
+              "type": "number",
+              "minimum": 0.3,
+              "maximum": 6,
+              "default": 1.4
+            },
+            "minLamp": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 12,
+              "default": 3
+            },
+            "keep": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 1,
+              "default": 0.6
+            }
+          },
+          "additionalProperties": false,
+          "description": "мусор вдоль улицы"
+        }
+      },
+      "additionalProperties": false,
+      "description": "процедурный мусор"
+    },
+    "signage": {
+      "type": "object",
+      "properties": {
+        "minFloors": {
+          "type": "number",
+          "minimum": 1,
+          "maximum": 40,
+          "default": 4
+        },
+        "minRun": {
+          "type": "number",
+          "minimum": 2,
+          "maximum": 40,
+          "default": 8
+        },
+        "edge": {
+          "type": "number",
+          "minimum": 0.2,
+          "maximum": 8,
+          "default": 1.2
+        },
+        "step": {
+          "type": "number",
+          "minimum": 2,
+          "maximum": 40,
+          "default": 10
+        },
+        "width": {
+          "type": "array",
+          "minItems": 2,
+          "maxItems": 2,
+          "items": {
+            "type": "number",
+            "minimum": 0.5,
+            "maximum": 30
+          },
+          "default": [
+            4,
+            8
+          ]
+        },
+        "minWidth": {
+          "type": "number",
+          "minimum": 0.5,
+          "maximum": 20,
+          "default": 2.5
+        },
+        "panelFloors": {
+          "type": "number",
+          "minimum": 1,
+          "maximum": 12,
+          "default": 2
+        },
+        "perFace": {
+          "type": "number",
+          "minimum": 1,
+          "maximum": 8,
+          "default": 2
+        },
+        "keep": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1,
+          "default": 0.6
+        },
+        "offset": {
+          "type": "number",
+          "minimum": 0.02,
+          "maximum": 2,
+          "default": 0.14
+        }
+      },
+      "additionalProperties": false,
+      "description": "вывески"
+    },
+    "sky": {
+      "type": "object",
+      "properties": {
+        "sky": {
+          "oneOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "string",
+              "pattern": "^#[0-9a-fA-F]{6}$"
+            }
+          ],
+          "description": "цвет неба",
+          "default": 11130101
+        },
+        "fog": {
+          "type": "object",
+          "properties": {
+            "color": {
+              "oneOf": [
+                {
+                  "type": "number"
+                },
+                {
+                  "type": "string",
+                  "pattern": "^#[0-9a-fA-F]{6}$"
+                }
+              ],
+              "description": "цвет тумана",
+              "default": 14084607
+            },
+            "near": {
+              "type": "number",
+              "minimum": 1,
+              "description": "м: начало тумана",
+              "default": 120
+            },
+            "far": {
+              "type": "number",
+              "minimum": 2,
+              "description": "м: полное затемнение",
+              "default": 460
+            }
+          },
+          "additionalProperties": false,
+          "description": "туман"
+        },
+        "sun": {
+          "type": "object",
+          "properties": {
+            "color": {
+              "oneOf": [
+                {
+                  "type": "number"
+                },
+                {
+                  "type": "string",
+                  "pattern": "^#[0-9a-fA-F]{6}$"
+                }
+              ],
+              "description": "цвет солнца/луны",
+              "default": 16774368
+            },
+            "intensity": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 10,
+              "description": "яркость",
+              "default": 2.4
+            },
+            "position": {
+              "type": "array",
+              "minItems": 3,
+              "maxItems": 3,
+              "items": {
+                "type": "number"
+              },
+              "description": "[x,y,z]",
+              "default": [
+                150,
+                200,
+                -110
+              ]
+            }
+          },
+          "additionalProperties": false,
+          "description": "направленный свет"
+        },
+        "hemi": {
+          "type": "object",
+          "properties": {
+            "sky": {
+              "oneOf": [
+                {
+                  "type": "number"
+                },
+                {
+                  "type": "string",
+                  "pattern": "^#[0-9a-fA-F]{6}$"
+                }
+              ],
+              "description": "верх полусферического света",
+              "default": 12575743
+            },
+            "ground": {
+              "oneOf": [
+                {
+                  "type": "number"
+                },
+                {
+                  "type": "string",
+                  "pattern": "^#[0-9a-fA-F]{6}$"
+                }
+              ],
+              "description": "низ полусферического света",
+              "default": 4877107
+            },
+            "intensity": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 10,
+              "description": "яркость",
+              "default": 1
+            }
+          },
+          "additionalProperties": false,
+          "description": "полусферический свет"
+        },
+        "lights": {
+          "type": "object",
+          "properties": {
+            "count": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 8,
+              "description": "штук: огней пула",
+              "default": 6
+            },
+            "reach": {
+              "type": "number",
+              "minimum": 1,
+              "description": "м: радиус поиска опор",
+              "default": 60
+            },
+            "height": {
+              "type": "number",
+              "minimum": 0,
+              "description": "м: подъём огня",
+              "default": 6
+            },
+            "spacing": {
+              "type": "number",
+              "minimum": 1,
+              "description": "м: разнос огней",
+              "default": 26
+            },
+            "intensity": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 400,
+              "description": "яркость огня",
+              "default": 60
+            }
+          },
+          "additionalProperties": false,
+          "description": "пул ночных огней"
+        }
+      },
+      "additionalProperties": false,
+      "description": "небо/освещение главы"
+    },
+    "gameplay": {
+      "type": "object",
+      "properties": {
+        "goal": {
+          "type": "string",
+          "enum": [
+            "exit"
+          ],
+          "description": "цель главы"
+        },
+        "spawn": {
+          "type": "object",
+          "properties": {
+            "x": {
+              "type": "number",
+              "description": "м: мировая координата X"
+            },
+            "z": {
+              "type": "number",
+              "description": "м: мировая координата Z"
+            }
+          },
+          "required": [
+            "x",
+            "z"
+          ],
+          "additionalProperties": false,
+          "description": "точка в плане (метры)"
+        },
+        "exit": {
+          "type": "object",
+          "properties": {
+            "x": {
+              "type": "number",
+              "description": "м: мировая координата X"
+            },
+            "z": {
+              "type": "number",
+              "description": "м: мировая координата Z"
+            }
+          },
+          "required": [
+            "x",
+            "z"
+          ],
+          "additionalProperties": false,
+          "description": "точка в плане (метры)"
+        },
+        "exitRadius": {
+          "type": "number",
+          "minimum": 1,
+          "maximum": 40,
+          "description": "м: радиус точки B",
+          "default": 3.5
+        },
+        "enemies": {
+          "type": "object",
+          "properties": {
+            "count": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 30,
+              "description": "человек-противники"
+            }
+          },
+          "additionalProperties": false,
+          "description": "пешие противники"
+        },
+        "alienEnemies": {
+          "type": "object",
+          "properties": {
+            "count": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 30,
+              "description": "Чужие"
+            }
+          },
+          "additionalProperties": false,
+          "description": "Чужие"
+        },
+        "cars": {
+          "type": "object",
+          "properties": {
+            "count": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 8,
+              "description": "штук"
+            },
+            "spots": {
+              "type": "array",
+              "minItems": 0,
+              "maxItems": 8,
+              "items": {
+                "type": "object",
+                "properties": {
+                  "x": {
+                    "type": "number"
+                  },
+                  "z": {
+                    "type": "number"
+                  },
+                  "yaw": {
+                    "type": "number",
+                    "minimum": -360,
+                    "maximum": 360,
+                    "description": "град",
+                    "default": 0
+                  }
+                },
+                "required": [
+                  "x",
+                  "z"
+                ],
+                "additionalProperties": false,
+                "description": "стоянка"
+              },
+              "description": "точки стоянок"
+            }
+          },
+          "required": [
+            "count"
+          ],
+          "additionalProperties": false,
+          "description": "машины главы"
+        }
+      },
+      "required": [
+        "goal"
+      ],
+      "additionalProperties": false,
+      "description": "цель и сущности главы"
+    },
+    "city": {
+      "type": "object",
+      "properties": {
+        "seed": {
+          "type": "number",
+          "description": "целое: сид ГПСЧ; порядок вызовов значим"
+        },
+        "districts": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string",
+                "description": "имя района: по нему строятся id лотов `<id>_<номер>` и префикс вытеснения авторской записи"
+              },
+              "name": {
+                "type": "string",
+                "description": "название для человека"
+              },
+              "style": {
+                "type": "string",
+                "enum": [
+                  "mixed",
+                  "corporate",
+                  "slum",
+                  "industrial",
+                  "kitsch"
+                ],
+                "description": "набор материалов фасада квартала",
+                "default": "mixed"
+              },
+              "block": {
+                "type": "object",
+                "properties": {
+                  "minX": {
+                    "type": "number",
+                    "description": "м: граница AABB квартала в мировых осях"
+                  },
+                  "maxX": {
+                    "type": "number",
+                    "description": "м: граница AABB квартала"
+                  },
+                  "minZ": {
+                    "type": "number",
+                    "description": "м: граница AABB квартала"
+                  },
+                  "maxZ": {
+                    "type": "number",
+                    "description": "м: граница AABB квартала"
+                  }
+                },
+                "required": [
+                  "minX",
+                  "maxX",
+                  "minZ",
+                  "maxZ"
+                ],
+                "additionalProperties": false,
+                "description": "прямоугольник квартала; при `polygon` это габарит полигона, и по нему мелится сетка"
+              },
+              "street": {
+                "type": "object",
+                "properties": {
+                  "pitch": {
+                    "type": "number",
+                    "minimum": 8,
+                    "description": "м: шаг улиц квартала",
+                    "default": 46
+                  },
+                  "width": {
+                    "type": "number",
+                    "minimum": 2,
+                    "description": "м: ширина проезжей части",
+                    "default": 14
+                  },
+                  "grade": {
+                    "type": "number",
+                    "minimum": 0,
+                    "maximum": 0.3,
+                    "description": "м/м: подъём проезжей части района по профилю поля. Это НЕ крутизна грунта (relief.maxSlope) и не уклон настила",
+                    "default": 0.06
+                  }
+                },
+                "additionalProperties": false,
+                "description": "сетка улиц района"
+              },
+              "lot": {
+                "type": "object",
+                "properties": {
+                  "pitch": {
+                    "type": "number",
+                    "minimum": 4,
+                    "description": "м: шаг лотов",
+                    "default": 12
+                  },
+                  "inset": {
+                    "type": "number",
+                    "minimum": 0,
+                    "description": "м: отступ корпуса от границы лота",
+                    "default": 1.6
+                  },
+                  "merge": {
+                    "type": "number",
+                    "minimum": 0,
+                    "maximum": 1,
+                    "description": "доля лотов, склеенных в один корпус",
+                    "default": 0.3
+                  }
+                },
+                "additionalProperties": false,
+                "description": "сетка лотов квартала"
+              },
+              "height": {
+                "type": "object",
+                "properties": {
+                  "minFloors": {
+                    "type": "number",
+                    "minimum": 1,
+                    "description": "эт: нижний предел этажности",
+                    "default": 2
+                  },
+                  "maxFloors": {
+                    "type": "number",
+                    "minimum": 1,
+                    "description": "эт: верхний предел этажности (вводимый дом ограничен J.enterableFloors)",
+                    "default": 9
+                  },
+                  "floorHeight": {
+                    "type": "number",
+                    "minimum": 2.4,
+                    "maximum": 8,
+                    "description": "м: высота этажа",
+                    "default": 3.4
+                  }
+                },
+                "additionalProperties": false,
+                "description": "разброс этажности квартала"
+              },
+              "tower": {
+                "type": "object",
+                "properties": {
+                  "chance": {
+                    "type": "number",
+                    "minimum": 0,
+                    "maximum": 1,
+                    "description": "доля лотов, ставших башней",
+                    "default": 0.05
+                  },
+                  "floors": {
+                    "type": "array",
+                    "minItems": 2,
+                    "maxItems": 2,
+                    "items": {
+                      "type": "number",
+                      "minimum": 1
+                    },
+                    "description": "эт: [min, max] этажности башни",
+                    "default": [
+                      18,
+                      44
+                    ]
+                  },
+                  "floorHeight": {
+                    "type": "number",
+                    "minimum": 2.4,
+                    "maximum": 8,
+                    "description": "м: высота этажа башни",
+                    "default": 4
+                  }
+                },
+                "additionalProperties": false,
+                "description": "башни района: доля лотов и их этажность"
+              },
+              "archetypes": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "enum": [
+                    "box",
+                    "slab",
+                    "l",
+                    "u",
+                    "t",
+                    "cross",
+                    "bar_pair",
+                    "stepped2",
+                    "stepped3",
+                    "podium_tower"
+                  ]
+                },
+                "description": "разрешённые формы корпуса; ритм ГПСЧ района значим",
+                "default": [
+                  "box",
+                  "slab",
+                  "l",
+                  "u",
+                  "t",
+                  "cross",
+                  "bar_pair",
+                  "stepped2",
+                  "stepped3",
+                  "podium_tower"
+                ]
+              },
+              "enterableEvery": {
+                "type": "number",
+                "minimum": 1,
+                "description": "каждый N-й лот-кандидат открывается",
+                "default": 18
+              },
+              "skip": {
+                "type": "number",
+                "minimum": 0,
+                "maximum": 1,
+                "description": "доля лотов, оставленных пустыми",
+                "default": 0.1
+              },
+              "courtyard": {
+                "type": "number",
+                "minimum": 0,
+                "maximum": 1,
+                "description": "доля лотов, ставших замкнутым двором",
+                "default": 0.12
+              },
+              "roofs": {
+                "type": "object",
+                "properties": {
+                  "walkable": {
+                    "type": "boolean",
+                    "description": "true — кровля становится опорой",
+                    "default": true
+                  },
+                  "access": {
+                    "type": "number",
+                    "minimum": 0,
+                    "maximum": 1,
+                    "description": "доля домов с выходом на кровлю",
+                    "default": 0.45
+                  },
+                  "parapet": {
+                    "type": "number",
+                    "minimum": 0,
+                    "maximum": 1.5,
+                    "description": "м: высота парапета кровли",
+                    "default": 0.9
+                  }
+                },
+                "additionalProperties": false,
+                "description": "кровля квартала"
+              },
+              "yaw": {
+                "type": "number",
+                "minimum": -180,
+                "maximum": 180,
+                "description": "град: поворот всего квартала вокруг центра блока",
+                "default": 0
+              },
+              "polygon": {
+                "type": "array",
+                "minItems": 3,
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "x": {
+                      "type": "number",
+                      "description": "м: мировая координата X"
+                    },
+                    "z": {
+                      "type": "number",
+                      "description": "м: мировая координата Z"
+                    }
+                  },
+                  "required": [
+                    "x",
+                    "z"
+                  ],
+                  "additionalProperties": false,
+                  "description": "точка в плане (метры)"
+                },
+                "description": "м: контур квартала"
+              }
+            },
+            "required": [
+              "id",
+              "block"
+            ],
+            "additionalProperties": false,
+            "description": "квартал генератора (tools/city.js)"
+          },
+          "description": "районы генератора"
+        },
+        "track": {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "string",
+              "description": "приставка id настилов трассы",
+              "default": "ring"
+            },
+            "center": {
+              "type": "array",
+              "minItems": 2,
+              "maxItems": 2,
+              "items": {
+                "type": "number"
+              },
+              "description": "м: центр звезды оси [x, z]",
+              "default": [
+                0,
+                0
+              ]
+            },
+            "radius": {
+              "type": "number",
+              "minimum": 10,
+              "description": "м: радиус вершины звезды",
+              "default": 120
+            },
+            "turns": {
+              "type": "number",
+              "minimum": 3,
+              "description": "вершин звезды = число поворотов петли",
+              "default": 12
+            },
+            "minRadius": {
+              "type": "number",
+              "minimum": 2,
+              "description": "м: радиус самого крутого поворота",
+              "default": 60
+            },
+            "curvatureJitter": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 0.5,
+              "description": "доля дрожи радиуса",
+              "default": 0.35
+            },
+            "width": {
+              "type": "number",
+              "minimum": 2,
+              "maximum": 30,
+              "description": "м: ширина полотна",
+              "default": 10
+            },
+            "bank": {
+              "type": "number",
+              "minimum": -30,
+              "maximum": 30,
+              "description": "град: крен на дугах",
+              "default": 6
+            },
+            "grade": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 0.3,
+              "description": "м/м: продольный уклон оси",
+              "default": 0.08
+            },
+            "clearance": {
+              "type": "number",
+              "minimum": 0,
+              "description": "м: зазор полотна над корытом поля",
+              "default": 3
+            },
+            "amplitude": {
+              "type": "number",
+              "minimum": 0,
+              "description": "м: половина высоты волны",
+              "default": 4
+            },
+            "waves": {
+              "type": "number",
+              "minimum": 1,
+              "description": "число полуволн",
+              "default": 2
+            },
+            "rails": {
+              "type": "boolean",
+              "description": "перила на настилах",
+              "default": true
+            },
+            "lamps": {
+              "type": "boolean",
+              "description": "фонари на полотне",
+              "default": true
+            },
+            "entries": {
+              "type": "number",
+              "minimum": 0,
+              "description": "число съездов",
+              "default": 2
+            }
+          },
+          "additionalProperties": false,
+          "description": "кольцевая трасса"
+        }
+      },
+      "required": [
+        "seed",
+        "districts"
+      ],
+      "additionalProperties": false,
+      "description": "секция генератора кварталов (tools/city.js); разворачивается до валидации/нормализации"
+    },
+    "stream": {
+      "type": "object",
+      "properties": {
+        "chunk": {
+          "type": "number",
+          "minimum": 40,
+          "maximum": 640,
+          "description": "м: сторона клетки разрезки; делит ground.size нацело"
+        },
+        "keep": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 4,
+          "description": "клеток во все стороны от клетки игрока"
+        },
+        "aheadMin": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1200,
+          "description": "м: радиус догрузки вперёд (пешком)"
+        },
+        "aheadMax": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1200,
+          "description": "м: радиус догрузки вперёд (машина), не меньше aheadMin"
+        },
+        "budgetMs": {
+          "type": "number",
+          "minimum": 1,
+          "maximum": 200,
+          "description": "мс: бюджет достройки на кадр"
+        }
+      },
+      "required": [
+        "chunk",
+        "keep",
+        "aheadMin",
+        "aheadMax",
+        "budgetMs"
+      ],
+      "additionalProperties": false,
+      "description": "разрезка и стриминг открытого мира"
+    },
+    "navEdgeProbe": {
+      "type": "number",
+      "minimum": 0.1,
+      "description": "шаг проб опоры вдоль навигационных рёбер (м)"
+    },
+    "bodyProbe": {
+      "type": "number",
+      "minimum": 0.1,
+      "description": "шаг проб габарита тела вдоль навигационных рёбер (м)"
+    },
+    "relief": {
+      "type": "object",
+      "properties": {
+        "baseY": {
+          "type": "number",
+          "description": "м: нулевая отметка поля; по умолчанию ground.y"
+        },
+        "maxSlope": {
+          "type": "number",
+          "minimum": 0.01,
+          "maximum": 1.5,
+          "description": "м/м: предел крутизны **поля** (уклон грунта). Не путать с `J.maxSlope` — пределом настила, и с `city.districts[].street.grade` — подъёмом проезжей части",
+          "default": 0.12
+        },
+        "hillMaxSlope": {
+          "type": "number",
+          "minimum": 0.01,
+          "maximum": 1.5,
+          "description": "м/м: предел крутизны отдельного холма (1,5 · height / radius); умножение на 1,5 — аналитический максимум производной капсулы",
+          "default": 0.06
+        },
+        "blend": {
+          "type": "number",
+          "minimum": 1,
+          "maximum": 200,
+          "description": "м: ширина перехода площадки к полю по умолчанию",
+          "default": 14
+        },
+        "cell": {
+          "type": "number",
+          "minimum": 2,
+          "maximum": 60,
+          "description": "м: сторона клетки индекса рельефа (цена пробы, не геометрия)",
+          "default": 24
+        },
+        "hills": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 16,
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string",
+                "description": "имя для метки и для текста ошибки предельного уклона"
+              },
+              "x": {
+                "type": "number",
+                "description": "м: начало капсулы"
+              },
+              "z": {
+                "type": "number",
+                "description": "м: начало капсулы"
+              },
+              "bx": {
+                "type": "number",
+                "description": "м: конец капсулы; без пары к (x,z) это круг"
+              },
+              "bz": {
+                "type": "number",
+                "description": "м: конец капсулы"
+              },
+              "radius": {
+                "type": "number",
+                "minimum": 2,
+                "description": "м: радиус capsule"
+              },
+              "height": {
+                "type": "number",
+                "minimum": -300,
+                "maximum": 300,
+                "description": "м: подъём над полем; отрицательное — провал (долина). Крутизна холма ограничена relief.hillMaxSlope"
+              }
+            },
+            "required": [
+              "x",
+              "z",
+              "radius",
+              "height"
+            ],
+            "additionalProperties": false,
+            "description": "холм-капсула поля высот"
+          },
+          "description": "холмы поля; лимит J.relief.maxHills"
+        },
+        "pads": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string",
+                "description": "имя для текста предупреждения о нехватке переходной зоны"
+              },
+              "minX": {
+                "type": "number",
+                "description": "м: сторона ядра площадки (ось X, мировая до yaw)"
+              },
+              "maxX": {
+                "type": "number",
+                "description": "м: сторона ядра площадки"
+              },
+              "minZ": {
+                "type": "number",
+                "description": "м: сторона ядра площадки"
+              },
+              "maxZ": {
+                "type": "number",
+                "description": "м: сторона ядра площадки"
+              },
+              "y": {
+                "type": "number",
+                "description": "м: отметка ядра; смешивается с полем весом, поэтому соседние террасы обязаны не перекрываться произвольно"
+              },
+              "blend": {
+                "type": "number",
+                "minimum": 1,
+                "maximum": 200,
+                "description": "м: ширина переходной зоны к полю; по умолчанию relief.blend, предел J.relief.maxBlend"
+              },
+              "yaw": {
+                "type": "number",
+                "minimum": -360,
+                "maximum": 360,
+                "description": "град: поворот вокруг центра прямоугольника",
+                "default": 0
+              }
+            },
+            "required": [
+              "minX",
+              "maxX",
+              "minZ",
+              "maxZ",
+              "y"
+            ],
+            "additionalProperties": false,
+            "description": "площадка поля высот (терраса района, площадь, насыпь)"
+          },
+          "description": "площадки поля"
+        },
+        "roadCorridors": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string",
+                "description": "имя коридора для отладки"
+              },
+              "width": {
+                "type": "number",
+                "minimum": 2,
+                "maximum": 60,
+                "description": "м: ширина полотна дороги",
+                "default": 8
+              },
+              "shoulder": {
+                "type": "number",
+                "minimum": 0,
+                "maximum": 20,
+                "description": "м: ширина обочины с мягким уклоном",
+                "default": 2
+              },
+              "blend": {
+                "type": "number",
+                "minimum": 0.5,
+                "maximum": 120,
+                "description": "м: ширина плавного перехода от обочины к природному полю",
+                "default": 10
+              },
+              "crossLevel": {
+                "type": "boolean",
+                "description": "выравнивать поперёк полотна по отметке оси, сохраняя продольный профиль по рельефу",
+                "default": false
+              },
+              "points": {
+                "type": "array",
+                "minItems": 2,
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "x": {
+                      "type": "number",
+                      "description": "м: ось дороги"
+                    },
+                    "y": {
+                      "type": "number",
+                      "description": "м: отметка профиля дороги в точке (при crossLevel берётся отметка рельефа на оси)",
+                      "default": 0
+                    },
+                    "z": {
+                      "type": "number",
+                      "description": "м: ось дороги"
+                    }
+                  },
+                  "required": [
+                    "x",
+                    "z"
+                  ],
+                  "additionalProperties": false,
+                  "description": "точка оси коридора"
+                },
+                "description": "ломаная оси коридора"
+              }
+            },
+            "required": [
+              "points"
+            ],
+            "additionalProperties": false,
+            "description": "коридор предварительного выравнивания ландшафта под дорогой (cut-and-fill)"
+          },
+          "description": "коридоры выравнивания ландшафта под дорогами"
+        }
+      },
+      "additionalProperties": false,
+      "description": "аналитическое поле высот: при наличии секции гасится groundPlane («пол мира — ноль» больше не опора)"
+    },
+    "tunnels": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "id туннеля"
+          },
+          "points": {
+            "type": "array",
+            "minItems": 2,
+            "maxItems": 2,
+            "items": {
+              "type": "object",
+              "properties": {
+                "x": {
+                  "type": "number"
+                },
+                "y": {
+                  "type": "number"
+                },
+                "z": {
+                  "type": "number"
+                }
+              },
+              "required": [
+                "x",
+                "y",
+                "z"
+              ],
+              "additionalProperties": false,
+              "description": "портал"
+            },
+            "description": "порталы"
+          },
+          "width": {
+            "type": "number",
+            "minimum": 2,
+            "maximum": 30,
+            "description": "м"
+          },
+          "height": {
+            "type": "number",
+            "minimum": 0.5,
+            "maximum": 60,
+            "description": "м"
+          },
+          "lamps": {
+            "type": "boolean",
+            "description": "фонари",
+            "default": false
+          }
+        },
+        "required": [
+          "id",
+          "points",
+          "width",
+          "height"
+        ],
+        "additionalProperties": false,
+        "description": "туннель"
+      },
+      "description": "туннели"
+    }
+  },
+  "required": [
+    "kind",
+    "metadata",
+    "roads",
+    "gameplay"
+  ],
+  "additionalProperties": false,
+  "description": "бриф открытого уровня (kind: open)"
+}

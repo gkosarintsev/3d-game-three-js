@@ -4,6 +4,7 @@
  *   node tools/export-schema.mjs [--check]
  *
  * Пишет производные файлы схем в `src/levels/`:
+ * - `level-open.schema.json` (`kind: 'open'`, данные карты напрямую)
  * - `level-v3.schema.json` (v3, `kind: 'cityforge'`)
  * - `level-common.schema.json` (общие определения v3/v4, `$ref`-цели)
  * - `level-v4.schema.json` (v4, `kind: 'cityforge'`, `schemaVersion: 4`)
@@ -31,7 +32,7 @@
 import { existsSync, readFileSync, writeFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { LEVEL_SPEC_V3, LEVEL_SPEC_V4, LEVEL_COMMON_V3 } from './level-schema.mjs';
+import { LEVEL_SPEC_OPEN, LEVEL_SPEC_V3, LEVEL_SPEC_V4, LEVEL_COMMON_V3 } from './level-schema.mjs';
 
 const DRAFT = 'http://json-schema.org/draft-07/schema#';
 const COLOR_PATTERN = '^#[0-9a-fA-F]{6}$';
@@ -140,6 +141,11 @@ export const SCHEMA_FILES = [
     title: 'Level brief v4 (kind: cityforge, schemaVersion: 4)',
     out: resolve(ROOT, 'src/levels/level-v4.schema.json'),
     refBase: './level-common.schema.json#/definitions/',
+  },
+  {
+    spec: LEVEL_SPEC_OPEN,
+    title: 'Level brief open (kind: open)',
+    out: resolve(ROOT, 'src/levels/level-open.schema.json'),
   },
 ];
 
