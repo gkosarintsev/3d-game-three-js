@@ -176,6 +176,8 @@ export class WorldMap extends JsonMap {
       task: null,
       /** @type {Map<string, {data: object|null, t0: number}>} id -> читалка клетки */
       requests: new Map(),
+      /** Клетки, чью картинку нужно пересобрать из-за owner/fallback handover (BUG-003). */
+      fallbackDirty: new Set(),
       /** @type {Map<string, number>} метка среза -> мс: **худшая из измеренных**
        *  цен среза этим же мире, им помпа решает «этот срез в кадр уже не
        *  влезет» (см. `streamStep`). EMA для гейта отвергнут: он разрешает
@@ -315,6 +317,7 @@ export class WorldMap extends JsonMap {
       this.pump.task = null;
     }
     this.pump.requests.clear();
+    this.pump.fallbackDirty.clear();
     for (const id of [...this.loaded.keys()]) this.unloadChunk(id);
     this.scene = null;
     this.houseTex?.dispose?.();
@@ -916,8 +919,8 @@ export class WorldMap extends JsonMap {
     return draw;
   }
 
-  /** При смене загрузки owner-чанка пересобираем картинки соседей, где fallback изменился. */
-  _rebuildFallbackPictures(changedId) {
+  /** Помечает соседние чанки, чья fallback-картинка изменилась при load/unload owner (BUG-003). */
+  _markFallbackDirty(changedId) {
     if (!changedId) return;
     for (const [id, entry] of this.loaded.entries()) {
       if (id === changedId || !entry?.pic || !entry?.data) continue;
@@ -925,12 +928,11 @@ export class WorldMap extends JsonMap {
       for (const key of DRAWN_INPUTS) {
         for (const rec of entry.data[key] ?? []) {
           if (!rec || rec.owner) continue;
-          // Owner handover is the BUG-003 case: owner loaded/unloaded.
           if (rec.homeChunk === changedId) { affected = true; break; }
         }
         if (affected) break;
       }
-      if (affected) this._rebuildPicture(id);
+      if (affected) this.pump.fallbackDirty.add(id);
     }
   }
 
@@ -1309,6 +1311,18 @@ export class WorldMap extends JsonMap {
       };
       return pump.task.slices[0];
     }
+    for (const id of pump.fallbackDirty) {
+      pump.fallbackDirty.delete(id);
+      const entry = this.loaded.get(id);
+      if (!entry?.pic || !entry?.data) continue;
+      const slices = [{ label: 'picture-fallback-rebuild', run: () => this._rebuildPicture(id) }];
+      pump.task = {
+        id, kind: 'fallback-rebuild', slices, sliceTotal: 1,
+        sliceDone: 0, startedAt: performance.now(), readAt: undefined,
+        costTotal: Object.create(null),
+      };
+      return pump.task.slices[0];
+    }
     return null;
   }
 
@@ -1670,9 +1684,8 @@ export class WorldMap extends JsonMap {
         this._rebuildAnchors();
         this._sumCounters();
       }
-      // BUG-003 handover rebuild отключён: полный пересбор картинки соседей
-      // слишком дорог на массовой загрузке чанков (level-contract 420s timeout).
-      // Build-time fallback остаётся; owner load/unload handover — remaining.
+      if (mode === 'unload' && id) this.pump.fallbackDirty.delete(id);
+      if ((mode === 'build' || mode === 'unload') && id) this._markFallbackDirty(id);
     } });
     return slices;
   }
