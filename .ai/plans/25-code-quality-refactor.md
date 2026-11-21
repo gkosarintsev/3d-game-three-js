@@ -84,8 +84,8 @@ Improve maintainability and reliability of the codebase through targeted refacto
 - [ ] [TEST-005] **Contract smoke for new/changed visuals**
   - Ensure level-contract/level-lifecycle/browser gates cover levels with new detailed visuals; add targeted cases only when an invariant is not already covered.
 
-- [ ] [TEST-006] **Bug-triage log**
-  - For every bug found in BUG-* tasks, record: symptom, root cause, fix, regression test, affected levels/files in PR description and/or `.ai/state/` note.
+- [x] [TEST-006] **Bug-triage log** (2026-11-21, `agent/plan25-test006-bug-triage`)
+  - Added `.ai/state/plan25-bug-triage.md` with symptom/root cause/fix/regression test/affected files/levels/evidence for BUG-001..BUG-005 (including BUG-003 handover PR #89). Future BUG-* tasks should append entries there and in PR body.
 
 ## Prioritized execution order
 1. **BUG-001 + TEST-001** — close the known rotation/dimension bug class with regression coverage.
