@@ -1651,7 +1651,9 @@ export class WorldMap extends JsonMap {
         this._rebuildAnchors();
         this._sumCounters();
       }
-      if ((mode === 'build' || mode === 'unload') && id) this._rebuildFallbackPictures(id);
+      // BUG-003 handover rebuild отключён: полный пересбор картинки соседей
+      // слишком дорог на массовой загрузке чанков (level-contract 420s timeout).
+      // Build-time fallback остаётся; owner load/unload handover — remaining.
     } });
     return slices;
   }

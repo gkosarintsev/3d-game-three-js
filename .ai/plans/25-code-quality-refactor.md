@@ -30,8 +30,8 @@ Improve maintainability and reliability of the codebase through targeted refacto
 
 - [x] [BUG-003] **Streaming/chunk boundary invariants** (first pass, 2026-11-21, `agent/plan25-bug003-chunk-boundaries`)
   - Audited chunk ownership/AABB/footprint/rotated solids/detailed visuals/roads/channels crossing boundaries in `tools/chunk-level.mjs`, `src/world-map.js`, `src/surfaces.js`.
-  - Fixed boundary visual/collision mismatch: when an owner chunk is unloaded/not loaded but a participant chunk is loaded, WorldMap now draws fallback picture for non-owner records in the first loaded `coverageChunks` participant and rebuilds affected chunk pictures on owner load/unload handover.
-  - Remaining: add dedicated browser regression for boundary fallback handover/revisit and continue audit for nav-node accumulation on unload.
+  - Fixed build-time boundary visual/collision mismatch: when an owner chunk is not loaded at participant build time, WorldMap draws fallback picture for non-owner records in the first loaded `coverageChunks` participant.
+  - Remaining: owner load/unload handover rebuild (disabled for perf, caused level-contract 420s timeout), dedicated browser regression for boundary fallback handover/revisit, and continue audit for nav-node accumulation on unload.
 
 - [x] [BUG-004] **Determinism and ordering audit** (first pass, 2026-11-21, `agent/plan25-bug004-determinism`)
   - Audited tools for `Math.random`/time-based output in generation: none found in `tools/*.mjs, tools/citygen/*.mjs` (Date.now only in CI/runner/editor tooling).
