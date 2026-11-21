@@ -280,7 +280,7 @@ export class WorldMap extends JsonMap {
     const data = cell && this.catalog ? startCells.get(`${this.catalog}/${cell.file}`) : null;
     if (!data) return;
     const { slices } = this._buildSlices(cell.id, data);
-    this._runTask(cell.id, 'start', slices);
+    this._runTask(cell.id, 'start', slices, undefined, data);
     // Спавн: после сборки стартовой клетки опора точна. Если спавн попал в зону
     // тоннеля — ставим на пол тоннеля (groundHeightAt от fromY=0 даёт рельеф под
     // приподнятым тоннелем по контракту шага ноги, но старт в тоннеле — явный).
@@ -414,7 +414,7 @@ export class WorldMap extends JsonMap {
     if (this.loaded.has(id)) return this.loaded.get(id);
     this.pump.requests.delete(id);
     const { entry, slices } = this._buildSlices(id, data);
-    this._runTask(id, 'build', slices);
+    this._runTask(id, 'build', slices, undefined, data);
     return entry;
   }
 
@@ -423,7 +423,7 @@ export class WorldMap extends JsonMap {
     const had = this.loaded.has(id);
     this._syncTask(id);
     if (!this.loaded.has(id)) return had;
-    this._runTask(id, 'unload', this._unloadSlices(id));
+    this._runTask(id, 'unload', this._unloadSlices(id), undefined, this.loaded.get(id)?.data ?? null);
     return true;
   }
 
@@ -434,11 +434,12 @@ export class WorldMap extends JsonMap {
    * голый `slice.run()` не оставляет ни цены метки (первый кадр помпы тогда
    * слепой, замер этапа 6 — 50,6 мс при просьбе 12), ни записи в `chunks`.
    */
-  _runTask(id, kind, slices, readAt = undefined) {
+  _runTask(id, kind, slices, readAt = undefined, data = null) {
     this.pump.task = {
       id, kind, slices, sliceTotal: slices.length, sliceDone: 0,
       startedAt: performance.now(), readAt,
       costTotal: Object.create(null),
+      data,
     };
     this._syncTask(id);
   }
@@ -760,15 +761,15 @@ export class WorldMap extends JsonMap {
     const cid = this._picRebuildId ?? this.pump?.task?.id ?? null;
     const draw = new Set(own);
     if (cid) {
-      const data = this.loaded.get(cid)?.data;
+      const data = this._picRebuildData ?? this.loaded.get(cid)?.data ?? this.pump?.task?.data ?? null;
       if (data) {
         for (const key of DRAWN_INPUTS) {
           for (const rec of data[key] ?? []) {
             if (!rec || rec.owner) continue;
             const home = rec.homeChunk;
-            if (home && this.loaded.has(home)) continue;
+            if (home && (home === cid || this.loaded.has(home))) continue;
             const cov = rec.coverageChunks;
-            const drawer = Array.isArray(cov) ? cov.find(c => this.loaded.has(c)) : null;
+            const drawer = Array.isArray(cov) ? cov.find(c => c === cid || this.loaded.has(c)) : null;
             if (drawer === cid) draw.add(rec);
           }
         }
@@ -782,6 +783,7 @@ export class WorldMap extends JsonMap {
     const entry = this.loaded.get(id);
     if (!entry || !entry.pic) return;
     this._picRebuildId = id;
+    this._picRebuildData = entry.data;
     try {
       this._release(entry.pic.objs, entry.pic.lights);
       const pic = { objs: [], lights: [], windows: 0, signage: 0, clutter: 0, clutterItems: null };
@@ -878,15 +880,16 @@ export class WorldMap extends JsonMap {
       this._sumCounters();
     } finally {
       this._picRebuildId = null;
+      this._picRebuildData = null;
     }
   }
 
   _isFallbackDraw(rec, cid) {
     if (!rec || rec.owner) return false;
     const home = rec.homeChunk;
-    if (home && this.loaded.has(home)) return false;
+    if (home && (home === cid || this.loaded.has(home))) return false;
     const cov = rec.coverageChunks;
-    return Array.isArray(cov) && cov.find(c => this.loaded.has(c)) === cid;
+    return Array.isArray(cov) && cov.find(c => c === cid || this.loaded.has(c)) === cid;
   }
 
   /** Набор для картинки: владельцы + fallback-записи (owner не загружен, этот чанк — первый загруженный coverage). */
@@ -911,8 +914,8 @@ export class WorldMap extends JsonMap {
       for (const key of DRAWN_INPUTS) {
         for (const rec of entry.data[key] ?? []) {
           if (!rec || rec.owner) continue;
+          // Owner handover is the BUG-003 case: owner loaded/unloaded.
           if (rec.homeChunk === changedId) { affected = true; break; }
-          if (Array.isArray(rec.coverageChunks) && rec.coverageChunks.includes(changedId)) { affected = true; break; }
         }
         if (affected) break;
       }
