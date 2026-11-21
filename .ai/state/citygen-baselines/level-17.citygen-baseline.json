@@ -6,7 +6,7 @@
     "seed": 16,
     "deterministic": true
   },
-  "reportHash": "5e5366e1462f6315b0ceae6030e9462dedc822718e94e02966362fffaed38d0f",
+  "reportHash": "c9c79532b3132f66de4d41e015e7e3b6b0c17a534007c8fef9204f3cf60ac0fb",
   "stages": 7,
   "summary": {
     "errors": 0,
@@ -22,44 +22,44 @@
   "metrics": {
     "partial": true,
     "counts": {
-      "roads": 184,
-      "roadNodes": 151,
+      "roads": 186,
+      "roadNodes": 153,
       "districts": 52,
       "parcels": 1955,
       "reservedParcels": 503,
-      "buildings": 396,
-      "enterableBuildings": 82,
-      "props": 390,
+      "buildings": 403,
+      "enterableBuildings": 83,
+      "props": 389,
       "lights": 8,
       "rivers": 2,
       "lakes": 0
     },
     "graph": {
-      "nodes": 151,
-      "edges": 184,
+      "nodes": 153,
+      "edges": 186,
       "components": 1,
-      "largestComponent": 151,
-      "deadEnds": 30,
-      "deadEndRatio": 0.198675,
-      "avgDegree": 2.437086,
-      "gamma": 0.411633
+      "largestComponent": 153,
+      "deadEnds": 31,
+      "deadEndRatio": 0.202614,
+      "avgDegree": 2.431373,
+      "gamma": 0.410596
     },
     "roads": {
-      "totalLength": 14785.99,
+      "totalLength": 14831.42,
       "lengthByType": {
         "arterial": 117.45,
         "collector": 211.26,
-        "local": 14457.28
+        "local": 14502.71
       },
       "shareByType": {
-        "arterial": 0.007943,
-        "collector": 0.014288,
-        "local": 0.977769
+        "arterial": 0.007919,
+        "collector": 0.014244,
+        "local": 0.977837
       },
       "maxSlope": 0.3,
       "slopeByClass": {
         "local": {
-          "count": 182,
+          "count": 184,
           "maxSlope": 0.3,
           "overPolicy": 65,
           "overAbsolute": 0
@@ -84,14 +84,14 @@
         "local": 12
       },
       "classPolicyViolations": 67,
-      "classPolicyOk": 117,
+      "classPolicyOk": 119,
       "overAbsolute": 0,
       "version": 2
     },
     "gameplay": {
       "spawnToRoad": 0,
       "exitToRoad": 0,
-      "enterableShare": 0.207071,
+      "enterableShare": 0.205955,
       "enterableTarget": 0.2,
       "spawnDistrictType": "office",
       "exitDistrictType": "suburb",

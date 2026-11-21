@@ -2,12 +2,12 @@
   "profile": "hill_town",
   "seed": 303,
   "generatorVersion": "0.90.0",
-  "reportHash": "3530ba5709382c2cd221e329c4d30a8e5f2cbf10eb772a2373e0b291e5f0c2ff",
+  "reportHash": "848f9000d68a8ca1359f01c56a33e8142466d73ea299f5e9fba9fc117e64f33b",
   "summary": {
     "errors": 0,
     "warnings": 13,
     "repairs": 2,
-    "drops": 14
+    "drops": 13
   },
   "rules": {
     "errors": 0,
@@ -22,7 +22,7 @@
       "districts": 39,
       "parcels": 2228,
       "reservedParcels": 93,
-      "buildings": 395,
+      "buildings": 396,
       "enterableBuildings": 82,
       "props": 376,
       "lights": 0,
@@ -59,7 +59,7 @@
     "gameplay": {
       "spawnToRoad": null,
       "exitToRoad": null,
-      "enterableShare": 0.207595,
+      "enterableShare": 0.207071,
       "enterableTarget": 0.2,
       "spawnDistrictType": "sports",
       "exitDistrictType": "luxury",

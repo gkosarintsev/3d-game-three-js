@@ -13,8 +13,8 @@
  * глава 18 (мост), глава 19 (турбинная развязка), профильные пилоты v4/citygen — главы 20,21,
  * быстрая smoke-глава для локальных тестов — глава 22, разнообразные главы 23,24.
  *
- * Главы 07,08,09,10,15,16,17,18,19,20,21,22,23,24 — **открытый мир** (`kind: 'open'`): v3 CityForge
- * (07,08,09,10,15) и v4 citygen/test (16,17,18,19,20,21,22,23,24). Источник `src/levels/level-NN.json`,
+ * Главы 07,08,09,10,15,16,17,18,19,20,21,22,23,24,25 — **открытый мир** (`kind: 'open'`): v3 CityForge
+ * (07,08,09,10,15) и v4 citygen/test (16,17,18,19,20,21,22,23,24,25). Источник `src/levels/level-NN.json`,
  * скомпилированный каталог `src/levels/level-NN/`
  * (`node tools/build-level.mjs src/levels/level-NN.json`).
  */
@@ -32,10 +32,11 @@ import { LEVEL_21 } from './level-21/index.js';
 import { LEVEL_22 } from './level-22/index.js';
 import { LEVEL_23 } from './level-23/index.js';
 import { LEVEL_24 } from './level-24/index.js';
+import { LEVEL_25 } from './level-25/index.js';
 
 export const LEVELS = [
-  LEVEL_07, LEVEL_08, LEVEL_09, LEVEL_10, LEVEL_15, LEVEL_16, LEVEL_17, LEVEL_18, LEVEL_19, LEVEL_20, LEVEL_21, LEVEL_22, LEVEL_23, LEVEL_24,
+  LEVEL_07, LEVEL_08, LEVEL_09, LEVEL_10, LEVEL_15, LEVEL_16, LEVEL_17, LEVEL_18, LEVEL_19, LEVEL_20, LEVEL_21, LEVEL_22, LEVEL_23, LEVEL_24, LEVEL_25,
 ];
 
 /** Номер главы для каждой позиции `LEVELS` (файлы/каталоги `level-NN`). */
-export const LEVEL_NUMBERS = [7, 8, 9, 10, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24];
+export const LEVEL_NUMBERS = [7, 8, 9, 10, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25];

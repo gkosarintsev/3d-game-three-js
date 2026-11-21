@@ -1235,8 +1235,8 @@
       "severity": "warn",
       "code": "chunk_buildings_heavy",
       "stage": "6_finalize_emit",
-      "message": "high building count in a single chunk (186)",
-      "maxBuildings": 186,
+      "message": "high building count in a single chunk (170)",
+      "maxBuildings": 170,
       "chunk": 640,
       "grid": 2
     },
@@ -1244,8 +1244,8 @@
       "severity": "warn",
       "code": "chunk_props_heavy",
       "stage": "6_finalize_emit",
-      "message": "high prop count in a single chunk (111)",
-      "maxProps": 111,
+      "message": "high prop count in a single chunk (124)",
+      "maxProps": 124,
       "chunk": 640,
       "grid": 2
     },
@@ -3573,29 +3573,29 @@
       "code": "buildings_generated",
       "stage": "4_buildings_structures",
       "message": "generated buildings from parcels",
-      "count": 406,
+      "count": 413,
       "budget": 420,
-      "skippedConflict": 708
+      "skippedConflict": 711
     },
     {
       "severity": "info",
       "code": "buildings_rebalanced_to_empty_split_districts",
       "stage": "4_buildings_structures",
       "message": "moved buildings to split child districts with parcels but no buildings",
-      "count": 4
+      "count": 5
     },
     {
       "severity": "info",
       "code": "enterable_share",
       "stage": "4_buildings_structures",
       "message": "enterable buildings share (section 9.8, target 15-25%)",
-      "total": 408,
-      "enterable": 82,
-      "share": 0.201,
+      "total": 415,
+      "enterable": 83,
+      "share": 0.2,
       "targetShare": 0.2,
       "required": {
-        "min": 62,
-        "max": 102
+        "min": 63,
+        "max": 103
       }
     },
     {
@@ -3614,11 +3614,11 @@
       "keys": [
         {
           "id": "district_3_1_01",
-          "max": 2
+          "max": 4
         },
         {
           "id": "district_3_1_2100",
-          "max": 4
+          "max": 3
         },
         {
           "id": "district_3_1_201",
@@ -3640,7 +3640,7 @@
         },
         {
           "id": "district_3_1_2100",
-          "max": 4
+          "max": 3
         },
         {
           "id": "district_3_1_201",
@@ -3662,7 +3662,7 @@
         },
         {
           "id": "district_3_1_2100",
-          "max": 4
+          "max": 3
         },
         {
           "id": "district_3_1_201",
@@ -3682,8 +3682,23 @@
       "idJ": "district_3_1_2100",
       "ti": "commercial",
       "tj": "commercial",
+      "vi": 4,
+      "vj": 3,
+      "cap": 7
+    },
+    {
+      "severity": "info",
+      "code": "floors_clamp_pair",
+      "stage": "4_buildings_structures",
+      "message": "trace pair",
+      "i": 17,
+      "j": 22,
+      "idI": "district_3_1_01",
+      "idJ": "district_3_1_2100",
+      "ti": "commercial",
+      "tj": "commercial",
       "vi": 2,
-      "vj": 4,
+      "vj": 3,
       "cap": 5
     },
     {
@@ -3698,22 +3713,7 @@
       "ti": "commercial",
       "tj": "commercial",
       "vi": 2,
-      "vj": 4,
-      "cap": 5
-    },
-    {
-      "severity": "info",
-      "code": "floors_clamp_pair",
-      "stage": "4_buildings_structures",
-      "message": "trace pair",
-      "i": 17,
-      "j": 22,
-      "idI": "district_3_1_01",
-      "idJ": "district_3_1_2100",
-      "ti": "commercial",
-      "tj": "commercial",
-      "vi": 2,
-      "vj": 4,
+      "vj": 3,
       "cap": 5
     },
     {
@@ -3721,7 +3721,7 @@
       "code": "floors_contrast_built",
       "stage": "4_buildings_structures",
       "message": "building floors distribution (section 9.4): L-modulation, adjacency contrast <= 2.5x, 5-8 dominants per city (one per high-L district, capped/filled 2026-11-19)",
-      "clamped": 78,
+      "clamped": 55,
       "dominants": 6,
       "districts": 52,
       "adjacencyPairs": 104
@@ -3731,8 +3731,8 @@
       "code": "post_buildings_local_connectors",
       "stage": "4_buildings_structures",
       "message": "added local connector segments after building placement (R3.5)",
-      "added": 5,
-      "candidates": 5
+      "added": 6,
+      "candidates": 6
     },
     {
       "severity": "info",
@@ -3752,7 +3752,7 @@
       "code": "t23_5_facade_blank",
       "stage": "4_buildings_structures",
       "message": "assigned blank facade sides (meso residue, ADR-005)",
-      "count": 41
+      "count": 38
     },
     {
       "severity": "info",
@@ -3761,21 +3761,21 @@
       "message": "generated district props",
       "count": 360,
       "budget": 360,
-      "attempts": 1053,
+      "attempts": 1031,
       "byDistrictType": {
-        "residential": 78,
-        "sports": 8,
-        "slums": 33,
-        "suburb": 51,
-        "commercial": 25,
+        "residential": 74,
+        "sports": 7,
+        "slums": 41,
+        "suburb": 54,
+        "commercial": 26,
         "parking": 24,
-        "old_town": 39,
-        "luxury": 29,
-        "park": 32,
-        "campus": 10,
-        "office": 20,
+        "old_town": 42,
+        "luxury": 21,
+        "park": 28,
+        "campus": 9,
+        "office": 22,
         "industrial": 9,
-        "forest": 2
+        "forest": 3
       }
     },
     {
@@ -3852,10 +3852,10 @@
         "grid": 2,
         "total": 4
       },
-      "roadNodes": 151,
-      "roadSegments": 184,
+      "roadNodes": 153,
+      "roadSegments": 186,
       "roadComponents": 1,
-      "roadGraphNodes": 151,
+      "roadGraphNodes": 153,
       "interchanges": {
         "segments": 13,
         "junctions": 4,
@@ -3957,46 +3957,46 @@
           "accessibleRatio": 0.957
         }
       },
-      "buildings": 408,
+      "buildings": 415,
       "buildingsByDistrictType": {
-        "commercial": 52,
-        "old_town": 79,
-        "suburb": 39,
-        "office": 40,
-        "residential": 89,
-        "industrial": 22,
+        "commercial": 48,
+        "old_town": 78,
+        "suburb": 50,
+        "office": 42,
+        "residential": 94,
+        "luxury": 3,
+        "industrial": 24,
         "parking": 14,
-        "campus": 16,
-        "slums": 44,
-        "luxury": 2,
-        "sports": 3,
-        "park": 6,
+        "campus": 11,
+        "slums": 35,
+        "park": 7,
+        "sports": 7,
         "forest": 2
       },
       "lights": 8,
-      "props": 390,
+      "props": 389,
       "propsByDistrictType": {
-        "residential": 78,
-        "sports": 8,
-        "slums": 33,
-        "suburb": 51,
-        "commercial": 25,
+        "residential": 74,
+        "sports": 7,
+        "slums": 41,
+        "suburb": 54,
+        "commercial": 26,
         "parking": 24,
-        "old_town": 39,
-        "luxury": 29,
-        "park": 32,
-        "campus": 10,
-        "office": 20,
+        "old_town": 42,
+        "luxury": 21,
+        "park": 28,
+        "campus": 9,
+        "office": 22,
         "industrial": 9,
-        "forest": 2
+        "forest": 3
       },
       "chunkLoad": {
         "nonEmptyChunks": 4,
-        "maxBuildings": 186,
-        "maxProps": 111,
+        "maxBuildings": 170,
+        "maxProps": 124,
         "maxLights": 4,
-        "avgBuildings": 102,
-        "avgProps": 97.5
+        "avgBuildings": 103.75,
+        "avgProps": 97.25
       }
     },
     {
@@ -4029,7 +4029,7 @@
       "stage": "6_finalize_emit",
       "message": "chaos applied at finish stage",
       "applied": 406,
-      "skipped": 2,
+      "skipped": 9,
       "lockedSkipped": 0,
       "seams": 3,
       "changes": [
@@ -4048,157 +4048,157 @@
           ]
         },
         {
-          "id": "b_district_0_0_00_103",
+          "id": "b_district_0_0_00_101",
           "dXZ": [
             -0.506,
             0.334
           ]
         },
         {
-          "id": "b_district_0_0_00_104",
+          "id": "b_district_0_0_00_102",
           "dXZ": [
             0.506,
             0.504
           ]
         },
         {
-          "id": "b_district_0_0_00_134",
+          "id": "b_district_0_0_00_205",
           "dXZ": [
             0.467,
             0.22
           ]
         },
         {
-          "id": "b_district_0_0_00_17",
+          "id": "b_district_0_0_00_206",
           "dXZ": [
             0.54,
             0.206
           ]
         },
         {
-          "id": "b_district_0_0_00_18",
+          "id": "b_district_0_0_00_309",
           "dXZ": [
-            0.352,
-            0.03
+            0.03,
+            -0.244
           ]
         },
         {
-          "id": "b_district_0_0_00_197",
+          "id": "b_district_0_0_00_320",
           "dXZ": [
-            -0.524,
-            -0.5
+            -0.5,
+            -0.405
           ]
         },
         {
-          "id": "b_district_0_0_00_203",
+          "id": "b_district_0_0_00_58",
           "dXZ": [
             0.218,
             -0.35
           ]
         },
         {
-          "id": "b_district_0_0_00_204",
-          "dXZ": [
-            -0.205,
-            0.521
-          ]
-        },
-        {
-          "id": "b_district_0_0_00_315",
-          "dXZ": [
-            0.52,
-            0.388
-          ]
-        },
-        {
-          "id": "b_district_0_0_00_322",
-          "dXZ": [
-            -0.195,
-            -0.407
-          ]
-        },
-        {
-          "id": "b_district_0_0_00_326",
-          "dXZ": [
-            0.397,
-            -0.292
-          ]
-        },
-        {
           "id": "b_district_0_0_00_59",
           "dXZ": [
-            -0.05,
-            -0.279
+            0.521,
+            -0.346
           ]
         },
         {
-          "id": "b_district_0_0_00_60",
+          "id": "b_district_0_0_01_103",
+          "dXZ": [
+            0.388,
+            -0.095
+          ]
+        },
+        {
+          "id": "b_district_0_0_01_104",
+          "dXZ": [
+            -0.407,
+            -0.485
+          ]
+        },
+        {
+          "id": "b_district_0_0_01_105",
+          "dXZ": [
+            -0.292,
+            0.515
+          ]
+        },
+        {
+          "id": "b_district_0_0_01_106",
+          "dXZ": [
+            -0.279,
+            0.396
+          ]
+        },
+        {
+          "id": "b_district_0_0_01_198",
           "dXZ": [
             -0.004,
             0.175
           ]
         },
         {
-          "id": "b_district_0_0_00_68",
+          "id": "b_district_0_0_01_199",
           "dXZ": [
-            0.083,
-            -0.296
+            -0.296,
+            0.058
           ]
         },
         {
-          "id": "b_district_0_0_01_105",
+          "id": "b_district_0_0_01_200",
           "dXZ": [
-            0.058,
-            -0.134
+            -0.111,
+            -0.079
           ]
         },
         {
-          "id": "b_district_0_0_01_106",
+          "id": "b_district_0_0_01_259",
           "dXZ": [
-            -0.079,
-            0.362
+            0.362,
+            0.159
           ]
         },
         {
-          "id": "b_district_0_0_01_107",
+          "id": "b_district_0_0_01_260",
           "dXZ": [
-            0.395,
-            -0.522
+            -0.522,
+            0.44
           ]
         },
         {
-          "id": "b_district_0_0_01_108",
+          "id": "b_district_0_0_01_328",
           "dXZ": [
             0.291,
             0.374
           ]
         },
         {
-          "id": "b_district_0_0_01_109",
+          "id": "b_district_0_0_01_329",
           "dXZ": [
             -0.211,
             0.06
           ]
         },
         {
-          "id": "b_district_0_0_01_198",
+          "id": "b_district_0_0_01_367",
           "dXZ": [
-            0.319,
-            -0.2
+            -0.2,
+            0.348
           ]
         },
         {
-          "id": "b_district_0_0_01_199",
+          "id": "b_district_0_0_10_107",
           "dXZ": [
-            0.329,
-            -0.4
+            -0.4,
+            0.531
           ]
         },
         {
-          "id": "b_district_0_0_01_200",
+          "id": "b_district_0_0_10_108",
           "dXZ": [
-            0.401,
-            -0.259
+            -0.259,
+            -0.139
           ]
         }
       ]
@@ -4208,57 +4208,57 @@
       "code": "finish_chaos_macro",
       "stage": "6_finalize_emit",
       "message": "macro chaos (void parcel instead of building, 3-5%) applied at finish stage",
-      "eligible": 323,
+      "eligible": 324,
       "dropped": 12,
       "target": 12,
       "changes": [
         {
-          "id": "b_district_3_2_1_70",
-          "districtId": "district_3_2_1"
+          "id": "b_district_3_3_1_17",
+          "districtId": "district_3_3_1"
         },
         {
-          "id": "b_district_3_2_1_72",
-          "districtId": "district_3_2_1"
+          "id": "b_district_3_2_0_114",
+          "districtId": "district_3_2_0"
         },
         {
-          "id": "b_district_0_0_00_104",
-          "districtId": "district_0_0_00"
+          "id": "b_district_3_2_0_131",
+          "districtId": "district_3_2_0"
+        },
+        {
+          "id": "b_district_3_0_1_146",
+          "districtId": "district_3_0_1"
         },
         {
           "id": "b_district_3_2_0_156",
           "districtId": "district_3_2_0"
         },
         {
-          "id": "b_district_2_3_0_161",
-          "districtId": "district_2_3_0"
-        },
-        {
-          "id": "b_district_3_2_1_187",
-          "districtId": "district_3_2_1"
+          "id": "b_district_3_0_1_163",
+          "districtId": "district_3_0_1"
         },
         {
           "id": "b_district_0_0_01_200",
           "districtId": "district_0_0_01"
         },
         {
-          "id": "b_district_3_0_0_219",
+          "id": "b_district_2_0_1_233",
+          "districtId": "district_2_0_1"
+        },
+        {
+          "id": "b_district_2_0_1_307",
+          "districtId": "district_2_0_1"
+        },
+        {
+          "id": "b_district_3_0_0_380",
           "districtId": "district_3_0_0"
         },
         {
-          "id": "b_district_3_1_31_227",
-          "districtId": "district_3_1_31"
+          "id": "b_district_3_2_0_386",
+          "districtId": "district_3_2_0"
         },
         {
-          "id": "b_district_0_2_249",
-          "districtId": "district_0_2"
-        },
-        {
-          "id": "b_district_2_0_0_301",
-          "districtId": "district_2_0_0"
-        },
-        {
-          "id": "b_district_2_0_1_386",
-          "districtId": "district_2_0_1"
+          "id": "b_district_2_0_1_b1_410",
+          "districtId": "district_2_0_1_b1"
         }
       ]
     },
@@ -4267,24 +4267,15 @@
       "code": "finish_chaos_macro_island",
       "stage": "6_finalize_emit",
       "message": "macro chaos (epoch enclave in the lowest-land-value district) applied at finish stage",
-      "district": "district_3_0_0",
-      "landValue": 0.2669,
-      "eligible": 18,
+      "district": "district_1_0",
+      "landValue": 0.1328,
+      "eligible": 3,
       "target": "modern",
-      "converted": 12,
+      "converted": 3,
       "buildings": [
-        "b_district_3_0_0_153",
-        "b_district_3_0_0_164",
-        "b_district_3_0_0_216",
-        "b_district_3_0_0_225",
-        "b_district_3_0_0_231",
-        "b_district_3_0_0_232",
-        "b_district_3_0_0_233",
-        "b_district_3_0_0_234",
-        "b_district_3_0_0_251",
-        "b_district_3_0_0_293",
-        "b_district_3_0_0_333",
-        "b_district_3_0_0_349"
+        "b_district_1_0_149",
+        "b_district_1_0_246",
+        "b_district_1_0_387"
       ]
     },
     {
@@ -4299,7 +4290,7 @@
       "shifted": 1,
       "changes": [
         {
-          "id": "b_district_1_2_0_401",
+          "id": "b_district_1_2_0_407",
           "tangent": "z",
           "d": 0.675
         }
@@ -4313,11 +4304,11 @@
       "applied": 2,
       "changes": [
         {
-          "id": "b_district_0_2_184",
+          "id": "b_district_0_2_174",
           "era": "historic_insert"
         },
         {
-          "id": "b_district_0_2_248",
+          "id": "b_district_0_2_175",
           "era": "historic_insert"
         }
       ]
@@ -4359,7 +4350,7 @@
       "code": "interchange_junction_candidates",
       "stage": "6_finalize_emit",
       "message": "identified junction nodes as grade-separation candidates",
-      "count": 6
+      "count": 7
     },
     {
       "severity": "info",
@@ -4449,42 +4440,47 @@
   "drops": [
     {
       "stage": "6_finalize_emit",
-      "id": "b_district_0_0_00_104",
-      "reason": "finish_chaos_macro_void"
-    },
-    {
-      "stage": "6_finalize_emit",
       "id": "b_district_0_0_01_200",
       "reason": "finish_chaos_macro_void"
     },
     {
       "stage": "6_finalize_emit",
-      "id": "b_district_0_2_249",
+      "id": "b_district_2_0_1_233",
       "reason": "finish_chaos_macro_void"
     },
     {
       "stage": "6_finalize_emit",
-      "id": "b_district_2_0_0_301",
+      "id": "b_district_2_0_1_307",
       "reason": "finish_chaos_macro_void"
     },
     {
       "stage": "6_finalize_emit",
-      "id": "b_district_2_0_1_386",
+      "id": "b_district_2_0_1_b1_410",
       "reason": "finish_chaos_macro_void"
     },
     {
       "stage": "6_finalize_emit",
-      "id": "b_district_2_3_0_161",
+      "id": "b_district_3_0_0_380",
       "reason": "finish_chaos_macro_void"
     },
     {
       "stage": "6_finalize_emit",
-      "id": "b_district_3_0_0_219",
+      "id": "b_district_3_0_1_146",
       "reason": "finish_chaos_macro_void"
     },
     {
       "stage": "6_finalize_emit",
-      "id": "b_district_3_1_31_227",
+      "id": "b_district_3_0_1_163",
+      "reason": "finish_chaos_macro_void"
+    },
+    {
+      "stage": "6_finalize_emit",
+      "id": "b_district_3_2_0_114",
+      "reason": "finish_chaos_macro_void"
+    },
+    {
+      "stage": "6_finalize_emit",
+      "id": "b_district_3_2_0_131",
       "reason": "finish_chaos_macro_void"
     },
     {
@@ -4494,17 +4490,12 @@
     },
     {
       "stage": "6_finalize_emit",
-      "id": "b_district_3_2_1_187",
+      "id": "b_district_3_2_0_386",
       "reason": "finish_chaos_macro_void"
     },
     {
       "stage": "6_finalize_emit",
-      "id": "b_district_3_2_1_70",
-      "reason": "finish_chaos_macro_void"
-    },
-    {
-      "stage": "6_finalize_emit",
-      "id": "b_district_3_2_1_72",
+      "id": "b_district_3_3_1_17",
       "reason": "finish_chaos_macro_void"
     }
   ],
@@ -4535,7 +4526,7 @@
           "z": -400
         },
         "emitted": {
-          "props": 12,
+          "props": 11,
           "landscapeObjects": 0,
           "buildings": 0,
           "districts": 0
@@ -4547,44 +4538,44 @@
     "version": 2,
     "partial": true,
     "counts": {
-      "roads": 184,
-      "roadNodes": 151,
+      "roads": 186,
+      "roadNodes": 153,
       "districts": 52,
       "parcels": 1955,
       "reservedParcels": 503,
-      "buildings": 396,
-      "enterableBuildings": 82,
-      "props": 390,
+      "buildings": 403,
+      "enterableBuildings": 83,
+      "props": 389,
       "lights": 8,
       "rivers": 2,
       "lakes": 0
     },
     "graph": {
-      "nodes": 151,
-      "edges": 184,
+      "nodes": 153,
+      "edges": 186,
       "components": 1,
-      "largestComponent": 151,
-      "deadEnds": 30,
-      "deadEndRatio": 0.198675,
-      "avgDegree": 2.437086,
-      "gamma": 0.411633
+      "largestComponent": 153,
+      "deadEnds": 31,
+      "deadEndRatio": 0.202614,
+      "avgDegree": 2.431373,
+      "gamma": 0.410596
     },
     "roads": {
-      "totalLength": 14785.99,
+      "totalLength": 14831.42,
       "lengthByType": {
         "arterial": 117.45,
         "collector": 211.26,
-        "local": 14457.28
+        "local": 14502.71
       },
       "shareByType": {
-        "arterial": 0.007943,
-        "collector": 0.014288,
-        "local": 0.977769
+        "arterial": 0.007919,
+        "collector": 0.014244,
+        "local": 0.977837
       },
       "maxSlope": 0.3,
       "slopeByClass": {
         "local": {
-          "count": 182,
+          "count": 184,
           "maxSlope": 0.3,
           "overPolicy": 65,
           "overAbsolute": 0
@@ -4609,14 +4600,14 @@
         "local": 12
       },
       "classPolicyViolations": 67,
-      "classPolicyOk": 117,
+      "classPolicyOk": 119,
       "overAbsolute": 0,
       "version": 2
     },
     "gameplay": {
       "spawnToRoad": 0,
       "exitToRoad": 0,
-      "enterableShare": 0.207071,
+      "enterableShare": 0.205955,
       "enterableTarget": 0.2,
       "spawnDistrictType": "office",
       "exitDistrictType": "suburb",

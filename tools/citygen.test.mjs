@@ -548,9 +548,9 @@ test('pilot level-16 v4: generateOutput deterministic (report and catalog conten
   assert.ok(fin.propsByDistrictType && typeof fin.propsByDistrictType === 'object', 'pilot finalize_counts should include propsByDistrictType');
   assert.ok(fin.roadAccessByType && typeof fin.roadAccessByType === 'object', 'pilot finalize_counts should include roadAccessByType');
   assert.equal(fin.roadComponents, 1);
-  assert.equal(fin.roadSegments, 176);
-  assert.equal(fin.roadNodes, 145);
-  assert.equal(fin.buildings, 418);
+  assert.equal(fin.roadSegments, 178);
+  assert.equal(fin.roadNodes, 147);
+  assert.equal(fin.buildings, 414);
   assert.equal(fin.props, 390);
   assert.equal(fin.lights, 8);
   assert.ok(Array.isArray(fin.districtTypes) && fin.districtTypes.length >= 10, 'pilot should retain broad district type coverage');

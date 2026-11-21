@@ -2,7 +2,7 @@
   "profile": "river_trade",
   "seed": 202,
   "generatorVersion": "0.90.0",
-  "reportHash": "fac303b49ff35ff0549a0f7ae7de0c3f9008d8e14f1f3c56f0a2f6937805c0f2",
+  "reportHash": "159321ee123d4b41c97131afdcc2568f189d9c8741c0c9909cb327ed1b2b70cc",
   "summary": {
     "errors": 0,
     "warnings": 8,
@@ -22,8 +22,8 @@
       "districts": 43,
       "parcels": 2112,
       "reservedParcels": 327,
-      "buildings": 397,
-      "enterableBuildings": 82,
+      "buildings": 394,
+      "enterableBuildings": 81,
       "props": 370,
       "lights": 0,
       "rivers": 2,
@@ -59,7 +59,7 @@
     "gameplay": {
       "spawnToRoad": null,
       "exitToRoad": null,
-      "enterableShare": 0.206549,
+      "enterableShare": 0.205584,
       "enterableTarget": 0.2,
       "spawnDistrictType": "parking",
       "exitDistrictType": "luxury",

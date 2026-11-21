@@ -1,1 +1,219 @@
-{"file":"src/levels/level-24.json","levelName":"level-24","generator":{"generatorVersion":"0.90.0","seed":24,"deterministic":true},"reportHash":"3a0647a4d2ee291df4103e99b8ffdd9e3f1cc38259d1fb620ff05c7a5d75c5af","stages":7,"summary":{"errors":0,"warnings":3,"repairs":11,"drops":1},"rules":{"errors":0,"warnings":8,"infos":1},"metrics":{"partial":true,"counts":{"roads":118,"roadNodes":79,"districts":17,"parcels":394,"reservedParcels":196,"buildings":57,"enterableBuildings":12,"props":188,"lights":8,"rivers":2,"lakes":0},"graph":{"nodes":79,"edges":118,"components":1,"largestComponent":79,"deadEnds":17,"deadEndRatio":0.21519,"avgDegree":2.962025,"gamma":0.510823},"roads":{"totalLength":7925.885,"lengthByType":{"arterial":115.95,"local":7809.935},"shareByType":{"arterial":0.014629,"local":0.985371},"maxSlope":0.139535,"slopeByClass":{"local":{"count":117,"maxSlope":0.139535,"overPolicy":5,"overAbsolute":0},"arterial":{"count":1,"maxSlope":0.10439,"overPolicy":1,"overAbsolute":0}},"slopePolicy":{"highway":6,"arterial":8,"collector":10,"local":12},"classPolicyViolations":6,"classPolicyOk":112,"overAbsolute":0,"version":2},"gameplay":{"spawnToRoad":0,"exitToRoad":0,"enterableShare":0.210526,"enterableTarget":0.2,"spawnDistrictType":"office","exitDistrictType":"parking","straightMeters":565.7,"routeMeters":800,"routeRatio":1.414,"districtsPassed":6,"exitRadius":4,"cars":{"declared":1,"spots":1,"onRoad":0,"misaligned":0,"nearJunction":1},"enemies":{"count":4,"alienCount":2,"available":false,"note":"runtime placement via nav graph; D-scaling/spawn-distance enforced by engine constraints (not implemented in generator)"}},"districts":{"plateArea":262144,"knownArea":262144,"areaByType":{"commercial":29127.111,"forest":10244.267,"industrial":29127.111,"market":29127.111,"office":29127.111,"park":22705.778,"parking":29127.111,"residential":58254.222,"slums":25304.178},"shareByType":{"commercial":0.111111,"forest":0.039079,"industrial":0.111111,"market":0.111111,"office":0.111111,"park":0.086616,"parking":0.111111,"residential":0.222222,"slums":0.096528},"parkShare":0.125694},"parcels":{"reservedShare":0.497462,"byDistrictCount":{"district_0_0_0":18,"district_0_0_1":12,"district_1_0":12,"district_2_0":64,"district_0_1":16,"district_1_1_0":28,"district_1_1_1":66,"district_2_1":64,"district_0_2_00":12,"district_0_2_01":12,"district_0_2_1":21,"district_1_2_0":21,"district_1_2_1":28,"district_2_2":16,"district_1_0_b0":2,"district_1_0_b0_b1":1,"district_1_1_0_b2":1}},"terrain":{"slope":{"step":16,"grid":32,"cells":1024,"maxSlope":0.126862,"share":{"flat_lt3":0.142578,"gentle_3_8":0.573242,"moderate_8_15":0.28418,"steep_15_25":0,"very_steep_gt25":0},"counts":{"flat_lt3":146,"gentle_3_8":587,"moderate_8_15":291,"steep_15_25":0,"very_steep_gt25":0}},"crossings":6,"reservations":13,"landmarks":6,"waterBuffers":2,"floodplains":2},"landmarkVisibility":{"partial":true,"method":"terrain_los_sample","landmarks":6,"crossings":6,"cores":0,"total":12,"observers":12,"totalPairs":132,"visiblePairs":113,"visibleApprox":12,"visibleFraction":0.856061,"visibleTargets":12},"blockDensityCorrelation":{"rho":0.335617,"n":17,"target":0.6,"ok":false,"partial":false},"chunkBuild":{"partial":true,"buildTimeMs":null},"stream":{"chunk":256,"keep":1,"aheadMin":200,"aheadMax":900,"budgetMs":120,"dividesPlate":true}}}
+{
+  "file": "src/levels/level-24.json",
+  "levelName": "level-24",
+  "generator": {
+    "generatorVersion": "0.90.0",
+    "seed": 24,
+    "deterministic": true
+  },
+  "reportHash": "39e35968bcf04530b3dfece4b477a602436a344ad7d1e5cf4d53d561d23eb49e",
+  "stages": 7,
+  "summary": {
+    "errors": 0,
+    "warnings": 3,
+    "repairs": 11,
+    "drops": 1
+  },
+  "rules": {
+    "errors": 0,
+    "warnings": 8,
+    "infos": 1
+  },
+  "metrics": {
+    "partial": true,
+    "counts": {
+      "roads": 118,
+      "roadNodes": 79,
+      "districts": 17,
+      "parcels": 394,
+      "reservedParcels": 196,
+      "buildings": 59,
+      "enterableBuildings": 12,
+      "props": 178,
+      "lights": 8,
+      "rivers": 2,
+      "lakes": 0
+    },
+    "graph": {
+      "nodes": 79,
+      "edges": 118,
+      "components": 1,
+      "largestComponent": 79,
+      "deadEnds": 17,
+      "deadEndRatio": 0.21519,
+      "avgDegree": 2.962025,
+      "gamma": 0.510823
+    },
+    "roads": {
+      "totalLength": 7925.885,
+      "lengthByType": {
+        "arterial": 115.95,
+        "local": 7809.935
+      },
+      "shareByType": {
+        "arterial": 0.014629,
+        "local": 0.985371
+      },
+      "maxSlope": 0.139535,
+      "slopeByClass": {
+        "local": {
+          "count": 117,
+          "maxSlope": 0.139535,
+          "overPolicy": 5,
+          "overAbsolute": 0
+        },
+        "arterial": {
+          "count": 1,
+          "maxSlope": 0.10439,
+          "overPolicy": 1,
+          "overAbsolute": 0
+        }
+      },
+      "slopePolicy": {
+        "highway": 6,
+        "arterial": 8,
+        "collector": 10,
+        "local": 12
+      },
+      "classPolicyViolations": 6,
+      "classPolicyOk": 112,
+      "overAbsolute": 0,
+      "version": 2
+    },
+    "gameplay": {
+      "spawnToRoad": 0,
+      "exitToRoad": 0,
+      "enterableShare": 0.20339,
+      "enterableTarget": 0.2,
+      "spawnDistrictType": "office",
+      "exitDistrictType": "parking",
+      "straightMeters": 565.7,
+      "routeMeters": 800,
+      "routeRatio": 1.414,
+      "districtsPassed": 6,
+      "exitRadius": 4,
+      "cars": {
+        "declared": 1,
+        "spots": 1,
+        "onRoad": 0,
+        "misaligned": 0,
+        "nearJunction": 1
+      },
+      "enemies": {
+        "count": 4,
+        "alienCount": 2,
+        "available": false,
+        "note": "runtime placement via nav graph; D-scaling/spawn-distance enforced by engine constraints (not implemented in generator)"
+      }
+    },
+    "districts": {
+      "plateArea": 262144,
+      "knownArea": 262144,
+      "areaByType": {
+        "commercial": 29127.111,
+        "forest": 10244.267,
+        "industrial": 29127.111,
+        "market": 29127.111,
+        "office": 29127.111,
+        "park": 22705.778,
+        "parking": 29127.111,
+        "residential": 58254.222,
+        "slums": 25304.178
+      },
+      "shareByType": {
+        "commercial": 0.111111,
+        "forest": 0.039079,
+        "industrial": 0.111111,
+        "market": 0.111111,
+        "office": 0.111111,
+        "park": 0.086616,
+        "parking": 0.111111,
+        "residential": 0.222222,
+        "slums": 0.096528
+      },
+      "parkShare": 0.125694
+    },
+    "parcels": {
+      "reservedShare": 0.497462,
+      "byDistrictCount": {
+        "district_0_0_0": 18,
+        "district_0_0_1": 12,
+        "district_1_0": 12,
+        "district_2_0": 64,
+        "district_0_1": 16,
+        "district_1_1_0": 28,
+        "district_1_1_1": 66,
+        "district_2_1": 64,
+        "district_0_2_00": 12,
+        "district_0_2_01": 12,
+        "district_0_2_1": 21,
+        "district_1_2_0": 21,
+        "district_1_2_1": 28,
+        "district_2_2": 16,
+        "district_1_0_b0": 2,
+        "district_1_0_b0_b1": 1,
+        "district_1_1_0_b2": 1
+      }
+    },
+    "terrain": {
+      "slope": {
+        "step": 16,
+        "grid": 32,
+        "cells": 1024,
+        "maxSlope": 0.126862,
+        "share": {
+          "flat_lt3": 0.142578,
+          "gentle_3_8": 0.573242,
+          "moderate_8_15": 0.28418,
+          "steep_15_25": 0,
+          "very_steep_gt25": 0
+        },
+        "counts": {
+          "flat_lt3": 146,
+          "gentle_3_8": 587,
+          "moderate_8_15": 291,
+          "steep_15_25": 0,
+          "very_steep_gt25": 0
+        }
+      },
+      "crossings": 6,
+      "reservations": 13,
+      "landmarks": 6,
+      "waterBuffers": 2,
+      "floodplains": 2
+    },
+    "landmarkVisibility": {
+      "partial": true,
+      "method": "terrain_los_sample",
+      "landmarks": 6,
+      "crossings": 6,
+      "cores": 0,
+      "total": 12,
+      "observers": 12,
+      "totalPairs": 132,
+      "visiblePairs": 113,
+      "visibleApprox": 12,
+      "visibleFraction": 0.856061,
+      "visibleTargets": 12
+    },
+    "blockDensityCorrelation": {
+      "rho": 0.335617,
+      "n": 17,
+      "target": 0.6,
+      "ok": false,
+      "partial": false
+    },
+    "chunkBuild": {
+      "partial": true,
+      "buildTimeMs": null
+    },
+    "stream": {
+      "chunk": 256,
+      "keep": 1,
+      "aheadMin": 200,
+      "aheadMax": 900,
+      "budgetMs": 120,
+      "dividesPlate": true
+    }
+  }
+}

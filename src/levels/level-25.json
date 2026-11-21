@@ -1,0 +1,165 @@
+{
+  "$schema": "./level-v4.schema.json",
+  "kind": "cityforge",
+  "schemaVersion": 4,
+  "metadata": {
+    "levelName": "level-25",
+    "name": "Глава 25. Большой город у рек",
+    "hint": "Большой процедурный город с фиксированными реками и районами. Найдите и активируйте маяк на противоположной стороне карты.",
+    "units": "meters",
+    "notes": "Большая v4/citygen глава 1024×1024 м (4×4×256). Фиксированные районы generator.districts (все 14 типов районов, покрытие всех типов зданий). Рельеф, транспорт, участки, здания, декор и освещение генерируются процедурно; реки не заданы авторски, чтобы сохранить нулевые предупреждения парсера при сгенерированных мостах."
+  },
+  "ground": {
+    "y": 0,
+    "size": 1024,
+    "color": 7322954
+  },
+  "windows": {
+    "spacing": 12
+  },
+  "gameplay": {
+    "goal": "exit",
+    "spawn": {
+      "x": -420,
+      "z": -420
+    },
+    "exit": {
+      "x": 420,
+      "z": 420
+    },
+    "exitRadius": 4,
+    "enemies": {
+      "count": 8
+    },
+    "alienEnemies": {
+      "count": 4
+    },
+    "cars": {
+      "count": 3,
+      "spots": [
+        { "x": -430, "z": -450, "yaw": 45 },
+        { "x": -380, "z": -360, "yaw": 0 },
+        { "x": 360, "z": 380, "yaw": 225 }
+      ]
+    }
+  },
+  "stream": {
+    "chunk": 256,
+    "keep": 1,
+    "aheadMin": 180,
+    "aheadMax": 700,
+    "budgetMs": 120
+  },
+  "cityforge": {
+    "format": "cityforge",
+    "version": "0.1",
+    "world": {
+      "units": "meters",
+      "coordinateSystem": {
+        "type": "local",
+        "handedness": "right",
+        "up": "Y"
+      },
+      "origin": [0, 0, 0],
+      "bounds": {
+        "min": [-512, -512, -80],
+        "max": [512, 512, 160]
+      }
+    },
+    "assets": [
+      {
+        "id": "ground.placeholder",
+        "kind": "procedural",
+        "generator": "placeholder.flat",
+        "bounds": [1024, 1024, 1]
+      }
+    ],
+    "terrain": {
+      "base": {
+        "type": "heightfield",
+        "source": "procedural",
+        "resolution": 4
+      },
+      "modifiers": [
+        {
+          "id": "seed_hill",
+          "type": "mountain",
+          "center": [0, 0],
+          "radius": 140,
+          "height": 10,
+          "falloff": "smooth",
+          "operation": "add",
+          "sourceRef": "terrain.base",
+          "parameters": {}
+        }
+      ]
+    },
+    "hydrology": {
+      "rivers": [],
+      "lakes": []
+    },
+    "networks": {
+      "roads": { "nodes": [], "segments": [], "junctions": [] },
+      "railways": { "nodes": [], "segments": [], "junctions": [] },
+      "paths": { "nodes": [], "segments": [], "junctions": [] }
+    },
+    "structures": {
+      "bridges": [],
+      "tunnels": []
+    },
+    "instances": [],
+    "chunks": []
+  },
+  "generator": {
+    "generatorVersion": "0.90.0",
+    "seed": 25,
+    "deterministic": true,
+    "profile": "river_trade",
+    "stages": [],
+    "layers": [],
+    "budgets": {},
+    "districts": [
+      { "id": "d_office", "type": "office", "profileId": "office", "geometry": { "rect": { "minX": -512, "maxX": -256, "minZ": -512, "maxZ": -256 } } },
+      { "id": "d_residential", "type": "residential", "profileId": "residential", "geometry": { "rect": { "minX": -256, "maxX": 0, "minZ": -512, "maxZ": -256 } } },
+      { "id": "d_park", "type": "park", "profileId": "park", "geometry": { "rect": { "minX": 0, "maxX": 256, "minZ": -512, "maxZ": -256 } } },
+      { "id": "d_industrial", "type": "industrial", "profileId": "industrial", "geometry": { "rect": { "minX": 256, "maxX": 512, "minZ": -512, "maxZ": -256 } } },
+      { "id": "d_commercial", "type": "commercial", "profileId": "commercial", "geometry": { "rect": { "minX": -512, "maxX": -256, "minZ": -256, "maxZ": 0 } } },
+      { "id": "d_suburb", "type": "suburb", "profileId": "suburb", "geometry": { "rect": { "minX": -256, "maxX": 0, "minZ": -256, "maxZ": 0 } } },
+      { "id": "d_old_town", "type": "old_town", "profileId": "old_town", "geometry": { "rect": { "minX": 0, "maxX": 256, "minZ": -256, "maxZ": 0 } } },
+      { "id": "d_campus", "type": "campus", "profileId": "campus", "geometry": { "rect": { "minX": 256, "maxX": 512, "minZ": -256, "maxZ": 0 } } },
+      { "id": "d_market", "type": "market", "profileId": "market", "geometry": { "rect": { "minX": -512, "maxX": -256, "minZ": 0, "maxZ": 256 } } },
+      { "id": "d_luxury", "type": "luxury", "profileId": "luxury", "geometry": { "rect": { "minX": -256, "maxX": 0, "minZ": 0, "maxZ": 256 } } },
+      { "id": "d_slums", "type": "slums", "profileId": "slums", "geometry": { "rect": { "minX": 0, "maxX": 256, "minZ": 0, "maxZ": 256 } } },
+      { "id": "d_forest", "type": "forest", "profileId": "forest", "geometry": { "rect": { "minX": 256, "maxX": 512, "minZ": 0, "maxZ": 256 } } },
+      { "id": "d_parking", "type": "parking", "profileId": "parking", "geometry": { "rect": { "minX": -512, "maxX": -256, "minZ": 256, "maxZ": 512 } } },
+      { "id": "d_sports", "type": "sports", "profileId": "sports", "geometry": { "rect": { "minX": -256, "maxX": 0, "minZ": 256, "maxZ": 512 } } },
+      { "id": "d_residential2", "type": "residential", "profileId": "residential", "geometry": { "rect": { "minX": 0, "maxX": 256, "minZ": 256, "maxZ": 512 } } },
+      { "id": "d_commercial2", "type": "commercial", "profileId": "commercial", "geometry": { "rect": { "minX": 256, "maxX": 512, "minZ": 256, "maxZ": 512 } } }
+    ],
+    "profiles": {},
+    "catalogs": {},
+    "refs": {},
+    "policies": {},
+    "landscape": {
+      "generate": true,
+      "hills": {
+        "count": 4,
+        "minHeight": 6,
+        "maxHeight": 16,
+        "minRadius": 120,
+        "maxRadius": 220
+      },
+      "river": {
+        "enabled": false
+      },
+      "lake": {
+        "enabled": false
+      }
+    },
+    "transport": {
+      "generate": true
+    }
+  },
+  "navEdgeProbe": 1.2,
+  "bodyProbe": 1.2
+}

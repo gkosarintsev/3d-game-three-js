@@ -2,7 +2,7 @@
   "profile": "railway_industrial",
   "seed": 202,
   "generatorVersion": "0.90.0",
-  "reportHash": "65249bf8dda3649cfd6c8bab944b6396ddf46406ce2885c9c8fe532eabfccc18",
+  "reportHash": "c1e2cbfc3928228e05ab82507b5054082700a71cb26e5cbf7039ade72f247d34",
   "summary": {
     "errors": 0,
     "warnings": 8,
@@ -22,7 +22,7 @@
       "districts": 40,
       "parcels": 2266,
       "reservedParcels": 314,
-      "buildings": 395,
+      "buildings": 394,
       "enterableBuildings": 81,
       "props": 370,
       "lights": 0,
@@ -59,7 +59,7 @@
     "gameplay": {
       "spawnToRoad": null,
       "exitToRoad": null,
-      "enterableShare": 0.205063,
+      "enterableShare": 0.205584,
       "enterableTarget": 0.2,
       "spawnDistrictType": "parking",
       "exitDistrictType": "luxury",
