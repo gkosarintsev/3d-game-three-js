@@ -2608,12 +2608,19 @@ export class JsonMap extends SurfaceField {
     const rad = d => d * Math.PI / 180;
     for (const b of buildings) {
       if (!b.bounds) continue;
-      const bw = b.bounds.maxX - b.bounds.minX;
-      const bd = b.bounds.maxZ - b.bounds.minZ;
-      if (!(bw > 0) || !(bd > 0)) continue;
+      const bw0 = b.bounds.maxX - b.bounds.minX;
+      const bd0 = b.bounds.maxZ - b.bounds.minZ;
+      if (!(bw0 > 0) || !(bd0 > 0)) continue;
       const cx = (b.bounds.minX + b.bounds.maxX) / 2;
       const cz = (b.bounds.minZ + b.bounds.maxZ) / 2;
-      const ry = b.rotation ? -rad(b.rotation) : 0;
+      const rot = ((b.rotation || 0) % 360 + 360) % 360;
+      // bounds — мировая AABB; при повороте 90/270 локальные ширина/глубина
+      // меняются местами относительно осей мира, иначе деталь строится с
+      // перевёрнутыми пропорциями и не совпадает с коллизией/футпринтом.
+      const swap = rot === 90 || rot === 270;
+      const bw = swap ? bd0 : bw0;
+      const bd = swap ? bw0 : bd0;
+      const ry = rot ? -rad(rot) : 0;
       let meshes = null;
       let yOffset = 0;
 
