@@ -32,9 +32,10 @@ Improve maintainability and reliability of the codebase through targeted refacto
   - Audit edge cases around chunk ownership, AABB vs footprint, rotated solids, detailed visuals, rivers/roads crossing chunk boundaries.
   - Verify no visual/collision mismatch after chunk load/unload/revisit; confirm deterministic rebuild/check output unchanged for data-only refactors.
 
-- [ ] [BUG-004] **Determinism and ordering audit**
-  - Check for hidden non-determinism in generation/render-order-sensitive outputs: object iteration over unordered maps where order matters, random without seed, locale-dependent sort, floating-point serialization edge cases.
-  - Prioritize `tools/citygen`, `tools/normalize-level.mjs`, `tools/build-level.mjs`, chunk/skeleton emission.
+- [x] [BUG-004] **Determinism and ordering audit** (first pass, 2026-11-21, `agent/plan25-bug004-determinism`)
+  - Audited tools for `Math.random`/time-based output in generation: none found in `tools/*.mjs, tools/citygen/*.mjs` (Date.now only in CI/runner/editor tooling).
+  - Replaced locale-dependent `localeCompare` with codepoint comparison in citygen determinism paths: `tools/citygen/ids.mjs`, `diagnostics.mjs`, `features.mjs`, `rules.mjs`.
+  - Remaining: deeper audit of object iteration/float serialization in normalize/build/chunk emission.
 
 - [ ] [BUG-005] **Defensive guards and error reporting**
   - Identify silent `undefined`/`NaN` propagation in hot paths (map queries, nav, entity spawn, detail builders).
@@ -74,9 +75,8 @@ Improve maintainability and reliability of the codebase through targeted refacto
   - Existing `level-lifecycle` `reload-scene-budget` gate already checks `renderer.info` geometries/textures/scene children don't grow on reload; BUG-002 merge-disposal fixes reduce leak risk on this path.
   - TODO: add explicit detailed-visual-heavy reload/chunk rebuild assertion if CI/stability budget allows.
 
-- [ ] [TEST-004] **Generation determinism/property checks**
-  - Add/extend deterministic checks for touched generators: same input+seed => byte-identical output/artifacts; report warnings stable.
-  - Where useful, add small invariant/property tests (bounds inside plate, no NaN/Infinity, IDs unique, rotation normalized).
+- [x] [TEST-004] **Generation determinism/property checks** (first pass, 2026-11-21, `agent/plan25-bug004-determinism`)
+  - Added citygen determinism test: `citygen BUG-004/TEST-004: deterministic ordering is locale-independent for ASCII ids` in `tools/citygen.test.mjs`; all 66 citygen tests pass locally (hint, not CI gate).
 
 - [ ] [TEST-005] **Contract smoke for new/changed visuals**
   - Ensure level-contract/level-lifecycle/browser gates cover levels with new detailed visuals; add targeted cases only when an invariant is not already covered.
