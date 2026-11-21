@@ -36,18 +36,18 @@ export function finalizeReport(report, ctx = null) {
   if (ctx) {
     try { finalizeFeatureManifest(ctx, '6_finalize_emit'); } catch { /* keep report robust */ }
   }
-  // Stable ordering for determinism
-  report.stages = [...(report.stages ?? [])].sort((a, b) => String(a.id ?? a.stage ?? '').localeCompare(String(b.id ?? b.stage ?? '')));
+  // Stable ordering for determinism (fixed locale)
+  report.stages = [...(report.stages ?? [])].sort((a, b) => String(a.id ?? a.stage ?? '').localeCompare(String(b.id ?? b.stage ?? ''), 'en'));
   report.districts = [...(report.districts ?? [])].sort(byId);
   const sevRank = { error: 0, warn: 1, info: 2 };
   report.diagnostics = [...(report.diagnostics ?? [])].sort((a, b) =>
     (sevRank[a.severity] ?? 9) - (sevRank[b.severity] ?? 9)
-    || String(a.stage ?? '').localeCompare(String(b.stage ?? ''))
-    || String(a.code ?? '').localeCompare(String(b.code ?? ''))
-    || String(a.message ?? '').localeCompare(String(b.message ?? ''))
+    || String(a.stage ?? '').localeCompare(String(b.stage ?? ''), 'en')
+    || String(a.code ?? '').localeCompare(String(b.code ?? ''), 'en')
+    || String(a.message ?? '').localeCompare(String(b.message ?? ''), 'en')
   );
-  report.repairs = [...(report.repairs ?? [])].sort((a, b) => String(a.stage ?? '').localeCompare(String(b.stage ?? '')) || String(a.code ?? '').localeCompare(String(b.code ?? '')));
-  report.drops = [...(report.drops ?? [])].sort((a, b) => String(a.stage ?? '').localeCompare(String(b.stage ?? '')) || String(a.id ?? '').localeCompare(String(b.id ?? '')));
+  report.repairs = [...(report.repairs ?? [])].sort((a, b) => String(a.stage ?? '').localeCompare(String(b.stage ?? ''), 'en') || String(a.code ?? '').localeCompare(String(b.code ?? ''), 'en'));
+  report.drops = [...(report.drops ?? [])].sort((a, b) => String(a.stage ?? '').localeCompare(String(b.stage ?? ''), 'en') || String(a.id ?? '').localeCompare(String(b.id ?? ''), 'en'));
   report.summary = {
     errors: report.diagnostics.filter(d => d.severity === 'error').length,
     warnings: report.diagnostics.filter(d => d.severity === 'warn').length,

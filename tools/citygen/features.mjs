@@ -58,7 +58,7 @@ function pickDistrict(ctx, wantedTypes, rng) {
   const pool = preferred.length ? preferred : ds;
   if (!pool.length) return null;
   // deterministic: stable order by id then rng pick
-  const sorted = [...pool].sort((a, b) => String(a?.id ?? '').localeCompare(String(b?.id ?? '')));
+  const sorted = [...pool].sort((a, b) => String(a?.id ?? '').localeCompare(String(b?.id ?? ''), 'en'));
   return sorted[Math.floor(rng() * sorted.length) % sorted.length] || sorted[0];
 }
 

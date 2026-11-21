@@ -1236,8 +1236,8 @@ export function evaluateRules(ctx) {
 
   const sevRank = { error: 0, warn: 1, info: 2 };
   violations.sort((a, b) => (sevRank[a.severity] ?? 9) - (sevRank[b.severity] ?? 9)
-    || String(a.code).localeCompare(String(b.code))
-    || String(a.message).localeCompare(String(b.message)));
+    || String(a.code).localeCompare(String(b.code), 'en')
+    || String(a.message).localeCompare(String(b.message), 'en'));
 
   const rules = {
     version: 1,

@@ -13,5 +13,5 @@ export function stageSubseed(seed, stage, districtId = '', chunkY = 0, chunkX = 
 
 /** Deterministic sort key: by id, then by coords if present. */
 export function byId(a, b) {
-  return String(a?.id ?? '').localeCompare(String(b?.id ?? ''));
+  return String(a?.id ?? '').localeCompare(String(b?.id ?? ''), 'en');
 }
