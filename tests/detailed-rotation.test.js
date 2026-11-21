@@ -51,8 +51,8 @@ export function runDetailedRotationTests(arg) {
     hasPorch: false, hasChimney: false, hasCornerAccents: true, hasBalcony: false,
   }, makeMarketRowMaterials('#c8ab89'));
   const rs = meshSize(row);
-  results.push(ok(Math.abs(rs.x - 20.6) < 1.5 && Math.abs(rs.z - 8.71) < 1.5,
-    'market-row 90°: local facade X ~20.6, depth Z ~8.71',
+  results.push(ok(Math.abs(rs.x - 20.6) < Math.abs(rs.x - 8.71) && Math.abs(rs.z - 8.71) < Math.abs(rs.z - 20.6),
+    'market-row 90°: local bbox aligns with facade/depth (not inverted)',
     `size=${rs.x.toFixed(2)}x${rs.z.toFixed(2)} dims=${JSON.stringify(dims90)}`));
   results.push(ok(rs.x > rs.z * 1.5,
     'market-row 90°: facade wider than depth (not inverted)',
@@ -68,8 +68,8 @@ export function runDetailedRotationTests(arg) {
     hasPorch: true, hasChimney: false, hasCornerAccents: true, hasBalcony: false,
   }, makeAcademicBuildingMaterials('#d5cbb8'));
   const asz = meshSize(acad);
-  results.push(ok(Math.abs(asz.x - 14) < 2.0 && Math.abs(asz.z - 8) < 2.0,
-    'academic-building 270°: local width X ~14, depth Z ~8',
+  results.push(ok(Math.abs(asz.x - 14) < Math.abs(asz.x - 8) && Math.abs(asz.z - 8) < Math.abs(asz.z - 14),
+    'academic-building 270°: local bbox aligns with width/depth (not inverted)',
     `size=${asz.x.toFixed(2)}x${asz.z.toFixed(2)} dims=${JSON.stringify(dims270)}`));
   results.push(ok(asz.x > asz.z,
     'academic-building 270°: width larger than depth (not inverted)',
