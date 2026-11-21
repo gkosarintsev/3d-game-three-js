@@ -81,8 +81,9 @@ Improve maintainability and reliability of the codebase through targeted refacto
 - [x] [TEST-004] **Generation determinism/property checks** (first pass, 2026-11-21, `agent/plan25-bug004-determinism`)
   - Added citygen determinism test: `citygen BUG-004/TEST-004: deterministic ordering is locale-independent for ASCII ids` in `tools/citygen.test.mjs`; all 66 citygen tests pass locally (hint, not CI gate).
 
-- [ ] [TEST-005] **Contract smoke for new/changed visuals**
-  - Ensure level-contract/level-lifecycle/browser gates cover levels with new detailed visuals; add targeted cases only when an invariant is not already covered.
+- [x] [TEST-005] **Contract smoke for new/changed visuals** (2026-11-21, `agent/plan25-test005-contract-smoke`)
+  - Audited coverage: `tests/level-contract.test.js` and `tests/level-lifecycle.test.js` iterate all registered levels, so levels with detailed visuals are loaded by existing browser gates; `tests/detailed-rotation.test.js` covers rotated detailed-building proportions.
+  - Added targeted node smoke in `tools/check-levels.mjs`: all `detailedVisual` values in committed level briefs must be registered in `src/json-map.js` `DETAILED_VISUAL_BUILDERS` (catches silent-invisible unknown visual type). CI fast `check-levels` runs this check.
 
 - [x] [TEST-006] **Bug-triage log** (2026-11-21, `agent/plan25-test006-bug-triage`)
   - Added `.ai/state/plan25-bug-triage.md` with symptom/root cause/fix/regression test/affected files/levels/evidence for BUG-001..BUG-005 (including BUG-003 handover PR #89). Future BUG-* tasks should append entries there and in PR body.
