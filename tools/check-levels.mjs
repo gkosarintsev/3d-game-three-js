@@ -150,6 +150,18 @@ async function importLevelModule(js) {
   return moduleCache.get(js);
 }
 
+/** Зарегистрированные detailedVisual builders из src/json-map.js (источник истины для TEST-005). */
+function detailedVisualKeys() {
+  const src = readFileSync(resolve(ROOT, 'src/json-map.js'), 'utf8');
+  const keys = new Set();
+  const block = src.match(/const DETAILED_VISUAL_BUILDERS = \{([\s\S]*?)\n\};/);
+  if (block) for (const m of block[1].matchAll(/^\s*'([^']+)'\s*:/gm)) keys.add(m[1]);
+  for (const m of src.matchAll(/for \(const styleId of \[([^\]]+)\]\) \{\s*\n\s*DETAILED_VISUAL_BUILDERS\[styleId\]/g)) {
+    for (const k of m[1].matchAll(/'([^']+)'/g)) keys.add(k[1]);
+  }
+  return keys;
+}
+
 for (const file of briefs) {
   const stem = basename(file, '.json');
   t(`${stem}: два прогона парсера дают побайтово одинаковый модуль`, () => {
@@ -288,6 +300,28 @@ for (const asset of assets) {
     }
   });
 }
+
+// ---------------------------------------------------------------- TEST-005: detailed visuals smoke
+
+t('TEST-005: все detailedVisual в брифах уровней имеют зарегистрированный builder', () => {
+  const allowed = detailedVisualKeys();
+  assert(allowed.size > 0, 'DETAILED_VISUAL_BUILDERS не найден в src/json-map.js');
+  const offenders = [];
+  for (const file of discoverBriefs([])) {
+    const raw = JSON.parse(readFileSync(resolve(ROOT, file), 'utf8'));
+    const stack = [raw];
+    while (stack.length) {
+      const v = stack.pop();
+      if (Array.isArray(v)) { for (const x of v) stack.push(x); continue; }
+      if (!v || typeof v !== 'object') continue;
+      if (typeof v.detailedVisual === 'string' && !allowed.has(v.detailedVisual)) {
+        offenders.push(`${file}: detailedVisual "${v.detailedVisual}" не зарегистрирован в DETAILED_VISUAL_BUILDERS`);
+      }
+      for (const x of Object.values(v)) stack.push(x);
+    }
+  }
+  assert(offenders.length === 0, offenders.slice(0, 10).join(' | '));
+});
 
 // ---------------------------------------------------------------- бюджеты (отчёт)
 
