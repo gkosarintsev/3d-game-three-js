@@ -58,9 +58,9 @@ Improve maintainability and reliability of the codebase through targeted refacto
   - Documented module boundaries/responsibilities and dependency direction in `docs/architecture-level-pipeline.md` (schema/normalize/city/build/citygen roles, determinism, warning/CLI boundary, pure-helper rule).
   - Remaining: extract small pure helpers only where clear duplication/risk is found (bounds/rotation math, ID/path normalization, warning formatting), without churny refactors.
 
-- [ ] [REF-004] **World/chunk rendering duplication pass**
-  - Audit duplicated logic between `JsonMap` and `WorldMap` for detailed buildings/quads/props and chunk lifecycle hooks.
-  - Prefer shared helper/module only when it preserves current contracts and reduces bug surface; avoid abstracting stable but different code paths prematurely.
+- [x] [REF-004] **World/chunk rendering duplication pass** (first pass audit, 2026-11-21, `agent/plan25-ref004-duplication-audit`)
+  - Audited JsonMap/WorldMap duplication: primitives (props/panelka/detailed/quads) already shared via inheritance/modules; main duplication is WorldMap `_buildSlices` vs `_rebuildPicture` picture-details orchestration (water/clutter/props/detailed/panelka/windows/signage/lights/counts). Chunk lifecycle hooks are WorldMap-specific.
+  - Recorded findings and safe next slice in `.ai/state/plan25-ref004-duplication-audit.md`. Remaining: extract small WorldMap-internal helper for picture-details tail while preserving slice budget boundaries and BUG-003/open-world perf behavior.
 
 - [x] [REF-005] **Config/constants hygiene** (first pass, 2026-11-21, `agent/plan25-ref005-config-hygiene`)
   - Moved hardcoded world streaming unload-decay tunable (`20 м/с`) from `src/world-map.js` to `CONFIG.jsonMap.pump.unloadDecay` in `src/config.js` (behavior-preserving default).
