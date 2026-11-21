@@ -28,10 +28,12 @@ Improve maintainability and reliability of the codebase through targeted refacto
   - Audited `JsonMap.dispose/_release` (objs, lights, houseTex, shared-material guard), `WorldMap` chunk unload/release, `night-lights` and `weapon` disposers — no new obvious leak found in this pass.
   - Remaining: deeper texture ownership audit on unique material maps and TEST-003 extension.
 
-- [x] [BUG-003] **Streaming/chunk boundary invariants** (first pass, 2026-11-21, `agent/plan25-bug003-chunk-boundaries`)
+- [x] [BUG-003] **Streaming/chunk boundary invariants** (2026-11-21, first pass `agent/plan25-bug003-chunk-boundaries`; handover/regression `agent/plan25-bug003-handover`)
   - Audited chunk ownership/AABB/footprint/rotated solids/detailed visuals/roads/channels crossing boundaries in `tools/chunk-level.mjs`, `src/world-map.js`, `src/surfaces.js`.
   - Fixed build-time boundary visual/collision mismatch: when an owner chunk is not loaded at participant build time, WorldMap draws fallback picture for non-owner records in the first loaded `coverageChunks` participant.
-  - Remaining: owner load/unload handover rebuild (disabled for perf, caused level-contract 420s timeout), dedicated browser regression for boundary fallback handover/revisit, and continue audit for nav-node accumulation on unload.
+  - Added perf-safe owner load/unload handover: affected participant chunks are marked `pump.fallbackDirty` and rebuilt by budgeted `picture-fallback-rebuild` slices in `streamStep` (no sync commit-swap rebuild).
+  - Added browser regression `tests/open-world.test.js` (`BUG-003: fallback handover на границе чанков`) covering build-time fallback, owner load handover, owner unload handover via pumped rebuild.
+  - Nav-node accumulation audit: nav graph remains append-only across unloads by design; unloaded-cell nodes are excluded by `navFit`/`isBuiltAt` reachability checks. Accumulation is bounded by visited chunk set in session; not a correctness bug, but a future memory/perf optimization candidate for very long sessions.
 
 - [x] [BUG-004] **Determinism and ordering audit** (first pass, 2026-11-21, `agent/plan25-bug004-determinism`)
   - Audited tools for `Math.random`/time-based output in generation: none found in `tools/*.mjs, tools/citygen/*.mjs` (Date.now only in CI/runner/editor tooling).

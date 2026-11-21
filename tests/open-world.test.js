@@ -1620,6 +1620,61 @@ async function testLevel16InterchangeNav() {
   };
 }
 
+async function testBoundaryFallbackHandover() {
+  const world = await makeWorld();
+  const { map } = world;
+  const center = map.spawnCell();
+  const cx = center.rect.minX + center.rect.maxX / 2;
+  const cz = center.rect.minZ + center.rect.maxZ / 2;
+  // Найти participant-запись: owner=false, homeChunk другой загруженный/соседний чанк.
+  let found = null;
+  for (const cell of map.cells) {
+    const data = await chunkData(cell.file);
+    for (const key of ['buildings', 'roads', 'channels', 'props', 'lights', 'tunnels']) {
+      for (const rec of data[key] ?? []) {
+        if (!rec || rec.owner || !rec.homeChunk || rec.homeChunk === cell.id) continue;
+        const home = map.cellById.get(rec.homeChunk);
+        if (!home) continue;
+        found = { pId: cell.id, hId: rec.homeChunk, rec, key, pFile: cell.file, hFile: home.file };
+        break;
+      }
+      if (found) break;
+    }
+    if (found) break;
+  }
+  if (!found) {
+    map.dispose();
+    return { name: 'BUG-003: fallback handover на границе чанков', passed: false, info: 'не найдена boundary-запись' };
+  }
+
+  // 1) Загружаем participant без owner: build-time fallback должен нарисовать запись.
+  await map.loadChunk(found.pId);
+  const pEntry1 = map.loaded.get(found.pId);
+  const pPic1 = !!pEntry1?.pic;
+  const fallbackOnBuild = pEntry1 ? map._isFallbackDraw(found.rec, found.pId) : false;
+
+  // 2) Загружаем owner: participant помечается dirty, streamStep делает budgeted rebuild.
+  await map.loadChunk(found.hId);
+  for (let i = 0; i < 20 && map.pump.fallbackDirty.size > 0; i++) map.streamStep(100, cx, cz, 0);
+  const dirtyAfterOwnerLoad = map.pump.fallbackDirty.has(found.pId);
+  const fallbackAfterOwnerLoad = map.loaded.get(found.pId) ? map._isFallbackDraw(found.rec, found.pId) : true;
+
+  // 3) Выгружаем owner: participant снова получает fallback через budgeted rebuild.
+  map.unloadChunk(found.hId);
+  for (let i = 0; i < 20 && map.pump.fallbackDirty.size > 0; i++) map.streamStep(100, cx, cz, 0);
+  const dirtyAfterOwnerUnload = map.pump.fallbackDirty.has(found.pId);
+  const fallbackAfterOwnerUnload = map.loaded.get(found.pId) ? map._isFallbackDraw(found.rec, found.pId) : false;
+  const pPicAfter = !!map.loaded.get(found.pId)?.pic;
+
+  const passed = pPic1 && fallbackOnBuild && !dirtyAfterOwnerLoad && !fallbackAfterOwnerLoad
+    && !dirtyAfterOwnerUnload && fallbackAfterOwnerUnload && pPicAfter;
+  const info = `p=${found.pId} h=${found.hId} key=${found.key} buildPic=${pPic1} buildFallback=${fallbackOnBuild}`
+    + ` ownerLoadDirty=${dirtyAfterOwnerLoad} ownerLoadFallback=${fallbackAfterOwnerLoad}`
+    + ` ownerUnloadDirty=${dirtyAfterOwnerUnload} ownerUnloadFallback=${fallbackAfterOwnerUnload} picAfter=${pPicAfter}`;
+  map.dispose();
+  return { name: 'BUG-003: fallback handover на границе чанков', passed, info };
+}
+
 async function testStreamedTunnel() {
   const world = await makeWorld();
   const id = world.map.spawnCell().id;
@@ -1666,6 +1721,7 @@ export async function runOpenWorldTests(arg) {
     testExitAndCarsOnlyInBuiltCells,
     testMinimapPlanFrame,
     testPumpFrameBudget,
+    testBoundaryFallbackHandover,
     testStreamedTunnel,
   ];
   // OPEN_600 — probe-фикстура, не пронумерованная глава реестра. При фильтре по
