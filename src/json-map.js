@@ -1722,7 +1722,13 @@ export class JsonMap extends SurfaceField {
       const make = (r) => new THREE.PlaneGeometry(
         r.maxX - r.minX, r.maxZ - r.minZ,
       ).translate((r.minX + r.maxX) / 2, -(r.minZ + r.maxZ) / 2, 0);
-      const geo = rects.length === 1 ? make(rects[0]) : mergeGeometries(rects.map(make), false);
+      let geo;
+      if (rects.length === 1) geo = make(rects[0]);
+      else {
+        const parts = rects.map(make);
+        geo = mergeGeometries(parts, false);
+        for (const g of parts) g.dispose();
+      }
       geo?.computeBoundingSphere();
       return geo;
     }
@@ -1738,7 +1744,13 @@ export class JsonMap extends SurfaceField {
     const makeR = (r) => (riverAt || roadAt)
       ? this._riverGroundGeo(r, cell, riverAt, roadAt)
       : this._plainGroundGeo(r, cell, hasCurved);
-    const geo = rects.length === 1 ? makeR(rects[0]) : mergeGeometries(rects.map(makeR), false);
+    let geo;
+    if (rects.length === 1) geo = makeR(rects[0]);
+    else {
+      const parts = rects.map(makeR);
+      geo = mergeGeometries(parts, false);
+      for (const g of parts) g.dispose();
+    }
     geo?.computeBoundingSphere();
     return geo;
   }
@@ -2026,24 +2038,33 @@ export class JsonMap extends SurfaceField {
     ).translate((r.minX + r.maxX) / 2, -(r.minZ + r.maxZ) / 2, r.y));
     for (const ch of waterChains) geos.push(this._ribbonGeo(ch));
     if (geos.length) {
-      const water = new THREE.Mesh(mergeGeometries(geos, false), new THREE.MeshStandardMaterial({
-        color: J.waterColor, roughness: 0.3, metalness: 0.1,
-        transparent: true, opacity: J.waterOpacity,
-      }));
-      water.rotation.x = -Math.PI / 2;
-      scene.add(water);
-      objs.push(water);
+      const mergedWater = mergeGeometries(geos, false);
+      for (const g of geos) g.dispose();
+      if (mergedWater) {
+        const water = new THREE.Mesh(mergedWater, new THREE.MeshStandardMaterial({
+          color: J.waterColor, roughness: 0.3, metalness: 0.1,
+          transparent: true, opacity: J.waterOpacity,
+        }));
+        water.rotation.x = -Math.PI / 2;
+        scene.add(water);
+        objs.push(water);
+      }
     }
 
     if (bedChains.length) {
-      const bed = new THREE.Mesh(
-        mergeGeometries(bedChains.map(ch => this._ribbonGeo(ch)), false),
-        new THREE.MeshStandardMaterial({ color: J.earth, roughness: 1, metalness: 0 }),
-      );
-      bed.rotation.x = -Math.PI / 2;
-      bed.receiveShadow = true;
-      scene.add(bed);
-      objs.push(bed);
+      const bedGeos = bedChains.map(ch => this._ribbonGeo(ch));
+      const mergedBed = mergeGeometries(bedGeos, false);
+      for (const g of bedGeos) g.dispose();
+      if (mergedBed) {
+        const bed = new THREE.Mesh(
+          mergedBed,
+          new THREE.MeshStandardMaterial({ color: J.earth, roughness: 1, metalness: 0 }),
+        );
+        bed.rotation.x = -Math.PI / 2;
+        bed.receiveShadow = true;
+        scene.add(bed);
+        objs.push(bed);
+      }
     }
   }
 
@@ -3058,7 +3079,10 @@ export class JsonMap extends SurfaceField {
       if (key === '_wallMats') continue;
       const geos = groups[key];
       if (!geos || !geos.length) continue;
-      const mesh = new THREE.Mesh(mergeGeometries(geos, false), mats[key]);
+      const merged = mergeGeometries(geos, false);
+      for (const g of geos) g.dispose();
+      if (!merged) continue;
+      const mesh = new THREE.Mesh(merged, mats[key]);
       mesh.castShadow = true;
       mesh.receiveShadow = true;
       scene.add(mesh);
@@ -3072,7 +3096,10 @@ export class JsonMap extends SurfaceField {
       for (const [matKey, geos] of wallMats) {
         if (!geos.length) continue;
         const { material } = makeFacadeMaterial(matKey, this.houseTex, J.walls);
-        const mesh = new THREE.Mesh(mergeGeometries(geos, false), material);
+        const merged = mergeGeometries(geos, false);
+        for (const g of geos) g.dispose();
+        if (!merged) continue;
+        const mesh = new THREE.Mesh(merged, material);
         mesh.castShadow = true;
         mesh.receiveShadow = true;
         scene.add(mesh);
@@ -3171,11 +3198,15 @@ export class JsonMap extends SurfaceField {
       bulbs.push(bulb);
     }
     if (bulbs.length) {
-      const mesh = new THREE.Mesh(mergeGeometries(bulbs, false), new THREE.MeshBasicMaterial({
-        color: 0xffe6c0,
-      }));
-      scene.add(mesh);
-      objs.push(mesh);
+      const mergedBulbs = mergeGeometries(bulbs, false);
+      for (const g of bulbs) g.dispose();
+      if (mergedBulbs) {
+        const mesh = new THREE.Mesh(mergedBulbs, new THREE.MeshBasicMaterial({
+          color: 0xffe6c0,
+        }));
+        scene.add(mesh);
+        objs.push(mesh);
+      }
     }
     return lights;
   }

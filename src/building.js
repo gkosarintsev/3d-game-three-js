@@ -498,7 +498,12 @@ export function buildBuildingGeometry(b, solids) {
     }
   }
 
-  const merge = arr => (arr.length ? mergeGeometries(arr, false) : null);
+  const merge = arr => {
+    if (!arr.length) return null;
+    const merged = mergeGeometries(arr, false);
+    for (const g of arr) g.dispose();
+    return merged;
+  };
   return {
     walls: merge(wallGeos),
     slabs: merge(slabGeos),

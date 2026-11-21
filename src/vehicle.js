@@ -40,38 +40,43 @@ function buildParts() {
   const c = CONFIG.car;
   const bodyY = c.clearance + 0.34;
   const cabinY = bodyY + 0.34 + 0.29;
+  const merge = (parts) => {
+    const geo = mergeGeometries(parts, false);
+    for (const g of parts) g.dispose();
+    return geo;
+  };
   return [
     {
       mat: 'paint',
-      geo: mergeGeometries([
+      geo: merge([
         box(c.length, 0.68, c.width, 0, bodyY, 0),
         box(c.length * 0.44, 0.58, c.width * 0.86, -c.length * 0.04, cabinY, 0),
-      ], false),
+      ]),
     },
     // остекление — пластины чуть наружу кузова: заподлицо они легли бы в одну
     // плоскость с краской и замигали в z-buffer (то же правило швов, что у перил)
     {
       mat: 'glass',
-      geo: mergeGeometries([
+      geo: merge([
         box(0.06, 0.42, c.width * 0.72, c.length * 0.16, cabinY, 0),
         box(0.06, 0.36, c.width * 0.66, -c.length * 0.235, cabinY, 0),
         box(c.length * 0.36, 0.06, 0.02, -c.length * 0.04, cabinY + 0.3, c.width * 0.43),
         box(c.length * 0.36, 0.06, 0.02, -c.length * 0.04, cabinY + 0.3, -c.width * 0.43),
-      ], false),
+      ]),
     },
     {
       mat: 'lights',
-      geo: mergeGeometries([
+      geo: merge([
         box(0.05, 0.14, 0.34, c.length / 2 - 0.03, bodyY + 0.08, c.width * 0.3),
         box(0.05, 0.14, 0.34, c.length / 2 - 0.03, bodyY + 0.08, -c.width * 0.3),
-      ], false),
+      ]),
     },
     {
       mat: 'tail',
-      geo: mergeGeometries([
+      geo: merge([
         box(0.05, 0.12, 0.3, -c.length / 2 + 0.03, bodyY + 0.1, c.width * 0.32),
         box(0.05, 0.12, 0.3, -c.length / 2 + 0.03, bodyY + 0.1, -c.width * 0.32),
-      ], false),
+      ]),
     },
   ];
 }

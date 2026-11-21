@@ -169,6 +169,8 @@ export function buildDecor(scene, map) {
   const add = (geos, mat) => {
     if (!geos.length) return [];
     const g = mergeGeometries(geos, false);
+    for (const src of geos) src.dispose();
+    if (!g) return [];
     const mesh = new THREE.Mesh(g, mat);
     mesh.castShadow = true;
     mesh.receiveShadow = true;

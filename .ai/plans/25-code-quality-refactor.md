@@ -23,10 +23,10 @@ Improve maintainability and reliability of the codebase through targeted refacto
   - `WorldMap` delegates detailed visuals to `JsonMap` — covered by same path. `panelka-decor.js` uses world-AABB bounds for axis-aligned world-space decor (correct for already-baked world footprints). `normalize-level.mjs` bounds sampling is world-space terrain sampling (correct). No new AABB/local-space bug found in this pass.
   - Regression coverage added as TEST-001; CI verification pending.
 
-- [ ] [BUG-002] **Lifecycle/dispose audit**
-  - Verify all objects created per level/chunk/visual pass dispose geometries/materials/textures/listeners as required.
-  - Focus: `json-map` detailed meshes/quads, `world-map` chunk attach/detach, `night-lights`, debug overlays, weapon/enemy/vehicle disposable resources.
-  - Add/extend tests or diagnostics counters where existing gates can observe leaks (`renderer.info.memory` style checks where already used).
+- [x] [BUG-002] **Lifecycle/dispose audit** (first pass, 2026-11-21, `agent/plan25-bug002-lifecycle-audit`)
+  - Fixed merge-source geometry leaks: after `mergeGeometries` disposed source arrays in `json-map`, `world-map`, `panelka-decor`, `decor`, `map`, `city-map`, `terrain-map`, `building`, `props`, `vehicle`.
+  - Audited `JsonMap.dispose/_release` (objs, lights, houseTex, shared-material guard), `WorldMap` chunk unload/release, `night-lights` and `weapon` disposers — no new obvious leak found in this pass.
+  - Remaining: deeper texture ownership audit on unique material maps and TEST-003 extension.
 
 - [ ] [BUG-003] **Streaming/chunk boundary invariants**
   - Audit edge cases around chunk ownership, AABB vs footprint, rotated solids, detailed visuals, rivers/roads crossing chunk boundaries.
@@ -71,8 +71,9 @@ Improve maintainability and reliability of the codebase through targeted refacto
 - [ ] [TEST-002] **AABB/rotation utility tests**
   - If BUG-001 introduces shared helper(s), add unit tests for 0/90/180/270 and negative/normalized rotations.
 
-- [ ] [TEST-003] **Lifecycle regression tests**
-  - Extend existing lifecycle/streaming tests to assert no growth/leak after repeated load/unload or chunk rebuild for detailed-visual-heavy levels.
+- [x] [TEST-003] **Lifecycle regression tests** (partial, 2026-11-21, `agent/plan25-bug002-lifecycle-audit`)
+  - Existing `level-lifecycle` `reload-scene-budget` gate already checks `renderer.info` geometries/textures/scene children don't grow on reload; BUG-002 merge-disposal fixes reduce leak risk on this path.
+  - TODO: add explicit detailed-visual-heavy reload/chunk rebuild assertion if CI/stability budget allows.
 
 - [ ] [TEST-004] **Generation determinism/property checks**
   - Add/extend deterministic checks for touched generators: same input+seed => byte-identical output/artifacts; report warnings stable.
