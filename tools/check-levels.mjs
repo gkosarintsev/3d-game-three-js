@@ -150,9 +150,9 @@ async function importLevelModule(js) {
   return moduleCache.get(js);
 }
 
-/** Зарегистрированные detailedVisual builders из src/json-map.js (источник истины для TEST-005). */
+/** Зарегистрированные detailedVisual builders (источник истины для TEST-005). */
 function detailedVisualKeys() {
-  const src = readFileSync(resolve(ROOT, 'src/json-map.js'), 'utf8');
+  const src = readFileSync(resolve(ROOT, 'src/detailed-visuals.js'), 'utf8');
   const keys = new Set();
   const block = src.match(/const DETAILED_VISUAL_BUILDERS = \{([\s\S]*?)\n\};/);
   if (block) for (const m of block[1].matchAll(/^\s*'([^']+)'\s*:/gm)) keys.add(m[1]);
@@ -305,7 +305,7 @@ for (const asset of assets) {
 
 t('TEST-005: все detailedVisual в брифах уровней имеют зарегистрированный builder', () => {
   const allowed = detailedVisualKeys();
-  assert(allowed.size > 0, 'DETAILED_VISUAL_BUILDERS не найден в src/json-map.js');
+  assert(allowed.size > 0, 'DETAILED_VISUAL_BUILDERS не найден в src/detailed-visuals.js');
   const offenders = [];
   for (const file of discoverBriefs([])) {
     const raw = JSON.parse(readFileSync(resolve(ROOT, file), 'utf8'));

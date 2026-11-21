@@ -45,10 +45,10 @@ Improve maintainability and reliability of the codebase through targeted refacto
   - Remaining: continue audit for silent `undefined`/`NaN` propagation in entity spawn/detail builders and other hot paths; add targeted tests if a concrete corruption case is found.
 
 ### B. Refactoring (behavior-preserving)
-- [ ] [REF-001] **Split `src/json-map.js` by responsibility**
+- [x] [REF-001] **Split `src/json-map.js` by responsibility** (first pass, 2026-11-21, `agent/plan25-ref001-detailed-visuals`)
   - Candidate modules: building/wall mesh builders, detailed-visual dispatch, quad/window/signage batching, road/water/decor assembly, debug/id helpers.
-  - Keep public behavior and map contract unchanged; preserve performance-sensitive paths (avoid per-frame allocations, keep batching).
-  - Add characterization tests before moving logic.
+  - First slice: extracted detailed visual builder registry/imports from `src/json-map.js` into `src/detailed-visuals.js` (`DETAILED_VISUAL_BUILDERS`), preserving dispatch/defaults/behavior 1:1. Updated `tools/check-levels.mjs` TEST-005 to read keys from the new module.
+  - Keep public behavior and map contract unchanged; preserve performance-sensitive paths. Remaining: continue incremental slices (quads/windows/signage, building/wall mesh, road/water/decor assembly, debug/id helpers) with characterization/CI green per slice.
 
 - [x] [REF-002] **Detailed visual dispatch table** (2026-11-21, `agent/plan25-ref002-detailed-dispatch`)
   - Replaced long `if/else if (b.detailedVisual === ...)` chain in `JsonMap._buildDetailedBuildings` with module-scope `DETAILED_VISUAL_BUILDERS` registry (handlers preserve 1:1 defaults/foundation/yOffset rules, including generic-house group).
