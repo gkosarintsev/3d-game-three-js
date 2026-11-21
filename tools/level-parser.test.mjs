@@ -8,9 +8,10 @@
 import { existsSync, readFileSync, readdirSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { validateLevel, LEVEL_SPEC_OPEN, LEVEL_SPEC_V3, LEVEL_SPEC_V4, LEVEL_COMMON_V3 } from './level-schema.mjs';
-import { generateOutput, expandCityforgeSource, ValidationError } from './build-level.mjs';
+import { generateOutput, generateCatalog, expandCityforgeSource, ValidationError } from './build-level.mjs';
 import { schemaTextFor, SCHEMA_FILES } from './export-schema.mjs';
 import { normalizeLevel } from './normalize-level.mjs';
+import { skeletonOf } from './skeleton.mjs';
 
 const ROOT = resolve(import.meta.dirname, '..');
 
@@ -351,6 +352,60 @@ t('$schema каждого закоммиченного брифа ведёт к 
     const raw = JSON.parse(readFileSync(resolve(ROOT, file), 'utf8'));
     eq(raw.$schema, want(raw), `${file}: $schema не соответствует версии`);
     assert(existsSync(resolve(ROOT, 'src/levels', raw.$schema)), `${file}: ${raw.$schema} не существует`);
+  }
+});
+
+// ---------------------------------------------------------------
+// Пример внешнего автора: замок. Лежит вне src/levels, чтобы не требовать
+// закоммиченного каталога, но проходит те же ворота, что и глава: схема,
+// нормализатор без предупреждений, связный скелет и детерминированный каталог.
+// ---------------------------------------------------------------
+const CASTLE = resolve(ROOT, '.ai/prompts/castle-authoring/level-castle.json');
+
+t('open-схема экспортирована и принимает пример замка', () => {
+  const entry = SCHEMA_FILES.find(e => e.spec === LEVEL_SPEC_OPEN);
+  assert(entry, 'в SCHEMA_FILES нет LEVEL_SPEC_OPEN');
+  eq(entry.out.replace(/\\/g, '/').endsWith('/src/levels/level-open.schema.json'), true,
+    'open-схема обязана лежать рядом с брифами: src/levels/level-open.schema.json');
+  assert(existsSync(entry.out), 'level-open.schema.json не создан — запустите node tools/export-schema.mjs');
+  const raw = JSON.parse(readFileSync(CASTLE, 'utf8'));
+  eq(raw.$schema, './level-open.schema.json', 'пример замка ссылается не на open-схему');
+  const errors = [];
+  checkJsonSchema(raw, renderFor(entry), '', errors);
+  eq(errors.length, 0, `open-схема отвергла замок: ${errors.slice(0, 6).join(' | ')}`);
+});
+
+t('пример замка: нулевые предупреждения, связный скелет, ходовая кровля и детерминированный каталог', () => {
+  const raw = JSON.parse(readFileSync(CASTLE, 'utf8'));
+  const val = validateLevel(raw, LEVEL_SPEC_OPEN);
+  eq(val.errors.length, 0, `схема: ${val.errors.join(' | ')}`);
+  eq(val.warnings.length, 0, `схема: ${val.warnings.join(' | ')}`);
+
+  const level = normalizeLevel(raw);
+  eq(level.warnings.length, 0, `нормализатор: ${level.warnings.join(' | ')}`);
+  const keep = level.map.buildings.find(b => b.id === 'keep');
+  assert(keep, 'нормализатор потерял keep');
+  eq(keep.roof?.walkable, true, 'кровля keep обязана быть ходовой');
+  eq(keep.roofY, 12, `roofY=${keep.roofY}, ожидалось 12`);
+  eq(keep.doors.length, 1, `наружных дверей keep: ${keep.doors.length}, ожидалась одна`);
+  eq(keep.stairs.length, 3, `маршей keep: ${keep.stairs.length}, ожидалось три (2 лестницы + трап)`);
+  const ladder = keep.stairs.find(s => s.type === 'ladder');
+  assert(ladder && ladder.connectsFloors?.[1] === 3, 'нет трапа на кровлю (connectsFloors [2,3])');
+  assert(keep.doors[0].target === 'rd_court', 'дверь keep ведёт не на дворовую дорогу');
+
+  const sk = skeletonOf(level.map);
+  eq(sk.meta.components.after, 1, `скелет распался на ${sk.meta.components.after} компонент`);
+  eq(sk.meta.covered.missingCount, 0, `вне скелета: ${sk.meta.covered.missing.join(', ')}`);
+
+  const a = generateCatalog(raw, CASTLE);
+  const b = generateCatalog(raw, CASTLE);
+  eq(a.warnings.length, 0, `каталог: ${a.warnings.join(' | ')}`);
+  eq(a.kind, 'catalog', 'kind: open обязан собираться в каталог');
+  eq(a.files.map(f => f.path).join(','), b.files.map(f => f.path).join(','), 'список файлов каталога нестабилен');
+  for (let i = 0; i < a.files.length; i++) {
+    const fa = a.files[i], fb = b.files[i];
+    if ('bytes' in fa) eq(Buffer.compare(Buffer.from(fa.bytes), Buffer.from(fb.bytes)), 0, `${fa.path}: байты нестабильны`);
+    else eq(fa.code, fb.code, `${fa.path}: код нестабилен`);
   }
 });
 
