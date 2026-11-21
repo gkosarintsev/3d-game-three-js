@@ -39,6 +39,16 @@ export function runDetailedRotationTests(arg) {
   results.push(ok(r270.bw === 20 && r270.bd === 10 && r270.rot === 270, 'detailedLocalDims: 270° swaps', JSON.stringify(r270)));
   const r360 = detailedLocalDims(b, 360);
   results.push(ok(r360.bw === 10 && r360.bd === 20 && r360.rot === 0, 'detailedLocalDims: 360° normalizes', JSON.stringify(r360)));
+  const rn90 = detailedLocalDims(b, -90);
+  results.push(ok(rn90.bw === 20 && rn90.bd === 10 && rn90.rot === 270, 'detailedLocalDims: -90° normalizes to 270°', JSON.stringify(rn90)));
+  const rn180 = detailedLocalDims(b, -180);
+  results.push(ok(rn180.bw === 10 && rn180.bd === 20 && rn180.rot === 180, 'detailedLocalDims: -180° normalizes to 180°', JSON.stringify(rn180)));
+  const rn270 = detailedLocalDims(b, -270);
+  results.push(ok(rn270.bw === 20 && rn270.bd === 10 && rn270.rot === 90, 'detailedLocalDims: -270° normalizes to 90°', JSON.stringify(rn270)));
+  const r450 = detailedLocalDims(b, 450);
+  results.push(ok(r450.bw === 20 && r450.bd === 10 && r450.rot === 90, 'detailedLocalDims: 450° normalizes to 90°', JSON.stringify(r450)));
+  const r720 = detailedLocalDims(b, 720);
+  results.push(ok(r720.bw === 10 && r720.bd === 20 && r720.rot === 0, 'detailedLocalDims: 720° normalizes to 0°', JSON.stringify(r720)));
 
   // Регрессия реального кейса: market-row b_d_commercial_49 (level 25) — rotation 90°,
   // world AABB 8.71 x 20.6, значит локальный фасад ~20.6, глубина ~8.71.

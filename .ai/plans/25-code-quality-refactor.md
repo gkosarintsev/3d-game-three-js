@@ -68,8 +68,8 @@ Improve maintainability and reliability of the codebase through targeted refacto
   - Added `tests/detailed-rotation.test.js` (`runDetailedRotationTests`): checks `detailedLocalDims` for 0/90/180/270/360, and verifies built mesh local bbox for rotated `market-row` (reported `b_d_commercial_49` case) and `academic-building`.
   - Registered in CI browser `misc` suite in `.github/workflows/ci.yml`. CI verification pending.
 
-- [ ] [TEST-002] **AABB/rotation utility tests**
-  - If BUG-001 introduces shared helper(s), add unit tests for 0/90/180/270 and negative/normalized rotations.
+- [x] [TEST-002] **AABB/rotation utility tests** (2026-11-21, `agent/plan25-test002-rotation-utils`)
+  - Extended `tests/detailed-rotation.test.js` with negative/normalized rotation cases for `detailedLocalDims` (-90/-180/-270/450/720), covering the helper introduced by BUG-001. CI browser misc suite verifies it.
 
 - [x] [TEST-003] **Lifecycle regression tests** (partial, 2026-11-21, `agent/plan25-bug002-lifecycle-audit`)
   - Existing `level-lifecycle` `reload-scene-budget` gate already checks `renderer.info` geometries/textures/scene children don't grow on reload; BUG-002 merge-disposal fixes reduce leak risk on this path.
