@@ -34,7 +34,7 @@ Improve maintainability and reliability of the codebase through targeted refacto
 
 - [x] [BUG-004] **Determinism and ordering audit** (first pass, 2026-11-21, `agent/plan25-bug004-determinism`)
   - Audited tools for `Math.random`/time-based output in generation: none found in `tools/*.mjs, tools/citygen/*.mjs` (Date.now only in CI/runner/editor tooling).
-  - Replaced locale-dependent `localeCompare` with codepoint comparison in citygen determinism paths: `tools/citygen/ids.mjs`, `diagnostics.mjs`, `features.mjs`, `rules.mjs`.
+  - Pinned locale-dependent `localeCompare` to fixed locale `'en'` in citygen determinism paths: `tools/citygen/ids.mjs`, `diagnostics.mjs`, `features.mjs`, `rules.mjs` (codepoint change was tried but reverted because it changed generation artifacts).
   - Remaining: deeper audit of object iteration/float serialization in normalize/build/chunk emission.
 
 - [ ] [BUG-005] **Defensive guards and error reporting**

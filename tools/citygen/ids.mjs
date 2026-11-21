@@ -11,9 +11,7 @@ export function stageSubseed(seed, stage, districtId = '', chunkY = 0, chunkX = 
   return mix(seed, stage, districtId, chunkY, chunkX, slotId, attempt);
 }
 
-/** Deterministic sort key: by id (codepoint, locale-independent). */
+/** Deterministic sort key: by id, then by coords if present. */
 export function byId(a, b) {
-  const aa = String(a?.id ?? '');
-  const bb = String(b?.id ?? '');
-  return aa < bb ? -1 : aa > bb ? 1 : 0;
+  return String(a?.id ?? '').localeCompare(String(b?.id ?? ''), 'en');
 }

@@ -1562,7 +1562,7 @@ test('citygen R2.3: class slope policy is wired (policies from generator.policie
 
 test('citygen BUG-004/TEST-004: deterministic ordering is locale-independent for ASCII ids', () => {
   const a = {id:'b_2'}; const b = {id:'b_10'};
-  assert.equal(byId(a,b), 1); // codepoint: '2' > '1'
+  assert.equal(byId(a,b), 1); // fixed locale 'en': '2' > '1'
   const raw = v4Base();
   raw.generator.seed = 123;
   raw.cityforge.hydrology.rivers = [
@@ -1572,6 +1572,6 @@ test('citygen BUG-004/TEST-004: deterministic ordering is locale-independent for
   const r1 = runCitygen(structuredClone(raw));
   const r2 = runCitygen(structuredClone(raw));
   assert.equal(r1.reportJson, r2.reportJson);
-  // Deterministic ordering: same input => same output order. Codepoint comparison is locale-independent.
+  // Deterministic ordering: same input => same output order (fixed locale).
   assert.deepEqual(r1.engine.cityforge.hydrology.rivers.map(r=>r.id), r2.engine.cityforge.hydrology.rivers.map(r=>r.id));
 });
