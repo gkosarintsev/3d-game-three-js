@@ -54,9 +54,9 @@ Improve maintainability and reliability of the codebase through targeted refacto
   - Replaced long `if/else if (b.detailedVisual === ...)` chain in `JsonMap._buildDetailedBuildings` with module-scope `DETAILED_VISUAL_BUILDERS` registry (handlers preserve 1:1 defaults/foundation/yOffset rules, including generic-house group).
   - Rotation/local-dimension normalization already centralized via `detailedLocalDims` (BUG-001). CI verification pending.
 
-- [ ] [REF-003] **Normalize/build pipeline boundaries**
-  - Document and tighten boundaries between `tools/level-schema.mjs`, `tools/normalize-level.mjs`, `tools/city.js`, `tools/build-level.mjs`, and `tools/citygen/pipeline/*`.
-  - Extract small pure helpers where duplication/risk is high (bounds/rotation math, ID/path normalization, warning formatting), but avoid churny mega-refactors.
+- [x] [REF-003] **Normalize/build pipeline boundaries** (first pass, 2026-11-21, `agent/plan25-ref003-pipeline-boundaries`)
+  - Documented module boundaries/responsibilities and dependency direction in `docs/architecture-level-pipeline.md` (schema/normalize/city/build/citygen roles, determinism, warning/CLI boundary, pure-helper rule).
+  - Remaining: extract small pure helpers only where clear duplication/risk is found (bounds/rotation math, ID/path normalization, warning formatting), without churny refactors.
 
 - [ ] [REF-004] **World/chunk rendering duplication pass**
   - Audit duplicated logic between `JsonMap` and `WorldMap` for detailed buildings/quads/props and chunk lifecycle hooks.
