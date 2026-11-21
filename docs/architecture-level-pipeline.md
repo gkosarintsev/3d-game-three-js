@@ -16,6 +16,24 @@
   в браузере может быть не видно).
 - `JsonMap` не знает ни номера главы, ни схемы: ест нормализованные данные.
 
+## Границы модулей пайплайна (REF-003)
+
+Цель: каждый модуль имеет одну ответственность; зависимости направлены «вниз» по пайплайну, без обратных импортов runtime.
+
+| Модуль | Ответственность | Вход/выход | Не делает |
+|---|---|---|---|
+| `tools/level-schema.mjs` | DSL схемы + `validateLevel` (структура/типы/геометрические инварианты, которые можно доказать без генерации) | raw/expanded object → `{errors,warnings}` | Не нормализует, не пишет файлы, не знает о Three.js/рантайме |
+| `tools/normalize-level.mjs` | Детерминированная нормализация геометрии/высот/опор/производных полей | validated expanded level → normalized level + warnings | Не читает/пишет файлы, не генерирует city/citygen, не импортирует Three.js |
+| `tools/city.js` | Разворот `city` (кварталы/улицы/дома/track) в обычные `buildings/roads/...` | raw level с `city` → expanded level | Не валидирует схему целиком, не пишет файлы; ГПСЧ только через `city.seed` |
+| `tools/build-level.mjs` | CLI/оркестрация: read → expand/citygen/compile → validate → normalize → emit/check | файл брифа → module/catalog/report или check result | Не содержит геодезии домена; делегирует специализированным модулям |
+| `tools/citygen/*` | v4 staged generation (IR, stages, diagnostics, repair, report, profiles/policies) | v4 manifest/input → generated IR/data + report | Не подменяет schema/normalize; финальный выход проходит общий compile/validate/normalize путь |
+
+Правила границ:
+- **Один источник правды:** defaults — из `CONFIG`/DSL-объектов-владельцев, не дублируются в других модулях.
+- **Детерминизм:** порядок вызовов ГПСЧ и сортировок значим; новые helpers должны быть чистыми и не добавлять скрытое состояние.
+- **Предупреждения/ошибки:** форматировать на границе CLI/отчёта; внутренние модули возвращают структурированные данные/исключения домена, не печатают в stdout как контракт.
+- **Общие pure helpers:** выносить только при явной дубликации/риске (bounds/rotation/math, ID/path normalization, warning formatting). Не создавать общие модули «на всякий случай».
+
 ## Схема: один DSL
 
 - Источник правды — DSL в `tools/level-schema.mjs`. JSON Schema draft-07
