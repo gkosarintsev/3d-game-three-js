@@ -46,10 +46,9 @@ Improve maintainability and reliability of the codebase through targeted refacto
   - Keep public behavior and map contract unchanged; preserve performance-sensitive paths (avoid per-frame allocations, keep batching).
   - Add characterization tests before moving logic.
 
-- [ ] [REF-002] **Detailed visual dispatch table**
-  - Replace long `if/else if (b.detailedVisual === ...)` chain with a data-driven registry/table (builder, materials, default params, foundation/yOffset rules).
-  - Centralize rotation/local-dimension normalization once (BUG-001) so new detailed visuals cannot repeat the bug.
-  - Keep deterministic ordering and existing visual names/IDs.
+- [x] [REF-002] **Detailed visual dispatch table** (2026-11-21, `agent/plan25-ref002-detailed-dispatch`)
+  - Replaced long `if/else if (b.detailedVisual === ...)` chain in `JsonMap._buildDetailedBuildings` with module-scope `DETAILED_VISUAL_BUILDERS` registry (handlers preserve 1:1 defaults/foundation/yOffset rules, including generic-house group).
+  - Rotation/local-dimension normalization already centralized via `detailedLocalDims` (BUG-001). CI verification pending.
 
 - [ ] [REF-003] **Normalize/build pipeline boundaries**
   - Document and tighten boundaries between `tools/level-schema.mjs`, `tools/normalize-level.mjs`, `tools/city.js`, `tools/build-level.mjs`, and `tools/citygen/pipeline/*`.
