@@ -1654,7 +1654,6 @@ async function testBoundaryFallbackHandover() {
     if (!pEntry || !src) { map.dispose(); return { name: 'BUG-003: fallback handover на границе чанков', passed: false, info: 'нет здания для синтетики' }; }
     const rec = { ...src, owner: false, homeChunk: hId, coverageChunks: [hId, pId].sort() };
     pEntry.data.buildings.push(rec);
-    pEntry.records.buildings.push(rec);
     map._rebuildPicture(pId);
     found = { pId, hId, rec, key: 'buildings', synthetic: true };
   }
