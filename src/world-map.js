@@ -599,7 +599,10 @@ export class WorldMap extends JsonMap {
           if (key === '_wallMats') continue;
           const geos = groups[key];
           if (!geos || !geos.length) continue;
-          const mesh = new THREE.Mesh(mergeGeometries(geos, false), mats[key]);
+          const merged = mergeGeometries(geos, false);
+          for (const g of geos) g.dispose();
+          if (!merged) continue;
+          const mesh = new THREE.Mesh(merged, mats[key]);
           mesh.castShadow = true;
           mesh.receiveShadow = true;
           this.scene.add(mesh);
@@ -612,7 +615,10 @@ export class WorldMap extends JsonMap {
           for (const [matKey, geos] of wallMats) {
             if (!geos.length) continue;
             const { material } = makeFacadeMaterial(matKey, this.houseTex, J.walls);
-            const mesh = new THREE.Mesh(mergeGeometries(geos, false), material);
+            const merged = mergeGeometries(geos, false);
+            for (const g of geos) g.dispose();
+            if (!merged) continue;
+            const mesh = new THREE.Mesh(merged, material);
             mesh.castShadow = true;
             mesh.receiveShadow = true;
             this.scene.add(mesh);

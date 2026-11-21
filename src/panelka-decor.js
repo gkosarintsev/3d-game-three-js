@@ -256,6 +256,7 @@ export function buildPanelkaDecor(scene, buildings, panelMatColor = 0xd6d0c4) {
   for (const [key, list] of Object.entries(geos)) {
     if (!list.length) continue;
     const merged = mergeGeometries(list, false);
+    for (const g of list) g.dispose();
     if (!merged) continue;
     const mesh = new THREE.Mesh(merged, mats[key]);
     mesh.castShadow = true;

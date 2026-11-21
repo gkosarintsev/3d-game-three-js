@@ -147,7 +147,9 @@ export function buildProps(scene, props) {
 
   for (const [model, items] of byModel) {
     for (const part of PARTS[model]()) {
-      const mesh = new THREE.InstancedMesh(mergeGeometries(part.geo, false), MATERIALS[part.mat], items.length);
+      const merged = mergeGeometries(part.geo, false);
+      for (const g of part.geo) g.dispose();
+      const mesh = new THREE.InstancedMesh(merged, MATERIALS[part.mat], items.length);
       items.forEach((it, i) => {
         e.set(0, ((it.rotationY ?? 0) * Math.PI) / 180, 0);
         q.setFromEuler(e);
