@@ -62,9 +62,9 @@ Improve maintainability and reliability of the codebase through targeted refacto
   - Audit duplicated logic between `JsonMap` and `WorldMap` for detailed buildings/quads/props and chunk lifecycle hooks.
   - Prefer shared helper/module only when it preserves current contracts and reduces bug surface; avoid abstracting stable but different code paths prematurely.
 
-- [ ] [REF-005] **Config/constants hygiene**
-  - Move repeated tunables/magic numbers into `config.js` or level schema defaults as appropriate (not gameplay/content numbers hidden in unrelated modules).
-  - Add comments only where non-obvious (reason/invariant), per style guide.
+- [x] [REF-005] **Config/constants hygiene** (first pass, 2026-11-21, `agent/plan25-ref005-config-hygiene`)
+  - Moved hardcoded world streaming unload-decay tunable (`20 м/с`) from `src/world-map.js` to `CONFIG.jsonMap.pump.unloadDecay` in `src/config.js` (behavior-preserving default).
+  - Remaining: continue opportunistic audit for repeated tunables/magic numbers with clear config/schema owner; avoid gameplay/content churn.
 
 ### C. Test coverage
 - [x] [TEST-001] **Regression: rotated detailed building proportions** (2026-11-21, `agent/plan25-bug001-rotation-audit`)

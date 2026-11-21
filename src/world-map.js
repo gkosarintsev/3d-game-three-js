@@ -1125,7 +1125,7 @@ export class WorldMap extends JsonMap {
     // unload→load thrash на границе окна. Загрузка/приоритет — по wantRadius.
     const prevUnload = this.pump.unloadRadius || wantRadius;
     const dtUnload = this.pump.unloadRadiusAt ? Math.max(0, (now - this.pump.unloadRadiusAt) / 1000) : 0;
-    const unloadDecay = 20; // м/с
+    const unloadDecay = J.pump.unloadDecay;
     const unloadRadius = Math.max(wantRadius, prevUnload - unloadDecay * dtUnload);
     this.pump.radius = wantRadius;
     this.pump.unloadRadius = unloadRadius;
