@@ -38,9 +38,9 @@ Improve maintainability and reliability of the codebase through targeted refacto
   - Pinned locale-dependent `localeCompare` to fixed locale `'en'` in citygen determinism paths: `tools/citygen/ids.mjs`, `diagnostics.mjs`, `features.mjs`, `rules.mjs` (codepoint change was tried but reverted because it changed generation artifacts).
   - Remaining: deeper audit of object iteration/float serialization in normalize/build/chunk emission.
 
-- [ ] [BUG-005] **Defensive guards and error reporting**
-  - Identify silent `undefined`/`NaN` propagation in hot paths (map queries, nav, entity spawn, detail builders).
-  - Replace silent bad states with existing project pattern: explicit validation/warning/error with actionable context; do not hide contract violations.
+- [x] [BUG-005] **Defensive guards and error reporting** (first pass, 2026-11-21, `agent/plan25-bug005-defensive-guards`)
+  - Added finite-input guards with one-time warnings for unexpected world state in hot map queries/nav: `WorldMap.isBuiltAt/streamStep`, `SurfaceField.groundHeightAt`, `JsonMap.randomNavPoint/findPath`.
+  - Remaining: continue audit for silent `undefined`/`NaN` propagation in entity spawn/detail builders and other hot paths; add targeted tests if a concrete corruption case is found.
 
 ### B. Refactoring (behavior-preserving)
 - [ ] [REF-001] **Split `src/json-map.js` by responsibility**

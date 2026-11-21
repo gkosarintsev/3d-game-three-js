@@ -34,6 +34,13 @@ import { applyGrass } from './grass-material.js';
 
 const J = CONFIG.jsonMap;
 const DEG = Math.PI / 180;
+const WARNED = new Set();
+/** Одноразовое предупреждение о неожиданном состоянии карты (BUG-005). */
+function warnOnce(key, msg) {
+  if (WARNED.has(key)) return;
+  WARNED.add(key);
+  console.warn(`[JsonMap] ${msg}`);
+}
 
 /** Нормаль грани по обходу (правая рука), единичная. */
 function faceNormal(p0, p1, p2) {
@@ -1862,11 +1869,27 @@ export class JsonMap extends SurfaceField {
 
   /** Случайная точка графа в радиусе от (x, z); если не нашлось — null. */
   randomNavPoint(x, z, radius) {
+    if (!this.nav || typeof this.nav.randomPoint !== 'function') {
+      warnOnce('nav-missing', 'randomNavPoint вызван без навигационного графа');
+      return null;
+    }
+    if (!Number.isFinite(x) || !Number.isFinite(z) || !Number.isFinite(radius)) {
+      warnOnce('randomNavPoint-nan', `randomNavPoint получил нечисловые аргументы: x=${x} z=${z} radius=${radius}`);
+      return null;
+    }
     return this.nav.randomPoint(x, z, radius, this.navFit);
   }
 
   /** Маршрут по узлам графа (поиск в ширину). null — пути нет. */
   findPath(from, to) {
+    if (!this.nav || typeof this.nav.findPath !== 'function') {
+      warnOnce('nav-missing-find', 'findPath вызван без навигационного графа');
+      return null;
+    }
+    if (!from || !to || !Number.isFinite(from.x) || !Number.isFinite(from.z) || !Number.isFinite(to.x) || !Number.isFinite(to.z)) {
+      warnOnce('findPath-bad-args', 'findPath получил некорректные точки from/to');
+      return null;
+    }
     return this.nav.findPath(from, to, this.navFit);
   }
 

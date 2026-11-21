@@ -5,6 +5,12 @@ import { reliefOf } from './relief.js';
 
 const J = CONFIG.jsonMap;
 const DEG = Math.PI / 180;
+const WARNED = new Set();
+function warnOnce(key, msg) {
+  if (WARNED.has(key)) return;
+  WARNED.add(key);
+  console.warn(`[SurfaceField] ${msg}`);
+}
 
 /**
  * Поля-приёмники фазы данных: всё, куда пишут `_collect*`.
@@ -884,6 +890,11 @@ export class SurfaceField extends SolidField {
    * холма отвечал бы нулём, и нога повисла бы над склоном.
    */
   groundHeightAt(x, z, fromY = 0, terrainY) {
+    if (!Number.isFinite(x) || !Number.isFinite(z)) {
+      warnOnce('groundHeightAt-nan', `groundHeightAt получил нечисловые координаты: x=${x} z=${z} fromY=${fromY}`);
+      return Number.isFinite(this.groundY) ? this.groundY : 0;
+    }
+    if (!Number.isFinite(fromY)) fromY = 0;
     const relief = terrainY !== undefined ? terrainY : (this.relief ? this.relief.heightAt(x, z) : 0);
     const hasPrisms = !!this.prisms?.length;
     const hasSweeps = !!this.sweeps?.length;
