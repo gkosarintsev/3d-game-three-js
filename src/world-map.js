@@ -12,6 +12,13 @@ import { buildDetailedSovietPanel, makeSovietPanelMaterials } from './soviet-pan
 import { applyGrass } from './grass-material.js';
 
 const J = CONFIG.jsonMap;
+const WARNED = new Set();
+/** Одноразовое предупреждение о неожиданном состоянии мира (BUG-005): не спамить в hot path. */
+function warnOnce(key, msg) {
+  if (WARNED.has(key)) return;
+  WARNED.add(key);
+  console.warn(`[WorldMap] ${msg}`);
+}
 
 /** Коллекции чанка, которые читает картинка: у `JsonMap` они приходят прямо из
  *  брифа, у открытого мира — из файла клетки. */
@@ -242,6 +249,10 @@ export class WorldMap extends JsonMap {
    *   `isBlocked`» стирало бы легальных Чужих в тысячах кадров, а не в одном.
    */
   isBuiltAt(x, z) {
+    if (!Number.isFinite(x) || !Number.isFinite(z)) {
+      warnOnce('isBuiltAt-nan', `isBuiltAt получил нечисловые координаты: x=${x} z=${z}`);
+      return false;
+    }
     for (const entry of this.loaded.values()) {
       const r = entry.cell.rect;
       if (x >= r.minX && x <= r.maxX && z >= r.minZ && z <= r.maxZ) return true;
@@ -1096,6 +1107,14 @@ export class WorldMap extends JsonMap {
    *   между `stream.aheadMin` (пешком) и `stream.aheadMax` (на машине)
    */
   streamStep(budgetMs, x, z, speed = 0) {
+    if (!Number.isFinite(x) || !Number.isFinite(z)) {
+      warnOnce('streamStep-nan', `streamStep получил нечисловые координаты: x=${x} z=${z}`);
+      return;
+    }
+    if (!Number.isFinite(speed)) {
+      warnOnce('streamStep-speed-nan', `streamStep получил нечисловую скорость: speed=${speed}`);
+      speed = 0;
+    }
     const budget = Math.min(budgetMs ?? this.stream.budgetMs, this.stream.budgetMs);
     const wantRadius = this._windowRadius(speed);
     const now = performance.now();
