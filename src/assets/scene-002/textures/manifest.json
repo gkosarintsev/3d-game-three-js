@@ -1,0 +1,135 @@
+{
+  "source": "docs/buckingham-palace-3d/src/palace/textures.ts",
+  "textures": {
+    "portlandAlbedo": {
+      "file": "./textures/portland_albedo.png",
+      "width": 512,
+      "height": 512,
+      "colorSpace": "srgb",
+      "repeat": [
+        6,
+        3
+      ]
+    },
+    "portlandBump": {
+      "file": "./textures/portland_bump.png",
+      "width": 512,
+      "height": 512,
+      "colorSpace": "",
+      "repeat": [
+        6,
+        3
+      ]
+    },
+    "rusticatedBump": {
+      "file": "./textures/rusticated_bump.png",
+      "width": 512,
+      "height": 512,
+      "colorSpace": "",
+      "repeat": [
+        8,
+        2
+      ]
+    },
+    "slateAlbedo": {
+      "file": "./textures/slate_albedo.png",
+      "width": 512,
+      "height": 512,
+      "colorSpace": "srgb",
+      "repeat": [
+        6,
+        3
+      ]
+    },
+    "slateBump": {
+      "file": "./textures/slate_bump.png",
+      "width": 512,
+      "height": 512,
+      "colorSpace": "",
+      "repeat": [
+        6,
+        3
+      ]
+    },
+    "gravelAlbedo": {
+      "file": "./textures/gravel_albedo.png",
+      "width": 512,
+      "height": 512,
+      "colorSpace": "srgb",
+      "repeat": [
+        16,
+        8
+      ]
+    },
+    "gravelBump": {
+      "file": "./textures/gravel_bump.png",
+      "width": 512,
+      "height": 512,
+      "colorSpace": "",
+      "repeat": [
+        16,
+        8
+      ]
+    },
+    "mallAsphaltAlbedo": {
+      "file": "./textures/mall_asphalt_albedo.png",
+      "width": 512,
+      "height": 512,
+      "colorSpace": "srgb",
+      "repeat": [
+        4,
+        16
+      ]
+    },
+    "roadTarmacAlbedo": {
+      "file": "./textures/road_tarmac_albedo.png",
+      "width": 256,
+      "height": 256,
+      "colorSpace": "srgb",
+      "repeat": [
+        4,
+        12
+      ]
+    },
+    "flowerbedAlbedo": {
+      "file": "./textures/flowerbed_albedo.png",
+      "width": 256,
+      "height": 256,
+      "colorSpace": "srgb",
+      "repeat": [
+        3,
+        3
+      ]
+    },
+    "lawnAlbedo": {
+      "file": "./textures/lawn_albedo.png",
+      "width": 512,
+      "height": 512,
+      "colorSpace": "srgb",
+      "repeat": [
+        16,
+        16
+      ]
+    },
+    "royalStandardAlbedo": {
+      "file": "./textures/royal_standard_albedo.png",
+      "width": 1024,
+      "height": 512,
+      "colorSpace": "srgb",
+      "repeat": [
+        1,
+        1
+      ]
+    },
+    "contactShadowAlpha": {
+      "file": "./textures/contact_shadow_alpha.png",
+      "width": 256,
+      "height": 256,
+      "colorSpace": "",
+      "repeat": [
+        1,
+        1
+      ]
+    }
+  }
+}

@@ -165,6 +165,16 @@ docs/               архитектура, планы, ADR, заметки
 
 Аттестация (title/author/license/source) записана и в метаданных самого `.glb` (`asset.extras`).
 
+### «Buckingham Palace 3D» — `src/assets/scene-002/scene.glb`
+
+GLB-макет сцены для главы 26 («Букингемский дворец»): дворец, двор, ограда, Мемориал Виктории, парки и Мэлл. Перенесён из локального пакета сцен `C:\Temp\005\scenes\scene-002` (источник: `docs/buckingham-palace-3d`).
+
+- Автор: **Buckingham Palace 3D** (процедурная модель, пакет `docs/buckingham-palace-3d`)
+- Источник: локальный пакет сцен `C:\Temp\005\scenes\scene-002` / `docs/buckingham-palace-3d`
+- Лицензия: **Unspecified** — см. исходный пакет `docs/buckingham-palace-3d`
+
+Атрибуция (title/author/license/source) записана и в метаданных самого `.glb` (`asset.extras`).
+
 ### «@dimforge/rapier3d-compat@0.21.0» — индекс твёрдости статики (RAP, Часть II)
 
 Используется в режиме `rapier` через `?physics=rapier` как индекс твёрдости статики (солиды/блокеры → коллайдеры, луч и свип тела), а не как физика тел. Подключается через `importmap`, не попадает в репозиторий.
