@@ -57,7 +57,7 @@ test('levelFile zero-pad', () => {
 
 test('parseLevelNumbers from real index.js', () => {
   const text = fs.readFileSync(path.join(ROOT, 'src', 'levels', 'index.js'), 'utf8');
-  assert.deepEqual(parseLevelNumbers(text), [7, 8, 9, 10, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25]);
+  assert.deepEqual(parseLevelNumbers(text), [7, 8, 9, 10, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26]);
 });
 
 test('nice125', () => {
